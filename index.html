@@ -860,13 +860,19 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   </div>
 
   <div class="sec">Sonuçlar</div>
-  <div id="denemeFields" class="deneme-fields"></div>
+  <div id="denemeFields" class="deneme-fields" style="overflow:hidden"></div>
 
-  <div class="input-row">
-    <div class="input-group">
+  <div class="input-row" style="margin-bottom:8px">
+    <div class="input-group" style="flex:2">
+      <div class="input-label">🏷 Deneme Adı</div>
+      <input class="num-input" type="text" id="denemeIsim" placeholder="Örn: TYT Denemesi 1">
+    </div>
+    <div class="input-group" style="flex:1">
       <div class="input-label">📅 Tarih</div>
       <input class="num-input" type="date" id="denemedTarih">
     </div>
+  </div>
+  <div class="input-row">
     <div class="input-group">
       <div class="input-label">📝 Not (isteğe bağlı)</div>
       <input class="num-input" type="text" id="denemeNot" placeholder="Yorum...">
@@ -1024,30 +1030,30 @@ var EXAM_DATA = {
 
 var DENEME_FIELDS = {
   TYT: [
-    { key:"turkce", label:"Türkçe Net", max:40 },
-    { key:"mat", label:"Matematik Net", max:40 },
-    { key:"fen", label:"Fen Net", max:20 },
-    { key:"sosyal", label:"Sosyal Net", max:20 }
+    { key:"turkce",    label:"Türkçe",     max:40 },
+    { key:"mat",       label:"Matematik",  max:40 },
+    { key:"fen",       label:"Fen",        max:20 },
+    { key:"sosyal",    label:"Sosyal",     max:20 }
   ],
   AYT_SAY: [
-    { key:"mat", label:"Mat Net", max:40 },
-    { key:"fizik", label:"Fizik Net", max:14 },
-    { key:"kimya", label:"Kimya Net", max:13 },
-    { key:"bio", label:"Biyoloji Net", max:13 }
+    { key:"mat",    label:"Matematik", max:40 },
+    { key:"fizik",  label:"Fizik",     max:14 },
+    { key:"kimya",  label:"Kimya",     max:13 },
+    { key:"bio",    label:"Biyoloji",  max:13 }
   ],
   AYT_SOZ: [
-    { key:"edebiyat", label:"Edebiyat Net", max:24 },
-    { key:"tarih1", label:"Tarih-1 Net", max:10 },
-    { key:"cografya1", label:"Coğrafya-1 Net", max:6 },
-    { key:"tarih2", label:"Tarih-2 Net", max:11 },
-    { key:"cografya2", label:"Coğrafya-2 Net", max:11 },
-    { key:"felsefe", label:"Felsefe Net", max:12 }
+    { key:"edebiyat",   label:"Edebiyat",    max:24 },
+    { key:"tarih1",     label:"Tarih-1",     max:10 },
+    { key:"cografya1",  label:"Coğrafya-1",  max:6  },
+    { key:"tarih2",     label:"Tarih-2",     max:11 },
+    { key:"cografya2",  label:"Coğrafya-2",  max:11 },
+    { key:"felsefe",    label:"Felsefe",     max:12 }
   ],
   AYT_EA: [
-    { key:"mat", label:"Mat Net", max:40 },
-    { key:"edebiyat", label:"Edebiyat Net", max:24 },
-    { key:"tarih1", label:"Tarih-1 Net", max:10 },
-    { key:"cografya1", label:"Coğrafya-1 Net", max:6 }
+    { key:"mat",        label:"Matematik",  max:40 },
+    { key:"edebiyat",   label:"Edebiyat",   max:24 },
+    { key:"tarih1",     label:"Tarih-1",    max:10 },
+    { key:"cografya1",  label:"Coğrafya-1", max:6  }
   ]
 };
 
@@ -1560,64 +1566,154 @@ renderBackupSummary();
 }
 
 function renderDenemeFields() {
-  const fields = DENEME_FIELDS[currentDenemeType] || [];
-  document.getElementById('denemeFields').innerHTML = fields.map(f =>
-    `<div class="input-group">
-      <div class="input-label">${f.label} (/${f.max})</div>
-      <input class="num-input" type="number" id="df_${f.key}" placeholder="0.00" step="0.25" min="-99" max="${f.max}">
-    </div>`
-  ).join('');
-  const today = new Date().toISOString().split('T')[0];
+  var fields = DENEME_FIELDS[currentDenemeType] || [];
+  var totalMax = fields.reduce(function(a, f) { return a + f.max; }, 0);
+  var html = '';
+
+  fields.forEach(function(f) {
+    html += '<div id="dfrow_' + f.key + '" style="background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px">';
+    // Ders adı
+    html += '<div style="font-size:0.78rem;font-weight:900;margin-bottom:8px">' + f.label + ' <span style="color:var(--muted);font-size:0.65rem;font-weight:700">/' + f.max + ' soru</span></div>';
+    // D / Y / Net satırı
+    html += '<div style="display:flex;gap:8px;align-items:center">';
+    html += '<div style="flex:1">';
+    html += '<div style="font-size:0.58rem;font-weight:800;color:#34d399;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Doğru</div>';
+    html += '<input class="num-input" type="number" id="df_d_' + f.key + '" placeholder="0" min="0" max="' + f.max + '" style="text-align:center;padding:8px 4px;font-size:0.9rem;width:100%;box-sizing:border-box" oninput="calcDenemeNet()">';
+    html += '</div>';
+    html += '<div style="flex:1">';
+    html += '<div style="font-size:0.58rem;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Yanlış</div>';
+    html += '<input class="num-input" type="number" id="df_y_' + f.key + '" placeholder="0" min="0" max="' + f.max + '" style="text-align:center;padding:8px 4px;font-size:0.9rem;width:100%;box-sizing:border-box" oninput="calcDenemeNet()">';
+    html += '</div>';
+    html += '<div style="flex:1">';
+    html += '<div style="font-size:0.58rem;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Net</div>';
+    html += '<div id="df_net_' + f.key + '" style="text-align:center;font-family:monospace;font-size:0.9rem;font-weight:700;color:var(--accent2);background:var(--bg3);border-radius:8px;padding:8px 4px">—</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '</div>';
+  });
+
+  // Toplam kartı
+  html += '<div style="background:var(--bg3);border:1.5px solid var(--yellow);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;margin-top:4px">';
+  html += '<div style="font-size:0.78rem;font-weight:900">TOPLAM <span style="color:var(--muted);font-size:0.65rem">/' + totalMax + '</span></div>';
+  html += '<div style="display:flex;gap:16px;align-items:center">';
+  html += '<div style="text-align:center"><div style="font-size:0.55rem;font-weight:800;color:#34d399;text-transform:uppercase;letter-spacing:1px">D</div><div id="df_total_d" style="font-family:monospace;font-size:0.85rem;font-weight:700;color:#34d399">—</div></div>';
+  html += '<div style="text-align:center"><div style="font-size:0.55rem;font-weight:800;color:#f87171;text-transform:uppercase;letter-spacing:1px">Y</div><div id="df_total_y" style="font-family:monospace;font-size:0.85rem;font-weight:700;color:#f87171">—</div></div>';
+  html += '<div style="text-align:center"><div style="font-size:0.55rem;font-weight:800;color:var(--yellow);text-transform:uppercase;letter-spacing:1px">NET</div><div id="df_total_net" style="font-family:monospace;font-size:1rem;font-weight:900;color:var(--yellow)">—</div></div>';
+  html += '</div>';
+  html += '</div>';
+
+  document.getElementById('denemeFields').innerHTML = html;
+  var today = new Date().toISOString().split('T')[0];
   document.getElementById('denemedTarih').value = today;
 }
 
-function saveDeneme() {
-  const fields = DENEME_FIELDS[currentDenemeType] || [];
-  const results = {};
-  let totalNet = 0;
-  fields.forEach(f => {
-    const v = parseFloat(document.getElementById('df_' + f.key)?.value) || 0;
-    results[f.key] = v;
-    totalNet += v;
+
+function calcDenemeNet() {
+  var fields = DENEME_FIELDS[currentDenemeType] || [];
+  var totalD = 0, totalY = 0, totalNet = 0;
+
+  fields.forEach(function(f) {
+    var d = parseFloat(document.getElementById('df_d_' + f.key).value) || 0;
+    var y = parseFloat(document.getElementById('df_y_' + f.key).value) || 0;
+    var row = document.getElementById('dfrow_' + f.key);
+    var netEl = document.getElementById('df_net_' + f.key);
+
+    if (d + y > f.max) {
+      if (row) row.style.outline = '2px solid var(--warn)';
+      if (netEl) { netEl.textContent = '!'; netEl.style.color = 'var(--warn)'; }
+    } else {
+      if (row) row.style.outline = 'none';
+      var net = Math.round((d - y / 4) * 100) / 100;
+      if (netEl) {
+        netEl.textContent = net.toFixed(2);
+        netEl.style.color = net >= 0 ? 'var(--accent2)' : 'var(--warn)';
+      }
+      totalD += d; totalY += y; totalNet += net;
+    }
   });
-  const d = {
+
+  var tdEl = document.getElementById('df_total_d');
+  var tyEl = document.getElementById('df_total_y');
+  var tnEl = document.getElementById('df_total_net');
+  if (tdEl) tdEl.textContent = totalD || '—';
+  if (tyEl) tyEl.textContent = totalY || '—';
+  if (tnEl) { tnEl.textContent = totalNet.toFixed(2); tnEl.style.color = totalNet >= 0 ? 'var(--yellow)' : 'var(--warn)'; }
+}
+
+function saveDeneme() {
+  var fields = DENEME_FIELDS[currentDenemeType] || [];
+  var results = {};
+  var totalNet = 0;
+
+  for (var i = 0; i < fields.length; i++) {
+    var f = fields[i];
+    var d = parseFloat(document.getElementById('df_d_' + f.key).value) || 0;
+    var y = parseFloat(document.getElementById('df_y_' + f.key).value) || 0;
+    if (d + y > f.max) {
+      showToast('⚠️ ' + f.label + ' toplamı ' + f.max + ' soruyu geçemez! (' + (d+y) + ' girildi)');
+      return;
+    }
+    var net = Math.round((d - y / 4) * 100) / 100;
+    results[f.key] = { d: d, y: y, net: net };
+    totalNet += net;
+  }
+
+  var isim = (document.getElementById('denemeIsim').value || '').trim();
+  var deneme = {
     id: Date.now(),
     type: currentDenemeType,
+    isim: isim,
     date: document.getElementById('denemedTarih').value,
     not: document.getElementById('denemeNot').value,
-    results,
+    results: results,
     totalNet: Math.round(totalNet * 100) / 100
   };
-  denemeler.unshift(d);
+
+  denemeler.unshift(deneme);
   localStorage.setItem('yks_denemeler', JSON.stringify(denemeler));
-  fields.forEach(f => { const el = document.getElementById('df_' + f.key); if(el) el.value = ''; });
+
+  // Temizle
+  fields.forEach(function(f) {
+    var de = document.getElementById('df_d_' + f.key); if (de) de.value = '';
+    var ye = document.getElementById('df_y_' + f.key); if (ye) ye.value = '';
+    var ne = document.getElementById('df_net_' + f.key); if (ne) { ne.textContent = '—'; ne.style.color = 'var(--accent2)'; }
+    var row = document.getElementById('dfrow_' + f.key); if (row) row.style.outline = 'none';
+  });
+  var tnEl = document.getElementById('df_total_net'); if (tnEl) { tnEl.textContent = '—'; }
+  var tdEl = document.getElementById('df_total_d'); if (tdEl) tdEl.textContent = '—';
+  var tyEl = document.getElementById('df_total_y'); if (tyEl) tyEl.textContent = '—';
+  document.getElementById('denemeIsim').value = '';
   document.getElementById('denemeNot').value = '';
-  showToast('✅ Deneme kaydedildi! Net: ' + d.totalNet);
+
+  showToast('✅ Deneme kaydedildi! Net: ' + deneme.totalNet);
   renderDenemeLog();
 }
 
 function renderDenemeLog() {
-  const list = document.getElementById('denemeLog');
-  if (denemeler.length === 0) {
-    list.innerHTML = `<div class="empty"><span>📋</span><p>Henüz deneme kaydı yok.</p></div>`;
+  var list = document.getElementById('denemeLog');
+  if (!list) return;
+  var filtered = denemeler.filter(function(d) { return d.type === currentDenemeType; });
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty"><span>📋</span><p>Henüz deneme kaydı yok.</p></div>';
     return;
   }
-  const typeLabels = { TYT:'TYT', AYT_SAY:'AYT Sayısal', AYT_SOZ:'AYT Sözel', AYT_EA:'AYT EA' };
-  list.innerHTML = denemeler.slice(0,20).map(d => {
-    const fields = DENEME_FIELDS[d.type] || [];
-    const detail = fields.map(f => `${f.label.split(' ')[0]}: ${d.results[f.key] ?? '-'}`).join(' · ');
-    return `<div class="log-item">
-      <div class="log-icon" style="background:rgba(244,114,182,0.12)">📋</div>
-      <div class="log-info">
-        <div class="log-title">${typeLabels[d.type] || d.type}</div>
-        <div class="log-sub">${d.date} ${d.not ? '· ' + d.not : ''}</div>
-        <div class="log-sub" style="margin-top:2px">${detail}</div>
-      </div>
-      <div>
-        <div class="log-val" style="color:var(--warn)">Net: ${d.totalNet}</div>
-        <button class="log-del" onclick="deleteDeneme(${d.id})">🗑</button>
-      </div>
-    </div>`;
+  list.innerHTML = filtered.map(function(d) {
+    var fields2 = DENEME_FIELDS[d.type] || [];
+    var nets = fields2.map(function(f) {
+      var r = d.results[f.key];
+      var net = r && typeof r === 'object' ? r.net : r;
+      return '<span>' + f.label + ': <b>' + (typeof net === 'number' ? net.toFixed(2) : '—') + '</b></span>';
+    }).join(' · ');
+    var title = (d.isim ? d.isim + ' · ' : '') + d.type.replace('_',' ') + ' · ' + d.date;
+    return '<div class="log-item">' +
+      '<div class="log-icon" style="background:rgba(56,189,248,0.1)">📋</div>' +
+      '<div class="log-info">' +
+        '<div class="log-title">' + title + '</div>' +
+        '<div class="log-sub" style="font-size:0.65rem">' + nets + '</div>' +
+        (d.not ? '<div class="log-sub">' + d.not + '</div>' : '') +
+      '</div>' +
+      '<div style="font-family:monospace;font-size:0.9rem;color:var(--yellow);font-weight:700">' + d.totalNet + '</div>' +
+    '</div>';
   }).join('');
 }
 
