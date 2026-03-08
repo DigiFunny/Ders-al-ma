@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#080d18">
 <link rel="manifest" href="manifest.json">
 
@@ -40,6 +42,7 @@ body {
   padding-bottom: 160px;
   min-height: 100vh;
 }
+
 
 /* SCROLLBAR */
 ::-webkit-scrollbar { width: 4px; }
@@ -171,15 +174,46 @@ body {
 .ring-sublabel { font-size: 0.65rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
 .timer-btns { display: flex; gap: 14px; align-items: center; }
-.btn-play { width: 62px; height: 62px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--fox-orange), var(--fox-amber)); color: white; font-size: 1.4rem; cursor: pointer; box-shadow: 0 0 20px rgba(56,189,248,0.35); transition: transform 0.15s; display: flex; align-items: center; justify-content: center; }
+.btn-play { width: 62px; height: 62px; border-radius: 50%; border: none; background: linear-gradient(135deg, #38bdf8, #818cf8); color: white; font-size: 0; cursor: pointer; box-shadow: 0 4px 20px rgba(56,189,248,0.45); transition: transform 0.15s, background 0.25s, box-shadow 0.25s; display: flex; align-items: center; justify-content: center; }
+.btn-play.running { background: linear-gradient(135deg, #38bdf8, #818cf8); box-shadow: 0 4px 20px rgba(56,189,248,0.45); }
 .btn-play:active { transform: scale(0.9); }
-.btn-sm { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.btn-sm { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgba(56,189,248,0.25); background: rgba(56,189,248,0.08); color: var(--accent); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.btn-sm:hover { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.5); }
 .btn-sm:active { transform: scale(0.9); }
+
 
 /* BIG BUTTON */
 .btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; letter-spacing: 0.3px; }
 .btn-save:active { opacity: 0.85; }
 .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* BRANS CHIP */
+.brans-chip {
+  padding: 10px 10px 8px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.brans-chip.active {
+  border-color: var(--accent3);
+  color: var(--accent3);
+  background: rgba(52,211,153,0.1);
+}
+.brans-max {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-top: 1px;
+}
+.brans-chip.active .brans-max { color: rgba(52,211,153,0.7); }
 
 /* DENEME */
 .deneme-type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
@@ -549,6 +583,97 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   .fs-close { top: 10px; right: 10px; width: 34px; height: 34px; font-size: 0.85rem; }
 }
 
+/* ═══════════════════ LANDSCAPE SIDEBAR LAYOUT ═══════════════════ */
+@media (orientation: landscape) and (max-height: 600px) {
+  body {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  /* Hide header to save space */
+  .header { display: none !important; }
+
+  /* Sidebar tabs */
+  .tabs {
+    position: fixed !important;
+    left: 0 !important; top: 0 !important; bottom: auto !important;
+    width: 66px !important;
+    max-width: 66px !important;
+    height: 100dvh !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    border-radius: 0 !important;
+    margin-bottom: 0 !important;
+    transform: none !important;
+    left: 0 !important;
+    padding: 10px 6px 10px !important;
+    gap: 4px !important;
+    overflow-y: auto !important;
+    border: none !important;
+    border-right: 1px solid rgba(56,189,248,0.2) !important;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.4) !important;
+    background: var(--card) !important;
+    z-index: 100 !important;
+  }
+
+  .tab-btn {
+    flex-direction: column !important;
+    width: 54px !important;
+    min-width: unset !important;
+    padding: 8px 4px !important;
+    font-size: 0.5rem !important;
+    border-radius: 12px !important;
+    gap: 2px !important;
+    flex: none !important;
+  }
+
+  .tab-btn .ti svg { width: 18px !important; height: 18px !important; }
+  .tab-btn .ti { font-size: 0 !important; }
+
+  /* Shift content right of sidebar */
+  .app-wrap {
+    margin-left: 66px !important;
+    height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+    padding-bottom: 16px !important;
+  }
+
+  /* User bar offset */
+  .user-bar {
+    left: 66px !important;
+    right: 0 !important;
+    max-width: none !important;
+    transform: none !important;
+    width: auto !important;
+  }
+
+  /* Tighter page padding */
+  .page { padding: 6px 12px 8px !important; }
+
+  /* Shorter topic list */
+  .topic-list { max-height: 120px !important; }
+
+  /* Two-column Çalış layout */
+  #page-calis { 
+    display: grid !important;
+    grid-template-columns: auto 1fr !important;
+    column-gap: 12px !important;
+    align-items: start !important;
+  }
+  .timer-section { grid-column: 1; grid-row: 1 / 20; }
+  .timer-section + .sec,
+  .timer-section ~ .sec,
+  .timer-section ~ div,
+  .timer-section ~ .type-row,
+  .timer-section ~ .exam-tabs { grid-column: 2; }
+}
+
+
+
 /* AUTH MODAL */
 .auth-modal { position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center; }
 .auth-modal.open { display:flex;pointer-events:all; }
@@ -691,8 +816,8 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         style="transition:stroke-dashoffset 1s linear;transform:rotate(-90deg);transform-origin:50% 50%"/>
       <defs>
         <linearGradient id="fsGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#C8511A"/>
-          <stop offset="100%" stop-color="#E8830A"/>
+          <stop offset="0%" stop-color="#38bdf8"/>
+          <stop offset="100%" stop-color="#818cf8"/>
         </linearGradient>
       </defs>
     </svg>
@@ -703,9 +828,9 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
   </div>
   <div class="fs-btns">
-    <button class="btn-sm" onclick="resetTimer()" style="width:54px;height:54px;font-size:1.3rem;">↺</button>
-    <button class="btn-play" id="fsPlayBtn" onclick="toggleTimer()" style="width:72px;height:72px;font-size:1.8rem;">▶</button>
-    <button class="btn-sm" onclick="skipTimer()" style="width:54px;height:54px;font-size:1.3rem;">⏭</button>
+    <button class="btn-sm" onclick="resetTimer()" style="width:54px;height:54px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg></button>
+    <button class="btn-play" id="fsPlayBtn" onclick="toggleTimer()" style="width:72px;height:72px;"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+    <button class="btn-sm" onclick="skipTimer()" style="width:54px;height:54px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg></button>
   </div>
 </div>
 
@@ -857,7 +982,8 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 
 <!-- PAGE: CALIS -->
-<div class="page" id="page-calis">
+<div class="app-wrap" id="appWrap"><div class="page" id="page-calis">
+  <div class="timer-section">
   <div class="sec">Zamanlayıcı</div>
   <div class="mode-pills" id="modePills">
     <div class="mode-pill active" onclick="setTimerMode(0,this)">⏱ 25</div>
@@ -917,11 +1043,12 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
   </div>
   <div class="timer-btns" style="justify-content:center;margin-bottom:16px;">
-    <button class="btn-sm" onclick="resetTimer()">↺</button>
-    <button class="btn-play" id="playBtn" onclick="toggleTimer()">▶</button>
-    <button class="btn-sm" onclick="skipTimer()">⏭</button>
+    <button class="btn-sm" onclick="resetTimer()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg></button>
+    <button class="btn-play" id="playBtn" onclick="toggleTimer()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>
+    <button class="btn-sm" onclick="skipTimer()"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg></button>
   </div>
 
+  </div><!-- /timer-section -->
   <!-- Kayıt Türü -->
   <div class="sec">Ne Kaydedelim?</div>
   <div class="type-row">
@@ -968,12 +1095,44 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
 <!-- ════════════════════ PAGE: DENEME ════════════════════ -->
 <div class="page" id="page-deneme">
-  <div class="sec">Deneme Türü</div>
-  <div class="deneme-type-grid" id="denemeTypeGrid">
-    <div class="deneme-chip active" onclick="selectDenemeType('TYT',this)">📋 TYT Denemesi</div>
-    <div class="deneme-chip" onclick="selectDenemeType('AYT_SAY',this)">🔢 AYT Sayısal</div>
-    <div class="deneme-chip" onclick="selectDenemeType('AYT_SOZ',this)">📜 AYT Sözel</div>
-    <div class="deneme-chip" onclick="selectDenemeType('AYT_EA',this)">⚖️ AYT EA</div>
+  <!-- Mod Seçici -->
+  <div style="display:flex;gap:8px;margin-bottom:12px;margin-top:4px">
+    <button id="modTamBtn" onclick="setDenemeMode('tam')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.12);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">📋 Tam Deneme</button>
+    <button id="modBransBtn" onclick="setDenemeMode('brans')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">🎯 Branş Denemesi</button>
+  </div>
+
+  <!-- Tam Deneme Tipi -->
+  <div id="tamDenemeWrap">
+    <div class="sec" style="margin-top:0">Sınav Türü</div>
+    <div class="deneme-type-grid" id="denemeTypeGrid">
+      <div class="deneme-chip active" onclick="selectDenemeType('TYT',this)">📋 TYT</div>
+      <div class="deneme-chip" onclick="selectDenemeType('AYT_SAY',this)">🔢 AYT Sayısal</div>
+      <div class="deneme-chip" onclick="selectDenemeType('AYT_SOZ',this)">📜 AYT Sözel</div>
+      <div class="deneme-chip" onclick="selectDenemeType('AYT_EA',this)">⚖️ AYT EA</div>
+    </div>
+  </div>
+
+  <!-- Branş Denemesi Tipi -->
+  <div id="bransDenemeWrap" style="display:none">
+    <div class="sec" style="margin-top:0">Branş Seç</div>
+    <div style="margin-bottom:6px">
+      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">TYT</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px" id="bransTYTGrid">
+        <div class="brans-chip active" onclick="selectBransType('TYT_TURKCE',this)" data-key="TYT_TURKCE">📖 Türkçe <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('TYT_MAT',this)" data-key="TYT_MAT">📐 Matematik <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('TYT_FEN',this)" data-key="TYT_FEN">🧪 Fen <span class="brans-max">20 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('TYT_SOSYAL',this)" data-key="TYT_SOSYAL">🌍 Sosyal <span class="brans-max">20 soru</span></div>
+      </div>
+      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">AYT</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="bransAYTGrid">
+        <div class="brans-chip" onclick="selectBransType('AYT_MAT',this)" data-key="AYT_MAT">📐 Matematik <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_FEN',this)" data-key="AYT_FEN">⚛️ Fen <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_EDEBIYAT',this)" data-key="AYT_EDEBIYAT">📚 Edebiyat <span class="brans-max">24 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_TARIH',this)" data-key="AYT_TARIH">📜 Tarih <span class="brans-max">21 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_COG',this)" data-key="AYT_COG">🗺️ Coğrafya <span class="brans-max">17 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_FELSEFE',this)" data-key="AYT_FELSEFE">🤔 Felsefe <span class="brans-max">12 soru</span></div>
+      </div>
+    </div>
   </div>
 
   <div class="sec">Sonuçlar</div>
@@ -1143,6 +1302,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   </div>
 </div>
 
+</div><!-- /app-wrap -->
 <!-- BOTTOM TABS -->
 <div class="tabs">
   <button class="tab-btn" onclick="switchTab('calis',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Çalış</span></button>
@@ -1231,6 +1391,42 @@ var DENEME_FIELDS = {
     { key:"cografya1",  label:"Coğrafya-1", max:6  }
   ]
 };
+
+
+var BRANS_FIELDS = {
+  TYT_TURKCE:  { label:'TYT Türkçe',    emoji:'📖', color:'#f472b6', fields:[{ key:'turkce',  label:'Türkçe',    max:40 }] },
+  TYT_MAT:     { label:'TYT Matematik', emoji:'📐', color:'#38bdf8', fields:[{ key:'mat',     label:'Matematik', max:40 }] },
+  TYT_FEN:     { label:'TYT Fen',       emoji:'🧪', color:'#fbbf24', fields:[
+    { key:'fizik', label:'Fizik',    max:7 },
+    { key:'kimya', label:'Kimya',    max:7 },
+    { key:'bio',   label:'Biyoloji', max:6 }
+  ]},
+  TYT_SOSYAL:  { label:'TYT Sosyal',    emoji:'🌍', color:'#34d399', fields:[
+    { key:'tarih',    label:'Tarih',       max:5 },
+    { key:'cografya', label:'Coğrafya',    max:5 },
+    { key:'felsefe',  label:'Felsefe',     max:5 },
+    { key:'din',      label:'Din Kültürü', max:5 }
+  ]},
+  AYT_MAT:     { label:'AYT Matematik', emoji:'📐', color:'#38bdf8', fields:[{ key:'mat', label:'Matematik', max:40 }] },
+  AYT_FEN:     { label:'AYT Fen',       emoji:'⚛️', color:'#60a5fa', fields:[
+    { key:'fizik', label:'Fizik',    max:14 },
+    { key:'kimya', label:'Kimya',    max:13 },
+    { key:'bio',   label:'Biyoloji', max:13 }
+  ]},
+  AYT_EDEBIYAT:{ label:'AYT Edebiyat',  emoji:'📚', color:'#c084fc', fields:[{ key:'edebiyat', label:'Edebiyat', max:24 }] },
+  AYT_TARIH:   { label:'AYT Tarih',     emoji:'📜', color:'#fb923c', fields:[
+    { key:'tarih1', label:'Tarih-1', max:10 },
+    { key:'tarih2', label:'Tarih-2', max:11 }
+  ]},
+  AYT_COG:     { label:'AYT Coğrafya',  emoji:'🗺️', color:'#34d399', fields:[
+    { key:'cografya1', label:'Coğrafya-1', max:6  },
+    { key:'cografya2', label:'Coğrafya-2', max:11 }
+  ]},
+  AYT_FELSEFE: { label:'AYT Felsefe',   emoji:'🤔', color:'#a78bfa', fields:[{ key:'felsefe', label:'Felsefe', max:12 }] }
+};
+
+var currentBransType = 'TYT_TURKCE';
+var _denemeMode = 'tam'; // 'tam' | 'brans'
 
 // ════════════════════════════════════════════
 // STATE
@@ -1342,13 +1538,15 @@ function updateTimerUI() {
   const s = String(timerRemain % 60).padStart(2, '0');
   const timeStr = m + ':' + s;
   const labelStr = timerRunning ? timerModes[timerMode].label : (timerRemain === timerTotal ? 'HAZIR' : 'DURAKLATILDI');
-  const playIcon = timerRunning ? '⏸' : '▶';
+  const playIcon = timerRunning ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
   const progress = 1 - timerRemain / timerTotal;
 
   // Ana zamanlayıcı
   document.getElementById('timerDisp').textContent = timeStr;
   document.getElementById('timerSubLabel').textContent = labelStr;
-  document.getElementById('playBtn').textContent = playIcon;
+  var pb = document.getElementById('playBtn');
+  pb.innerHTML = playIcon;
+  pb.classList.toggle('running', timerRunning);
   const ring = document.getElementById('ringFill');
   ring.style.strokeDashoffset = CIRC * progress;
   ring.className = 'ring-fill' + (timerModes[timerMode].isBreak ? ' t-break' : '');
@@ -1362,7 +1560,7 @@ function updateTimerUI() {
     const fsSub = document.getElementById('fsSubjectLabel');
     if (fsDisp) fsDisp.textContent = timeStr;
     if (fsLabel) fsLabel.textContent = labelStr;
-    if (fsPlay) fsPlay.textContent = playIcon;
+    if (fsPlay) { fsPlay.innerHTML = playIcon; fsPlay.classList.toggle('running', timerRunning); }
     if (fsRing) {
       const FS_CIRC = 2 * Math.PI * 120;
       fsRing.setAttribute('stroke-dashoffset', (FS_CIRC * progress).toFixed(1));
@@ -1389,7 +1587,7 @@ function startTimer() {
   localStorage.setItem('yks_timer_remain', _timerRemainAtStart);
   localStorage.setItem('yks_timer_running', '1');
 
-  document.getElementById('playBtn').textContent = '⏸';
+  document.getElementById('playBtn').innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>`;
 
   timerInterval = setInterval(() => {
     timerRemain = Math.max(0, _timerRemainAtStart - Math.floor((Date.now() - _timerStartedAt) / 1000));
@@ -1408,7 +1606,7 @@ function stopTimer() {
   localStorage.removeItem('yks_timer_start');
   localStorage.removeItem('yks_timer_remain');
   localStorage.removeItem('yks_timer_running');
-  document.getElementById('playBtn').textContent = '▶';
+  var pb2 = document.getElementById('playBtn'); pb2.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>`; pb2.classList.remove('running');
   updateTimerUI();
 }
 
@@ -1732,16 +1930,41 @@ function clearInputs() {
 // ════════════════════════════════════════════
 // DENEME
 // ════════════════════════════════════════════
+function setDenemeMode(mode) {
+  _denemeMode = mode;
+  var isBrans = mode === 'brans';
+  document.getElementById('tamDenemeWrap').style.display = isBrans ? 'none' : 'block';
+  document.getElementById('bransDenemeWrap').style.display = isBrans ? 'block' : 'none';
+  var tamBtn = document.getElementById('modTamBtn');
+  var bransBtn = document.getElementById('modBransBtn');
+  tamBtn.style.borderColor = isBrans ? 'var(--border)' : 'var(--accent)';
+  tamBtn.style.background = isBrans ? 'transparent' : 'rgba(56,189,248,0.12)';
+  tamBtn.style.color = isBrans ? 'var(--muted)' : 'var(--accent)';
+  bransBtn.style.borderColor = isBrans ? 'var(--accent3)' : 'var(--border)';
+  bransBtn.style.background = isBrans ? 'rgba(52,211,153,0.12)' : 'transparent';
+  bransBtn.style.color = isBrans ? 'var(--accent3)' : 'var(--muted)';
+  renderDenemeFields();
+}
+
+function selectBransType(key, el) {
+  currentBransType = key;
+  document.querySelectorAll('.brans-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderDenemeFields();
+}
+
 function selectDenemeType(type, el) {
   currentDenemeType = type;
   document.querySelectorAll('.deneme-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   renderDenemeFields();
-renderBackupSummary();
+  renderBackupSummary();
 }
 
 function renderDenemeFields() {
-  var fields = DENEME_FIELDS[currentDenemeType] || [];
+  var isBrans = _denemeMode === 'brans';
+  var bransInfo = isBrans ? BRANS_FIELDS[currentBransType] : null;
+  var fields = isBrans ? (bransInfo ? bransInfo.fields : []) : (DENEME_FIELDS[currentDenemeType] || []);
   var totalMax = fields.reduce(function(a, f) { return a + f.max; }, 0);
   var html = '';
 
@@ -1860,9 +2083,14 @@ function saveDeneme() {
   }
 
   var isim = (document.getElementById('denemeIsim').value || '').trim();
+  var isBransSave = _denemeMode === 'brans';
+  var bransInfoSave = isBransSave ? BRANS_FIELDS[currentBransType] : null;
   var deneme = {
     id: Date.now(),
-    type: currentDenemeType,
+    type: isBransSave ? ('BRANS_' + currentBransType) : currentDenemeType,
+    brans: isBransSave ? currentBransType : null,
+    bransLabel: isBransSave && bransInfoSave ? bransInfoSave.label : null,
+    bransEmoji: isBransSave && bransInfoSave ? bransInfoSave.emoji : null,
     isim: isim,
     date: document.getElementById('denemedTarih').value,
     not: document.getElementById('denemeNot').value,
@@ -1893,19 +2121,26 @@ function saveDeneme() {
 function renderDenemeLog() {
   var list = document.getElementById('denemeLog');
   if (!list) return;
-  var filtered = denemeler.filter(function(d) { return d.type === currentDenemeType; });
+  var isBransView = _denemeMode === 'brans';
+  var filtered = isBransView
+    ? denemeler.filter(function(d) { return d.brans === currentBransType; })
+    : denemeler.filter(function(d) { return d.type === currentDenemeType; });
   if (filtered.length === 0) {
     list.innerHTML = '<div class="empty"><span>🦊</span><p>Henüz deneme kaydı yok.</p></div>';
     return;
   }
   list.innerHTML = filtered.map(function(d) {
-    var fields2 = DENEME_FIELDS[d.type] || [];
+    var isBransEntry = d.brans && BRANS_FIELDS[d.brans];
+    var fields2 = isBransEntry ? BRANS_FIELDS[d.brans].fields : (DENEME_FIELDS[d.type] || []);
     var nets = fields2.map(function(f) {
       var r = d.results[f.key];
       var net = r && typeof r === 'object' ? r.net : r;
       return '<span>' + f.label + ': <b>' + (typeof net === 'number' ? net.toFixed(2) : '—') + '</b></span>';
     }).join(' · ');
-    var title = (d.isim ? '<b>' + d.isim + '</b> · ' : '') + d.type.replace('_',' ') + ' · ' + d.date;
+    var typeLabel = isBransEntry
+      ? (d.bransEmoji || '🎯') + ' ' + (d.bransLabel || d.brans)
+      : d.type.replace('_',' ');
+    var title = (d.isim ? '<b>' + d.isim + '</b> · ' : '') + typeLabel + ' · ' + d.date;
     return '<div class="log-item" style="align-items:flex-start">' +
       '<div class="log-icon" style="background:rgba(56,189,248,0.1);flex-shrink:0">📋</div>' +
       '<div class="log-info" style="flex:1;min-width:0">' +
@@ -1935,11 +2170,22 @@ function editDeneme(id) {
   document.getElementById('page-deneme').classList.add('active');
   document.querySelector('[onclick*="deneme"]').classList.add('active');
 
-  // Set deneme type
-  currentDenemeType = d.type;
-  document.querySelectorAll('.exam-type-btn').forEach(function(b){
-    b.classList.toggle('active', b.dataset.type === d.type);
-  });
+  // Set deneme mode and type
+  if (d.brans) {
+    _denemeMode = 'brans';
+    currentBransType = d.brans;
+    setDenemeMode('brans');
+    document.querySelectorAll('.brans-chip').forEach(function(b){
+      b.classList.toggle('active', b.dataset.key === d.brans);
+    });
+  } else {
+    _denemeMode = 'tam';
+    currentDenemeType = d.type;
+    setDenemeMode('tam');
+    document.querySelectorAll('.deneme-chip').forEach(function(b){
+      b.classList.toggle('active', b.dataset.type === d.type);
+    });
+  }
   renderDenemeFields();
 
   // Fill in values after fields render
@@ -3352,13 +3598,28 @@ function renderDenemeNetChart() {
   var selectedType = window._denemeChartType || null;
   var typeLabels = { TYT:'TYT', AYT_SAY:'Sayısal', AYT_SOZ:'Sözel', AYT_EA:'EA' };
   var typeColors = { TYT:'#38bdf8', AYT_SAY:'#818cf8', AYT_SOZ:'#f472b6', AYT_EA:'#fb923c' };
+  // Tam denemeler
   var existingTypes = ['TYT','AYT_SAY','AYT_SOZ','AYT_EA'].filter(function(t){
     return denemeler.some(function(d){ return d.type === t; });
   });
+  // Branş denemelerini de ekle
+  Object.keys(BRANS_FIELDS).forEach(function(bk){
+    if (denemeler.some(function(d){ return d.brans === bk; })) {
+      existingTypes.push('BRANS_' + bk);
+      typeLabels['BRANS_' + bk] = BRANS_FIELDS[bk].emoji + ' ' + BRANS_FIELDS[bk].label;
+      typeColors['BRANS_' + bk] = BRANS_FIELDS[bk].color;
+    }
+  });
 
   // Filter + sort oldest→newest
-  var data = (selectedType ? denemeler.filter(function(d){ return d.type === selectedType; }) : denemeler.slice())
-    .sort(function(a, b){ return a.id - b.id; });
+  var data = (selectedType
+    ? denemeler.filter(function(d){
+        return selectedType.startsWith('BRANS_')
+          ? d.brans === selectedType.replace('BRANS_','')
+          : d.type === selectedType;
+      })
+    : denemeler.slice()
+  ).sort(function(a, b){ return a.id - b.id; });
 
   // Filter buttons
   var filterHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">';
