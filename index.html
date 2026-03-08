@@ -1025,6 +1025,9 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="sec">Ders Bazında Konu Haritası</div>
   <div class="topic-map-wrap" id="topicMapWrap"></div>
 
+  <div class="sec">Deneme Net Grafiği</div>
+  <div id="denemeNetChartWrap" style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px 12px;margin-bottom:10px"></div>
+
   <div class="sec">Haftalık Grafik</div>
   <div class="chart-wrap" id="weeklyChartWrap"></div>
 
@@ -2602,6 +2605,42 @@ function syncWeeklyStats() {
 
   var earnedBadges = JSON.parse(localStorage.getItem('yks_badges') || '[]');
 
+  // Tüm zamanlar: ders bazında çalışılan unique konu sayısı / toplam konu sayısı
+  var allSubjectTopics = {};
+  entries.forEach(function(e) {
+    if (e.subject && e.topic && e.topic !== 'Genel Çalışma') {
+      if (!allSubjectTopics[e.subject]) allSubjectTopics[e.subject] = new Set();
+      allSubjectTopics[e.subject].add(e.topic);
+    }
+  });
+  var subjectProgress = Object.keys(allSubjectTopics).map(function(subj) {
+    var examKey = null;
+    ['TYT','AYT','SOZ','EA'].forEach(function(ek) {
+      if (EXAM_DATA[ek] && EXAM_DATA[ek][subj]) examKey = ek;
+    });
+    var total = examKey ? (EXAM_DATA[examKey][subj].topics || []).length : 0;
+    var done = allSubjectTopics[subj].size;
+    return { name: subj, done: done, total: total };
+  }).filter(function(x){ return x.total > 0; })
+    .sort(function(a,b){ return b.done - a.done; })
+    .slice(0, 8);
+
+  // En yüksek deneme netleri (her tip için)
+  var bestNets = {};
+  denemeler.forEach(function(d) {
+    if (!bestNets[d.type] || d.totalNet > bestNets[d.type]) {
+      bestNets[d.type] = d.totalNet;
+    }
+  });
+  var bestNetsArr = Object.entries(bestNets).map(function(x){ return { type: x[0], net: x[1] }; });
+
+  // Genel çalışma istatistikleri
+  var totalAllMins = entries.reduce(function(a,e){ return a+(e.sure||0); }, 0);
+  var totalAllSoru = entries.reduce(function(a,e){ return a+(e.dogru||0)+(e.yanlis||0); }, 0);
+  var totalDeneme = denemeler.length;
+  var xpTotal = getTotalXP();
+  var lvInfo = getLevelInfo(xpTotal);
+
   _fbDb.collection('weeklyStats').doc(_currentUser.uid).set({
     weekKey: weekKey,
     totalMins: totalMins,
@@ -2609,6 +2648,14 @@ function syncWeeklyStats() {
     totalKonu: totalKonu,
     topSubjects: topSubjects,
     badges: earnedBadges,
+    subjectProgress: subjectProgress,
+    bestNets: bestNetsArr,
+    totalAllMins: totalAllMins,
+    totalAllSoru: totalAllSoru,
+    totalDeneme: totalDeneme,
+    xpTotal: xpTotal,
+    level: lvInfo.lvNum,
+    levelTitle: lvInfo.title,
     updatedAt: new Date().toISOString()
   }).catch(function(e){ console.error('Sync error:', e); });
 }
@@ -2659,83 +2706,153 @@ var _openFriendUid = null;
 
 function openFriendDetail(friendUid, displayName, username, stats) {
   _openFriendUid = friendUid;
+
+  var typeLabels = { TYT:'TYT', AYT_SAY:'Sayısal', AYT_SOZ:'Sözel', AYT_EA:'EA' };
+  var typeColors = { TYT:'#38bdf8', AYT_SAY:'#818cf8', AYT_SOZ:'#f472b6', AYT_EA:'#fb923c' };
+
   document.getElementById('fdAvatar').textContent = displayName.charAt(0).toUpperCase();
   document.getElementById('fdName').textContent = displayName;
   document.getElementById('fdUname').textContent = '@' + username;
 
-  var totalMins = stats ? (stats.totalMins || 0) : 0;
-  var totalSoru = stats ? (stats.totalSoru || 0) : 0;
-  var totalKonu = stats ? (stats.totalKonu || 0) : 0;
+  var totalMins   = stats ? (stats.totalMins   || 0) : 0;
+  var totalSoru   = stats ? (stats.totalSoru   || 0) : 0;
+  var totalKonu   = stats ? (stats.totalKonu   || 0) : 0;
+  var totalAllMins= stats ? (stats.totalAllMins|| 0) : 0;
+  var totalAllSoru= stats ? (stats.totalAllSoru|| 0) : 0;
+  var totalDeneme = stats ? (stats.totalDeneme || 0) : 0;
   var topSubjects = stats ? (stats.topSubjects || []) : [];
-  var badges = stats ? (stats.badges || []) : [];
-  var hours = Math.floor(totalMins / 60);
-  var mins = totalMins % 60;
-  var timeStr = hours > 0 ? hours + 's ' + mins + 'dk' : (totalMins > 0 ? mins + 'dk' : '—');
+  var badges      = stats ? (stats.badges      || []) : [];
+  var subjectProgress = stats ? (stats.subjectProgress || []) : [];
+  var bestNets    = stats ? (stats.bestNets    || []) : [];
+  var lvNum       = stats ? (stats.level       || 1) : 1;
+  var lvTitle     = stats ? (stats.levelTitle  || '') : '';
+  var xpTotal     = stats ? (stats.xpTotal     || 0) : 0;
 
-  // Top subject
-  var topSubjectName = topSubjects.length > 0 ? topSubjects[0].name : '—';
+  var hours = Math.floor(totalMins / 60), mins2 = totalMins % 60;
+  var timeStr = hours > 0 ? hours + 's ' + mins2 + 'dk' : (totalMins > 0 ? mins2 + 'dk' : '—');
+  var allH = Math.floor(totalAllMins / 60), allM = totalAllMins % 60;
+  var allTimeStr = allH > 0 ? allH + 's ' + allM + 'dk' : (totalAllMins > 0 ? allM + 'dk' : '—');
 
-  // Build content
   var html = '';
 
-  // Stats row
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">' +
-    '<div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center">' +
-      '<div style="font-family:monospace;font-size:1.1rem;font-weight:700;color:var(--accent)">' + timeStr + '</div>' +
-      '<div style="font-size:0.6rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-top:2px">Bu Hafta</div>' +
+  if (!stats) {
+    html = '<div style="text-align:center;padding:28px;color:var(--muted);font-size:0.82rem;font-weight:700">Bu hafta henüz veri senkronize edilmemiş.</div>';
+    document.getElementById('fdContent').innerHTML = html;
+    document.getElementById('friendDetailModal').classList.add('open');
+    return;
+  }
+
+  // ── Seviye & XP ──
+  html += '<div style="background:var(--bg3);border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:12px">' +
+    '<div style="font-size:1.6rem">' + (lvTitle.split(' ')[0] || '📖') + '</div>' +
+    '<div style="flex:1">' +
+      '<div style="font-size:0.82rem;font-weight:900">Seviye ' + lvNum + ' <span style="color:var(--muted);font-size:0.7rem;font-weight:600">' + (lvTitle.split(' ').slice(1).join(' ') || lvTitle) + '</span></div>' +
+      '<div style="font-size:0.68rem;color:var(--yellow);font-weight:700;margin-top:2px">' + xpTotal + ' XP</div>' +
     '</div>' +
-    '<div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center">' +
-      '<div style="font-family:monospace;font-size:1.1rem;font-weight:700;color:var(--accent3)">' + totalSoru + '</div>' +
-      '<div style="font-size:0.6rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-top:2px">Soru</div>' +
-    '</div>' +
-    '<div style="background:var(--bg3);border-radius:12px;padding:12px;text-align:center">' +
-      '<div style="font-family:monospace;font-size:1.1rem;font-weight:700;color:var(--accent2)">' + totalKonu + '</div>' +
-      '<div style="font-size:0.6rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-top:2px">Konu</div>' +
+    '<div style="text-align:right">' +
+      '<div style="font-size:0.62rem;color:var(--muted);font-weight:700">' + totalDeneme + ' deneme</div>' +
     '</div>' +
   '</div>';
 
-  // Top subjects
+  // ── Bu hafta + toplam ──
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' +
+    '<div style="background:var(--bg3);border-radius:12px;padding:11px;text-align:center">' +
+      '<div style="font-size:0.58rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bu Hafta</div>' +
+      '<div style="font-family:monospace;font-size:1rem;font-weight:700;color:var(--accent)">' + timeStr + '</div>' +
+      '<div style="font-size:0.62rem;color:var(--muted);margin-top:3px">' + totalSoru + ' soru · ' + totalKonu + ' konu</div>' +
+    '</div>' +
+    '<div style="background:var(--bg3);border-radius:12px;padding:11px;text-align:center">' +
+      '<div style="font-size:0.58rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Toplam</div>' +
+      '<div style="font-family:monospace;font-size:1rem;font-weight:700;color:var(--accent2)">' + allTimeStr + '</div>' +
+      '<div style="font-size:0.62rem;color:var(--muted);margin-top:3px">' + totalAllSoru + ' soru</div>' +
+    '</div>' +
+  '</div>';
+
+  // ── En Yüksek Deneme Netleri ──
+  if (bestNets.length > 0) {
+    html += '<div style="margin-bottom:12px">' +
+      '<div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">En Yüksek Deneme Neti</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:7px">';
+    bestNets.forEach(function(b) {
+      var col = typeColors[b.type] || '#fbbf24';
+      html += '<div style="background:var(--bg3);border:1.5px solid ' + col + '44;border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px">' +
+        '<div style="font-size:0.68rem;font-weight:800;color:' + col + '">' + (typeLabels[b.type] || b.type) + '</div>' +
+        '<div style="font-family:monospace;font-size:1rem;font-weight:900;color:var(--yellow)">' + (typeof b.net === 'number' ? b.net.toFixed(1) : b.net) + '</div>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── Konu İlerleme Pasta Grafikleri ──
+  if (subjectProgress.length > 0) {
+    html += '<div style="margin-bottom:12px">' +
+      '<div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Konu İlerlemesi</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px">';
+
+    subjectProgress.forEach(function(s) {
+      var pct = s.total > 0 ? Math.round((s.done / s.total) * 100) : 0;
+      var barCol = pct >= 70 ? '#34d399' : pct >= 40 ? '#fbbf24' : '#f87171';
+      // SVG donut mini
+      var r = 18, circ = 2 * Math.PI * r;
+      var arc = circ * (pct / 100);
+      html +=
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<svg width="44" height="44" viewBox="0 0 44 44" style="flex-shrink:0">' +
+            '<circle cx="22" cy="22" r="' + r + '" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="5"/>' +
+            '<circle cx="22" cy="22" r="' + r + '" fill="none" stroke="' + barCol + '" stroke-width="5"' +
+              ' stroke-dasharray="' + arc.toFixed(1) + ' ' + (circ - arc).toFixed(1) + '"' +
+              ' stroke-dashoffset="' + (circ * 0.25).toFixed(1) + '"' +
+              ' stroke-linecap="round"/>' +
+            '<text x="22" y="27" text-anchor="middle" font-size="9" font-family="monospace" font-weight="700" fill="' + barCol + '">%' + pct + '</text>' +
+          '</svg>' +
+          '<div style="flex:1">' +
+            '<div style="font-size:0.8rem;font-weight:800;margin-bottom:3px">' + s.name + '</div>' +
+            '<div style="height:5px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden">' +
+              '<div style="height:100%;width:' + pct + '%;background:' + barCol + ';border-radius:3px;transition:width 0.5s"></div>' +
+            '</div>' +
+            '<div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">' + s.done + ' / ' + s.total + ' konu çalışıldı</div>' +
+          '</div>' +
+        '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // ── En Çok Çalıştığı Dersler ──
   if (topSubjects.length > 0) {
-    html += '<div style="margin-bottom:16px">' +
-      '<div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">En Çok Çalıştığı Dersler</div>';
+    html += '<div style="margin-bottom:12px">' +
+      '<div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Bu Hafta En Çok Çalıştığı</div>';
     topSubjects.forEach(function(s, i) {
-      var h2 = Math.floor(s.mins/60), m2 = s.mins%60;
-      var t2 = h2>0 ? h2+'s '+m2+'dk' : m2+'dk';
-      var colors = ['var(--accent)','var(--accent2)','var(--accent3)'];
-      html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">' +
-        '<div style="font-size:1rem">' + (i===0?'🥇':i===1?'🥈':'🥉') + '</div>' +
+      var h2 = Math.floor(s.mins/60), m2 = s.mins % 60;
+      var t2 = h2 > 0 ? h2 + 's ' + m2 + 'dk' : m2 + 'dk';
+      var medals = ['🥇','🥈','🥉'];
+      html += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:8px 10px;background:var(--bg3);border-radius:10px">' +
+        '<div style="font-size:1rem;flex-shrink:0">' + (medals[i] || '🏅') + '</div>' +
         '<div style="flex:1;font-size:0.82rem;font-weight:800">' + s.name + '</div>' +
-        '<div style="font-family:monospace;font-size:0.78rem;font-weight:700;color:' + colors[i] + '">' + t2 + '</div>' +
+        '<div style="font-family:monospace;font-size:0.78rem;font-weight:700;color:var(--accent)">' + t2 + '</div>' +
       '</div>';
     });
     html += '</div>';
   }
 
-  // Badges
-  html += '<div style="margin-bottom:16px">' +
-    '<div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Rozetler ' +
-    '<span style="color:var(--yellow);font-weight:900">' + badges.length + '</span></div>';
-
+  // ── Rozetler ──
+  html += '<div style="margin-bottom:8px">' +
+    '<div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Rozetler <span style="color:var(--yellow);font-weight:900">' + badges.length + '</span></div>';
   if (badges.length === 0) {
-    html += '<div style="color:var(--muted);font-size:0.78rem;font-weight:700;padding:8px 0">Henüz rozet kazanmamış.</div>';
+    html += '<div style="color:var(--muted);font-size:0.78rem;font-weight:700;padding:6px 0">Henüz rozet kazanmamış.</div>';
   } else {
-    html += '<div style="display:flex;flex-wrap:wrap;gap:8px">';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:7px">';
     badges.forEach(function(bid) {
       var b = BADGES.find(function(x){ return x.id === bid; });
       if (b) {
-        html += '<div style="background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:8px 10px;display:flex;align-items:center;gap:6px">' +
+        html += '<div style="background:var(--bg3);border:1.5px solid rgba(251,191,36,0.2);border-radius:10px;padding:7px 10px;display:flex;align-items:center;gap:6px" title="' + b.hint + '">' +
           '<span style="font-size:1.2rem">' + b.icon + '</span>' +
-          '<span style="font-size:0.68rem;font-weight:800">' + b.name + '</span>' +
+          '<span style="font-size:0.67rem;font-weight:800">' + b.name + '</span>' +
         '</div>';
       }
     });
     html += '</div>';
   }
   html += '</div>';
-
-  if (!stats) {
-    html = '<div style="text-align:center;padding:24px;color:var(--muted);font-size:0.82rem;font-weight:700">Bu hafta henüz veri senkronize edilmemiş.</div>';
-  }
 
   document.getElementById('fdContent').innerHTML = html;
   document.getElementById('friendDetailModal').classList.add('open');
@@ -3171,6 +3288,7 @@ function renderBadges() {
 function renderCharts() {
   renderWeeklyChart();
   renderMonthlyChart();
+  renderDenemeNetChart();
 }
 
 function renderWeeklyChart() {
@@ -3226,6 +3344,160 @@ function renderMonthlyChart() {
         '</div>';
     }).join('') + '</div>';
 }
+
+function renderDenemeNetChart() {
+  var wrap = document.getElementById('denemeNetChartWrap');
+  if (!wrap) return;
+
+  var selectedType = window._denemeChartType || null;
+  var typeLabels = { TYT:'TYT', AYT_SAY:'Sayısal', AYT_SOZ:'Sözel', AYT_EA:'EA' };
+  var typeColors = { TYT:'#38bdf8', AYT_SAY:'#818cf8', AYT_SOZ:'#f472b6', AYT_EA:'#fb923c' };
+  var existingTypes = ['TYT','AYT_SAY','AYT_SOZ','AYT_EA'].filter(function(t){
+    return denemeler.some(function(d){ return d.type === t; });
+  });
+
+  // Filter + sort oldest→newest
+  var data = (selectedType ? denemeler.filter(function(d){ return d.type === selectedType; }) : denemeler.slice())
+    .sort(function(a, b){ return a.id - b.id; });
+
+  // Filter buttons
+  var filterHtml = '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">';
+  var allActive = !selectedType;
+  filterHtml += '<button onclick="setDenemeChartType(null)" style="padding:5px 12px;border-radius:20px;border:1.5px solid ' + (allActive ? 'var(--accent)' : 'var(--border)') + ';background:' + (allActive ? 'rgba(56,189,248,0.12)' : 'transparent') + ';color:' + (allActive ? 'var(--accent)' : 'var(--muted)') + ';font-size:0.7rem;font-weight:800;cursor:pointer">Hepsi</button>';
+  existingTypes.forEach(function(t) {
+    var active = selectedType === t;
+    var col = typeColors[t];
+    filterHtml += '<button onclick="setDenemeChartType(\'' + t + '\')" style="padding:5px 12px;border-radius:20px;border:1.5px solid ' + (active ? col : 'var(--border)') + ';background:' + (active ? col + '22' : 'transparent') + ';color:' + (active ? col : 'var(--muted)') + ';font-size:0.7rem;font-weight:800;cursor:pointer">' + typeLabels[t] + '</button>';
+  });
+  filterHtml += '</div>';
+
+  if (data.length === 0) {
+    wrap.innerHTML = filterHtml + '<div style="text-align:center;padding:24px;color:var(--muted);font-size:0.8rem;font-weight:700">Bu tür için henüz deneme kaydı yok.</div>';
+    return;
+  }
+
+  // Chart dimensions
+  var dotSpacing = Math.max(44, Math.min(72, Math.floor(320 / data.length)));
+  var chartW = Math.max(data.length * dotSpacing + 40, 300);
+  var chartH = 160;
+  var padTop = 28, padBot = 36, padLeft = 32, padRight = 16;
+  var drawW = chartW - padLeft - padRight;
+  var drawH = chartH - padTop - padBot;
+
+  var nets = data.map(function(d){ return d.totalNet || 0; });
+  var maxNet = Math.max.apply(null, nets);
+  var minNet = Math.min.apply(null, nets);
+  var range = Math.max(maxNet - minNet, 5);
+  var padRange = range * 0.15;
+  var yMin = minNet - padRange;
+  var yMax = maxNet + padRange;
+  var yRange = yMax - yMin;
+
+  function toX(i) { return padLeft + (i / Math.max(data.length - 1, 1)) * drawW; }
+  function toY(v) { return padTop + drawH - ((v - yMin) / yRange) * drawH; }
+
+  var points = data.map(function(d, i) {
+    return { x: toX(i), y: toY(d.totalNet || 0), net: d.totalNet || 0, date: d.date, label: d.isim || (typeLabels[d.type] || d.type), type: d.type, idx: i };
+  });
+
+  // Polyline
+  var polyPts = points.map(function(p){ return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ');
+  // Fill
+  var fillD = 'M' + points[0].x.toFixed(1) + ',' + (padTop + drawH) +
+    points.map(function(p){ return ' L' + p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join('') +
+    ' L' + points[points.length-1].x.toFixed(1) + ',' + (padTop + drawH) + ' Z';
+
+  // Y axis grid lines
+  var gridLines = '';
+  var yTicks = 3;
+  for (var gi = 0; gi <= yTicks; gi++) {
+    var gv = yMin + (yRange * gi / yTicks);
+    var gy = toY(gv);
+    gridLines += '<line x1="' + padLeft + '" y1="' + gy.toFixed(1) + '" x2="' + (chartW - padRight) + '" y2="' + gy.toFixed(1) + '" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>';
+    gridLines += '<text x="' + (padLeft - 4) + '" y="' + (gy + 3.5).toFixed(1) + '" fill="rgba(255,255,255,0.28)" font-size="8" font-family="monospace" text-anchor="end">' + Math.round(gv) + '</text>';
+  }
+
+  // Dots, net labels, date labels
+  var dotsHtml = points.map(function(p, i) {
+    var col = typeColors[p.type] || '#fbbf24';
+    var isFirst = i === 0;
+    var isLast = i === points.length - 1;
+    var prev = i > 0 ? points[i-1].net : null;
+    var diff = prev !== null ? p.net - prev : null;
+    var diffStr = diff !== null ? (diff >= 0 ? '+' : '') + diff.toFixed(1) : '';
+    var diffCol = diff !== null ? (diff > 0 ? '#34d399' : diff < 0 ? '#f87171' : 'rgba(255,255,255,0.4)') : '';
+
+    // Show net above dot — skip crowded ones unless first/last
+    var showLabel = data.length <= 10 || isFirst || isLast || i % Math.ceil(data.length / 8) === 0;
+    // Show diff below net label
+    var netLabel = showLabel
+      ? '<text x="' + p.x.toFixed(1) + '" y="' + (p.y - 10).toFixed(1) + '" fill="' + col + '" font-size="9" font-family="monospace" font-weight="700" text-anchor="middle">' + p.net.toFixed(1) + '</text>' +
+        (diffStr ? '<text x="' + p.x.toFixed(1) + '" y="' + (p.y - 1).toFixed(1) + '" fill="' + diffCol + '" font-size="7.5" font-family="monospace" text-anchor="middle">' + diffStr + '</text>' : '')
+      : '';
+
+    // Date label below x-axis
+    var dateLabel = (data.length <= 8 || isFirst || isLast || i % Math.ceil(data.length / 6) === 0)
+      ? '<text x="' + p.x.toFixed(1) + '" y="' + (chartH - 4) + '" fill="rgba(255,255,255,0.35)" font-size="7.5" text-anchor="middle">' + (p.date || '') + '</text>'
+      : '<text x="' + p.x.toFixed(1) + '" y="' + (chartH - 4) + '" fill="rgba(255,255,255,0.22)" font-size="7.5" text-anchor="middle">' + (i + 1) + '</text>';
+
+    var r = isLast ? 5.5 : isFirst ? 5 : 4;
+    return netLabel +
+      '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + r + '" fill="' + col + '" stroke="var(--bg2)" stroke-width="2"/>' +
+      dateLabel;
+  }).join('');
+
+  var gradId = 'ng' + Date.now();
+  var gradCol = selectedType ? (typeColors[selectedType] || '#fbbf24') : '#fbbf24';
+
+  var svgHtml = '<div style="overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;border-radius:10px">' +
+    '<svg width="' + chartW + '" height="' + chartH + '" style="display:block">' +
+    '<defs><linearGradient id="' + gradId + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0%" stop-color="' + gradCol + '" stop-opacity="0.3"/>' +
+      '<stop offset="100%" stop-color="' + gradCol + '" stop-opacity="0.02"/>' +
+    '</linearGradient></defs>' +
+    gridLines +
+    '<path d="' + fillD + '" fill="url(#' + gradId + ')"/>' +
+    '<polyline points="' + polyPts + '" fill="none" stroke="' + gradCol + '" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+    dotsHtml +
+    '</svg></div>';
+
+  // Summary stats
+  var best = Math.max.apply(null, nets);
+  var worst = Math.min.apply(null, nets);
+  var avg = nets.reduce(function(a,b){return a+b;},0) / nets.length;
+  var lastNet = nets[nets.length - 1];
+  var prevNet = nets.length >= 2 ? nets[nets.length - 2] : null;
+  var trend = prevNet !== null ? lastNet - prevNet : 0;
+  var trendCol = trend > 0 ? '#34d399' : trend < 0 ? '#f87171' : 'var(--muted)';
+  var trendArrow = trend > 0 ? '▲' : trend < 0 ? '▼' : '—';
+
+  var statsHtml = '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px">' +
+    '<div style="background:var(--bg3);border-radius:10px;padding:8px;text-align:center">' +
+      '<div style="font-family:monospace;font-size:0.88rem;font-weight:700;color:#34d399">' + best.toFixed(1) + '</div>' +
+      '<div style="font-size:0.56rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-top:2px">En Yüksek</div>' +
+    '</div>' +
+    '<div style="background:var(--bg3);border-radius:10px;padding:8px;text-align:center">' +
+      '<div style="font-family:monospace;font-size:0.88rem;font-weight:700;color:var(--accent)">' + avg.toFixed(1) + '</div>' +
+      '<div style="font-size:0.56rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-top:2px">Ortalama</div>' +
+    '</div>' +
+    '<div style="background:var(--bg3);border-radius:10px;padding:8px;text-align:center">' +
+      '<div style="font-family:monospace;font-size:0.88rem;font-weight:700;color:#f87171">' + worst.toFixed(1) + '</div>' +
+      '<div style="font-size:0.56rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-top:2px">En Düşük</div>' +
+    '</div>' +
+    '<div style="background:var(--bg3);border-radius:10px;padding:8px;text-align:center">' +
+      '<div style="font-family:monospace;font-size:0.88rem;font-weight:700;color:' + trendCol + '">' + trendArrow + ' ' + Math.abs(trend).toFixed(1) + '</div>' +
+      '<div style="font-size:0.56rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-top:2px">Son Değişim</div>' +
+    '</div>' +
+  '</div>';
+
+  wrap.innerHTML = filterHtml + svgHtml + statsHtml;
+}
+
+function setDenemeChartType(type) {
+  window._denemeChartType = type || null;
+  renderDenemeNetChart();
+}
+
 
 // ═══════════════════════════════════════════════
 // ANALİZ: EN GÜÇLÜ / EN ZAYIF
