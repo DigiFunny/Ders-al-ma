@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#080d18">
-<link rel="manifest" href="/Ders-al-ma/manifest.json"
+<link rel="manifest" href="manifest.json">
+
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Pugi">
 <title>YKS Takip 🎯</title>
@@ -539,6 +540,52 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   }
   .fs-close { top: 10px; right: 10px; width: 34px; height: 34px; font-size: 0.85rem; }
 }
+
+/* AUTH MODAL */
+.auth-modal { position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center; }
+.auth-modal.open { display:flex;pointer-events:all; }
+.auth-overlay { position:absolute;inset:0;background:rgba(0,0,0,0.7); }
+.auth-box { position:relative;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:28px 22px;width:90%;max-width:340px;z-index:1; }
+.auth-title { font-family:'Space Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--accent);margin-bottom:4px; }
+.auth-sub { font-size:0.75rem;color:var(--muted);margin-bottom:18px; }
+.auth-input { width:100%;box-sizing:border-box;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.9rem;color:var(--text);margin-bottom:10px;outline:none; }
+.auth-input:focus { border-color:var(--accent); }
+.auth-btn { width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#fff;font-size:0.9rem;font-weight:800;cursor:pointer;margin-bottom:8px; }
+.auth-btn:active { opacity:0.85; }
+.auth-switch { text-align:center;font-size:0.78rem;color:var(--muted);cursor:pointer; }
+.auth-switch span { color:var(--accent);font-weight:700; }
+.auth-error { font-size:0.75rem;color:var(--warn);margin-bottom:8px;padding:8px 10px;background:rgba(248,113,113,0.1);border-radius:8px;display:none; }
+.auth-error.show { display:block; }
+
+/* USER BAR */
+.user-bar { display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--card);border-bottom:1px solid var(--border);justify-content:space-between; }
+.user-bar-info { display:flex;align-items:center;gap:8px; }
+.user-avatar { width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.8rem;color:#fff;flex-shrink:0; }
+.user-name { font-size:0.78rem;font-weight:800;color:var(--text); }
+.user-uname { font-size:0.65rem;color:var(--muted); }
+.user-logout { font-size:0.72rem;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer; }
+
+/* FRIENDS SECTION */
+.friends-wrap { padding:0; }
+.friend-add-row { display:flex;gap:8px;margin-bottom:12px; }
+.friend-add-row input { flex:1;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:0.85rem;color:var(--text);outline:none; }
+.friend-add-row input:focus { border-color:var(--accent); }
+.friend-add-btn { background:var(--accent);border:none;border-radius:10px;padding:10px 14px;color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer; }
+.friend-card { background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s; }
+.friend-card:active { border-color:var(--accent); }
+.friend-card-header { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+.friend-avatar { width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.95rem;color:#fff;flex-shrink:0; }
+.friend-name { font-size:0.85rem;font-weight:800; }
+.friend-uname { font-size:0.65rem;color:var(--muted); }
+.friend-stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:6px; }
+.friend-stat { background:var(--bg3);border-radius:8px;padding:8px 6px;text-align:center; }
+.friend-stat-val { font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent); }
+.friend-stat-lbl { font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px; }
+.friend-remove { float:right;font-size:0.65rem;color:var(--muted);background:none;border:none;cursor:pointer;padding:0; }
+.no-login-msg { text-align:center;padding:30px 20px; }
+.no-login-msg .nl-icon { font-size:2.5rem;margin-bottom:10px; }
+.no-login-msg p { font-size:0.82rem;color:var(--muted);margin-bottom:14px; }
+.no-login-btn { background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:11px 24px;color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer; }
 </style>
 
 </head>
@@ -640,6 +687,35 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <button class="btn-play" id="fsPlayBtn" onclick="toggleTimer()" style="width:72px;height:72px;font-size:1.8rem;">▶</button>
     <button class="btn-sm" onclick="skipTimer()" style="width:54px;height:54px;font-size:1.3rem;">⏭</button>
   </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="auth-modal" id="authModal">
+  <div class="auth-overlay" onclick="closeAuthModal()"></div>
+  <div class="auth-box">
+    <div class="auth-title" id="authTitle">Giriş Yap</div>
+    <div class="auth-sub" id="authSub">Arkadaşlarınla bağlan, ilerlemeni paylaş</div>
+    <div class="auth-error" id="authError"></div>
+    <div id="authFields">
+      <input class="auth-input" type="text" id="authUsername" placeholder="Kullanıcı adı (pugi123)" autocomplete="off" style="display:none">
+      <input class="auth-input" type="email" id="authEmail" placeholder="E-posta">
+      <input class="auth-input" type="password" id="authPassword" placeholder="Şifre">
+    </div>
+    <button class="auth-btn" id="authSubmitBtn" onclick="submitAuth()">Giriş Yap</button>
+    <div class="auth-switch" id="authSwitch">Hesabın yok mu? <span onclick="toggleAuthMode()">Kayıt Ol</span></div>
+  </div>
+</div>
+
+<!-- USER BAR (login sonrası header'ın altında görünür) -->
+<div class="user-bar" id="userBar" style="display:none">
+  <div class="user-bar-info">
+    <div class="user-avatar" id="userAvatarBar">?</div>
+    <div>
+      <div class="user-name" id="userNameBar">—</div>
+      <div class="user-uname" id="userUnameBar">@—</div>
+    </div>
+  </div>
+  <button class="user-logout" onclick="logoutUser()">Çıkış</button>
 </div>
 
 <!-- STREAK MODAL -->
@@ -924,6 +1000,10 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
 <!-- PAGE: ROZETLER -->
 <div class="page" id="page-rozet">
+  <div id="loginPromptBanner" style="display:none;background:var(--card);border:1.5px solid var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text)">🔗 Giriş yap, arkadaşlarını ekle!</div>
+    <button onclick="openAuthModal()" style="background:var(--accent);border:none;border-radius:8px;padding:7px 12px;color:#fff;font-weight:800;font-size:0.75rem;cursor:pointer">Giriş</button>
+  </div>
   <div class="sec">Seviye & XP</div>
   <div class="xp-bar-wrap" style="margin-bottom:10px;">
     <div class="xp-row">
@@ -2068,6 +2148,333 @@ function showToast(msg) {
 // ════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════
+// FIREBASE & AUTH
+// ═══════════════════════════════════════════════
+var firebaseConfig = {
+  apiKey: "AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
+  authDomain: "pugi-app-deeaa.firebaseapp.com",
+  projectId: "pugi-app-deeaa",
+  storageBucket: "pugi-app-deeaa.firebasestorage.app",
+  messagingSenderId: "219082394848",
+  appId: "1:219082394848:web:8780f59490374d6566d485"
+};
+
+var _fbApp = null, _fbDb = null, _fbAuth = null;
+var _currentUser = null;
+var _authMode = 'login'; // 'login' | 'register'
+
+function initFirebase() {
+  // Dynamically load Firebase SDK
+  function loadScript(src, cb) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = cb;
+    s.onerror = function() {
+      // Fallback to cdnjs
+      var fallbacks = {
+        'app': 'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js',
+        'auth': 'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js',
+        'firestore': 'https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js'
+      };
+      var key = Object.keys(fallbacks).find(function(k){ return src.includes(k); });
+      if (key && fallbacks[key] !== src) {
+        var s2 = document.createElement('script');
+        s2.src = fallbacks[key];
+        s2.onload = cb;
+        s2.onerror = function(){ console.warn('Firebase yüklenemedi (fallback da başarısız).'); };
+        document.head.appendChild(s2);
+      } else {
+        console.warn('Firebase yüklenemedi: ' + src);
+      }
+    };
+    document.head.appendChild(s);
+  }
+
+  loadScript('https://unpkg.com/firebase@10.8.0/compat/app/dist/index.js', function() {
+    loadScript('https://unpkg.com/firebase@10.8.0/compat/auth/dist/index.js', function() {
+      loadScript('https://unpkg.com/firebase@10.8.0/compat/firestore/dist/index.js', function() {
+        _initFirebaseCore();
+      });
+    });
+  });
+}
+
+function _initFirebaseCore() {
+  if (typeof firebase === 'undefined') {
+    console.warn('Firebase SDK yüklenemedi.');
+    return;
+  }
+  try {
+    _fbApp = firebase.initializeApp(firebaseConfig);
+    _fbDb = firebase.firestore();
+    _fbAuth = firebase.auth();
+
+    _fbAuth.onAuthStateChanged(function(user) {
+      _currentUser = user;
+      if (user) {
+        onUserLoggedIn(user);
+      } else {
+        onUserLoggedOut();
+      }
+    });
+  } catch(e) {
+    console.error('Firebase init error:', e);
+  }
+}
+
+function onUserLoggedIn(user) {
+  // Kullanıcı bilgilerini Firestore'dan al
+  _fbDb.collection('users').doc(user.uid).get().then(function(doc) {
+    var username = doc.exists ? doc.data().username : user.email.split('@')[0];
+    var displayName = doc.exists ? doc.data().displayName : username;
+
+    // User bar güncelle
+    document.getElementById('userBar').style.display = 'flex';
+    document.getElementById('userAvatarBar').textContent = displayName.charAt(0).toUpperCase();
+    document.getElementById('userNameBar').textContent = displayName;
+    document.getElementById('userUnameBar').textContent = '@' + username;
+
+    // Login banner gizle
+    var banner = document.getElementById('loginPromptBanner');
+    if (banner) banner.style.display = 'none';
+
+    // Haftalık istatistikleri senkronize et
+    syncWeeklyStats();
+
+    // Arkadaşları render et
+    renderFriends();
+  });
+}
+
+function onUserLoggedOut() {
+  document.getElementById('userBar').style.display = 'none';
+  var banner = document.getElementById('loginPromptBanner');
+  if (banner) banner.style.display = 'flex';
+  renderFriends();
+}
+
+// ── Auth Modal ──────────────────────────────────
+function openAuthModal() {
+  document.getElementById('authModal').classList.add('open');
+}
+
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('open');
+  document.getElementById('authError').classList.remove('show');
+}
+
+function toggleAuthMode() {
+  _authMode = _authMode === 'login' ? 'register' : 'login';
+  var isReg = _authMode === 'register';
+  document.getElementById('authTitle').textContent = isReg ? 'Kayıt Ol' : 'Giriş Yap';
+  document.getElementById('authSub').textContent = isReg ? 'Kullanıcı adın arkadaşların tarafından görünecek' : 'Arkadaşlarınla bağlan, ilerlemeni paylaş';
+  document.getElementById('authSubmitBtn').textContent = isReg ? 'Kayıt Ol' : 'Giriş Yap';
+  document.getElementById('authSwitch').innerHTML = isReg
+    ? 'Zaten hesabın var mı? <span onclick="toggleAuthMode()">Giriş Yap</span>'
+    : 'Hesabın yok mu? <span onclick="toggleAuthMode()">Kayıt Ol</span>';
+  document.getElementById('authUsername').style.display = isReg ? 'block' : 'none';
+  document.getElementById('authError').classList.remove('show');
+}
+
+function showAuthError(msg) {
+  var el = document.getElementById('authError');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function submitAuth() {
+  var email = document.getElementById('authEmail').value.trim();
+  var password = document.getElementById('authPassword').value;
+  var username = document.getElementById('authUsername').value.trim().toLowerCase();
+
+  if (!email || !password) { showAuthError('E-posta ve şifre gerekli.'); return; }
+  if (_authMode === 'register' && !username) { showAuthError('Kullanıcı adı gerekli.'); return; }
+  if (_authMode === 'register' && !/^[a-z0-9_]{3,20}$/.test(username)) {
+    showAuthError('Kullanıcı adı 3-20 karakter, sadece harf/rakam/alt çizgi.'); return;
+  }
+
+  var btn = document.getElementById('authSubmitBtn');
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  if (_authMode === 'login') {
+    _fbAuth.signInWithEmailAndPassword(email, password)
+      .then(function() { closeAuthModal(); btn.textContent = 'Giriş Yap'; btn.disabled = false; })
+      .catch(function(e) { btn.textContent = 'Giriş Yap'; btn.disabled = false;
+        showAuthError(e.code === 'auth/wrong-password' ? 'Şifre yanlış.' : e.code === 'auth/user-not-found' ? 'Kullanıcı bulunamadı.' : e.message); });
+  } else {
+    // Check username uniqueness
+    _fbDb.collection('usernames').doc(username).get().then(function(doc) {
+      if (doc.exists) { btn.textContent = 'Kayıt Ol'; btn.disabled = false; showAuthError('Bu kullanıcı adı alınmış.'); return; }
+      return _fbAuth.createUserWithEmailAndPassword(email, password);
+    }).then(function(cred) {
+      if (!cred) return;
+      var uid = cred.user.uid;
+      var batch = _fbDb.batch();
+      batch.set(_fbDb.collection('users').doc(uid), { username: username, displayName: username, email: email, createdAt: new Date().toISOString() });
+      batch.set(_fbDb.collection('usernames').doc(username), { uid: uid });
+      return batch.commit();
+    }).then(function() {
+      closeAuthModal(); btn.textContent = 'Kayıt Ol'; btn.disabled = false;
+    }).catch(function(e) {
+      btn.textContent = 'Kayıt Ol'; btn.disabled = false;
+      showAuthError(e.code === 'auth/email-already-in-use' ? 'Bu e-posta zaten kayıtlı.' : e.message);
+    });
+  }
+}
+
+function logoutUser() {
+  if (confirm('Çıkış yapmak istediğine emin misin?')) _fbAuth.signOut();
+}
+
+// ── Haftalık İstatistik Sync ────────────────────
+function getWeekKey() {
+  var now = new Date();
+  var day = now.getDay() || 7;
+  var monday = new Date(now); monday.setDate(now.getDate() - day + 1);
+  return monday.toISOString().split('T')[0];
+}
+
+function syncWeeklyStats() {
+  if (!_currentUser || !_fbDb) return;
+  var weekKey = getWeekKey();
+  var weekStart = new Date(weekKey);
+  var weekEnd = new Date(weekKey); weekEnd.setDate(weekEnd.getDate() + 7);
+
+  // Bu haftanın kayıtlarını filtrele
+  var weekEntries = entries.filter(function(e) {
+    var d = new Date(e.date.split('.').reverse().join('-'));
+    return d >= weekStart && d < weekEnd;
+  });
+
+  var totalMins = weekEntries.reduce(function(a,e) { return a+(e.sure||0); }, 0);
+  var totalSoru = weekEntries.reduce(function(a,e) { return a+(e.dogru||0)+(e.yanlis||0); }, 0);
+  var totalKonu = weekEntries.filter(function(e) { return e.type==='konu'; }).length;
+
+  // Ders bazında süre
+  var subjects = {};
+  weekEntries.forEach(function(e) {
+    if (e.subject) {
+      subjects[e.subject] = (subjects[e.subject] || 0) + (e.sure || 0);
+    }
+  });
+
+  // En çok çalışılan 3 ders
+  var topSubjects = Object.entries(subjects).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(x){return {name:x[0],mins:x[1]};});
+
+  _fbDb.collection('weeklyStats').doc(_currentUser.uid).set({
+    weekKey: weekKey,
+    totalMins: totalMins,
+    totalSoru: totalSoru,
+    totalKonu: totalKonu,
+    topSubjects: topSubjects,
+    updatedAt: new Date().toISOString()
+  }).catch(function(e){ console.error('Sync error:', e); });
+}
+
+// ── Arkadaş Sistemi ─────────────────────────────
+function renderFriends() {
+  var wrap = document.getElementById('friendsWrap');
+  if (!wrap) return;
+
+  if (!_currentUser) {
+    wrap.innerHTML = '<div class="no-login-msg"><div class="nl-icon">🔗</div><p>Arkadaşlarını eklemek ve onların ilerlemesini görmek için giriş yap.</p><button class="no-login-btn" onclick="openAuthModal()">Giriş Yap / Kayıt Ol</button></div>';
+    return;
+  }
+
+  wrap.innerHTML = '<div style="margin-bottom:10px"><div class="friend-add-row"><input type="text" id="friendUsernameInput" placeholder="Kullanıcı adı ile ara (pugi123)" autocomplete="off"><button class="friend-add-btn" onclick="addFriend()">Ekle</button></div><div id="friendAddMsg" style="font-size:0.75rem;color:var(--muted);margin-bottom:8px"></div></div><div id="friendsList"><div style="text-align:center;padding:16px;color:var(--muted);font-size:0.78rem">Yükleniyor...</div></div>';
+
+  loadFriends();
+}
+
+function addFriend() {
+  if (!_currentUser) return;
+  var username = (document.getElementById('friendUsernameInput').value || '').trim().toLowerCase();
+  var msgEl = document.getElementById('friendAddMsg');
+  if (!username) { msgEl.textContent = '⚠️ Kullanıcı adı gir.'; return; }
+
+  msgEl.textContent = '🔍 Aranıyor...';
+
+  _fbDb.collection('usernames').doc(username).get().then(function(doc) {
+    if (!doc.exists) { msgEl.textContent = '❌ Kullanıcı bulunamadı.'; return; }
+    var friendUid = doc.data().uid;
+    if (friendUid === _currentUser.uid) { msgEl.textContent = '😅 Kendini ekleyemezsin.'; return; }
+
+    return _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(friendUid).set({
+      username: username, addedAt: new Date().toISOString()
+    }).then(function() {
+      msgEl.textContent = '✅ ' + username + ' eklendi!';
+      document.getElementById('friendUsernameInput').value = '';
+      loadFriends();
+    });
+  }).catch(function(e) { msgEl.textContent = '❌ Hata: ' + e.message; });
+}
+
+function loadFriends() {
+  if (!_currentUser) return;
+  var listEl = document.getElementById('friendsList');
+
+  _fbDb.collection('friends').doc(_currentUser.uid).collection('list').get().then(function(snap) {
+    if (snap.empty) {
+      listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:0.78rem;font-weight:700">Henüz arkadaş eklemedin.<br>Yukarıdan kullanıcı adıyla arkadaş ekle!</div>';
+      return;
+    }
+
+    listEl.innerHTML = '';
+    snap.forEach(function(doc) {
+      var friendUid = doc.id;
+      var username = doc.data().username;
+
+      _fbDb.collection('weeklyStats').doc(friendUid).get().then(function(statsDoc) {
+        _fbDb.collection('users').doc(friendUid).get().then(function(userDoc) {
+          var displayName = userDoc.exists ? userDoc.data().displayName : username;
+          var stats = statsDoc.exists ? statsDoc.data() : null;
+
+          var totalMins = stats ? stats.totalMins || 0 : 0;
+          var totalSoru = stats ? stats.totalSoru || 0 : 0;
+          var totalKonu = stats ? stats.totalKonu || 0 : 0;
+          var topSubjects = stats ? (stats.topSubjects || []) : [];
+          var hours = Math.floor(totalMins / 60);
+          var mins = totalMins % 60;
+          var timeStr = hours > 0 ? hours + 's ' + mins + 'dk' : mins + 'dk';
+
+          var subjHtml = topSubjects.map(function(s) {
+            return '<span style="background:var(--bg3);border-radius:6px;padding:3px 7px;font-size:0.62rem;font-weight:700;color:var(--accent2)">' + s.name + ' ' + Math.floor(s.mins/60) + 's</span>';
+          }).join(' ');
+
+          var card = document.createElement('div');
+          card.className = 'friend-card';
+          card.innerHTML =
+            '<div class="friend-card-header">' +
+              '<div class="friend-avatar">' + displayName.charAt(0).toUpperCase() + '</div>' +
+              '<div style="flex:1"><div class="friend-name">' + displayName + '</div><div class="friend-uname">@' + username + '</div></div>' +
+              '<button class="friend-remove" onclick="removeFriend(\'' + friendUid + '\',event)">✕ Kaldır</button>' +
+            '</div>' +
+            '<div class="friend-stats-row">' +
+              '<div class="friend-stat"><div class="friend-stat-val">' + timeStr + '</div><div class="friend-stat-lbl">Bu hafta</div></div>' +
+              '<div class="friend-stat"><div class="friend-stat-val">' + totalSoru + '</div><div class="friend-stat-lbl">Soru</div></div>' +
+              '<div class="friend-stat"><div class="friend-stat-val">' + totalKonu + '</div><div class="friend-stat-lbl">Konu</div></div>' +
+            '</div>' +
+            (subjHtml ? '<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">' + subjHtml + '</div>' : '') +
+            (!stats ? '<div style="font-size:0.68rem;color:var(--muted);margin-top:6px">Bu hafta henüz veri yok</div>' : '');
+          listEl.appendChild(card);
+        });
+      });
+    });
+  }).catch(function(e) {
+    if (listEl) listEl.innerHTML = '<div style="color:var(--muted);font-size:0.78rem;padding:10px">Yüklenemedi.</div>';
+  });
+}
+
+function removeFriend(friendUid, e) {
+  e.stopPropagation();
+  if (!confirm('Arkadaşı kaldırmak istediğine emin misin?')) return;
+  _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(friendUid).delete()
+    .then(function() { loadFriends(); });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Ana sayfayı aktif et
   document.getElementById('page-ana').classList.add('active');
@@ -2086,6 +2493,7 @@ document.addEventListener('DOMContentLoaded', function() {
   renderWeeklySummaryCard();
   newMotiv();
   applyTheme();
+  initFirebase();
 });
 
 // YEDEKLEME
