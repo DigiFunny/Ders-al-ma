@@ -2,7 +2,7 @@
   "name": "Pugi",
   "short_name": "Pugi",
   "description": "YKS sınavına hazırlanmak için akıllı çalışma takip uygulaması — Pugi ile çalış, kazan!",
-  "start_url": "/",
+  "start_url": "/Ders-al-ma/",
   "display": "standalone",
   "background_color": "#080d18",
   "theme_color": "#080d18",
@@ -10,13 +10,13 @@
   "lang": "tr",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/Ders-al-ma/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "/Ders-al-ma/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
