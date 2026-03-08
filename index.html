@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#080d18">
+<link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="YKS Takip">
+<meta name="apple-mobile-web-app-title" content="Pugi">
 <title>YKS Takip 🎯</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -51,7 +52,7 @@ body {
   background: linear-gradient(180deg, var(--bg) 85%, transparent);
 }
 .header-row { display: flex; align-items: center; justify-content: space-between; }
-.logo { font-family: 'Space Mono', monospace; font-size: 1.2rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+.logo { font-family: 'Space Mono', monospace; font-size: 1.2rem; background: linear-gradient(135deg, var(--fox-orange), var(--fox-amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
 
 /* YKS COUNTDOWN */
 .yks-bar {
@@ -88,7 +89,7 @@ body {
 }
 .tab-btn .ti { font-size: 1.5rem; line-height: 1; }
 .tab-btn span:last-of-type { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.tab-btn.active { color: var(--accent); }
+.tab-btn.active { color: var(--fox-orange); }
 .tab-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); opacity: 0; transition: opacity 0.2s; }
 .tab-btn.active .tab-dot { opacity: 1; }
 
@@ -161,7 +162,7 @@ body {
 .ring-sublabel { font-size: 0.65rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
 .timer-btns { display: flex; gap: 14px; align-items: center; }
-.btn-play { width: 62px; height: 62px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; font-size: 1.4rem; cursor: pointer; box-shadow: 0 0 20px rgba(56,189,248,0.35); transition: transform 0.15s; display: flex; align-items: center; justify-content: center; }
+.btn-play { width: 62px; height: 62px; border-radius: 50%; border: none; background: linear-gradient(135deg, var(--fox-orange), var(--fox-amber)); color: white; font-size: 1.4rem; cursor: pointer; box-shadow: 0 0 20px rgba(56,189,248,0.35); transition: transform 0.15s; display: flex; align-items: center; justify-content: center; }
 .btn-play:active { transform: scale(0.9); }
 .btn-sm { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .btn-sm:active { transform: scale(0.9); }
@@ -448,18 +449,18 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .streak-modal { position:fixed;inset:0;z-index:9990;display:none;align-items:flex-end;justify-content:center; }
 .streak-modal.open { display:flex;pointer-events:all; }
 .streak-modal-overlay { position:absolute;inset:0;background:rgba(0,0,0,0.6); }
-.streak-modal-sheet { background:var(--bg2);border-radius:24px 24px 0 0;border-top:2px solid var(--orange);width:100%;max-width:430px;position:relative;padding-bottom:30px;max-height:80vh;overflow-y:auto; }
+.streak-modal-sheet { background:var(--bg2);border-radius:24px 24px 0 0;border-top:2px solid var(--fox-orange);width:100%;max-width:430px;position:relative;padding-bottom:30px;max-height:80vh;overflow-y:auto; }
 .streak-modal-handle { width:40px;height:4px;background:var(--border);border-radius:99px;margin:12px auto 0; }
 .streak-modal-header { padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
-.streak-modal-title { font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--orange); }
+.streak-modal-title { font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--fox-orange); }
 .streak-big { text-align:center;padding:20px 16px 12px; }
-.streak-big-num { font-family:'Space Mono',monospace;font-size:3.5rem;font-weight:700;color:var(--orange);line-height:1; }
+.streak-big-num { font-family:'Space Mono',monospace;font-size:3.5rem;font-weight:700;color:var(--fox-orange);line-height:1; }
 .streak-big-lbl { font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px; }
 .streak-days-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:0 14px 14px; }
 .streak-day { background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center; }
-.streak-day.active { border-color:var(--orange);background:rgba(251,146,60,0.1); }
-.streak-day.active .streak-day-name { color:var(--orange); }
-.streak-day.active .streak-day-date { color:var(--orange); }
+.streak-day.active { border-color:var(--fox-orange);background:rgba(200,81,26,0.12); }
+.streak-day.active .streak-day-name { color:var(--fox-orange); }
+.streak-day.active .streak-day-date { color:var(--fox-orange); }
 .streak-day.today .streak-day-name { color:var(--accent); }
 .streak-day.today .streak-day-date { color:var(--accent); }
 .streak-day.today { border-color:var(--accent);background:rgba(56,189,248,0.1); }
@@ -539,6 +540,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   .fs-close { top: 10px; right: 10px; width: 34px; height: 34px; font-size: 0.85rem; }
 }
 </style>
+
 </head>
 <body>
 
@@ -622,8 +624,8 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         style="transition:stroke-dashoffset 1s linear;transform:rotate(-90deg);transform-origin:50% 50%"/>
       <defs>
         <linearGradient id="fsGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#38bdf8"/>
-          <stop offset="100%" stop-color="#818cf8"/>
+          <stop offset="0%" stop-color="#C8511A"/>
+          <stop offset="100%" stop-color="#E8830A"/>
         </linearGradient>
       </defs>
     </svg>
@@ -678,7 +680,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <!-- HEADER -->
 <div class="header">
   <div class="header-row">
-    <div class="logo">🎯 YKS Takip</div>
+    <div class="logo">Pugi</div>
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
       <div class="streak-badge" onclick="openStreakModal()">🔥 <span id="streakNum">0</span> gün</div>
@@ -1694,7 +1696,7 @@ function renderDenemeLog() {
   if (!list) return;
   var filtered = denemeler.filter(function(d) { return d.type === currentDenemeType; });
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty"><span>📋</span><p>Henüz deneme kaydı yok.</p></div>';
+    list.innerHTML = '<div class="empty"><span>🦊</span><p>Henüz deneme kaydı yok.</p></div>';
     return;
   }
   list.innerHTML = filtered.map(function(d) {
