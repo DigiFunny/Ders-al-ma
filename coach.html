@@ -707,8 +707,12 @@ function openStudentStatsPage(s) {
   updateLiveBadge(s.lastSeen);
 
   // userData'dan tam veriyi çek ve hesapla
+  console.log('Fetching userData for:', s.uid);
   _db.collection('userData').doc(s.uid).get().then(function(doc) {
+    console.log('userData exists:', doc.exists, 'uid:', s.uid);
     if (!doc.exists) {
+      console.warn('userData belgesi yok!');
+      document.getElementById('statsLevel').textContent = 'Veri bulunamadı';
       renderStatsAllTime(null, ws);
       renderStatsDeneme(null, ws);
       renderStatsChart(null, ws);
@@ -717,6 +721,7 @@ function openStudentStatsPage(s) {
     var data = doc.data();
     var entries = data.entries || [];
     var denemeler = data.denemeler || [];
+    console.log('entries:', entries.length, 'denemeler:', denemeler.length);
 
     // subjectAllTime hesapla
     var subjectAllTime = {};
@@ -775,16 +780,12 @@ function openStudentStatsPage(s) {
       totalDeneme: denemeler.length
     });
 
-    if (fullWs.level) {
-      document.getElementById('statsLevel').textContent =
-        'Seviye ' + (fullWs.level||1) + ' · ' + (fullWs.levelTitle||'') +
-        ' · ' + fullWs.totalAllMins + ' dk';
-    } else {
-      document.getElementById('statsLevel').textContent = fullWs.totalAllMins + ' toplam dk';
-    }
-
     // Detay sayfası hâlâ bu öğrencide mi?
     if (_currentDetailUid !== s.uid) return;
+
+    document.getElementById('statsLevel').textContent = fullWs.level
+      ? 'Seviye ' + fullWs.level + ' · ' + (fullWs.levelTitle||'') + ' · ' + fullWs.totalAllMins + ' dk'
+      : fullWs.totalAllMins + ' toplam dk';
     renderStatsWeekTab(fullWs);
     renderStatsAllTime(null, fullWs);
     renderStatsDeneme(null, fullWs);
@@ -794,9 +795,12 @@ function openStudentStatsPage(s) {
     s._fullData = fullWs;
   }).catch(function(e) {
     console.warn('userData fetch err:', e);
-    renderStatsAllTime(null, ws);
-    renderStatsDeneme(null, ws);
-    renderStatsChart(null, ws);
+    if (_currentDetailUid === s.uid) {
+      document.getElementById('statsLevel').textContent = 'Veri yüklenemedi';
+      renderStatsAllTime(null, ws);
+      renderStatsDeneme(null, ws);
+      renderStatsChart(null, ws);
+    }
   });
 }
 
