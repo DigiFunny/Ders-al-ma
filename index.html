@@ -3041,9 +3041,9 @@ function renderFriends() {
   wrap.innerHTML = '<div id="friendsHeader" style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;cursor:pointer;user-select:none" onclick="toggleFriendsList()">' +
     '<div style="flex:1;font-size:0.85rem;font-weight:900">Arkadaşlarım <span id="friendCount" style="background:var(--accent);color:#fff;border-radius:20px;padding:1px 8px;font-size:0.65rem;margin-left:6px">...</span></div>' +
     '<button onclick="event.stopPropagation();openAddFriendModal()" style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);border-radius:8px;padding:5px 10px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer;margin-right:10px">+ Ekle</button>' +
-    '<span id="friendsArrow" style="color:var(--muted);font-size:0.8rem;transition:transform 0.25s">▼</span>' +
+    '<span id="friendsArrow" style="color:var(--muted);font-size:0.8rem;transition:transform 0.25s;display:inline-block;transform:rotate(180deg)">▼</span>' +
   '</div>' +
-  '<div id="friendsList" style="display:none;margin-top:8px"></div>';
+  '<div id="friendsList" style="display:block;margin-top:8px"></div>';
 
   loadFriends();
 }
@@ -3055,6 +3055,8 @@ function toggleFriendsList() {
   var isOpen = list.style.display !== 'none';
   list.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+  // Açılırken içerik boşsa yeniden yükle
+  if (!isOpen && list.innerHTML.trim() === '') loadFriends();
 }
 
 function openAddFriendModal() {
