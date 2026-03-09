@@ -495,10 +495,14 @@ function loadStudents() {
             if (_currentDetailUid === student.uid) {
               updateLiveBadge(student.lastSeen);
               renderStatsWeekTab(student.stats);
-              if (student.stats) {
+              renderStatsAllTime(student.coachView, student.stats);
+              renderStatsDeneme(student.coachView, student.stats);
+              renderStatsChart(student.coachView, student.stats);
+              var lvData = (student.coachView && student.coachView.weekStats) ? student.coachView.weekStats : student.stats;
+              if (lvData) {
                 document.getElementById('statsLevel').textContent =
-                  'Seviye ' + (student.stats.level||1) + ' · ' + (student.stats.levelTitle||'') +
-                  ' · ' + (student.stats.totalAllMins||0) + ' dk';
+                  'Seviye ' + (lvData.level||1) + ' · ' + (lvData.levelTitle||'') +
+                  ' · ' + (lvData.totalAllMins||0) + ' dk';
               }
             }
 
@@ -515,9 +519,9 @@ function loadStudents() {
 
             if (_currentDetailUid === student.uid) {
               updateLiveBadge(student.lastSeen);
-              renderStatsAllTime(cv);
-              renderStatsDeneme(cv);
-              renderStatsChart(cv);
+              renderStatsAllTime(cv, student.stats);
+              renderStatsDeneme(cv, student.stats);
+              renderStatsChart(cv, student.stats);
             }
           }, function(err) { console.warn('coachView snap err:', err); });
 
@@ -700,16 +704,17 @@ function openStudentStatsPage(s) {
   document.getElementById('page-student-stats').classList.add('active');
   switchStatsTab('week', document.getElementById('stab-week'));
 
-  // Zaten bellekte varsa hemen göster (snapshot'tan gelmiş olabilir)
   var cv = s.coachView || null;
-  renderStatsWeekTab(s.stats);
-  renderStatsAllTime(cv);
-  renderStatsDeneme(cv);
-  renderStatsChart(cv);
-  if (cv && cv.weekStats) {
+  var ws = s.stats || null; // weeklyStats - her zaman dolu
+  renderStatsWeekTab(ws);
+  renderStatsAllTime(cv, ws);
+  renderStatsDeneme(cv, ws);
+  renderStatsChart(cv, ws);
+  var lvData = (cv && cv.weekStats) ? cv.weekStats : ws;
+  if (lvData) {
     document.getElementById('statsLevel').textContent =
-      'Seviye ' + (cv.weekStats.level||1) + ' · ' + (cv.weekStats.levelTitle||'') +
-      ' · ' + (cv.weekStats.totalAllMins||0) + ' dk';
+      'Seviye ' + (lvData.level||1) + ' · ' + (lvData.levelTitle||'') +
+      ' · ' + (lvData.totalAllMins||0) + ' dk';
   }
   updateLiveBadge(s.lastSeen);
 }
@@ -766,15 +771,15 @@ function renderStatsWeekTab(stats) {
     '<div class="report-stat"><div class="report-stat-val">' + totalKonu + '</div><div class="report-stat-lbl">Konu</div></div>';
 
   var subEl = document.getElementById('statsWeekSubjects');
-  var subjects = stats && stats.subjectMins ? stats.subjectMins
-                : (stats && stats.topSubjects ? stats.topSubjects : []);
+  var subjects = (stats && stats.subjectMins && stats.subjectMins.length) ? stats.subjectMins
+                : (stats && stats.topSubjects && stats.topSubjects.length ? stats.topSubjects : []);
   if (!subjects.length) { subEl.innerHTML = noData(); }
   else {
     var maxM = Math.max.apply(null, subjects.map(function(s){ return s.mins || 0; })) || 1;
-    subEl.innerHTML = subjects.map(function(s) {
+    subEl.innerHTML = subjects.filter(function(s){ return (s.mins||0) > 0; }).map(function(s) {
       var pct = Math.round((s.mins||0)/maxM*100);
       return barRow(s.name, (s.mins||0) + 'dk', pct, 'var(--accent)', 'var(--accent2)');
-    }).join('');
+    }).join('') || noData();
   }
 
   var netsEl = document.getElementById('statsWeekNets');
@@ -824,9 +829,16 @@ function renderStatsAllTime(cv) {
   }
 }
 
-function renderStatsDeneme(cv) {
+function renderStatsDeneme(cv, ws) {
   var el = document.getElementById('statsDenemeler');
+  // cv.recentDenemeler varsa kullan, yoksa weeklyStats'tan bestNets göster
   var list = cv && cv.recentDenemeler ? cv.recentDenemeler : [];
+  if (!list.length && ws && ws.bestNets && ws.bestNets.length) {
+    // bestNets'ten sentetik liste oluştur
+    list = ws.bestNets.map(function(n) {
+      return { isim: '', type: n.type, totalNet: n.net, date: '' };
+    });
+  }
   if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-text">Henüz deneme yok</div></div>'; return; }
   el.innerHTML = list.map(function(d) {
     var typeLabel = d.bransLabel || (d.type||'').replace('_',' ');
@@ -838,7 +850,7 @@ function renderStatsDeneme(cv) {
   }).join('');
 }
 
-function renderStatsChart(cv) {
+function renderStatsChart(cv, ws) {
   var svg = document.getElementById('statsChartSvg');
   var listEl = document.getElementById('statsChartList');
   if (!svg) return;
