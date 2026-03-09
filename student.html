@@ -3151,6 +3151,42 @@ function syncWeeklyStats() {
   var subjectMins = Object.entries(subjects).map(function(x){ return {name: x[0], mins: x[1]}; })
     .sort(function(a,b){ return b.mins-a.mins; });
 
+  // Günlük özet (son 60 gün)
+  var last60 = new Date(); last60.setDate(last60.getDate() - 60);
+  var dailyMap2 = {};
+  entries.forEach(function(e) {
+    try {
+      var d2 = new Date(e.date.split('.').reverse().join('-'));
+      if (d2 < last60) return;
+    } catch(x) { return; }
+    var dk = e.date;
+    if (!dailyMap2[dk]) dailyMap2[dk] = { date: dk, mins: 0, soru: 0, konu: 0 };
+    dailyMap2[dk].mins += (e.sure || 0);
+    dailyMap2[dk].soru += (e.dogru || 0) + (e.yanlis || 0);
+    if (e.type === 'konu') dailyMap2[dk].konu++;
+  });
+  var dailySummary2 = Object.values(dailyMap2).sort(function(a,b){ return a.date > b.date ? 1 : -1; });
+
+  // Ders bazında tüm zamanlar
+  var subjectAllTime2 = {};
+  entries.forEach(function(e) {
+    if (!e.subject) return;
+    if (!subjectAllTime2[e.subject]) subjectAllTime2[e.subject] = { mins: 0, soru: 0, dogru: 0, yanlis: 0 };
+    subjectAllTime2[e.subject].mins += (e.sure || 0);
+    subjectAllTime2[e.subject].soru += (e.dogru || 0) + (e.yanlis || 0);
+    subjectAllTime2[e.subject].dogru += (e.dogru || 0);
+    subjectAllTime2[e.subject].yanlis += (e.yanlis || 0);
+  });
+
+  // Son 20 deneme
+  var recentDenemeler2 = denemeler.slice(0, 20).map(function(d) {
+    return { type: d.type || '', bransLabel: d.bransLabel || '', isim: d.isim || '', date: d.date || '', totalNet: d.totalNet || 0 };
+  });
+
+  // Çalışma türü dağılımı
+  var typeDist2 = { konu: 0, soru: 0, genel: 0 };
+  entries.forEach(function(e) { if (e.type && typeDist2.hasOwnProperty(e.type)) typeDist2[e.type] += (e.sure || 1); });
+
   var statsPayload = {
     weekKey: weekKey,
     totalMins: totalMins,
@@ -3168,7 +3204,11 @@ function syncWeeklyStats() {
     level: lvInfo.lvNum,
     levelTitle: lvInfo.title,
     lastActiveDate: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
+    dailySummary: dailySummary2,
+    subjectAllTime: subjectAllTime2,
+    recentDenemeler: recentDenemeler2,
+    typeDist: typeDist2
   };
 
   _fbDb.collection('weeklyStats').doc(_currentUser.uid).set(statsPayload)

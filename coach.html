@@ -831,14 +831,10 @@ function renderStatsAllTime(cv) {
 
 function renderStatsDeneme(cv, ws) {
   var el = document.getElementById('statsDenemeler');
-  // cv.recentDenemeler varsa kullan, yoksa weeklyStats'tan bestNets göster
-  var list = cv && cv.recentDenemeler ? cv.recentDenemeler : [];
-  if (!list.length && ws && ws.bestNets && ws.bestNets.length) {
-    // bestNets'ten sentetik liste oluştur
-    list = ws.bestNets.map(function(n) {
-      return { isim: '', type: n.type, totalNet: n.net, date: '' };
-    });
-  }
+  var d = ws || {};
+  // weeklyStats.recentDenemeler artık direkt var
+  var list = (d.recentDenemeler && d.recentDenemeler.length) ? d.recentDenemeler
+           : ((d.bestNets && d.bestNets.length) ? d.bestNets.map(function(n){ return {type:n.type, totalNet:n.net, date:'', isim:''}; }) : []);
   if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-text">Henüz deneme yok</div></div>'; return; }
   el.innerHTML = list.map(function(d) {
     var typeLabel = d.bransLabel || (d.type||'').replace('_',' ');
@@ -854,7 +850,8 @@ function renderStatsChart(cv, ws) {
   var svg = document.getElementById('statsChartSvg');
   var listEl = document.getElementById('statsChartList');
   if (!svg) return;
-  var daily = cv && cv.dailySummary ? cv.dailySummary.slice(-30) : [];
+  var d = ws || {};
+  var daily = (d.dailySummary && d.dailySummary.length) ? d.dailySummary.slice(-30) : [];
   if (!daily.length) { svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#4b6280" font-size="11" font-family="Nunito">Veri yok</text>'; return; }
 
   var maxM = Math.max.apply(null, daily.map(function(d){ return d.mins; })) || 1;
