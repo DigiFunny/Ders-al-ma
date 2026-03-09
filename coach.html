@@ -400,6 +400,9 @@ var firebaseConfig = {
 
 var _db = null, _auth = null, _user = null;
 var _students = []; // [{uid, username, displayName, stats}]
+var _snapListeners = {}; // uid -> unsubscribe fn
+var _detailSnapUnsub = null; // aktif öğrenci detay listener
+var _liveUpdateInterval = null;
 var _pendingRequests = [];
 var _activeCommentData = null;
 
@@ -460,29 +463,63 @@ function loadPendingRequests() {
 }
 
 function loadStudents() {
+  // Önceki listener'ları temizle
+  Object.values(_snapListeners).forEach(function(unsub) { unsub(); });
+  _snapListeners = {};
+
   _db.collection('coachRequests')
     .where('coachUid', '==', _user.uid)
     .where('status', '==', 'accepted')
     .get().then(function(snap) {
       _students = [];
       var promises = [];
+
       snap.forEach(function(doc) {
         var req = doc.data();
-        var p = Promise.all([
-          _db.collection('users').doc(req.studentUid).get(),
-          _db.collection('weeklyStats').doc(req.studentUid).get()
-        ]).then(function(results) {
-          var uDoc = results[0], sDoc = results[1];
+        var p = _db.collection('users').doc(req.studentUid).get().then(function(uDoc) {
           if (!uDoc.exists) return;
-          _students.push({
+          var student = {
             uid: req.studentUid,
             displayName: uDoc.data().displayName || req.studentUsername,
             username: uDoc.data().username || req.studentUsername,
-            stats: sDoc.exists ? sDoc.data() : null
-          });
+            stats: null,
+            coachView: null,
+            lastSeen: null
+          };
+          _students.push(student);
+
+          // coachView realtime listener
+          var unsub = _db.collection('coachView').doc(req.studentUid).onSnapshot(function(cvDoc) {
+            var cv = cvDoc.exists ? cvDoc.data() : null;
+            student.coachView = cv;
+            student.stats = cv ? cv.weekStats : null;
+            student.lastSeen = cv ? cv.updatedAt : null;
+
+            // Eğer şu an bu öğrencinin detay sayfasındaysak güncelle
+            if (_currentDetailUid === student.uid) {
+              updateLiveBadge(student.lastSeen);
+              renderStatsWeekTab(student.stats);
+              renderStatsAllTime(cv);
+              renderStatsDeneme(cv);
+              renderStatsChart(cv);
+              if (cv && cv.weekStats) {
+                document.getElementById('statsLevel').textContent =
+                  'Seviye ' + (cv.weekStats.level||1) + ' · ' + (cv.weekStats.levelTitle||'') +
+                  ' · ' + (cv.weekStats.totalAllMins||0) + ' dk';
+              }
+            }
+
+            // Liste ve genel bakış güncelle
+            renderStudents();
+            renderOverviewStudents();
+            updateOverviewStats();
+          }, function(err) { console.warn('Snapshot err:', err); });
+
+          _snapListeners[req.studentUid] = unsub;
         });
         promises.push(p);
       });
+
       return Promise.all(promises);
     }).then(function() {
       renderStudents();
@@ -646,7 +683,8 @@ function openStudentDetail(s) {
 }
 
 function openStudentStatsPage(s) {
-  // Header bilgisi
+  _currentDetailUid = s.uid;
+
   document.getElementById('statsAvatar').textContent = s.displayName.charAt(0).toUpperCase();
   document.getElementById('statsName').textContent = s.displayName + ' · @' + s.username;
   document.getElementById('statsLevel').textContent = '';
@@ -654,31 +692,51 @@ function openStudentStatsPage(s) {
   // Sayfaya geç
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('page-student-stats').classList.add('active');
-
-  // Tab sıfırla
   switchStatsTab('week', document.getElementById('stab-week'));
 
-  // weeklyStats ile doldur
+  // Zaten bellekte varsa hemen göster (snapshot'tan gelmiş olabilir)
+  var cv = s.coachView || null;
   renderStatsWeekTab(s.stats);
+  renderStatsAllTime(cv);
+  renderStatsDeneme(cv);
+  renderStatsChart(cv);
+  if (cv && cv.weekStats) {
+    document.getElementById('statsLevel').textContent =
+      'Seviye ' + (cv.weekStats.level||1) + ' · ' + (cv.weekStats.levelTitle||'') +
+      ' · ' + (cv.weekStats.totalAllMins||0) + ' dk';
+  }
+  updateLiveBadge(s.lastSeen);
+}
 
-  // coachView'dan tam veri çek
-  _db.collection('coachView').doc(s.uid).get().then(function(doc) {
-    var cv = doc.exists ? doc.data() : null;
-    if (cv && cv.weekStats) {
-      document.getElementById('statsLevel').textContent =
-        'Seviye ' + (cv.weekStats.level || 1) + ' · ' + (cv.weekStats.levelTitle || '') +
-        ' · 🔥 ' + (cv.weekStats.totalAllMins || 0) + ' toplam dk';
-    }
-    renderStatsAllTime(cv);
-    renderStatsDeneme(cv);
-    renderStatsChart(cv);
-  });
+function updateLiveBadge(updatedAt) {
+  var el = document.getElementById('statsLevel');
+  if (!el) return;
+  if (!updatedAt) return;
+  var diff = Math.floor((Date.now() - new Date(updatedAt).getTime()) / 1000);
+  var agoStr;
+  if (diff < 60) agoStr = diff + 'sn önce';
+  else if (diff < 3600) agoStr = Math.floor(diff/60) + 'dk önce';
+  else if (diff < 86400) agoStr = Math.floor(diff/3600) + 'sa önce';
+  else agoStr = Math.floor(diff/86400) + 'g önce';
+
+  // Live dot ekle/güncelle
+  var liveSpan = document.getElementById('liveBadge');
+  if (!liveSpan) {
+    liveSpan = document.createElement('span');
+    liveSpan.id = 'liveBadge';
+    liveSpan.style.cssText = 'font-size:0.6rem;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:middle';
+    el.appendChild(liveSpan);
+  }
+  var isRecent = diff < 300; // 5dk içinde → aktif
+  liveSpan.style.background = isRecent ? 'rgba(52,211,153,0.15)' : 'rgba(75,98,128,0.2)';
+  liveSpan.style.color = isRecent ? 'var(--coach)' : 'var(--muted)';
+  liveSpan.textContent = (isRecent ? '🟢 Aktif' : '⚫') + ' ' + agoStr;
 }
 
 function goBackToStudents() {
+  _currentDetailUid = null;
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('page-students').classList.add('active');
-  // Tab bar'da öğrenciler sekmesini aktif yap
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   document.querySelectorAll('.tab-btn')[1].classList.add('active');
 }
@@ -994,11 +1052,13 @@ function saveComment() {
 
 // ════════════════════ YARDIMCI ════════════════════
 function switchTab(tab, el) {
+  _currentDetailUid = null;
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById('page-' + tab).classList.add('active');
   el.classList.add('active');
   if (tab === 'suggest') loadSentSuggestions();
+  if (tab === 'reports') loadReports();
 }
 
 function logout() {
