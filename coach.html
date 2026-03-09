@@ -91,6 +91,16 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .modal-title { font-size: 1rem; font-weight: 900; margin-bottom: 16px; }
 
 /* TOAST */
+.dtab {
+  flex: 1; padding: 7px 4px; border: none; border-radius: 7px;
+  background: transparent; color: var(--muted);
+  font-family: 'Nunito', sans-serif; font-size: 0.7rem; font-weight: 800;
+  cursor: pointer; transition: all 0.2s;
+}
+.active-dtab {
+  background: var(--card); color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
 .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 20px; font-size: 0.82rem; font-weight: 800; opacity: 0; transition: all 0.3s; z-index: 300; white-space: nowrap; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -240,32 +250,63 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   </button>
 </div>
 
-<!-- Öğrenci Detay Modalı -->
-<div class="modal-overlay" id="studentDetailModal">
-  <div class="modal-sheet">
+<!-- Öğrenci Tam İstatistik Modalı -->
+<div class="modal-overlay" id="studentDetailModal" style="align-items:flex-end">
+  <div class="modal-sheet" style="max-height:95dvh;overflow-y:auto;padding-bottom:30px">
     <div class="modal-handle"></div>
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+
+    <!-- Başlık -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
       <div id="detailAvatar" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;color:#fff;flex-shrink:0"></div>
-      <div>
+      <div style="flex:1">
         <div id="detailName" style="font-size:1rem;font-weight:900"></div>
-        <div id="detailUname" style="font-size:0.7rem;color:var(--muted);font-weight:700"></div>
+        <div id="detailUname" style="font-size:0.7rem;color:var(--muted);font-weight:700;margin-top:2px"></div>
+        <div id="detailLevel" style="font-size:0.68rem;color:var(--coach);font-weight:800;margin-top:2px"></div>
       </div>
-      <button onclick="closeStudentDetail()" style="margin-left:auto;background:none;border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;color:var(--muted);cursor:pointer;font-size:1rem">✕</button>
+      <button onclick="closeStudentDetail()" style="background:none;border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;color:var(--muted);cursor:pointer;font-size:1rem;flex-shrink:0">✕</button>
     </div>
 
-    <!-- Haftanın özeti -->
-    <div class="sec" style="margin-top:0">Bu Hafta</div>
-    <div class="report-stats" id="detailWeekStats"></div>
+    <!-- Tab seçici -->
+    <div style="display:flex;gap:6px;background:var(--bg2);border-radius:10px;padding:4px;margin:14px 0 16px">
+      <button onclick="switchDetailTab('week',this)" id="dtab-week" class="dtab active-dtab">Bu Hafta</button>
+      <button onclick="switchDetailTab('alltime',this)" id="dtab-alltime" class="dtab">Tüm Zamanlar</button>
+      <button onclick="switchDetailTab('deneme',this)" id="dtab-deneme" class="dtab">Denemeler</button>
+      <button onclick="switchDetailTab('chart',this)" id="dtab-chart" class="dtab">Grafik</button>
+    </div>
 
-    <!-- Ders dağılımı -->
-    <div class="sec">Ders Dağılımı (Bu Hafta)</div>
-    <div id="detailSubjects"></div>
+    <!-- Bu Hafta -->
+    <div id="dtab-content-week">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Özet</div>
+      <div class="report-stats" id="detailWeekStats"></div>
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:12px 0 8px">Ders Dağılımı</div>
+      <div id="detailSubjects"></div>
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:12px 0 8px">En İyi Netler</div>
+      <div id="detailBestNets"></div>
+    </div>
 
-    <!-- En iyi net -->
-    <div class="sec">En İyi Netler</div>
-    <div id="detailBestNets"></div>
+    <!-- Tüm Zamanlar -->
+    <div id="dtab-content-alltime" style="display:none">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Genel İstatistikler</div>
+      <div id="detailAllStats" class="report-stats"></div>
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:12px 0 8px">Derse Göre Toplam Süre</div>
+      <div id="detailAllSubjects"></div>
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:12px 0 8px">Çalışma Türü</div>
+      <div id="detailTypeDist"></div>
+    </div>
 
-    <button onclick="closeStudentDetail()" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:12px;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;margin-top:8px">Kapat</button>
+    <!-- Denemeler -->
+    <div id="dtab-content-deneme" style="display:none">
+      <div id="detailDenemeler"></div>
+    </div>
+
+    <!-- Günlük Grafik -->
+    <div id="dtab-content-chart" style="display:none">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Son 30 Gün (Dakika)</div>
+      <div style="background:var(--bg2);border-radius:12px;padding:12px;overflow-x:auto">
+        <svg id="detailChartSvg" height="80" style="min-width:100%;display:block"></svg>
+      </div>
+    </div>
+
   </div>
 </div>
 
