@@ -878,30 +878,31 @@ function renderStatsWeekTab(stats) {
   }
 }
 
-function renderStatsAllTime(cv) {
-  if (!cv) { document.getElementById('statsAllSummary').innerHTML = noData(); return; }
-  var ws = cv.weekStats || {};
-  document.getElementById('statsAllSummary').innerHTML =
-    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (ws.totalAllMins||0) + '</div><div class="report-stat-lbl">Toplam dk</div></div>' +
-    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (ws.totalAllSoru||0) + '</div><div class="report-stat-lbl">Toplam Soru</div></div>' +
-    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (ws.totalDeneme||0) + '</div><div class="report-stat-lbl">Deneme</div></div>';
 
-  var subEl = document.getElementById('statsAllSubjects');
-  var subj = cv.subjectAllTime ? Object.entries(cv.subjectAllTime) : [];
-  if (!subj.length) { subEl.innerHTML = noData(); }
+
+function renderStatsAllTime(cv, ws) {
+  var d = ws || {};
+  document.getElementById('statsAllSummary').innerHTML =
+    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (d.totalAllMins||0) + '</div><div class="report-stat-lbl">Toplam dk</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (d.totalAllSoru||0) + '</div><div class="report-stat-lbl">Toplam Soru</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (d.totalDeneme||0) + '</div><div class="report-stat-lbl">Deneme</div></div>';
+
+  var subjEl = document.getElementById('statsAllSubjects');
+  var subj = d.subjectAllTime ? Object.entries(d.subjectAllTime) : [];
+  if (!subj.length) { subjEl.innerHTML = noData(); }
   else {
-    var maxM = Math.max.apply(null, subj.map(function(x){ return x[1].mins||0; }));
-    subEl.innerHTML = subj.sort(function(a,b){ return (b[1].mins||0)-(a[1].mins||0); }).map(function(x) {
-      var pct = maxM > 0 ? Math.round((x[1].mins||0)/maxM*100) : 0;
-      var acc = x[1].soru > 0 ? Math.round(x[1].dogru/x[1].soru*100) : 0;
+    var maxM = Math.max.apply(null, subj.map(function(x){ return x[1].mins||0; })) || 1;
+    subjEl.innerHTML = subj.sort(function(a,b){ return (b[1].mins||0)-(a[1].mins||0); }).map(function(x) {
+      var pct = Math.round((x[1].mins||0)/maxM*100);
+      var acc = (x[1].soru||0) > 0 ? Math.round((x[1].dogru||0)/(x[1].soru||1)*100) : 0;
       return barRow(x[0], (x[1].mins||0) + 'dk · %' + acc + ' doğru', pct, 'var(--coach)', '#fbbf24');
     }).join('');
   }
 
   var typeEl = document.getElementById('statsTypeDist');
-  var td = cv.typeDist || {};
+  var td = d.typeDist || {};
   var total = (td.konu||0)+(td.soru||0)+(td.genel||0);
-  if (!total) { typeEl.innerHTML = needsSync(); }
+  if (!total) { typeEl.innerHTML = noData(); }
   else {
     typeEl.innerHTML = [
       {label:'Konu Anlatımı', val:td.konu||0, color:'var(--accent)'},
