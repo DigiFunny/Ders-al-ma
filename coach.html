@@ -182,6 +182,69 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   <div id="studentList"></div>
 </div>
 
+<!-- SAYFA: Öğrenci İstatistik -->
+<div class="page" id="page-student-stats">
+  <!-- Geri butonu + başlık -->
+  <div style="display:flex;align-items:center;gap:10px;padding:4px 0 12px">
+    <button onclick="goBackToStudents()" style="background:var(--card);border:1.5px solid var(--border);border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;flex-shrink:0;transition:all 0.2s" onmouseover="this.style.borderColor='var(--coach)'" onmouseout="this.style.borderColor='var(--border)'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+      <div id="statsAvatar" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#fff;flex-shrink:0"></div>
+      <div style="min-width:0">
+        <div id="statsName" style="font-size:0.95rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="statsLevel" style="font-size:0.65rem;color:var(--coach);font-weight:800;margin-top:1px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab seçici -->
+  <div style="display:flex;gap:6px;background:var(--bg2);border-radius:10px;padding:4px;margin-bottom:16px">
+    <button onclick="switchStatsTab('week',this)" id="stab-week" class="dtab active-dtab">Bu Hafta</button>
+    <button onclick="switchStatsTab('alltime',this)" id="stab-alltime" class="dtab">Tüm Zamanlar</button>
+    <button onclick="switchStatsTab('deneme',this)" id="stab-deneme" class="dtab">Denemeler</button>
+    <button onclick="switchStatsTab('chart',this)" id="stab-chart" class="dtab">Grafik</button>
+  </div>
+
+  <!-- Bu Hafta -->
+  <div id="stab-content-week">
+    <div class="sec" style="margin-top:0">Haftalık Özet</div>
+    <div class="report-stats" id="statsWeekSummary"></div>
+    <div class="sec">Ders Dağılımı</div>
+    <div id="statsWeekSubjects"></div>
+    <div class="sec">En İyi Netler</div>
+    <div id="statsWeekNets"></div>
+  </div>
+
+  <!-- Tüm Zamanlar -->
+  <div id="stab-content-alltime" style="display:none">
+    <div class="sec" style="margin-top:0">Genel İstatistikler</div>
+    <div id="statsAllSummary" class="report-stats"></div>
+    <div class="sec">Derse Göre Toplam Süre</div>
+    <div id="statsAllSubjects"></div>
+    <div class="sec">Çalışma Türü Dağılımı</div>
+    <div id="statsTypeDist"></div>
+  </div>
+
+  <!-- Denemeler -->
+  <div id="stab-content-deneme" style="display:none">
+    <div class="sec" style="margin-top:0">Son Denemeler</div>
+    <div id="statsDenemeler"></div>
+  </div>
+
+  <!-- Günlük Grafik -->
+  <div id="stab-content-chart" style="display:none">
+    <div class="sec" style="margin-top:0">Son 30 Gün (Dakika)</div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;overflow-x:auto">
+      <svg id="statsChartSvg" height="100" style="min-width:100%;display:block"></svg>
+    </div>
+    <div class="sec">Günlük Detaylar</div>
+    <div id="statsChartList"></div>
+  </div>
+
+  <div style="height:20px"></div>
+</div>
+
 <!-- SAYFA: Ders Önerisi -->
 <div class="page" id="page-suggest">
   <div class="sec">Ders Önerisi Gönder</div>
@@ -496,7 +559,7 @@ function makeStudentCard(s) {
       '</div>' +
     '</div>' +
     '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>';
-  card.addEventListener('click', function() { openStudentDetail(s); });
+  card.addEventListener('click', function() { openStudentStatsPage(s); });
   return card;
 }
 
@@ -580,6 +643,170 @@ function openStudentDetail(s) {
   }
 
   document.getElementById('studentDetailModal').classList.add('open');
+}
+
+function openStudentStatsPage(s) {
+  // Header bilgisi
+  document.getElementById('statsAvatar').textContent = s.displayName.charAt(0).toUpperCase();
+  document.getElementById('statsName').textContent = s.displayName + ' · @' + s.username;
+  document.getElementById('statsLevel').textContent = '';
+
+  // Sayfaya geç
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-student-stats').classList.add('active');
+
+  // Tab sıfırla
+  switchStatsTab('week', document.getElementById('stab-week'));
+
+  // weeklyStats ile doldur
+  renderStatsWeekTab(s.stats);
+
+  // coachView'dan tam veri çek
+  _db.collection('coachView').doc(s.uid).get().then(function(doc) {
+    var cv = doc.exists ? doc.data() : null;
+    if (cv && cv.weekStats) {
+      document.getElementById('statsLevel').textContent =
+        'Seviye ' + (cv.weekStats.level || 1) + ' · ' + (cv.weekStats.levelTitle || '') +
+        ' · 🔥 ' + (cv.weekStats.totalAllMins || 0) + ' toplam dk';
+    }
+    renderStatsAllTime(cv);
+    renderStatsDeneme(cv);
+    renderStatsChart(cv);
+  });
+}
+
+function goBackToStudents() {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.getElementById('page-students').classList.add('active');
+  // Tab bar'da öğrenciler sekmesini aktif yap
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn')[1].classList.add('active');
+}
+
+function switchStatsTab(tab, el) {
+  ['week','alltime','deneme','chart'].forEach(function(t) {
+    var el2 = document.getElementById('stab-content-' + t);
+    if (el2) el2.style.display = t === tab ? 'block' : 'none';
+    var btn = document.getElementById('stab-' + t);
+    if (btn) btn.classList.toggle('active-dtab', t === tab);
+  });
+}
+
+function renderStatsWeekTab(stats) {
+  var totalMins = stats ? (stats.totalMins || 0) : 0;
+  var totalSoru = stats ? (stats.totalSoru || 0) : 0;
+  var totalKonu = stats ? (stats.totalKonu || 0) : 0;
+  document.getElementById('statsWeekSummary').innerHTML =
+    '<div class="report-stat"><div class="report-stat-val">' + totalMins + '</div><div class="report-stat-lbl">Dakika</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val">' + totalSoru + '</div><div class="report-stat-lbl">Soru</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val">' + totalKonu + '</div><div class="report-stat-lbl">Konu</div></div>';
+
+  var subEl = document.getElementById('statsWeekSubjects');
+  var subjects = stats && stats.subjectProgress ? stats.subjectProgress : [];
+  if (!subjects.length) { subEl.innerHTML = noData(); }
+  else {
+    var maxM = Math.max.apply(null, subjects.map(function(s){ return s.mins || 0; }));
+    subEl.innerHTML = subjects.map(function(s) {
+      var pct = maxM > 0 ? Math.round((s.mins||0)/maxM*100) : 0;
+      return barRow(s.name, (s.mins||0) + 'dk', pct, 'var(--accent)', 'var(--accent2)');
+    }).join('');
+  }
+
+  var netsEl = document.getElementById('statsWeekNets');
+  var nets = stats && stats.bestNets ? stats.bestNets : [];
+  if (!nets.length) { netsEl.innerHTML = noData(); }
+  else {
+    netsEl.innerHTML = nets.map(function(n) {
+      var label = n.type ? n.type.replace('_',' ') : '';
+      return netRow(label, typeof n.net === 'number' ? n.net.toFixed(2) : '—');
+    }).join('');
+  }
+}
+
+function renderStatsAllTime(cv) {
+  if (!cv) { document.getElementById('statsAllSummary').innerHTML = noData(); return; }
+  var ws = cv.weekStats || {};
+  document.getElementById('statsAllSummary').innerHTML =
+    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (ws.totalAllMins||0) + '</div><div class="report-stat-lbl">Toplam dk</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (ws.totalAllSoru||0) + '</div><div class="report-stat-lbl">Toplam Soru</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val" style="font-size:1.1rem">' + (ws.totalDeneme||0) + '</div><div class="report-stat-lbl">Deneme</div></div>';
+
+  var subEl = document.getElementById('statsAllSubjects');
+  var subj = cv.subjectAllTime ? Object.entries(cv.subjectAllTime) : [];
+  if (!subj.length) { subEl.innerHTML = noData(); }
+  else {
+    var maxM = Math.max.apply(null, subj.map(function(x){ return x[1].mins||0; }));
+    subEl.innerHTML = subj.sort(function(a,b){ return (b[1].mins||0)-(a[1].mins||0); }).map(function(x) {
+      var pct = maxM > 0 ? Math.round((x[1].mins||0)/maxM*100) : 0;
+      var acc = x[1].soru > 0 ? Math.round(x[1].dogru/x[1].soru*100) : 0;
+      return barRow(x[0], (x[1].mins||0) + 'dk · %' + acc + ' doğru', pct, 'var(--coach)', '#fbbf24');
+    }).join('');
+  }
+
+  var typeEl = document.getElementById('statsTypeDist');
+  var td = cv.typeDist || {};
+  var total = (td.konu||0)+(td.soru||0)+(td.genel||0);
+  if (!total) { typeEl.innerHTML = noData(); }
+  else {
+    typeEl.innerHTML = [
+      {label:'Konu Anlatımı', val:td.konu||0, color:'var(--accent)'},
+      {label:'Soru Çözme',    val:td.soru||0, color:'var(--accent2)'},
+      {label:'Genel Tekrar',  val:td.genel||0, color:'var(--accent3)'}
+    ].filter(function(x){ return x.val>0; }).map(function(x) {
+      var pct = Math.round(x.val/total*100);
+      return barRow(x.label, pct+'%', pct, x.color, x.color);
+    }).join('');
+  }
+}
+
+function renderStatsDeneme(cv) {
+  var el = document.getElementById('statsDenemeler');
+  var list = cv && cv.recentDenemeler ? cv.recentDenemeler : [];
+  if (!list.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📝</div><div class="empty-text">Henüz deneme yok</div></div>'; return; }
+  el.innerHTML = list.map(function(d) {
+    var typeLabel = d.bransLabel || (d.type||'').replace('_',' ');
+    return '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">' +
+      '<div><div style="font-size:0.85rem;font-weight:900">' + (d.isim || typeLabel) + '</div>' +
+      '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">' + typeLabel + (d.date ? ' · '+d.date : '') + '</div></div>' +
+      '<div style="font-family:Space Mono,monospace;font-size:1.1rem;font-weight:700;color:var(--accent3)">' + (typeof d.totalNet==='number' ? d.totalNet.toFixed(2) : '\u2014') + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderStatsChart(cv) {
+  var svg = document.getElementById('statsChartSvg');
+  var listEl = document.getElementById('statsChartList');
+  if (!svg) return;
+  var daily = cv && cv.dailySummary ? cv.dailySummary.slice(-30) : [];
+  if (!daily.length) { svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#4b6280" font-size="11" font-family="Nunito">Veri yok</text>'; return; }
+
+  var maxM = Math.max.apply(null, daily.map(function(d){ return d.mins; })) || 1;
+  var W = Math.max(300, daily.length * 16);
+  svg.setAttribute('width', W);
+  var barW = Math.max(10, (W / daily.length) - 3);
+  var bars = daily.map(function(d, i) {
+    var h = Math.round((d.mins / maxM) * 80);
+    var x = i * (W / daily.length);
+    var color = d.mins > 0 ? 'url(#sGrad)' : 'rgba(255,255,255,0.05)';
+    return '<rect x="' + x + '" y="' + (90-h) + '" width="' + barW + '" height="' + Math.max(h,2) + '" rx="3" fill="' + color + '"/>';
+  }).join('');
+  svg.innerHTML = '<defs><linearGradient id="sGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient></defs>' + bars;
+
+  // Son 7 günün listesi
+  if (listEl) {
+    var last7 = daily.slice(-7).reverse();
+    listEl.innerHTML = last7.map(function(d) {
+      var hrs = Math.floor(d.mins/60), mins = d.mins%60;
+      var timeStr = hrs > 0 ? hrs+'s '+mins+'dk' : (d.mins > 0 ? d.mins+'dk' : '—');
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px">' +
+        '<span style="font-size:0.78rem;font-weight:800">' + d.date + '</span>' +
+        '<div style="display:flex;gap:14px">' +
+          '<span style="font-size:0.72rem;font-weight:800;color:var(--accent)">⏱ ' + timeStr + '</span>' +
+          '<span style="font-size:0.72rem;font-weight:800;color:var(--accent2)">📝 ' + (d.soru||0) + ' soru</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
 }
 
 function closeStudentDetail() {
