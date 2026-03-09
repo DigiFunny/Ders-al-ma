@@ -463,7 +463,6 @@ function loadPendingRequests() {
 }
 
 function loadStudents() {
-  // Önceki listener'ları temizle
   Object.values(_snapListeners).forEach(function(unsub) { unsub(); });
   _snapListeners = {};
 
@@ -488,34 +487,41 @@ function loadStudents() {
           };
           _students.push(student);
 
-          // coachView realtime listener
-          var unsub = _db.collection('coachView').doc(req.studentUid).onSnapshot(function(cvDoc) {
-            var cv = cvDoc.exists ? cvDoc.data() : null;
-            student.coachView = cv;
-            student.stats = cv ? cv.weekStats : null;
-            student.lastSeen = cv ? cv.updatedAt : null;
+          // weeklyStats'a snapshot — bu koleksiyon zaten dolu
+          var unsub1 = _db.collection('weeklyStats').doc(req.studentUid).onSnapshot(function(sDoc) {
+            student.stats = sDoc.exists ? sDoc.data() : null;
+            student.lastSeen = student.stats ? student.stats.updatedAt : null;
 
-            // Eğer şu an bu öğrencinin detay sayfasındaysak güncelle
             if (_currentDetailUid === student.uid) {
               updateLiveBadge(student.lastSeen);
               renderStatsWeekTab(student.stats);
-              renderStatsAllTime(cv);
-              renderStatsDeneme(cv);
-              renderStatsChart(cv);
-              if (cv && cv.weekStats) {
+              if (student.stats) {
                 document.getElementById('statsLevel').textContent =
-                  'Seviye ' + (cv.weekStats.level||1) + ' · ' + (cv.weekStats.levelTitle||'') +
-                  ' · ' + (cv.weekStats.totalAllMins||0) + ' dk';
+                  'Seviye ' + (student.stats.level||1) + ' · ' + (student.stats.levelTitle||'') +
+                  ' · ' + (student.stats.totalAllMins||0) + ' dk';
               }
             }
 
-            // Liste ve genel bakış güncelle
             renderStudents();
             renderOverviewStudents();
             updateOverviewStats();
-          }, function(err) { console.warn('Snapshot err:', err); });
+          }, function(err) { console.warn('weeklyStats snap err:', err); });
 
-          _snapListeners[req.studentUid] = unsub;
+          // coachView'a da snapshot — tam detay için
+          var unsub2 = _db.collection('coachView').doc(req.studentUid).onSnapshot(function(cvDoc) {
+            var cv = cvDoc.exists ? cvDoc.data() : null;
+            student.coachView = cv;
+            if (cv && cv.updatedAt) student.lastSeen = cv.updatedAt;
+
+            if (_currentDetailUid === student.uid) {
+              updateLiveBadge(student.lastSeen);
+              renderStatsAllTime(cv);
+              renderStatsDeneme(cv);
+              renderStatsChart(cv);
+            }
+          }, function(err) { console.warn('coachView snap err:', err); });
+
+          _snapListeners[req.studentUid] = function() { unsub1(); unsub2(); };
         });
         promises.push(p);
       });
