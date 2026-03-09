@@ -998,7 +998,13 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <!-- PAGE: CALIS -->
 <div class="app-wrap" id="appWrap"><div class="page" id="page-calis">
   <div class="timer-section">
-  <div class="sec">Zamanlayıcı</div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+    <div class="sec" style="margin-bottom:0">Zamanlayıcı</div>
+    <button id="notifBtn" onclick="handleNotifBtn()" style="background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;font-size:0.72rem;font-weight:800;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.2s">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span id="notifBtnLabel">Bildirim</span>
+    </button>
+  </div>
   <div class="mode-pills" id="modePills">
     <div class="mode-pill active" onclick="setTimerMode(0,this)">⏱ 25</div>
     <div class="mode-pill" onclick="setTimerMode(1,this)">⏱ 15</div>
@@ -1198,6 +1204,23 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="sec">Ders Bazında Konu Haritası</div>
   <div class="topic-map-wrap" id="topicMapWrap"></div>
 
+  <!-- PIE CHARTS -->
+  <div class="sec">Ders Dağılımı & Çalışma Türü</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+    <!-- Ders Dağılımı -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px 10px">
+      <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;text-align:center;margin-bottom:10px">Ders Dağılımı</div>
+      <svg id="pieSubject" viewBox="0 0 100 100" width="100%" style="max-width:130px;display:block;margin:0 auto"></svg>
+      <div id="pieLegendSubject" style="margin-top:10px;display:flex;flex-direction:column;gap:4px"></div>
+    </div>
+    <!-- Çalışma Türü -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px 10px">
+      <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;text-align:center;margin-bottom:10px">Çalışma Türü</div>
+      <svg id="pieType" viewBox="0 0 100 100" width="100%" style="max-width:130px;display:block;margin:0 auto"></svg>
+      <div id="pieLegendType" style="margin-top:10px;display:flex;flex-direction:column;gap:4px"></div>
+    </div>
+  </div>
+
   <div class="sec">Deneme Net Grafiği</div>
   <div id="denemeNetChartWrap" style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px 12px;margin-bottom:10px"></div>
 
@@ -1231,6 +1254,12 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="summary-grid" id="rozetStats"></div>
   <div class="sec">Arkadaşlar</div>
   <div id="friendsWrap"></div>
+
+  <!-- Koç İstekleri -->
+  <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
+    <div class="sec" style="margin-bottom:8px">Koç İsteklerim</div>
+    <div id="coachRequestsList"></div>
+  </div>
 
   <div class="sec">Başarımlarım</div>
   <div class="badges-grid" id="badgesGrid"></div>
@@ -1299,7 +1328,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="day-modal-sheet" style="max-height:50vh">
     <div class="day-modal-handle"></div>
     <div class="day-modal-header">
-      <div class="day-modal-title">Arkadaş Ekle</div>
+      <div class="day-modal-title" id="addFriendModalTitle">Kullanıcı Ara</div>
       <button class="day-modal-close" onclick="closeAddFriendModal()">✕</button>
     </div>
     <div class="day-modal-body">
@@ -1308,9 +1337,19 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <input type="text" id="friendUsernameInput" placeholder="kullaniciadi" autocomplete="off"
           style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:13px 12px 13px 30px;font-size:0.92rem;color:var(--text);outline:none;transition:border-color 0.2s"
           onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
-          onkeydown="if(event.key==='Enter')addFriend()">
+          onkeydown="if(event.key==='Enter')searchUser()">
       </div>
-      <button onclick="addFriend()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-size:0.88rem;font-weight:800;cursor:pointer">Ekle</button>
+      <!-- Kullanıcı önizleme -->
+      <div id="userPreview" style="display:none;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px;align-items:center;gap:12px">
+        <div id="previewAvatar" style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;flex-shrink:0"></div>
+        <div style="flex:1;min-width:0">
+          <div id="previewName" style="font-size:0.88rem;font-weight:900"></div>
+          <div id="previewType" style="font-size:0.68rem;font-weight:800;margin-top:2px"></div>
+        </div>
+      </div>
+      <button onclick="searchUser()" id="searchUserBtn" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;margin-bottom:8px">🔍 Ara</button>
+      <button onclick="confirmAddUser()" id="confirmAddBtn" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;margin-bottom:8px" id="confirmAddBtn"></button>
+      <div id="friendAddMsg" style="text-align:center;font-size:0.8rem;font-weight:700;color:var(--muted);margin-top:4px"></div>
       <div id="friendAddMsg" style="font-size:0.75rem;color:var(--muted);margin-top:10px;min-height:18px;text-align:center"></div>
     </div>
   </div>
@@ -1743,6 +1782,7 @@ function playBreakFinishSignal() {
 function timerDone() {
   if (!timerModes[timerMode].isBreak) {
     playTimerFinishSignal();
+    notifyTimerDone(false);
     const mins = Math.max(1, Math.round(timerTotal / 60));
     if (currentEntryType === 'soru') {
       // Soru çözümüyse popup aç
@@ -1753,6 +1793,7 @@ function timerDone() {
     }
   } else {
     playBreakFinishSignal();
+    notifyTimerDone(true);
     showToast('☕ Mola bitti! Devam et 💪');
   }
   timerRemain = timerTotal;
@@ -2580,6 +2621,97 @@ function renderStat() {
 }
 
 // ════════════════════════════════════════════
+// PIE CHARTS
+// ════════════════════════════════════════════
+var SUBJECT_COLORS = {
+  'Türkçe':'#f472b6','Matematik':'#38bdf8','Fizik':'#60a5fa','Kimya':'#a78bfa',
+  'Biyoloji':'#34d399','Tarih':'#fb923c','Coğrafya':'#fbbf24','Edebiyat':'#c084fc',
+  'Felsefe':'#818cf8','Geometri':'#f43f5e','Din Kültürü':'#4ade80','İngilizce':'#22d3ee'
+};
+var TYPE_COLORS = { 'konu':'#38bdf8', 'soru':'#818cf8', 'genel':'#34d399' };
+var TYPE_LABELS = { 'konu':'Konu Anlatımı', 'soru':'Soru Çözme', 'genel':'Genel Tekrar' };
+
+function renderPieCharts() {
+  var filtered = getFilteredEntries();
+
+  // --- Ders Dağılımı (süreye göre) ---
+  var subjectMap = {};
+  filtered.forEach(function(e) {
+    if (!e.subject || !e.sure) return;
+    subjectMap[e.subject] = (subjectMap[e.subject] || 0) + e.sure;
+  });
+  var subjectData = Object.keys(subjectMap).map(function(k) {
+    return { label: k, value: subjectMap[k], color: SUBJECT_COLORS[k] || '#64748b' };
+  }).sort(function(a,b){ return b.value - a.value; }).slice(0, 6);
+
+  // --- Çalışma Türü ---
+  var typeMap = { konu: 0, soru: 0, genel: 0 };
+  filtered.forEach(function(e) {
+    if (e.type && typeMap.hasOwnProperty(e.type)) typeMap[e.type] += (e.sure || 1);
+  });
+  var typeData = Object.keys(typeMap).filter(function(k){ return typeMap[k] > 0; }).map(function(k) {
+    return { label: TYPE_LABELS[k], value: typeMap[k], color: TYPE_COLORS[k] };
+  });
+
+  drawDonut('pieSubject', 'pieLegendSubject', subjectData);
+  drawDonut('pieType', 'pieLegendType', typeData);
+}
+
+function drawDonut(svgId, legendId, data) {
+  var svgEl = document.getElementById(svgId);
+  var legendEl = document.getElementById(legendId);
+  if (!svgEl || !legendEl) return;
+
+  var total = data.reduce(function(a,d){ return a + d.value; }, 0);
+  if (total === 0) {
+    svgEl.innerHTML = '<text x="50" y="54" text-anchor="middle" fill="#4b6280" font-size="8" font-family="Nunito,sans-serif">Veri yok</text>';
+    legendEl.innerHTML = '';
+    return;
+  }
+
+  var cx = 50, cy = 50, r = 38, innerR = 24;
+  var startAngle = -Math.PI / 2;
+  var paths = '';
+
+  data.forEach(function(d) {
+    var angle = (d.value / total) * Math.PI * 2;
+    var endAngle = startAngle + angle;
+    var largeArc = angle > Math.PI ? 1 : 0;
+
+    var x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
+    var x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
+    var x3 = cx + innerR * Math.cos(endAngle), y3 = cy + innerR * Math.sin(endAngle);
+    var x4 = cx + innerR * Math.cos(startAngle), y4 = cy + innerR * Math.sin(startAngle);
+
+    paths += '<path d="M'+x1+' '+y1+' A'+r+' '+r+' 0 '+largeArc+' 1 '+x2+' '+y2
+      +' L'+x3+' '+y3+' A'+innerR+' '+innerR+' 0 '+largeArc+' 0 '+x4+' '+y4+' Z"'
+      +' fill="'+d.color+'" opacity="0.9"/>';
+    startAngle = endAngle;
+  });
+
+  // Center text
+  var topLabel = data[0] ? data[0].label.split(' ')[0] : '';
+  var topPct = data[0] ? Math.round(data[0].value / total * 100) : 0;
+  paths += '<text x="50" y="47" text-anchor="middle" fill="#e2e8f0" font-size="10" font-weight="700" font-family="Space Mono,monospace">'+topPct+'%</text>';
+  paths += '<text x="50" y="57" text-anchor="middle" fill="#4b6280" font-size="5.5" font-family="Nunito,sans-serif">'+topLabel+'</text>';
+
+  svgEl.innerHTML = paths;
+
+  // Legend
+  legendEl.innerHTML = data.map(function(d) {
+    var pct = Math.round(d.value / total * 100);
+    var hrs = Math.floor(d.value / 60);
+    var mins = d.value % 60;
+    var timeStr = hrs > 0 ? hrs+'s '+mins+'dk' : mins+'dk';
+    return '<div style="display:flex;align-items:center;gap:5px">'
+      +'<div style="width:8px;height:8px;border-radius:2px;background:'+d.color+';flex-shrink:0"></div>'
+      +'<div style="font-size:0.6rem;font-weight:800;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.label+'</div>'
+      +'<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">'+pct+'%</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ════════════════════════════════════════════
 // STREAK
 // ════════════════════════════════════════════
 function updateStreak() {
@@ -2769,6 +2901,8 @@ function onUserLoggedIn(user) {
   _fbDb.collection('users').doc(user.uid).get().then(function(doc) {
     var username = doc.exists ? doc.data().username : user.email.split('@')[0];
     var displayName = doc.exists ? doc.data().displayName : username;
+    var accountType = doc.exists ? (doc.data().accountType || 'student') : 'student';
+    if (_currentUser) { _currentUser._username = username; _currentUser._accountType = accountType; }
 
     // User bar güncelle
     document.getElementById('userBar').style.display = 'flex';
@@ -2786,6 +2920,7 @@ function onUserLoggedIn(user) {
     // Arkadaşları render et
     renderFriends();
     renderAnaFriends();
+    loadCoachRequests();
   });
 }
 
@@ -3067,6 +3202,11 @@ function closeAddFriendModal() {
   document.getElementById('addFriendModal').classList.remove('open');
   document.getElementById('friendAddMsg').textContent = '';
   document.getElementById('friendUsernameInput').value = '';
+  var preview = document.getElementById('userPreview');
+  if (preview) preview.style.display = 'none';
+  var confirmBtn = document.getElementById('confirmAddBtn');
+  if (confirmBtn) confirmBtn.style.display = 'none';
+  _foundUser = null;
 }
 
 var _openFriendUid = null;
@@ -3298,28 +3438,140 @@ function removeFriendFromModal() {
 }
 
 
-function addFriend() {
+var _foundUser = null; // {uid, username, displayName, accountType}
+
+function searchUser() {
   if (!_currentUser) return;
   var username = (document.getElementById('friendUsernameInput').value || '').trim().toLowerCase().replace(/^@/, '');
   var msgEl = document.getElementById('friendAddMsg');
   if (!username) { msgEl.style.color='var(--warn)'; msgEl.textContent = 'Kullanıcı adı gir.'; return; }
 
   msgEl.style.color='var(--muted)'; msgEl.textContent = 'Aranıyor...';
+  document.getElementById('userPreview').style.display = 'none';
+  document.getElementById('confirmAddBtn').style.display = 'none';
+  _foundUser = null;
 
-  _fbDb.collection('usernames').doc(username).get().then(function(doc) {
-    if (!doc.exists) { msgEl.style.color='var(--warn)'; msgEl.textContent = 'Kullanıcı bulunamadı.'; return; }
-    var friendUid = doc.data().uid;
-    if (friendUid === _currentUser.uid) { msgEl.style.color='var(--warn)'; msgEl.textContent = 'Kendini ekleyemezsin.'; return; }
+  _fbDb.collection('usernames').doc(username).get().then(function(uDoc) {
+    if (!uDoc.exists) { msgEl.style.color='var(--warn)'; msgEl.textContent = 'Kullanıcı bulunamadı.'; return; }
+    var uid = uDoc.data().uid;
+    if (uid === _currentUser.uid) { msgEl.style.color='var(--warn)'; msgEl.textContent = 'Kendini ekleyemezsin.'; return; }
+    return _fbDb.collection('users').doc(uid).get().then(function(userDoc) {
+      var data = userDoc.exists ? userDoc.data() : {};
+      _foundUser = { uid: uid, username: username, displayName: data.displayName || username, accountType: data.accountType || 'student' };
 
-    return _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(friendUid).set({
-      username: username, addedAt: new Date().toISOString()
-    }).then(function() {
-      msgEl.style.color='var(--accent3)'; msgEl.textContent = '@' + username + ' arkadaş listene eklendi!';
-      document.getElementById('friendUsernameInput').value = '';
-      closeAddFriendModal();
-      loadFriends();
+      // Preview göster
+      var preview = document.getElementById('userPreview');
+      preview.style.display = 'flex';
+      document.getElementById('previewAvatar').textContent = _foundUser.displayName.charAt(0).toUpperCase();
+      document.getElementById('previewName').textContent = _foundUser.displayName + ' · @' + username;
+
+      var isCoach = _foundUser.accountType === 'coach';
+      var typeEl = document.getElementById('previewType');
+      if (isCoach) {
+        typeEl.innerHTML = '<span style="color:var(--accent3)">🎯 Koç</span>';
+      } else {
+        typeEl.innerHTML = '<span style="color:var(--accent)">📚 Öğrenci</span>';
+      }
+
+      // Confirm butonu
+      var confirmBtn = document.getElementById('confirmAddBtn');
+      confirmBtn.style.display = 'block';
+      if (isCoach) {
+        confirmBtn.textContent = '🎯 Koçluk İsteği Gönder';
+        confirmBtn.style.background = 'linear-gradient(135deg,var(--accent3),#fbbf24)';
+      } else {
+        confirmBtn.textContent = '➕ Arkadaş Olarak Ekle';
+        confirmBtn.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))';
+      }
+      msgEl.textContent = '';
     });
-  }).catch(function(e) { msgEl.textContent = '❌ Hata: ' + e.message; });
+  }).catch(function(e) { msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ Hata: ' + e.message; });
+}
+
+function confirmAddUser() {
+  if (!_foundUser || !_currentUser) return;
+  var msgEl = document.getElementById('friendAddMsg');
+  msgEl.style.color='var(--muted)'; msgEl.textContent = 'Ekleniyor...';
+
+  if (_foundUser.accountType === 'coach') {
+    // Koçluk isteği gönder
+    sendCoachRequest(_foundUser).then(function() {
+      msgEl.style.color='var(--accent3)';
+      msgEl.textContent = '✅ Koçluk isteği gönderildi!';
+      document.getElementById('confirmAddBtn').style.display = 'none';
+      setTimeout(closeAddFriendModal, 1500);
+    }).catch(function(e) { msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ ' + e.message; });
+  } else {
+    // Normal arkadaş ekle
+    _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_foundUser.uid).set({
+      username: _foundUser.username,
+      displayName: _foundUser.displayName,
+      addedAt: new Date().toISOString()
+    }).then(function() {
+      msgEl.style.color='var(--accent3)'; msgEl.textContent = '✅ Arkadaş listene eklendi!';
+      setTimeout(function(){ closeAddFriendModal(); loadFriends(); }, 1200);
+    }).catch(function(e) { msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ ' + e.message; });
+  }
+}
+
+function sendCoachRequest(coach) {
+  // Daha önce istek gönderilmiş mi kontrol et
+  return _fbDb.collection('coachRequests')
+    .where('studentUid', '==', _currentUser.uid)
+    .where('coachUid', '==', coach.uid)
+    .get().then(function(snap) {
+      if (!snap.empty) throw new Error('Zaten istek gönderilmiş!');
+      return _fbDb.collection('coachRequests').add({
+        studentUid: _currentUser.uid,
+        studentUsername: _currentUser._username || '',
+        coachUid: coach.uid,
+        status: 'pending', // pending | accepted | rejected
+        sentAt: new Date().toISOString()
+      });
+    });
+}
+
+function addFriend() { searchUser(); } // legacy compat
+
+function loadCoachRequests() {
+  if (!_currentUser) return;
+  var wrap = document.getElementById('coachRequestsWrap');
+  var list = document.getElementById('coachRequestsList');
+  if (!wrap || !list) return;
+
+  _fbDb.collection('coachRequests')
+    .where('studentUid', '==', _currentUser.uid)
+    .get().then(function(snap) {
+      if (snap.empty) { wrap.style.display = 'none'; return; }
+      wrap.style.display = 'block';
+      list.innerHTML = '';
+      snap.forEach(function(doc) {
+        var req = doc.data();
+        var statusColor = req.status === 'accepted' ? 'var(--accent3)' : req.status === 'rejected' ? 'var(--warn)' : 'var(--yellow)';
+        var statusLabel = req.status === 'accepted' ? '✅ Kabul Edildi' : req.status === 'rejected' ? '❌ Reddedildi' : '⏳ Bekliyor';
+
+        // Get coach display name
+        _fbDb.collection('users').doc(req.coachUid).get().then(function(uDoc) {
+          var coachName = uDoc.exists ? uDoc.data().displayName : req.coachUid;
+          var card = document.createElement('div');
+          card.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px';
+          card.innerHTML =
+            '<div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),#fbbf24);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;flex-shrink:0">🎯</div>' +
+            '<div style="flex:1">' +
+              '<div style="font-size:0.85rem;font-weight:900">' + coachName + '</div>' +
+              '<div style="font-size:0.68rem;font-weight:800;color:' + statusColor + ';margin-top:2px">' + statusLabel + '</div>' +
+            '</div>' +
+          list.appendChild(card);
+        });
+      });
+    });
+}
+
+function cancelCoachRequest(reqId) {
+  _fbDb.collection('coachRequests').doc(reqId).delete().then(function() {
+    showToast('İstek iptal edildi.');
+    loadCoachRequests();
+  });
 }
 
 function loadFriends() {
@@ -3386,6 +3638,88 @@ function loadFriends() {
 
 // removeFriend moved to removeFriendFromModal
 
+
+// ════════════════════════════════════════════
+// BİLDİRİM SİSTEMİ
+// ════════════════════════════════════════════
+function handleNotifBtn() {
+  if (!('Notification' in window)) {
+    showToast('⚠️ Bu tarayıcı bildirim desteklemiyor.');
+    return;
+  }
+  if (Notification.permission === 'granted') {
+    showToast('🔔 Bildirimler zaten açık!');
+    return;
+  }
+  requestNotificationPermission();
+}
+
+function updateNotifBtn() {
+  var btn = document.getElementById('notifBtn');
+  var lbl = document.getElementById('notifBtnLabel');
+  if (!btn || !lbl) return;
+  if (!('Notification' in window)) { btn.style.display = 'none'; return; }
+  if (Notification.permission === 'granted') {
+    btn.style.borderColor = 'var(--accent3)';
+    btn.style.color = 'var(--accent3)';
+    lbl.textContent = 'Bildirim Açık';
+  } else if (Notification.permission === 'denied') {
+    btn.style.borderColor = 'var(--warn)';
+    btn.style.color = 'var(--warn)';
+    lbl.textContent = 'Bildirim Kapalı';
+  } else {
+    lbl.textContent = 'Bildirim Aç';
+  }
+}
+
+function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') return;
+  if (Notification.permission === 'denied') {
+    showToast('⚠️ Bildirimler engellendi. Tarayıcı ayarlarından izin ver.');
+    return;
+  }
+  Notification.requestPermission().then(function(perm) {
+    if (perm === 'granted') {
+      showToast('🔔 Bildirimler açık!');
+      updateNotifBtn();
+      // Test bildirimi gönder
+      sendNotification('🦊 Pugi hazır!', 'Zamanlayıcı bitince seni bilgilendireceğim.');
+    }
+  });
+}
+
+function sendNotification(title, body, icon) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    var n = new Notification(title, {
+      body: body,
+      icon: icon || 'icon-192.png',
+      badge: 'icon-192.png',
+      vibrate: [200, 100, 200],
+      tag: 'pugi-timer',
+      renotify: true
+    });
+    n.onclick = function() { window.focus(); n.close(); };
+    setTimeout(function(){ n.close(); }, 8000);
+  } catch(e) { console.log('Bildirim hatası:', e); }
+}
+
+function notifyTimerDone(isBreak) {
+  if (isBreak) {
+    sendNotification('☕ Mola Bitti!', 'Haydi devam et! 💪');
+  } else {
+    var subject = currentSubject || 'Çalışma';
+    sendNotification('✅ ' + subject + ' tamamlandı!', 'Harika iş! Bir sonraki adıma geçebilirsin.');
+  }
+}
+
+function notifyBreakStarted() {
+  var label = timerModes[timerMode] ? timerModes[timerMode].label : 'Mola';
+  var mins = timerModes[timerMode] ? Math.round(timerModes[timerMode].s / 60) : 5;
+  sendNotification('🎉 Çalışma bitti!', mins + ' dk ' + label + ' zamanı. Telefonu bırak 😌');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Ana sayfayı aktif et
   document.getElementById('page-ana').classList.add('active');
@@ -3405,6 +3739,7 @@ document.addEventListener('DOMContentLoaded', function() {
   newMotiv();
   applyTheme();
   initFirebase();
+  updateNotifBtn();
 });
 
 // YEDEKLEME
