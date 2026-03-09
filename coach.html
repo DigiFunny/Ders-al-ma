@@ -465,19 +465,28 @@ function loadPendingRequests() {
 function loadStudents() {
   Object.values(_snapListeners).forEach(function(unsub) { unsub(); });
   _snapListeners = {};
+  _students = [];
 
   _db.collection('coachRequests')
     .where('coachUid', '==', _user.uid)
     .where('status', '==', 'accepted')
     .get().then(function(snap) {
-      _students = [];
-      var promises = [];
+      if (snap.empty) {
+        renderStudents();
+        renderOverviewStudents();
+        updateOverviewStats();
+        populateStudentSelects();
+        return;
+      }
 
-      snap.forEach(function(doc) {
-        var req = doc.data();
-        var p = _db.collection('users').doc(req.studentUid).get().then(function(uDoc) {
-          if (!uDoc.exists) return;
-          var student = {
+      var studentUids = [];
+      snap.forEach(function(doc) { studentUids.push(doc.data()); });
+
+      // Önce tüm user profillerini çek
+      var userPromises = studentUids.map(function(req) {
+        return _db.collection('users').doc(req.studentUid).get().then(function(uDoc) {
+          if (!uDoc.exists) return null;
+          return {
             uid: req.studentUid,
             displayName: uDoc.data().displayName || req.studentUsername,
             username: uDoc.data().username || req.studentUsername,
@@ -485,57 +494,47 @@ function loadStudents() {
             coachView: null,
             lastSeen: null
           };
-          _students.push(student);
+        });
+      });
 
-          // weeklyStats'a snapshot — bu koleksiyon zaten dolu
-          var unsub1 = _db.collection('weeklyStats').doc(req.studentUid).onSnapshot(function(sDoc) {
+      Promise.all(userPromises).then(function(students) {
+        _students = students.filter(Boolean);
+        populateStudentSelects();
+
+        // Şimdi her öğrenci için snapshot başlat
+        _students.forEach(function(student) {
+          // weeklyStats snapshot
+          var unsub1 = _db.collection('weeklyStats').doc(student.uid).onSnapshot(function(sDoc) {
             student.stats = sDoc.exists ? sDoc.data() : null;
-            student.lastSeen = student.stats ? student.stats.updatedAt : null;
+            if (student.stats && student.stats.updatedAt) student.lastSeen = student.stats.updatedAt;
 
-            if (_currentDetailUid === student.uid) {
-              updateLiveBadge(student.lastSeen);
-              renderStatsWeekTab(student.stats);
-              renderStatsAllTime(student.coachView, student.stats);
-              renderStatsDeneme(student.coachView, student.stats);
-              renderStatsChart(student.coachView, student.stats);
-              var lvData = (student.coachView && student.coachView.weekStats) ? student.coachView.weekStats : student.stats;
-              if (lvData) {
-                document.getElementById('statsLevel').textContent =
-                  'Seviye ' + (lvData.level||1) + ' · ' + (lvData.levelTitle||'') +
-                  ' · ' + (lvData.totalAllMins||0) + ' dk';
-              }
-            }
-
+            // Her snapshot geldiğinde listeyi güncelle
             renderStudents();
             renderOverviewStudents();
             updateOverviewStats();
-          }, function(err) { console.warn('weeklyStats snap err:', err); });
 
-          // coachView'a da snapshot — tam detay için
-          var unsub2 = _db.collection('coachView').doc(req.studentUid).onSnapshot(function(cvDoc) {
-            var cv = cvDoc.exists ? cvDoc.data() : null;
-            student.coachView = cv;
-            if (cv && cv.updatedAt) student.lastSeen = cv.updatedAt;
-
+            // Detay sayfası açıksa onu da güncelle
             if (_currentDetailUid === student.uid) {
               updateLiveBadge(student.lastSeen);
-              renderStatsAllTime(cv, student.stats);
-              renderStatsDeneme(cv, student.stats);
-              renderStatsChart(cv, student.stats);
+              renderStatsWeekTab(student.stats);
+              renderStatsAllTime(null, student.stats);
+              renderStatsDeneme(null, student.stats);
+              renderStatsChart(null, student.stats);
+              if (student.stats) {
+                document.getElementById('statsLevel').textContent =
+                  'Seviye ' + (student.stats.level||1) + ' · ' + (student.stats.levelTitle||'') +
+                  ' · ' + (student.stats.totalAllMins||0) + ' dk';
+              }
             }
-          }, function(err) { console.warn('coachView snap err:', err); });
+          }, function(err) { console.warn('weeklyStats snap err:', err); });
 
-          _snapListeners[req.studentUid] = function() { unsub1(); unsub2(); };
+          _snapListeners[student.uid] = unsub1;
         });
-        promises.push(p);
-      });
 
-      return Promise.all(promises);
-    }).then(function() {
-      renderStudents();
-      renderOverviewStudents();
-      updateOverviewStats();
-      populateStudentSelects();
+        // İlk render snapshot gelmeden önce (isim/avatar için)
+        renderStudents();
+        renderOverviewStudents();
+      });
     });
 }
 
