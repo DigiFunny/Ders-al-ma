@@ -696,26 +696,108 @@ function openStudentStatsPage(s) {
 
   document.getElementById('statsAvatar').textContent = s.displayName.charAt(0).toUpperCase();
   document.getElementById('statsName').textContent = s.displayName + ' · @' + s.username;
-  document.getElementById('statsLevel').textContent = '';
+  document.getElementById('statsLevel').textContent = '⏳ Yükleniyor...';
 
-  // Sayfaya geç
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('page-student-stats').classList.add('active');
   switchStatsTab('week', document.getElementById('stab-week'));
 
-  var cv = s.coachView || null;
-  var ws = s.stats || null; // weeklyStats - her zaman dolu
+  var ws = s.stats || null;
   renderStatsWeekTab(ws);
-  renderStatsAllTime(cv, ws);
-  renderStatsDeneme(cv, ws);
-  renderStatsChart(cv, ws);
-  var lvData = (cv && cv.weekStats) ? cv.weekStats : ws;
-  if (lvData) {
-    document.getElementById('statsLevel').textContent =
-      'Seviye ' + (lvData.level||1) + ' · ' + (lvData.levelTitle||'') +
-      ' · ' + (lvData.totalAllMins||0) + ' dk';
-  }
   updateLiveBadge(s.lastSeen);
+
+  // userData'dan tam veriyi çek ve hesapla
+  _db.collection('userData').doc(s.uid).get().then(function(doc) {
+    if (!doc.exists) {
+      renderStatsAllTime(null, ws);
+      renderStatsDeneme(null, ws);
+      renderStatsChart(null, ws);
+      return;
+    }
+    var data = doc.data();
+    var entries = data.entries || [];
+    var denemeler = data.denemeler || [];
+
+    // subjectAllTime hesapla
+    var subjectAllTime = {};
+    entries.forEach(function(e) {
+      if (!e.subject) return;
+      if (!subjectAllTime[e.subject]) subjectAllTime[e.subject] = {mins:0, soru:0, dogru:0, yanlis:0};
+      subjectAllTime[e.subject].mins   += (e.sure   || 0);
+      subjectAllTime[e.subject].soru   += (e.dogru  || 0) + (e.yanlis || 0);
+      subjectAllTime[e.subject].dogru  += (e.dogru  || 0);
+      subjectAllTime[e.subject].yanlis += (e.yanlis || 0);
+    });
+
+    // typeDist hesapla
+    var typeDist = {konu:0, soru:0, genel:0};
+    entries.forEach(function(e) {
+      if (e.type && typeDist.hasOwnProperty(e.type)) typeDist[e.type] += (e.sure || 1);
+    });
+
+    // dailySummary hesapla (son 60 gün)
+    var last60 = new Date(); last60.setDate(last60.getDate() - 60);
+    var dailyMap = {};
+    entries.forEach(function(e) {
+      try {
+        var d = new Date(e.date.split('.').reverse().join('-'));
+        if (d < last60) return;
+      } catch(x) { return; }
+      if (!dailyMap[e.date]) dailyMap[e.date] = {date:e.date, mins:0, soru:0, konu:0};
+      dailyMap[e.date].mins += (e.sure || 0);
+      dailyMap[e.date].soru += (e.dogru || 0) + (e.yanlis || 0);
+      if (e.type === 'konu') dailyMap[e.date].konu++;
+    });
+    var dailySummary = Object.values(dailyMap).sort(function(a,b){ return a.date > b.date ? 1 : -1; });
+
+    // recentDenemeler
+    var recentDenemeler = denemeler.slice(0, 20).map(function(d) {
+      return {type: d.type||'', bransLabel: d.bransLabel||'', isim: d.isim||'', date: d.date||'', totalNet: d.totalNet||0};
+    });
+
+    // bestNets
+    var bestNetsMap = {};
+    denemeler.forEach(function(d) {
+      var k = d.bransLabel || d.type || 'Deneme';
+      if (!bestNetsMap[k] || d.totalNet > bestNetsMap[k]) bestNetsMap[k] = d.totalNet;
+    });
+    var bestNets = Object.entries(bestNetsMap).map(function(x){ return {type:x[0], net:x[1]}; });
+
+    // ws'e eksik alanları ekle
+    var fullWs = Object.assign({}, ws || {}, {
+      subjectAllTime: subjectAllTime,
+      typeDist: typeDist,
+      dailySummary: dailySummary,
+      recentDenemeler: recentDenemeler,
+      bestNets: bestNets,
+      totalAllMins: entries.reduce(function(a,e){ return a+(e.sure||0); }, 0),
+      totalAllSoru: entries.reduce(function(a,e){ return a+(e.dogru||0)+(e.yanlis||0); }, 0),
+      totalDeneme: denemeler.length
+    });
+
+    if (fullWs.level) {
+      document.getElementById('statsLevel').textContent =
+        'Seviye ' + (fullWs.level||1) + ' · ' + (fullWs.levelTitle||'') +
+        ' · ' + fullWs.totalAllMins + ' dk';
+    } else {
+      document.getElementById('statsLevel').textContent = fullWs.totalAllMins + ' toplam dk';
+    }
+
+    // Detay sayfası hâlâ bu öğrencide mi?
+    if (_currentDetailUid !== s.uid) return;
+    renderStatsWeekTab(fullWs);
+    renderStatsAllTime(null, fullWs);
+    renderStatsDeneme(null, fullWs);
+    renderStatsChart(null, fullWs);
+
+    // snapshot güncellemelerinde de bu veriyi kullan
+    s._fullData = fullWs;
+  }).catch(function(e) {
+    console.warn('userData fetch err:', e);
+    renderStatsAllTime(null, ws);
+    renderStatsDeneme(null, ws);
+    renderStatsChart(null, ws);
+  });
 }
 
 function updateLiveBadge(updatedAt) {
