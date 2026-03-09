@@ -2843,7 +2843,6 @@ function signInWithGoogle() {
         batch.set(_fbDb.collection('users').doc(user.uid), {
           username: finalUsername,
           displayName: displayName,
-          email: user.email,
           createdAt: new Date().toISOString()
         });
         batch.set(_fbDb.collection('usernames').doc(finalUsername), { uid: user.uid });
@@ -2887,7 +2886,7 @@ function submitAuth() {
       if (!cred) return;
       var uid = cred.user.uid;
       var batch = _fbDb.batch();
-      batch.set(_fbDb.collection('users').doc(uid), { username: username, displayName: username, email: email, createdAt: new Date().toISOString() });
+      batch.set(_fbDb.collection('users').doc(uid), { username: username, displayName: username, createdAt: new Date().toISOString() });
       batch.set(_fbDb.collection('usernames').doc(username), { uid: uid });
       return batch.commit();
     }).then(function() {
@@ -3248,13 +3247,13 @@ function renderAnaFriends() {
       var username = doc.data().username;
 
       Promise.all([
-        _fbDb.collection('weeklyStats').doc(friendUid).get(),
-        _fbDb.collection('users').doc(friendUid).get()
+        _fbDb.collection('weeklyStats').doc(friendUid).get().catch(function(){ return {exists:false}; }),
+        _fbDb.collection('users').doc(friendUid).get().catch(function(){ return {exists:false}; })
       ]).then(function(results) {
         var statsDoc = results[0];
         var userDoc = results[1];
-        var displayName = userDoc.exists ? userDoc.data().displayName : username;
-        var stats = statsDoc.exists ? statsDoc.data() : null;
+        var displayName = (userDoc && userDoc.exists) ? userDoc.data().displayName : (doc.data().displayName || username);
+        var stats = (statsDoc && statsDoc.exists) ? statsDoc.data() : null;
 
         var totalMins = stats ? (stats.totalMins || 0) : 0;
         var totalSoru = stats ? (stats.totalSoru || 0) : 0;
