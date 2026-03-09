@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pugi Koç Paneli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080d18; --bg2: #0e1628; --bg3: #131e33;
+  --card: #111827; --border: #1c2d47;
+  --accent: #38bdf8; --accent2: #818cf8; --accent3: #34d399;
+  --warn: #f472b6; --orange: #fb923c; --yellow: #fbbf24;
+  --text: #e2e8f0; --muted: #4b6280;
+  --coach: #34d399; --coach2: #fbbf24;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; max-width: 430px; margin: 0 auto; min-height: 100dvh; overflow-x: hidden; padding-bottom: 100px; }
+
+/* HEADER */
+.header { position: sticky; top: 0; z-index: 60; background: linear-gradient(180deg, var(--bg) 85%, transparent); padding: 14px 16px 8px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: 'Space Mono', monospace; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.coach-badge { background: linear-gradient(135deg, var(--coach), var(--coach2)); color: #000; font-size: 0.55rem; font-weight: 900; padding: 3px 8px; border-radius: 99px; letter-spacing: 1px; }
+.user-info { display: flex; align-items: center; gap: 8px; }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--coach), var(--coach2)); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.9rem; color: #000; }
+
+/* TABS */
+.tabs { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 406px; background: var(--card); border: 1px solid rgba(52,211,153,0.2); border-radius: 20px 20px 0 0; display: flex; padding: 10px 8px 18px; gap: 4px; z-index: 100; box-shadow: 0 -4px 24px rgba(0,0,0,0.4); }
+.tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border: none; background: transparent; color: var(--muted); cursor: pointer; border-radius: 14px; transition: all 0.2s; font-family: 'Nunito', sans-serif; font-size: 0.58rem; font-weight: 800; letter-spacing: 0.3px; }
+.tab-btn.active { background: rgba(52,211,153,0.12); color: var(--coach); }
+.tab-btn svg { transition: transform 0.2s; }
+.tab-btn.active svg { transform: scale(1.1); }
+
+/* PAGES */
+.page { display: none; padding: 0 16px 20px; }
+.page.active { display: block; }
+
+/* CARDS */
+.card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
+.card-coach { border-color: rgba(52,211,153,0.2); }
+.sec { font-size: 0.68rem; font-weight: 900; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin: 16px 0 10px; }
+
+/* STAT CARDS */
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.stat-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 12px; text-align: center; }
+.stat-val { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--text); }
+.stat-lbl { font-size: 0.65rem; font-weight: 800; color: var(--muted); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+
+/* STUDENT CARD */
+.student-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color 0.2s; }
+.student-card:hover { border-color: var(--coach); }
+.student-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--accent2), var(--accent3)); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.1rem; color: #fff; flex-shrink: 0; }
+.student-name { font-size: 0.88rem; font-weight: 900; }
+.student-meta { font-size: 0.68rem; color: var(--muted); margin-top: 3px; font-weight: 700; }
+.student-stats { display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+.student-stat { font-size: 0.65rem; font-weight: 800; color: var(--accent); }
+
+/* REQUEST CARD */
+.req-card { background: var(--card); border: 1.5px solid rgba(251,191,36,0.3); border-radius: 16px; padding: 14px 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+.req-actions { display: flex; gap: 8px; margin-left: auto; }
+.btn-accept { padding: 7px 14px; background: linear-gradient(135deg, var(--coach), var(--coach2)); border: none; border-radius: 10px; color: #000; font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 900; cursor: pointer; }
+.btn-reject { padding: 7px 14px; background: rgba(244,114,182,0.1); border: 1.5px solid rgba(244,114,182,0.3); border-radius: 10px; color: var(--warn); font-family: 'Nunito', sans-serif; font-size: 0.75rem; font-weight: 900; cursor: pointer; }
+
+/* ÖNERI FORMU */
+.suggest-form { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 10px; }
+.suggest-select { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; padding: 11px 12px; outline: none; margin-bottom: 10px; }
+.suggest-input { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 700; padding: 11px 12px; outline: none; resize: none; min-height: 80px; }
+.suggest-input::placeholder, .suggest-select option { color: var(--muted); }
+.suggest-input:focus, .suggest-select:focus { border-color: var(--coach); }
+.btn-send { width: 100%; padding: 13px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--coach), var(--coach2)); color: #000; font-family: 'Nunito', sans-serif; font-size: 0.9rem; font-weight: 900; cursor: pointer; margin-top: 10px; transition: transform 0.15s; }
+.btn-send:active { transform: scale(0.98); }
+
+/* HAFTALIK RAPOR */
+.report-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 10px; }
+.report-week { font-size: 0.68rem; font-weight: 900; color: var(--coach); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+.report-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.report-stat { text-align: center; background: var(--bg2); border-radius: 10px; padding: 10px 6px; }
+.report-stat-val { font-family: 'Space Mono', monospace; font-size: 1rem; font-weight: 700; color: var(--text); }
+.report-stat-lbl { font-size: 0.58rem; font-weight: 800; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+.report-comment { background: var(--bg2); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 0.8rem; color: var(--muted); font-weight: 700; font-style: italic; margin-top: 8px; }
+.report-comment.has-comment { color: var(--text); font-style: normal; border-color: rgba(52,211,153,0.3); }
+.btn-add-comment { background: none; border: 1.5px dashed var(--border); border-radius: 10px; color: var(--muted); font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 800; padding: 9px; width: 100%; cursor: pointer; margin-top: 8px; transition: all 0.2s; }
+.btn-add-comment:hover { border-color: var(--coach); color: var(--coach); }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; z-index: 200; display: none; align-items: flex-end; justify-content: center; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+.modal-overlay.open { display: flex; }
+.modal-sheet { background: var(--bg2); border-radius: 24px 24px 0 0; width: 100%; max-width: 430px; padding: 20px; max-height: 92dvh; overflow-y: auto; }
+.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 99px; margin: 0 auto 16px; }
+.modal-title { font-size: 1rem; font-weight: 900; margin-bottom: 16px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 20px; font-size: 0.82rem; font-weight: 800; opacity: 0; transition: all 0.3s; z-index: 300; white-space: nowrap; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+.empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-text { font-size: 0.85rem; font-weight: 700; line-height: 1.5; }
+
+/* BADGE */
+.badge-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); margin-left: 4px; vertical-align: middle; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Loading */
+.loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 999; transition: opacity 0.4s; }
+.loading.hidden { opacity: 0; pointer-events: none; }
+.spinner { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--coach); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div style="font-size:0.78rem;font-weight:800;color:var(--muted)">YÜKLENİYOR...</div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    🦊 Pugi <span class="coach-badge">KOÇ</span>
+  </div>
+  <div class="user-info">
+    <div id="coachAvatar" class="avatar">K</div>
+    <div>
+      <div id="coachName" style="font-size:0.82rem;font-weight:900"></div>
+      <div id="coachUname" style="font-size:0.62rem;color:var(--muted);font-weight:700"></div>
+    </div>
+    <button onclick="logout()" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:0.68rem;font-weight:800;color:var(--muted);cursor:pointer;margin-left:4px">Çıkış</button>
+  </div>
+</div>
+
+<!-- SAYFA: Genel Bakış -->
+<div class="page active" id="page-overview">
+  <div class="sec">Genel Bakış</div>
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-val" id="ovStudentCount">—</div>
+      <div class="stat-lbl">Öğrenci</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="ovPendingCount" style="color:var(--yellow)">—</div>
+      <div class="stat-lbl">Bekleyen İstek</div>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-val" id="ovTotalMins" style="color:var(--coach)">—</div>
+      <div class="stat-lbl">Bu Hafta dk</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="ovActiveToday" style="color:var(--accent)">—</div>
+      <div class="stat-lbl">Bugün Aktif</div>
+    </div>
+  </div>
+
+  <div class="sec" id="pendingSec" style="display:none">
+    Bekleyen İstekler <span class="badge-dot"></span>
+  </div>
+  <div id="pendingList"></div>
+
+  <div class="sec">Öğrencilerim</div>
+  <div id="overviewStudentList"></div>
+</div>
+
+<!-- SAYFA: Öğrencilerim -->
+<div class="page" id="page-students">
+  <div class="sec">Öğrencilerim</div>
+  <div id="studentList"></div>
+</div>
+
+<!-- SAYFA: Ders Önerisi -->
+<div class="page" id="page-suggest">
+  <div class="sec">Ders Önerisi Gönder</div>
+  <div class="suggest-form">
+    <div style="font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Öğrenci</div>
+    <select class="suggest-select" id="suggestStudent">
+      <option value="">Öğrenci seç...</option>
+    </select>
+    <div style="font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Ders</div>
+    <select class="suggest-select" id="suggestSubject">
+      <option value="">Ders seç...</option>
+      <option value="Türkçe">Türkçe</option>
+      <option value="Matematik">Matematik</option>
+      <option value="Fen">Fen</option>
+      <option value="Sosyal">Sosyal</option>
+      <option value="Fizik">Fizik</option>
+      <option value="Kimya">Kimya</option>
+      <option value="Biyoloji">Biyoloji</option>
+      <option value="Edebiyat">Edebiyat</option>
+      <option value="Tarih">Tarih</option>
+      <option value="Coğrafya">Coğrafya</option>
+      <option value="Felsefe">Felsefe</option>
+    </select>
+    <div style="font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Hedef (dk/gün)</div>
+    <input type="number" class="suggest-select" id="suggestTarget" placeholder="Örn: 60" min="1" max="600">
+    <div style="font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Mesaj / Not</div>
+    <textarea class="suggest-input" id="suggestNote" placeholder="Öğrenciye not ekle..."></textarea>
+    <button class="btn-send" onclick="sendSuggestion()">📤 Öneri Gönder</button>
+  </div>
+
+  <div class="sec">Gönderilen Öneriler</div>
+  <div id="sentSuggestions"></div>
+</div>
+
+<!-- SAYFA: Haftalık Raporlar -->
+<div class="page" id="page-reports">
+  <div class="sec">Öğrenci</div>
+  <select class="suggest-select" id="reportStudent" onchange="loadReports()" style="margin-bottom:16px">
+    <option value="">Öğrenci seç...</option>
+  </select>
+  <div id="reportsList">
+    <div class="empty">
+      <div class="empty-icon">📊</div>
+      <div class="empty-text">Bir öğrenci seç</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('overview',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    <span>Genel</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('students',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>Öğrenciler</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('suggest',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    <span>Öneri</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('reports',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span>Raporlar</span>
+  </button>
+</div>
+
+<!-- Öğrenci Detay Modalı -->
+<div class="modal-overlay" id="studentDetailModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <div id="detailAvatar" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;color:#fff;flex-shrink:0"></div>
+      <div>
+        <div id="detailName" style="font-size:1rem;font-weight:900"></div>
+        <div id="detailUname" style="font-size:0.7rem;color:var(--muted);font-weight:700"></div>
+      </div>
+      <button onclick="closeStudentDetail()" style="margin-left:auto;background:none;border:1.5px solid var(--border);border-radius:8px;width:32px;height:32px;color:var(--muted);cursor:pointer;font-size:1rem">✕</button>
+    </div>
+
+    <!-- Haftanın özeti -->
+    <div class="sec" style="margin-top:0">Bu Hafta</div>
+    <div class="report-stats" id="detailWeekStats"></div>
+
+    <!-- Ders dağılımı -->
+    <div class="sec">Ders Dağılımı (Bu Hafta)</div>
+    <div id="detailSubjects"></div>
+
+    <!-- En iyi net -->
+    <div class="sec">En İyi Netler</div>
+    <div id="detailBestNets"></div>
+
+    <button onclick="closeStudentDetail()" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:12px;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;margin-top:8px">Kapat</button>
+  </div>
+</div>
+
+<!-- Yorum Ekleme Modalı -->
+<div class="modal-overlay" id="commentModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Haftalık Rapor Yorumu</div>
+    <div id="commentWeekLabel" style="font-size:0.75rem;font-weight:800;color:var(--muted);margin-bottom:12px"></div>
+    <textarea id="commentInput" class="suggest-input" placeholder="Bu hafta öğrencine bir yorum yaz..."></textarea>
+    <button class="btn-send" onclick="saveComment()" style="margin-top:10px">💾 Yorumu Kaydet</button>
+    <button onclick="closeCommentModal()" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:12px;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;margin-top:8px">İptal</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
+  authDomain: "pugi-app-deeaa.firebaseapp.com",
+  projectId: "pugi-app-deeaa",
+  storageBucket: "pugi-app-deeaa.firebasestorage.app",
+  messagingSenderId: "219082394848",
+  appId: "1:219082394848:web:8780f59490374d6566d485"
+};
+
+var _db = null, _auth = null, _user = null;
+var _students = []; // [{uid, username, displayName, stats}]
+var _pendingRequests = [];
+var _activeCommentData = null;
+
+// ════════════════════ FIREBASE ════════════════════
+function loadScript(src, cb) {
+  var s = document.createElement('script');
+  s.src = src; s.onload = cb; document.head.appendChild(s);
+}
+
+function initFirebase() {
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js', function() {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js', function() {
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js', function() {
+        firebase.initializeApp(firebaseConfig);
+        _db = firebase.firestore();
+        _auth = firebase.auth();
+        _auth.onAuthStateChanged(function(user) {
+          if (!user) { window.location.href = 'index.html'; return; }
+          _user = user;
+          loadCoachProfile();
+        });
+      });
+    });
+  });
+}
+
+// ════════════════════ PROFİL ════════════════════
+function loadCoachProfile() {
+  _db.collection('users').doc(_user.uid).get().then(function(doc) {
+    if (!doc.exists || doc.data().accountType !== 'coach') {
+      window.location.href = 'student.html'; return;
+    }
+    var d = doc.data();
+    document.getElementById('coachAvatar').textContent = (d.displayName || 'K').charAt(0).toUpperCase();
+    document.getElementById('coachName').textContent = d.displayName || '';
+    document.getElementById('coachUname').textContent = '@' + (d.username || '');
+    document.getElementById('loading').classList.add('hidden');
+    loadAllData();
+  });
+}
+
+// ════════════════════ VERİ YÜKLE ════════════════════
+function loadAllData() {
+  loadPendingRequests();
+  loadStudents();
+}
+
+function loadPendingRequests() {
+  _db.collection('coachRequests')
+    .where('coachUid', '==', _user.uid)
+    .where('status', '==', 'pending')
+    .get().then(function(snap) {
+      _pendingRequests = [];
+      snap.forEach(function(doc) { _pendingRequests.push({id: doc.id, ...doc.data()}); });
+      renderPending();
+      document.getElementById('ovPendingCount').textContent = _pendingRequests.length;
+    });
+}
+
+function loadStudents() {
+  _db.collection('coachRequests')
+    .where('coachUid', '==', _user.uid)
+    .where('status', '==', 'accepted')
+    .get().then(function(snap) {
+      _students = [];
+      var promises = [];
+      snap.forEach(function(doc) {
+        var req = doc.data();
+        var p = Promise.all([
+          _db.collection('users').doc(req.studentUid).get(),
+          _db.collection('weeklyStats').doc(req.studentUid).get()
+        ]).then(function(results) {
+          var uDoc = results[0], sDoc = results[1];
+          if (!uDoc.exists) return;
+          _students.push({
+            uid: req.studentUid,
+            displayName: uDoc.data().displayName || req.studentUsername,
+            username: uDoc.data().username || req.studentUsername,
+            stats: sDoc.exists ? sDoc.data() : null
+          });
+        });
+        promises.push(p);
+      });
+      return Promise.all(promises);
+    }).then(function() {
+      renderStudents();
+      renderOverviewStudents();
+      updateOverviewStats();
+      populateStudentSelects();
+    });
+}
+
+// ════════════════════ RENDER ════════════════════
+function renderPending() {
+  var list = document.getElementById('pendingList');
+  var sec = document.getElementById('pendingSec');
+  if (!list) return;
+  if (_pendingRequests.length === 0) { sec.style.display = 'none'; list.innerHTML = ''; return; }
+  sec.style.display = 'block';
+  list.innerHTML = '';
+  _pendingRequests.forEach(function(req) {
+    _db.collection('users').doc(req.studentUid).get().then(function(doc) {
+      var name = doc.exists ? doc.data().displayName : req.studentUsername;
+      var uname = doc.exists ? doc.data().username : req.studentUsername;
+      var card = document.createElement('div');
+      card.className = 'req-card';
+      card.innerHTML =
+        '<div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#fff;flex-shrink:0">' + name.charAt(0).toUpperCase() + '</div>' +
+        '<div style="flex:1;min-width:0"><div style="font-size:0.88rem;font-weight:900">' + name + '</div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-top:2px">@' + uname + ' · Koçluk isteği</div></div>' +
+        '<div class="req-actions"><button class="btn-accept" data-id="' + req.id + '" data-uid="' + req.studentUid + '">Kabul</button><button class="btn-reject" data-id="' + req.id + '">Reddet</button></div>';
+      card.querySelectorAll('.btn-accept').forEach(function(b) { b.addEventListener('click', function(){ acceptRequest(b.dataset.id, b.dataset.uid); }); });
+      card.querySelectorAll('.btn-reject').forEach(function(b) { b.addEventListener('click', function(){ rejectRequest(b.dataset.id); }); });
+      list.appendChild(card);
+    });
+  });
+}
+
+function renderStudents() {
+  var list = document.getElementById('studentList');
+  if (!list) return;
+  if (_students.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Henüz öğrencin yok.<br>Öğrenciler sana koçluk isteği gönderebilir.</div></div>';
+    return;
+  }
+  list.innerHTML = '';
+  _students.forEach(function(s) { list.appendChild(makeStudentCard(s)); });
+}
+
+function renderOverviewStudents() {
+  var list = document.getElementById('overviewStudentList');
+  if (!list) return;
+  if (_students.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Henüz öğrencin yok.</div></div>';
+    return;
+  }
+  list.innerHTML = '';
+  _students.slice(0, 5).forEach(function(s) { list.appendChild(makeStudentCard(s)); });
+}
+
+function makeStudentCard(s) {
+  var stats = s.stats;
+  var totalMins = stats ? (stats.totalMins || 0) : 0;
+  var hrs = Math.floor(totalMins / 60), mins = totalMins % 60;
+  var timeStr = hrs > 0 ? hrs + 's ' + mins + 'dk' : (totalMins > 0 ? mins + 'dk' : '—');
+  var topSubject = stats && stats.topSubjects && stats.topSubjects[0] ? stats.topSubjects[0].name : null;
+
+  var card = document.createElement('div');
+  card.className = 'student-card';
+  card.innerHTML =
+    '<div class="student-avatar">' + s.displayName.charAt(0).toUpperCase() + '</div>' +
+    '<div style="flex:1;min-width:0">' +
+      '<div class="student-name">' + s.displayName + '</div>' +
+      '<div class="student-meta">@' + s.username + '</div>' +
+      '<div class="student-stats">' +
+        '<span class="student-stat">⏱ ' + timeStr + ' bu hafta</span>' +
+        (topSubject ? '<span class="student-stat" style="color:var(--accent2)">📚 ' + topSubject + '</span>' : '') +
+      '</div>' +
+    '</div>' +
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>';
+  card.addEventListener('click', function() { openStudentDetail(s); });
+  return card;
+}
+
+function updateOverviewStats() {
+  document.getElementById('ovStudentCount').textContent = _students.length;
+  var totalMins = _students.reduce(function(a, s) { return a + (s.stats ? (s.stats.totalMins || 0) : 0); }, 0);
+  document.getElementById('ovTotalMins').textContent = totalMins;
+  // "Bugün aktif" — öğrencilerin son aktivite tarihine göre
+  var today = new Date().toISOString().slice(0, 10);
+  var active = _students.filter(function(s) { return s.stats && s.stats.lastActiveDate && s.stats.lastActiveDate.slice(0,10) === today; }).length;
+  document.getElementById('ovActiveToday').textContent = active;
+}
+
+function populateStudentSelects() {
+  ['suggestStudent', 'reportStudent'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">Öğrenci seç...</option>';
+    _students.forEach(function(s) {
+      var opt = document.createElement('option');
+      opt.value = s.uid; opt.textContent = s.displayName + ' (@' + s.username + ')';
+      sel.appendChild(opt);
+    });
+  });
+}
+
+// ════════════════════ İSTEK YÖNETİMİ ════════════════════
+function acceptRequest(reqId, studentUid) {
+  _db.collection('coachRequests').doc(reqId).update({ status: 'accepted' }).then(function() {
+    showToast('✅ Öğrenci kabul edildi!');
+    loadAllData();
+  });
+}
+
+function rejectRequest(reqId) {
+  _db.collection('coachRequests').doc(reqId).update({ status: 'rejected' }).then(function() {
+    showToast('❌ İstek reddedildi.');
+    loadAllData();
+  });
+}
+
+// ════════════════════ ÖĞRENCİ DETAY ════════════════════
+function openStudentDetail(s) {
+  var stats = s.stats;
+  document.getElementById('detailAvatar').textContent = s.displayName.charAt(0).toUpperCase();
+  document.getElementById('detailName').textContent = s.displayName;
+  document.getElementById('detailUname').textContent = '@' + s.username;
+
+  // Hafta istatistikleri
+  var totalMins = stats ? (stats.totalMins || 0) : 0;
+  var totalSoru = stats ? (stats.totalSoru || 0) : 0;
+  var totalKonu = stats ? (stats.totalKonu || 0) : 0;
+  var ws = document.getElementById('detailWeekStats');
+  ws.innerHTML =
+    '<div class="report-stat"><div class="report-stat-val">' + totalMins + '</div><div class="report-stat-lbl">Dakika</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val">' + totalSoru + '</div><div class="report-stat-lbl">Soru</div></div>' +
+    '<div class="report-stat"><div class="report-stat-val">' + totalKonu + '</div><div class="report-stat-lbl">Konu</div></div>';
+
+  // Ders dağılımı
+  var subEl = document.getElementById('detailSubjects');
+  var subjects = stats && stats.subjectProgress ? Object.entries(stats.subjectProgress) : [];
+  if (subjects.length === 0) {
+    subEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);font-weight:700">Veri yok</div>';
+  } else {
+    var maxMins = Math.max.apply(null, subjects.map(function(s){ return s[1]; }));
+    subEl.innerHTML = subjects.sort(function(a,b){ return b[1]-a[1]; }).map(function(s) {
+      var pct = maxMins > 0 ? Math.round(s[1]/maxMins*100) : 0;
+      return '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:0.72rem;font-weight:800;margin-bottom:4px"><span>' + s[0] + '</span><span style="color:var(--muted)">' + s[1] + 'dk</span></div><div style="height:6px;background:var(--bg2);border-radius:99px;overflow:hidden"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px"></div></div></div>';
+    }).join('');
+  }
+
+  // En iyi netler
+  var netsEl = document.getElementById('detailBestNets');
+  var nets = stats && stats.bestNets ? Object.entries(stats.bestNets) : [];
+  if (nets.length === 0) {
+    netsEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);font-weight:700">Deneme verisi yok</div>';
+  } else {
+    netsEl.innerHTML = nets.map(function(n) {
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--bg2);border-radius:10px;margin-bottom:6px"><span style="font-size:0.8rem;font-weight:800">' + n[0] + '</span><span style="font-family:\'Space Mono\',monospace;font-size:0.85rem;font-weight:700;color:var(--accent3)">' + (typeof n[1] === 'number' ? n[1].toFixed(2) : n[1]) + '</span></div>';
+    }).join('');
+  }
+
+  document.getElementById('studentDetailModal').classList.add('open');
+}
+
+function closeStudentDetail() {
+  document.getElementById('studentDetailModal').classList.remove('open');
+}
+
+// ════════════════════ DERS ÖNERİSİ ════════════════════
+function sendSuggestion() {
+  var studentUid = document.getElementById('suggestStudent').value;
+  var subject = document.getElementById('suggestSubject').value;
+  var target = document.getElementById('suggestTarget').value;
+  var note = document.getElementById('suggestNote').value.trim();
+
+  if (!studentUid) { showToast('⚠️ Öğrenci seç'); return; }
+  if (!subject) { showToast('⚠️ Ders seç'); return; }
+
+  _db.collection('suggestions').add({
+    coachUid: _user.uid,
+    studentUid: studentUid,
+    subject: subject,
+    targetMinutes: parseInt(target) || 0,
+    note: note,
+    createdAt: new Date().toISOString(),
+    read: false
+  }).then(function() {
+    showToast('✅ Öneri gönderildi!');
+    document.getElementById('suggestSubject').value = '';
+    document.getElementById('suggestTarget').value = '';
+    document.getElementById('suggestNote').value = '';
+    loadSentSuggestions();
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function loadSentSuggestions() {
+  var list = document.getElementById('sentSuggestions');
+  if (!list) return;
+  _db.collection('suggestions')
+    .where('coachUid', '==', _user.uid)
+    .orderBy('createdAt', 'desc')
+    .limit(20)
+    .get().then(function(snap) {
+      if (snap.empty) { list.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);font-weight:700;text-align:center;padding:16px">Henüz öneri göndermedin.</div>'; return; }
+      list.innerHTML = '';
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        var student = _students.find(function(s){ return s.uid === d.studentUid; });
+        var studentName = student ? student.displayName : '—';
+        var card = document.createElement('div');
+        card.className = 'card';
+        card.style.marginBottom = '8px';
+        card.innerHTML =
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+            '<span style="font-size:0.78rem;font-weight:900;color:var(--coach)">' + d.subject + '</span>' +
+            '<span style="font-size:0.65rem;color:var(--muted);font-weight:700">' + (d.createdAt || '').slice(0,10) + '</span>' +
+          '</div>' +
+          '<div style="font-size:0.72rem;color:var(--muted);font-weight:800;margin-bottom:4px">→ ' + studentName + (d.targetMinutes ? ' · Hedef: ' + d.targetMinutes + 'dk/gün' : '') + '</div>' +
+          (d.note ? '<div style="font-size:0.78rem;color:var(--text);font-style:italic;border-left:2px solid var(--coach);padding-left:8px;margin-top:6px">' + d.note + '</div>' : '');
+        list.appendChild(card);
+      });
+    });
+}
+
+// ════════════════════ HAFTALIK RAPORLAR ════════════════════
+function getWeekKey(date) {
+  var d = date || new Date();
+  var day = d.getDay();
+  var diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  var monday = new Date(d.setDate(diff));
+  return monday.toISOString().slice(0, 10);
+}
+
+function loadReports() {
+  var studentUid = document.getElementById('reportStudent').value;
+  var list = document.getElementById('reportsList');
+  if (!studentUid) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-text">Bir öğrenci seç</div></div>';
+    return;
+  }
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:0.78rem;font-weight:700">Yükleniyor...</div>';
+
+  // Son 8 haftanın raporlarını oluştur
+  var weeks = [];
+  var now = new Date();
+  for (var i = 0; i < 8; i++) {
+    var d = new Date(now);
+    d.setDate(d.getDate() - i * 7);
+    weeks.push(getWeekKey(d));
+  }
+
+  // Öğrencinin weeklyStats + koç yorumları
+  Promise.all([
+    _db.collection('weeklyStats').doc(studentUid).get(),
+    _db.collection('weeklyReportComments')
+      .where('coachUid', '==', _user.uid)
+      .where('studentUid', '==', studentUid)
+      .get()
+  ]).then(function(results) {
+    var statsDoc = results[0];
+    var commentsSnap = results[1];
+
+    var stats = statsDoc.exists ? statsDoc.data() : {};
+    var comments = {};
+    commentsSnap.forEach(function(doc) { comments[doc.data().weekKey] = {id: doc.id, text: doc.data().comment}; });
+
+    list.innerHTML = '';
+    weeks.forEach(function(weekKey) {
+      var card = document.createElement('div');
+      card.className = 'report-card';
+      var weekEnd = new Date(weekKey);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      var weekLabel = weekKey.slice(5) + ' – ' + weekEnd.toISOString().slice(5, 10);
+
+      // Bu hafta geçerli mi? (mevcut haftaysa stats kullan)
+      var currentWeek = getWeekKey(new Date());
+      var isCurrentWeek = weekKey === currentWeek;
+      var totalMins = isCurrentWeek ? (stats.totalMins || 0) : 0;
+      var totalSoru = isCurrentWeek ? (stats.totalSoru || 0) : 0;
+      var totalKonu = isCurrentWeek ? (stats.totalKonu || 0) : 0;
+
+      var comment = comments[weekKey];
+      var commentHtml = comment
+        ? '<div class="report-comment has-comment">💬 ' + comment.text + '</div>' +
+          '<button class="btn-add-comment" data-week="' + weekKey + '" data-commentid="' + comment.id + '" data-comment="' + encodeURIComponent(comment.text) + '">✏️ Yorumu Düzenle</button>'
+        : '<button class="btn-add-comment" data-week="' + weekKey + '">+ Yorum Ekle</button>';
+
+      card.innerHTML =
+        '<div class="report-week">📅 ' + weekLabel + (isCurrentWeek ? ' <span style="color:var(--yellow)">· Bu Hafta</span>' : '') + '</div>' +
+        '<div class="report-stats">' +
+          '<div class="report-stat"><div class="report-stat-val">' + totalMins + '</div><div class="report-stat-lbl">Dakika</div></div>' +
+          '<div class="report-stat"><div class="report-stat-val">' + totalSoru + '</div><div class="report-stat-lbl">Soru</div></div>' +
+          '<div class="report-stat"><div class="report-stat-val">' + totalKonu + '</div><div class="report-stat-lbl">Konu</div></div>' +
+        '</div>' + commentHtml;
+
+      card.querySelectorAll('.btn-add-comment').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          openCommentModal(studentUid, btn.dataset.week, btn.dataset.commentid, decodeURIComponent(btn.dataset.comment || ''));
+        });
+      });
+
+      list.appendChild(card);
+    });
+  });
+}
+
+function openCommentModal(studentUid, weekKey, commentId, existingText) {
+  _activeCommentData = { studentUid: studentUid, weekKey: weekKey, commentId: commentId || null };
+  var d = new Date(weekKey);
+  var end = new Date(weekKey); end.setDate(end.getDate() + 6);
+  document.getElementById('commentWeekLabel').textContent = weekKey.slice(5) + ' – ' + end.toISOString().slice(5,10) + ' haftası';
+  document.getElementById('commentInput').value = existingText || '';
+  document.getElementById('commentModal').classList.add('open');
+}
+
+function closeCommentModal() {
+  document.getElementById('commentModal').classList.remove('open');
+  _activeCommentData = null;
+}
+
+function saveComment() {
+  if (!_activeCommentData) return;
+  var text = document.getElementById('commentInput').value.trim();
+  if (!text) { showToast('⚠️ Yorum boş olamaz'); return; }
+
+  var data = {
+    coachUid: _user.uid,
+    studentUid: _activeCommentData.studentUid,
+    weekKey: _activeCommentData.weekKey,
+    comment: text,
+    updatedAt: new Date().toISOString()
+  };
+
+  var promise;
+  if (_activeCommentData.commentId) {
+    promise = _db.collection('weeklyReportComments').doc(_activeCommentData.commentId).update(data);
+  } else {
+    promise = _db.collection('weeklyReportComments').add(data);
+  }
+
+  promise.then(function() {
+    showToast('✅ Yorum kaydedildi!');
+    closeCommentModal();
+    loadReports();
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+// ════════════════════ YARDIMCI ════════════════════
+function switchTab(tab, el) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('page-' + tab).classList.add('active');
+  el.classList.add('active');
+  if (tab === 'suggest') loadSentSuggestions();
+}
+
+function logout() {
+  _auth.signOut().then(function() { window.location.href = 'index.html'; });
+}
+
+var _toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+document.addEventListener('DOMContentLoaded', initFirebase);
+</script>
+</body>
+</html>
