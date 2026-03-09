@@ -2155,6 +2155,7 @@ function saveDeneme() {
 
   denemeler.unshift(deneme);
   localStorage.setItem('yks_denemeler', JSON.stringify(denemeler)); saveToCloud();
+  syncWeeklyStats();
 
   // Temizle
   fields.forEach(function(f) {
@@ -2753,6 +2754,7 @@ function saveToCloud() {
       updatedAt: new Date().toISOString()
     }).then(function() {
       console.log('☁️ Buluta kaydedildi');
+      syncWeeklyStats(); // Koç görünümünü de güncelle
     }).catch(function(e) {
       console.warn('☁️ Bulut kayıt hatası:', e.message);
     });
@@ -3065,7 +3067,11 @@ function sendPasswordReset() {
 }
 
 function logoutUser() {
-  if (confirm('Çıkış yapmak istediğine emin misin?')) _fbAuth.signOut();
+  if (confirm('Çıkış yapmak istediğine emin misin?')) {
+    _fbAuth.signOut().then(function() {
+      window.location.href = 'index.html';
+    });
+  }
 }
 
 // ── Haftalık İstatistik Sync ────────────────────
@@ -3141,7 +3147,11 @@ function syncWeeklyStats() {
   var xpTotal = getTotalXP();
   var lvInfo = getLevelInfo(xpTotal);
 
-  _fbDb.collection('weeklyStats').doc(_currentUser.uid).set({
+  // Haftalık ders bazında dakika (koç görünümü için)
+  var subjectMins = Object.entries(subjects).map(function(x){ return {name: x[0], mins: x[1]}; })
+    .sort(function(a,b){ return b.mins-a.mins; });
+
+  var statsPayload = {
     weekKey: weekKey,
     totalMins: totalMins,
     totalSoru: totalSoru,
@@ -3149,6 +3159,7 @@ function syncWeeklyStats() {
     topSubjects: topSubjects,
     badges: earnedBadges,
     subjectProgress: subjectProgress,
+    subjectMins: subjectMins,
     bestNets: bestNetsArr,
     totalAllMins: totalAllMins,
     totalAllSoru: totalAllSoru,
@@ -3156,8 +3167,76 @@ function syncWeeklyStats() {
     xpTotal: xpTotal,
     level: lvInfo.lvNum,
     levelTitle: lvInfo.title,
+    lastActiveDate: new Date().toISOString(),
     updatedAt: new Date().toISOString()
-  }).catch(function(e){ console.error('Sync error:', e); });
+  };
+
+  _fbDb.collection('weeklyStats').doc(_currentUser.uid).set(statsPayload)
+    .catch(function(e){ console.error('Sync error:', e); });
+
+  // Son 90 günün günlük özeti (koç görünümü için)
+  var last90 = new Date(); last90.setDate(last90.getDate() - 90);
+  var recentEntries = entries.filter(function(e) {
+    try {
+      var d = new Date(e.date.split('.').reverse().join('-'));
+      return d >= last90;
+    } catch(x){ return false; }
+  });
+
+  // Günlük çalışma özeti
+  var dailyMap = {};
+  recentEntries.forEach(function(e) {
+    var dk = e.date;
+    if (!dailyMap[dk]) dailyMap[dk] = { date: dk, mins: 0, soru: 0, konu: 0 };
+    dailyMap[dk].mins += (e.sure || 0);
+    dailyMap[dk].soru += (e.dogru || 0) + (e.yanlis || 0);
+    if (e.type === 'konu') dailyMap[dk].konu++;
+  });
+  var dailySummary = Object.values(dailyMap).sort(function(a,b){ return a.date > b.date ? 1 : -1; });
+
+  // Ders bazında tüm zamanlar özeti
+  var subjectAllTime = {};
+  entries.forEach(function(e) {
+    if (!e.subject) return;
+    if (!subjectAllTime[e.subject]) subjectAllTime[e.subject] = { mins: 0, soru: 0, dogru: 0, yanlis: 0 };
+    subjectAllTime[e.subject].mins += (e.sure || 0);
+    subjectAllTime[e.subject].soru += (e.dogru || 0) + (e.yanlis || 0);
+    subjectAllTime[e.subject].dogru += (e.dogru || 0);
+    subjectAllTime[e.subject].yanlis += (e.yanlis || 0);
+  });
+
+  // Son 20 deneme
+  var recentDenemeler = denemeler.slice(0, 20).map(function(d) {
+    return { id: d.id, type: d.type, bransLabel: d.bransLabel || null, isim: d.isim || '', date: d.date || '', totalNet: d.totalNet || 0, results: d.results || {} };
+  });
+
+  // Çalışma türü dağılımı
+  var typeDist = { konu: 0, soru: 0, genel: 0 };
+  entries.forEach(function(e) { if (e.type && typeDist.hasOwnProperty(e.type)) typeDist[e.type] += (e.sure || 1); });
+
+  _fbDb.collection('coachView').doc(_currentUser.uid).set({
+    displayName: _currentUser.displayName || '',
+    weekStats: statsPayload,
+    dailySummary: dailySummary,
+    subjectAllTime: subjectAllTime,
+    recentDenemeler: recentDenemeler,
+    typeDist: typeDist,
+    streak: (function(){ var s=0, d=new Date(); while(true){ var k=d.toLocaleDateString('tr-TR'); if(!entries.find(function(e){return e.date===k;})) break; s++; d.setDate(d.getDate()-1); if(s>365) break; } return s; })(),
+    updatedAt: new Date().toISOString()
+  }).catch(function(e){ console.error('CoachView sync error:', e); });
+
+  // Haftalık tarih arşivi - her hafta için ayrı belge sakla
+  _fbDb.collection('weeklyHistory').doc(_currentUser.uid)
+    .collection('weeks').doc(weekKey).set({
+      weekKey: weekKey,
+      totalMins: totalMins,
+      totalSoru: totalSoru,
+      totalKonu: totalKonu,
+      topSubjects: topSubjects,
+      subjectProgress: subjectProgress,
+      bestNets: bestNetsArr,
+      savedAt: new Date().toISOString()
+    }, { merge: true }).catch(function(e){ console.error('History sync error:', e); });
 }
 
 // ── Arkadaş Sistemi ─────────────────────────────

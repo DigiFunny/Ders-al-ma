@@ -760,12 +760,13 @@ function renderStatsWeekTab(stats) {
     '<div class="report-stat"><div class="report-stat-val">' + totalKonu + '</div><div class="report-stat-lbl">Konu</div></div>';
 
   var subEl = document.getElementById('statsWeekSubjects');
-  var subjects = stats && stats.subjectProgress ? stats.subjectProgress : [];
+  var subjects = stats && stats.subjectMins ? stats.subjectMins
+                : (stats && stats.topSubjects ? stats.topSubjects : []);
   if (!subjects.length) { subEl.innerHTML = noData(); }
   else {
-    var maxM = Math.max.apply(null, subjects.map(function(s){ return s.mins || 0; }));
+    var maxM = Math.max.apply(null, subjects.map(function(s){ return s.mins || 0; })) || 1;
     subEl.innerHTML = subjects.map(function(s) {
-      var pct = maxM > 0 ? Math.round((s.mins||0)/maxM*100) : 0;
+      var pct = Math.round((s.mins||0)/maxM*100);
       return barRow(s.name, (s.mins||0) + 'dk', pct, 'var(--accent)', 'var(--accent2)');
     }).join('');
   }
@@ -775,7 +776,7 @@ function renderStatsWeekTab(stats) {
   if (!nets.length) { netsEl.innerHTML = noData(); }
   else {
     netsEl.innerHTML = nets.map(function(n) {
-      var label = n.type ? n.type.replace('_',' ') : '';
+      var label = (n.type||'').replace('TYT','TYT ').replace('AYT_','AYT ').replace(/_/g,' ').trim();
       return netRow(label, typeof n.net === 'number' ? n.net.toFixed(2) : '—');
     }).join('');
   }
