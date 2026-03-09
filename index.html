@@ -595,14 +595,22 @@ function submitAuth() {
 
     // Kullanıcı adı kontrol
     _fbDb.collection('usernames').doc(uname).get().then(function(doc) {
-      if (doc.exists) { hideLoading(); showError('Bu kullanıcı adı alınmış.'); return; }
+      if (doc.exists) { hideLoading(); showError('Bu kullanıcı adı alınmış.'); return null; }
       return _fbAuth.createUserWithEmailAndPassword(email, pw);
     }).then(function(cred) {
-      if (!cred) return;
-      return createUserProfile(cred.user, name, uname, selectedAccountType);
+      if (!cred) return null;
+      return createUserProfile(cred.user, name, uname, selectedAccountType).then(function() {
+        // Profil yazıldıktan sonra yönlendir
+        if (selectedAccountType === 'coach') {
+          window.location.href = 'coach.html';
+        } else {
+          window.location.href = 'yks-takip-uygulamasi.html';
+        }
+      });
     }).catch(function(e) {
       hideLoading();
       if (e.code) showError(getErrorMsg(e.code));
+      else showError('Bir hata oluştu.');
     });
   }
 }
@@ -616,11 +624,14 @@ function signInWithGoogle() {
     var user = result.user;
     var isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
     if (isNew) {
-      // Yeni Google kullanıcısı — profil oluştur
       var autoUname = user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
       var displayName = user.displayName || autoUname;
-      return createUserProfile(user, displayName, autoUname, selectedAccountType || 'student');
+      var type = selectedAccountType || 'student';
+      return createUserProfile(result.user, displayName, autoUname, type).then(function() {
+        window.location.href = type === 'coach' ? 'coach.html' : 'yks-takip-uygulamasi.html';
+      });
     }
+    // Mevcut Google kullanıcısı — onAuthStateChanged halleder
   }).catch(function(e) {
     hideLoading();
     if (e.code !== 'auth/popup-closed-by-user') showError('Google ile giriş başarısız.');
