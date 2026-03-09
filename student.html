@@ -1484,8 +1484,9 @@ var _denemeMode = 'tam'; // 'tam' | 'brans'
 // ════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════
-var entries = JSON.parse(localStorage.getItem('yks_entries') || '[]');
-var denemeler = JSON.parse(localStorage.getItem('yks_denemeler') || '[]');
+var entries = [];
+var denemeler = [];
+var _loadedUid = null; // hangi UID için yüklendi
 
 var currentExam = 'TYT';
 var currentSubject = Object.keys(EXAM_DATA.TYT)[0];
@@ -2111,7 +2112,7 @@ function saveDeneme() {
         totalNet3 += net;
       });
       denemeler[editIdx].totalNet = Math.round(totalNet3*100)/100;
-      localStorage.setItem('yks_denemeler', JSON.stringify(denemeler)); saveToCloud();
+      if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
       window._editingDenemeId = null;
       var saveBtn = document.querySelector('[onclick="saveDeneme()"]');
       if (saveBtn) { saveBtn.textContent = 'Kaydet'; saveBtn.style.background = ''; }
@@ -2154,7 +2155,7 @@ function saveDeneme() {
   };
 
   denemeler.unshift(deneme);
-  localStorage.setItem('yks_denemeler', JSON.stringify(denemeler)); saveToCloud();
+  if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
   syncWeeklyStats();
 
   // Temizle
@@ -2282,7 +2283,7 @@ function editDeneme(id) {
 
 function deleteDeneme(id) {
   denemeler = denemeler.filter(d => d.id !== id);
-  localStorage.setItem('yks_denemeler', JSON.stringify(denemeler)); saveToCloud();
+  if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
   renderDenemeLog();
   showToast('🗑 Silindi');
 }
@@ -2530,7 +2531,7 @@ function closeStreakModal() {
 }
 
 function showBadgeTooltip(id) {
-  const earned = JSON.parse(localStorage.getItem('yks_badges') || '[]');
+  const earned = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
   const b = BADGES.find(x => x.id === id);
   if (!b) return;
   const isEarned = earned.includes(id);
@@ -2734,7 +2735,7 @@ function updateStreak() {
 // ════════════════════════════════════════════
 function todayStr() { return new Date().toLocaleDateString('tr-TR'); }
 function save() {
-  localStorage.setItem('yks_entries', JSON.stringify(entries));
+  if (_currentUser) localStorage.setItem('yks_entries_' + _currentUser.uid, JSON.stringify(entries));
   saveToCloud();
 }
 
@@ -2744,8 +2745,10 @@ function saveToCloud() {
   // Debounce: 2 saniye bekle, ardından kaydet
   clearTimeout(_saveCloudTimer);
   _saveCloudTimer = setTimeout(function() {
-    var badges = JSON.parse(localStorage.getItem('yks_badges') || '[]');
-    var goal = parseInt(localStorage.getItem('yks_goal') || '600');
+    var bk = _currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges';
+    var gk = _currentUser ? 'yks_goal_'+_currentUser.uid : 'yks_goal';
+    var badges = JSON.parse(localStorage.getItem(bk) || '[]');
+    var goal = parseInt(localStorage.getItem(gk) || '600');
     _fbDb.collection('userData').doc(_currentUser.uid).set({
       entries: entries,
       denemeler: denemeler,
@@ -2763,33 +2766,56 @@ function saveToCloud() {
 
 function loadFromCloud(uid) {
   if (!_fbDb) return;
+
+  // Farklı kullanıcı girişi — önce yerel veriyi temizle
+  if (_loadedUid && _loadedUid !== uid) {
+    entries = [];
+    denemeler = [];
+    weeklyGoal = 600;
+    renderAna();
+  }
+  _loadedUid = uid;
+
   showSyncIndicator('yükleniyor...');
   _fbDb.collection('userData').doc(uid).get().then(function(doc) {
+    // Kullanıcıya ait uid-specific cache anahtarları
+    var eKey = 'yks_entries_' + uid;
+    var dKey = 'yks_denemeler_' + uid;
+    var bKey = 'yks_badges_' + uid;
+    var gKey = 'yks_goal_' + uid;
+
     if (!doc.exists) {
-      // Kullanıcının ilk girişi — mevcut localStorage verisini buluta yükle
+      // İlk giriş — boş başla, eski global cache'den alma
+      entries = [];
+      denemeler = [];
+      localStorage.setItem(eKey, '[]');
+      localStorage.setItem(dKey, '[]');
       showSyncIndicator('');
-      saveToCloud();
+      syncWeeklyStats();
       return;
     }
     var data = doc.data();
     if (data.entries && Array.isArray(data.entries)) {
       entries = data.entries;
-      localStorage.setItem('yks_entries', JSON.stringify(entries));
+      localStorage.setItem(eKey, JSON.stringify(entries));
+    } else {
+      entries = JSON.parse(localStorage.getItem(eKey) || '[]');
     }
     if (data.denemeler && Array.isArray(data.denemeler)) {
       denemeler = data.denemeler;
-      localStorage.setItem('yks_denemeler', JSON.stringify(denemeler)); saveToCloud();
+      localStorage.setItem(dKey, JSON.stringify(denemeler));
+    } else {
+      denemeler = JSON.parse(localStorage.getItem(dKey) || '[]');
     }
     if (data.badges && Array.isArray(data.badges)) {
-      localStorage.setItem('yks_badges', JSON.stringify(data.badges));
+      localStorage.setItem(bKey, JSON.stringify(data.badges));
     }
     if (data.goal) {
       weeklyGoal = data.goal;
-      localStorage.setItem('yks_goal', data.goal);
+      localStorage.setItem(gKey, data.goal);
     }
     showSyncIndicator('✓');
     setTimeout(function(){ showSyncIndicator(''); }, 2000);
-    // Sayfaları yenile
     renderAna();
     updateStreak();
     updateXPUI();
@@ -3109,7 +3135,7 @@ function syncWeeklyStats() {
   // En çok çalışılan 3 ders
   var topSubjects = Object.entries(subjects).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(x){return {name:x[0],mins:x[1]};});
 
-  var earnedBadges = JSON.parse(localStorage.getItem('yks_badges') || '[]');
+  var earnedBadges = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
 
   // Tüm zamanlar: ders bazında çalışılan unique konu sayısı / toplam konu sayısı
   var allSubjectTopics = {};
@@ -3891,7 +3917,7 @@ function importData(input) {
       entries = [...newEntries, ...entries];
       denemeler = [...newDenemeler, ...denemeler];
       save();
-      localStorage.setItem('yks_denemeler', JSON.stringify(denemeler)); saveToCloud();
+      if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
       renderAna(); renderBackupSummary(); updateStreak();
       showToast('✅ ' + newEntries.length + ' kayıt, ' + newDenemeler.length + ' deneme yüklendi!');
     } catch(err) { showToast('❌ Geçersiz yedek dosyası!'); }
@@ -3903,7 +3929,7 @@ function importData(input) {
 function clearAllData() {
   if (!confirm('Tüm veriler silinecek!\n\nÖnce yedek almayı unutma!')) return;
   entries = []; denemeler = [];
-  save(); localStorage.setItem('yks_denemeler', JSON.stringify(denemeler)); saveToCloud();
+  save(); if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
   renderAna(); renderBackupSummary(); updateStreak();
   showToast('🗑 Tüm veriler silindi');
 }
@@ -4065,19 +4091,19 @@ function calcStreak() {
 }
 
 function checkBadges() {
-  const earned = JSON.parse(localStorage.getItem('yks_badges') || '[]');
+  const earned = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
   let newOnes = [];
   BADGES.forEach(b => {
     if (!earned.includes(b.id) && b.check()) { earned.push(b.id); newOnes.push(b); }
   });
   if (newOnes.length > 0) {
-    localStorage.setItem('yks_badges', JSON.stringify(earned)); saveToCloud();
+    if(_currentUser) localStorage.setItem('yks_badges_'+_currentUser.uid, JSON.stringify(earned)); saveToCloud();
     newOnes.forEach((b, i) => setTimeout(() => showToast('🏆 Başarım kazandın: ' + b.name + '!'), i * 1500));
   }
 }
 
 function renderBadges() {
-  const earned = JSON.parse(localStorage.getItem('yks_badges') || '[]');
+  const earned = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
   const xp = getTotalXP();
   const info = getLevelInfo(xp);
   document.getElementById('xpLevel2').textContent = info.lvNum;
@@ -4502,7 +4528,7 @@ function renderAnalysis() {
 // ═══════════════════════════════════════════════
 // HAFTALIK HEDEF
 // ═══════════════════════════════════════════════
-var weeklyGoal = parseInt(localStorage.getItem('yks_goal') || '600');
+var weeklyGoal = 600; // uid-specific, loaded in loadFromCloud
 
 function getThisWeekMins() {
   const now = new Date();
@@ -4540,14 +4566,14 @@ function saveGoal() {
   const v = parseInt(document.getElementById('goalInput')?.value) || 0;
   if (v < 30) { showToast('⚠️ En az 30 dakika gir!'); return; }
   weeklyGoal = v;
-  localStorage.setItem('yks_goal', v); saveToCloud();
+  if(_currentUser) localStorage.setItem('yks_goal_'+_currentUser.uid, v); saveToCloud();
   renderGoalCard();
   showToast('✅ Haftalık hedef: ' + v + ' dk!');
 }
 
 function applyGoalPreset(mins) {
   weeklyGoal = mins;
-  localStorage.setItem('yks_goal', mins); saveToCloud();
+  if(_currentUser) localStorage.setItem('yks_goal_'+_currentUser.uid, mins); saveToCloud();
   renderGoalCard();
   const h = Math.floor(mins/60);
   showToast('✅ Hedef: ' + (h>0?h+' saat ':'') + (mins%60>0?mins%60+' dk':''));
@@ -4568,7 +4594,7 @@ function saveGoalCustom() {
   const total = h * 60 + m;
   if (total < 30) { showToast('⚠️ En az 30 dakika gir!'); return; }
   weeklyGoal = total;
-  localStorage.setItem('yks_goal', total); saveToCloud();
+  if(_currentUser) localStorage.setItem('yks_goal_'+_currentUser.uid, total); saveToCloud();
   renderGoalCard();
   showToast('✅ Hedef: ' + (h>0?h+' saat ':'') + (m>0?m+' dk':'') + ' ayarlandı!');
 }
