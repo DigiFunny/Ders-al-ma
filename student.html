@@ -1631,10 +1631,29 @@ function toggleTimer() {
 var _timerStartedAt = null;
 var _timerRemainAtStart = 0;
 
+var _wakeLock = null;
+async function requestWakeLock() {
+  if ('wakeLock' in navigator) {
+    try {
+      _wakeLock = await navigator.wakeLock.request('screen');
+    } catch(e) { /* desteklenmiyor veya reddedildi */ }
+  }
+}
+function releaseWakeLock() {
+  if (_wakeLock) { _wakeLock.release(); _wakeLock = null; }
+}
+// Sayfa tekrar görünür olduğunda wake lock'ı yenile
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && timerRunning && !_wakeLock) {
+    requestWakeLock();
+  }
+});
+
 function startTimer() {
   timerRunning = true;
   _timerStartedAt = Date.now();
   _timerRemainAtStart = timerRemain;
+  requestWakeLock(); // Ekranı açık tut
 
   // Ekran kapandığında kurtarma için localStorage'a kaydet
   localStorage.setItem('yks_timer_start', _timerStartedAt);
@@ -1657,6 +1676,7 @@ function stopTimer() {
   timerRunning = false;
   clearInterval(timerInterval);
   _timerStartedAt = null;
+  releaseWakeLock(); // Ekran kilidini serbest bırak
   localStorage.removeItem('yks_timer_start');
   localStorage.removeItem('yks_timer_remain');
   localStorage.removeItem('yks_timer_running');
