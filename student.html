@@ -961,7 +961,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <!-- ════════════════════ PAGE: ANA ════════════════════ -->
 <div class="page active" id="page-ana" class="page active">
   <!-- XP Bar -->
-  <div class="xp-bar-wrap">
+  <div class="xp-bar-wrap" id="xpBarWrap" style="display:none">
     <div class="xp-row">
       <div><span class="xp-level">Seviye <span id="xpLevel">1</span></span> <span class="xp-title" id="xpTitle">Başlangıç</span></div>
       <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal">0</span> XP</div>
@@ -1051,7 +1051,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
   </div>
   <div class="timer-wrap">
-    <div class="ring-cont">
+    <div class="ring-cont" onclick="toggleFullscreenTimer()" style="cursor:pointer" title="Tam ekran">
       <svg class="ring-svg" width="180" height="180" viewBox="0 0 180 180">
         <circle class="ring-bg" cx="90" cy="90" r="78"/>
         <circle class="ring-fill" id="ringFill" cx="90" cy="90" r="78" stroke-dasharray="490" stroke-dashoffset="0"/>
@@ -1109,7 +1109,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div id="netGroup" style="display:none"></div>
   <div id="sureGroup" style="display:none"></div>
 
-  <button class="btn-save" onclick="saveEntry()">💾 Kaydet</button>
   <div style="height:100px"></div>
 </div>
 
@@ -1243,7 +1242,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <button onclick="openAuthModal()" style="background:var(--accent);border:none;border-radius:8px;padding:7px 12px;color:#fff;font-weight:800;font-size:0.75rem;cursor:pointer">Giriş</button>
   </div>
   <div class="sec">Seviye & XP</div>
-  <div class="xp-bar-wrap" style="margin-bottom:10px;">
+  <div class="xp-bar-wrap" id="xpBarWrap2" style="margin-bottom:10px;display:none">
     <div class="xp-row">
       <div><span class="xp-level">Seviye <span id="xpLevel2">1</span></span> <span class="xp-title" id="xpTitle2">Başlangıç</span></div>
       <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal2">0</span> XP</div>
@@ -1486,6 +1485,7 @@ var _denemeMode = 'tam'; // 'tam' | 'brans'
 // ════════════════════════════════════════════
 var entries = [];
 var denemeler = [];
+var badges = []; // in-memory, localStorage'a yazılmaz
 var _loadedUid = null; // hangi UID için yüklendi
 
 var currentExam = 'TYT';
@@ -1801,7 +1801,7 @@ function timerDone() {
   updateTimerUI();
 }
 
-function saveTimerEntry(mins, dogru, yanlis, net) {
+function saveTimerEntry(mins, dogru, yanlis, net, totalSoru) {
   const subjData = (EXAM_DATA[getExamKey()] || {})[currentSubject];
   const entry = {
     id: Date.now(),
@@ -1813,6 +1813,7 @@ function saveTimerEntry(mins, dogru, yanlis, net) {
     type: currentEntryType || (currentTopic ? 'konu' : 'genel'),
     sure: mins,
     dogru: dogru, yanlis: yanlis, net: net,
+    totalSoru: totalSoru || (dogru + yanlis),
     emoji: subjData?.emoji || '📚',
     color: subjData?.color || '#38bdf8',
     autoSaved: true
@@ -1841,23 +1842,45 @@ function openSoruModal(mins) {
 }
 
 function calcSoruNet() {
-  const d = parseFloat(document.getElementById('soruDogru').value) || 0;
-  const y = parseFloat(document.getElementById('soruYanlis').value) || 0;
+  const dEl = document.getElementById('soruDogru');
+  const yEl = document.getElementById('soruYanlis');
+  const bEl = document.getElementById('soruBos');
+  const tEl = document.getElementById('soruToplam');
+
+  const toplam = parseFloat(tEl.value) || 0;
+  let d = parseFloat(dEl.value) || 0;
+  let y = parseFloat(yEl.value) || 0;
+
+  if (toplam > 0 && dEl.value === '' && yEl.value === '') {
+    // Sadece toplam girildi: hepsi doğru kabul
+    d = toplam; y = 0;
+    dEl.value = toplam;
+    bEl.value = 0;
+  } else if (toplam > 0 && dEl.value !== '') {
+    // Toplam var, dogru girildi: kalan = bos (yanlis sıfır kabul)
+    y = parseFloat(yEl.value) || 0;
+    const bos = Math.max(0, toplam - d - y);
+    bEl.value = bos;
+  } else if (toplam === 0 && (d > 0 || y > 0)) {
+    // Sadece dogru/yanlis: toplam hesapla
+    const b = parseFloat(bEl.value) || 0;
+    if (!tEl.value) tEl.value = d + y + b || '';
+  }
+
   const net = Math.max(0, d - y / 4);
   document.getElementById('soruNetVal').textContent = net.toFixed(2);
-  // Toplam otomatik hesapla
-  const b = parseFloat(document.getElementById('soruBos').value) || 0;
-  if (!document.getElementById('soruToplam').value) {
-    document.getElementById('soruToplam').value = d + y + b || '';
-  }
 }
 
 function saveSoruModal() {
   const d = parseFloat(document.getElementById('soruDogru').value) || 0;
   const y = parseFloat(document.getElementById('soruYanlis').value) || 0;
+  const t = parseFloat(document.getElementById('soruToplam').value) || 0;
   const net = Math.max(0, d - y / 4);
+  // toplam soru = toplam alanı || dogru+yanlis+bos
+  const b = parseFloat(document.getElementById('soruBos').value) || 0;
+  const totalSoru = t || (d + y + b);
   document.getElementById('soruModal').classList.remove('open');
-  saveTimerEntry(_soruModalMins, d, y, net);
+  saveTimerEntry(_soruModalMins, d, y, net, totalSoru);
 }
 
 function skipSoruModal() {
@@ -2112,7 +2135,7 @@ function saveDeneme() {
         totalNet3 += net;
       });
       denemeler[editIdx].totalNet = Math.round(totalNet3*100)/100;
-      if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
+      saveToCloud();
       window._editingDenemeId = null;
       var saveBtn = document.querySelector('[onclick="saveDeneme()"]');
       if (saveBtn) { saveBtn.textContent = 'Kaydet'; saveBtn.style.background = ''; }
@@ -2155,7 +2178,48 @@ function saveDeneme() {
   };
 
   denemeler.unshift(deneme);
-  if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
+
+  // Deneme süre ve soru sayısını entries'e yansıt
+  var _denemeType = (deneme.type || '').toUpperCase();
+  var _isTYT = _denemeType === 'TYT';
+  // Branş denemesi için süre/soru eklenmez
+  if (!deneme.brans) {
+    var _dSure = _isTYT ? 165 : 180;
+    var _dSoru = _isTYT ? 120 : 80;
+    var _dSubj = _isTYT ? 'TYT' : 'AYT';
+    // Gerçek dogru/yanlis toplamlarını hesapla
+    var _totalD = 0, _totalY = 0;
+    Object.values(deneme.results || {}).forEach(function(r) { _totalD += (r.d||0); _totalY += (r.y||0); });
+    // Tarih formatını tr-TR'ye çevir (denemedTarih ISO, entries tr-TR bekliyor)
+    var _rawDate = deneme.date || '';
+    var _entryDate = todayStr();
+    if (_rawDate) {
+      try {
+        var _parts = _rawDate.split('-');
+        _entryDate = _parts[2] + '.' + _parts[1] + '.' + _parts[0];
+      } catch(e) { _entryDate = todayStr(); }
+    }
+    var _dEntry = {
+      id: Date.now() + 1,
+      date: _entryDate,
+      time: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}),
+      exam: _dSubj,
+      subject: _dSubj + ' Denemesi',
+      topic: deneme.isim || (_dSubj + ' Denemesi'),
+      type: 'soru',
+      sure: _dSure,
+      dogru: _totalD,
+      yanlis: _totalY,
+      totalSoru: _dSoru,
+      net: deneme.totalNet || 0,
+      emoji: '📋',
+      color: _isTYT ? '#38bdf8' : '#818cf8',
+      fromDeneme: deneme.id
+    };
+    entries.unshift(_dEntry);
+  }
+
+  saveToCloud();
   syncWeeklyStats();
 
   // Temizle
@@ -2173,6 +2237,10 @@ function saveDeneme() {
 
   showToast('✅ Deneme kaydedildi! Net: ' + deneme.totalNet);
   renderDenemeLog();
+  renderAna();
+  renderWeeklySummaryCard();
+  updateXPUI();
+  updateStreak();
 }
 
 function renderDenemeLog() {
@@ -2283,7 +2351,7 @@ function editDeneme(id) {
 
 function deleteDeneme(id) {
   denemeler = denemeler.filter(d => d.id !== id);
-  if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
+  saveToCloud();
   renderDenemeLog();
   showToast('🗑 Silindi');
 }
@@ -2291,6 +2359,21 @@ function deleteDeneme(id) {
 // ════════════════════════════════════════════
 // ANA PAGE
 // ════════════════════════════════════════════
+
+function denemeLogItemHTML(d) {
+  return `<div class="log-item">
+    <div class="log-icon" style="background:#818cf822">📋</div>
+    <div class="log-info">
+      <div class="log-title">${d.isim || d.bransLabel || 'Deneme'}</div>
+      <div class="log-sub">${d.bransLabel || d.type || ''} · ${d.date || ''} ${d.time || ''}</div>
+    </div>
+    <div style="text-align:right">
+      <div><span style="color:var(--accent2)">${typeof d.totalNet !== 'undefined' ? 'Net: ' + (Math.round(d.totalNet*100)/100) : ''}</span></div>
+      <button class="log-del" onclick="deleteDeneme(${d.id})">🗑</button>
+    </div>
+  </div>`;
+}
+
 function renderAna() {
   const today = todayStr();
   const todayEntries = entries.filter(e => e.date === today);
@@ -2305,22 +2388,35 @@ function renderAna() {
   renderHeatmap();
 
   const logEl = document.getElementById('anaLog');
-  const recent = entries.slice(0, 8);
-  if (recent.length === 0) {
+  // entries içinde zaten fromDeneme olan kayıtlar var, denemeler ayrıca eklenmez
+  const _denemeIdsInEntries = new Set(entries.filter(e => e.fromDeneme).map(e => e.fromDeneme));
+  const _extraDenemeler = (denemeler || []).filter(d => !_denemeIdsInEntries.has(d.id));
+  const allItems = [
+    ...entries.map(e => ({...e, _type:'entry'})),
+    ..._extraDenemeler.map(d => ({...d, _type:'deneme'}))
+  ].sort((a, b) => (b.id || 0) - (a.id || 0)).slice(0, 8);
+
+  if (allItems.length === 0) {
     logEl.innerHTML = `<div class="empty"><span>📚</span><p>Henüz çalışma kaydı yok.<br>Hadi başla! 💪</p></div>`;
   } else {
-    logEl.innerHTML = recent.map(e => logItemHTML(e)).join('');
+    logEl.innerHTML = allItems.map(e => e._type === 'deneme' ? denemeLogItemHTML(e) : logItemHTML(e)).join('');
   }
 }
 
 function logItemHTML(e) {
+  const isDeneme = !!e.fromDeneme;
   const valParts = [];
   if (e.sure) valParts.push(`<span style="color:var(--orange)">${e.sure}dk</span>`);
-  if (e.type === 'soru') valParts.push(`<span style="color:var(--accent3)">${e.dogru}D/${e.yanlis}Y</span>`);
+  if (isDeneme) {
+    valParts.push(`<span style="color:var(--accent2)">Net: ${e.net}</span>`);
+  } else if (e.type === 'soru') {
+    valParts.push(`<span style="color:var(--accent3)">${e.dogru}D/${e.yanlis}Y</span>`);
+  }
+  const titleBadge = isDeneme ? `<span style="font-size:0.6rem;background:var(--accent2)22;color:var(--accent2);border-radius:5px;padding:1px 5px;font-weight:900;margin-left:4px">DENEME</span>` : '';
   return `<div class="log-item">
     <div class="log-icon" style="background:${e.color}22">${e.emoji}</div>
     <div class="log-info">
-      <div class="log-title">${e.subject}</div>
+      <div class="log-title">${e.subject}${titleBadge}</div>
       <div class="log-sub">${e.topic} · ${e.date} ${e.time}</div>
     </div>
     <div style="text-align:right">
@@ -2531,7 +2627,7 @@ function closeStreakModal() {
 }
 
 function showBadgeTooltip(id) {
-  const earned = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
+  const earned = badges;
   const b = BADGES.find(x => x.id === id);
   if (!b) return;
   const isEarned = earned.includes(id);
@@ -2590,9 +2686,15 @@ function renderStat() {
     <div class="summary-card"><span class="summary-val" style="color:var(--accent2)">${uniqueKonu}</span><div class="summary-lbl">Konu Sayısı</div></div>
   `;
 
-  // Bars by subject
+  // Bars by subject (deneme entries ayrı gösterilir)
   const bySubj = {};
-  filtered.forEach(e => { bySubj[e.subject] = (bySubj[e.subject] || 0) + (e.sure||0); });
+  filtered.forEach(e => {
+    if (e.fromDeneme) return; // Denemeler ayrı grupta
+    bySubj[e.subject] = (bySubj[e.subject] || 0) + (e.sure||0);
+  });
+  // Deneme sürelerini ekle
+  var _denemeSure = filtered.filter(e => e.fromDeneme).reduce((a,e)=>a+(e.sure||0),0);
+  if (_denemeSure > 0) bySubj['📋 Denemeler'] = _denemeSure;
   const sortedSubj = Object.entries(bySubj).sort((a,b) => b[1]-a[1]);
   const maxSubj = sortedSubj[0]?.[1] || 1;
   document.getElementById('statBars').innerHTML = sortedSubj.length === 0
@@ -2620,6 +2722,8 @@ function renderStat() {
         <div class="bar-track"><div class="bar-fill" style="width:${(val/maxTopic*100).toFixed(1)}%;background:linear-gradient(90deg,var(--accent3),var(--accent))"></div></div>
         <div class="bar-val">${val}S</div>
       </div>`).join('');
+
+  renderPieCharts();
 }
 
 // ════════════════════════════════════════════
@@ -2671,31 +2775,38 @@ function drawDonut(svgId, legendId, data) {
     return;
   }
 
-  var cx = 50, cy = 50, r = 38, innerR = 24;
-  var startAngle = -Math.PI / 2;
+  var cx = 50, cy = 50, R = 40, r = 25;
   var paths = '';
+  var f = function(n){ return Math.round(n * 1000) / 1000; };
 
-  data.forEach(function(d) {
-    var angle = (d.value / total) * Math.PI * 2;
-    var endAngle = startAngle + angle;
-    var largeArc = angle > Math.PI ? 1 : 0;
+  // Tek eleman varsa tam çember çiz
+  if (data.length === 1) {
+    paths += '<circle cx="'+cx+'" cy="'+cy+'" r="'+R+'" fill="'+data[0].color+'" opacity="0.9"/>';
+    paths += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="var(--card)"/>';
+  } else {
+    var startAngle = -Math.PI / 2;
+    data.forEach(function(d) {
+      var angle = (d.value / total) * Math.PI * 2;
+      // Çok küçük dilimleri atla
+      if (angle < 0.01) { startAngle += angle; return; }
+      var endAngle = startAngle + angle;
+      var large = angle > Math.PI ? 1 : 0;
+      var x1 = f(cx + R * Math.cos(startAngle)), y1 = f(cy + R * Math.sin(startAngle));
+      var x2 = f(cx + R * Math.cos(endAngle)),   y2 = f(cy + R * Math.sin(endAngle));
+      var x3 = f(cx + r * Math.cos(endAngle)),   y3 = f(cy + r * Math.sin(endAngle));
+      var x4 = f(cx + r * Math.cos(startAngle)), y4 = f(cy + r * Math.sin(startAngle));
+      paths += '<path d="M'+x1+','+y1+' A'+R+','+R+' 0 '+large+',1 '+x2+','+y2
+             +' L'+x3+','+y3+' A'+r+','+r+' 0 '+large+',0 '+x4+','+y4+' Z"'
+             +' fill="'+d.color+'" opacity="0.9" stroke="var(--bg2)" stroke-width="0.8"/>';
+      startAngle = endAngle;
+    });
+  }
 
-    var x1 = cx + r * Math.cos(startAngle), y1 = cy + r * Math.sin(startAngle);
-    var x2 = cx + r * Math.cos(endAngle),   y2 = cy + r * Math.sin(endAngle);
-    var x3 = cx + innerR * Math.cos(endAngle), y3 = cy + innerR * Math.sin(endAngle);
-    var x4 = cx + innerR * Math.cos(startAngle), y4 = cy + innerR * Math.sin(startAngle);
-
-    paths += '<path d="M'+x1+' '+y1+' A'+r+' '+r+' 0 '+largeArc+' 1 '+x2+' '+y2
-      +' L'+x3+' '+y3+' A'+innerR+' '+innerR+' 0 '+largeArc+' 0 '+x4+' '+y4+' Z"'
-      +' fill="'+d.color+'" opacity="0.9"/>';
-    startAngle = endAngle;
-  });
-
-  // Center text
-  var topLabel = data[0] ? data[0].label.split(' ')[0] : '';
+  // Merkez yazı
   var topPct = data[0] ? Math.round(data[0].value / total * 100) : 0;
-  paths += '<text x="50" y="47" text-anchor="middle" fill="#e2e8f0" font-size="10" font-weight="700" font-family="Space Mono,monospace">'+topPct+'%</text>';
-  paths += '<text x="50" y="57" text-anchor="middle" fill="#4b6280" font-size="5.5" font-family="Nunito,sans-serif">'+topLabel+'</text>';
+  var topLabel = data[0] ? data[0].label.slice(0,8) : '';
+  paths += '<text x="50" y="47" text-anchor="middle" fill="#e2e8f0" font-size="10" font-weight="700" font-family="monospace">'+topPct+'%</text>';
+  paths += '<text x="50" y="58" text-anchor="middle" fill="#4b6280" font-size="5.5" font-family="Nunito,sans-serif">'+topLabel+'</text>';
 
   svgEl.innerHTML = paths;
 
@@ -2708,7 +2819,7 @@ function drawDonut(svgId, legendId, data) {
     return '<div style="display:flex;align-items:center;gap:5px">'
       +'<div style="width:8px;height:8px;border-radius:2px;background:'+d.color+';flex-shrink:0"></div>'
       +'<div style="font-size:0.6rem;font-weight:800;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+d.label+'</div>'
-      +'<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">'+pct+'%</div>'
+      +'<div style="font-size:0.6rem;font-weight:700;color:var(--muted)">'+pct+'% · '+timeStr+'</div>'
       +'</div>';
   }).join('');
 }
@@ -2735,7 +2846,6 @@ function updateStreak() {
 // ════════════════════════════════════════════
 function todayStr() { return new Date().toLocaleDateString('tr-TR'); }
 function save() {
-  if (_currentUser) localStorage.setItem('yks_entries_' + _currentUser.uid, JSON.stringify(entries));
   saveToCloud();
 }
 
@@ -2745,15 +2855,11 @@ function saveToCloud() {
   // Debounce: 2 saniye bekle, ardından kaydet
   clearTimeout(_saveCloudTimer);
   _saveCloudTimer = setTimeout(function() {
-    var bk = _currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges';
-    var gk = _currentUser ? 'yks_goal_'+_currentUser.uid : 'yks_goal';
-    var badges = JSON.parse(localStorage.getItem(bk) || '[]');
-    var goal = parseInt(localStorage.getItem(gk) || '600');
     _fbDb.collection('userData').doc(_currentUser.uid).set({
       entries: entries,
       denemeler: denemeler,
       badges: badges,
-      goal: goal,
+      goal: weeklyGoal,
       updatedAt: new Date().toISOString()
     }).then(function() {
       console.log('☁️ Buluta kaydedildi');
@@ -2778,49 +2884,29 @@ function loadFromCloud(uid) {
 
   showSyncIndicator('yükleniyor...');
   _fbDb.collection('userData').doc(uid).get().then(function(doc) {
-    // Kullanıcıya ait uid-specific cache anahtarları
-    var eKey = 'yks_entries_' + uid;
-    var dKey = 'yks_denemeler_' + uid;
-    var bKey = 'yks_badges_' + uid;
-    var gKey = 'yks_goal_' + uid;
-
     if (!doc.exists) {
-      // İlk giriş — boş başla, eski global cache'den alma
       entries = [];
       denemeler = [];
-      localStorage.setItem(eKey, '[]');
-      localStorage.setItem(dKey, '[]');
+      badges = [];
+      weeklyGoal = 600;
       showSyncIndicator('');
       syncWeeklyStats();
       return;
     }
     var data = doc.data();
-    if (data.entries && Array.isArray(data.entries)) {
-      entries = data.entries;
-      localStorage.setItem(eKey, JSON.stringify(entries));
-    } else {
-      entries = JSON.parse(localStorage.getItem(eKey) || '[]');
-    }
-    if (data.denemeler && Array.isArray(data.denemeler)) {
-      denemeler = data.denemeler;
-      localStorage.setItem(dKey, JSON.stringify(denemeler));
-    } else {
-      denemeler = JSON.parse(localStorage.getItem(dKey) || '[]');
-    }
-    if (data.badges && Array.isArray(data.badges)) {
-      localStorage.setItem(bKey, JSON.stringify(data.badges));
-    }
-    if (data.goal) {
-      weeklyGoal = data.goal;
-      localStorage.setItem(gKey, data.goal);
-    }
+    entries  = (data.entries  && Array.isArray(data.entries))  ? data.entries  : [];
+    denemeler= (data.denemeler&& Array.isArray(data.denemeler))? data.denemeler: [];
+    badges   = (data.badges   && Array.isArray(data.badges))   ? data.badges   : [];
+    weeklyGoal = data.goal ? parseInt(data.goal) : 600;
     showSyncIndicator('✓');
     setTimeout(function(){ showSyncIndicator(''); }, 2000);
     renderAna();
     updateStreak();
     updateXPUI();
     checkBadges();
+    renderBadges();
     renderWeeklySummaryCard();
+    renderGoalCard();
     renderBackupSummary();
     syncWeeklyStats();
   }).catch(function(e) {
@@ -2926,6 +3012,15 @@ function _initFirebaseCore() {
 }
 
 function onUserLoggedIn(user) {
+  // Eski localStorage cache'ini temizle — tüm veri artık sadece cloud'dan gelir
+  try {
+    Object.keys(localStorage).forEach(function(k) {
+      if (k.startsWith('yks_') && !k.startsWith('yks_theme') && !k.startsWith('yks_timer')) {
+        localStorage.removeItem(k);
+      }
+    });
+  } catch(e) {}
+
   _fbDb.collection('users').doc(user.uid).get().then(function(doc) {
     var username = doc.exists ? doc.data().username : user.email.split('@')[0];
     var displayName = doc.exists ? doc.data().displayName : username;
@@ -2953,9 +3048,19 @@ function onUserLoggedIn(user) {
 }
 
 function onUserLoggedOut() {
+  entries = []; denemeler = []; badges = []; weeklyGoal = 600;
   document.getElementById('userBar').style.display = 'none';
   var banner = document.getElementById('loginPromptBanner');
   if (banner) banner.style.display = 'flex';
+  var xbw = document.getElementById('xpBarWrap');
+  if (xbw) xbw.style.display = 'none';
+  var xbw2 = document.getElementById('xpBarWrap2');
+  if (xbw2) xbw2.style.display = 'none';
+  var rxs = document.getElementById('rozetXpSec');
+  if (rxs) rxs.style.display = 'none';
+  var rs = document.getElementById('rozetStats');
+  if (rs) rs.style.display = 'none';
+  renderAna();
   renderFriends();
 }
 
@@ -3135,7 +3240,7 @@ function syncWeeklyStats() {
   // En çok çalışılan 3 ders
   var topSubjects = Object.entries(subjects).sort(function(a,b){return b[1]-a[1];}).slice(0,3).map(function(x){return {name:x[0],mins:x[1]};});
 
-  var earnedBadges = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
+  var earnedBadges = badges;
 
   // Tüm zamanlar: ders bazında çalışılan unique konu sayısı / toplam konu sayısı
   var allSubjectTopics = {};
@@ -3705,7 +3810,7 @@ function loadCoachRequests() {
             '<div style="flex:1">' +
               '<div style="font-size:0.85rem;font-weight:900">' + coachName + '</div>' +
               '<div style="font-size:0.68rem;font-weight:800;color:' + statusColor + ';margin-top:2px">' + statusLabel + '</div>' +
-            '</div>' +
+            '</div>';
           list.appendChild(card);
         });
       });
@@ -3878,9 +3983,6 @@ document.addEventListener('DOMContentLoaded', function() {
   setEntryType('konu', document.getElementById('typeKonu'));
   renderDenemeFields();
   renderBackupSummary();
-  updateXPUI();
-  checkBadges();
-  renderWeeklySummaryCard();
   newMotiv();
   applyTheme();
   initFirebase();
@@ -3917,7 +4019,7 @@ function importData(input) {
       entries = [...newEntries, ...entries];
       denemeler = [...newDenemeler, ...denemeler];
       save();
-      if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
+      saveToCloud();
       renderAna(); renderBackupSummary(); updateStreak();
       showToast('✅ ' + newEntries.length + ' kayıt, ' + newDenemeler.length + ' deneme yüklendi!');
     } catch(err) { showToast('❌ Geçersiz yedek dosyası!'); }
@@ -3929,7 +4031,7 @@ function importData(input) {
 function clearAllData() {
   if (!confirm('Tüm veriler silinecek!\n\nÖnce yedek almayı unutma!')) return;
   entries = []; denemeler = [];
-  save(); if(_currentUser) localStorage.setItem('yks_denemeler_'+_currentUser.uid, JSON.stringify(denemeler)); saveToCloud();
+  save(); saveToCloud();
   renderAna(); renderBackupSummary(); updateStreak();
   showToast('🗑 Tüm veriler silindi');
 }
@@ -4091,19 +4193,18 @@ function calcStreak() {
 }
 
 function checkBadges() {
-  const earned = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
   let newOnes = [];
   BADGES.forEach(b => {
-    if (!earned.includes(b.id) && b.check()) { earned.push(b.id); newOnes.push(b); }
+    if (!badges.includes(b.id) && b.check()) { badges.push(b.id); newOnes.push(b); }
   });
   if (newOnes.length > 0) {
-    if(_currentUser) localStorage.setItem('yks_badges_'+_currentUser.uid, JSON.stringify(earned)); saveToCloud();
+    saveToCloud();
     newOnes.forEach((b, i) => setTimeout(() => showToast('🏆 Başarım kazandın: ' + b.name + '!'), i * 1500));
   }
 }
 
 function renderBadges() {
-  const earned = JSON.parse(localStorage.getItem(_currentUser ? 'yks_badges_'+_currentUser.uid : 'yks_badges') || '[]');
+  const earned = badges;
   const xp = getTotalXP();
   const info = getLevelInfo(xp);
   document.getElementById('xpLevel2').textContent = info.lvNum;
@@ -4566,14 +4667,14 @@ function saveGoal() {
   const v = parseInt(document.getElementById('goalInput')?.value) || 0;
   if (v < 30) { showToast('⚠️ En az 30 dakika gir!'); return; }
   weeklyGoal = v;
-  if(_currentUser) localStorage.setItem('yks_goal_'+_currentUser.uid, v); saveToCloud();
+  saveToCloud();
   renderGoalCard();
   showToast('✅ Haftalık hedef: ' + v + ' dk!');
 }
 
 function applyGoalPreset(mins) {
   weeklyGoal = mins;
-  if(_currentUser) localStorage.setItem('yks_goal_'+_currentUser.uid, mins); saveToCloud();
+  saveToCloud();
   renderGoalCard();
   const h = Math.floor(mins/60);
   showToast('✅ Hedef: ' + (h>0?h+' saat ':'') + (mins%60>0?mins%60+' dk':''));
@@ -4594,7 +4695,7 @@ function saveGoalCustom() {
   const total = h * 60 + m;
   if (total < 30) { showToast('⚠️ En az 30 dakika gir!'); return; }
   weeklyGoal = total;
-  if(_currentUser) localStorage.setItem('yks_goal_'+_currentUser.uid, total); saveToCloud();
+  saveToCloud();
   renderGoalCard();
   showToast('✅ Hedef: ' + (h>0?h+' saat ':'') + (m>0?m+' dk':'') + ' ayarlandı!');
 }
@@ -4611,18 +4712,20 @@ function getWeekData(offsetWeeks) {
   weekStart.setDate(now.getDate() - offset - offsetWeeks * 7);
   const DAYS = ['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
   const days = [];
-  let totalMins = 0, totalSoru = 0;
+  let totalMins = 0, totalSoru = 0, totalDeneme = 0;
   for (let i = 0; i < 7; i++) {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
     const ds = d.toLocaleDateString('tr-TR');
     const dayEntries = entries.filter(e => e.date === ds);
+    const dayDenemeler = (denemeler || []).filter(e => e.date === ds);
     const mins = dayEntries.reduce((a,e) => a+(e.sure||0), 0);
     const soru = dayEntries.reduce((a,e) => a+(e.dogru||0)+(e.yanlis||0), 0);
     totalMins += mins; totalSoru += soru;
-    days.push({ name: DAYS[i], date: ds, entries: dayEntries, mins, soru, isToday: ds === todayStr() });
+    totalDeneme += dayDenemeler.length;
+    days.push({ name: DAYS[i], date: ds, entries: dayEntries, denemeler: dayDenemeler, mins, soru, isToday: ds === todayStr() });
   }
-  return { days, totalMins, totalSoru };
+  return { days, totalMins, totalSoru, totalDeneme };
 }
 
 function renderWeeklySummaryCard() {
@@ -4710,11 +4813,17 @@ function openWeekModal() {
       day.entries.forEach(e => {
         const valParts = [];
         if (e.sure) valParts.push(e.sure + 'dk');
-        if (e.type === 'soru' && (e.dogru || e.yanlis)) valParts.push(e.dogru + 'D/' + e.yanlis + 'Y');
+        if (e.fromDeneme) {
+          valParts.push('Net: ' + e.net);
+        } else if (e.type === 'soru' && (e.dogru || e.yanlis)) {
+          valParts.push(e.dogru + 'D/' + e.yanlis + 'Y');
+        }
+        var isDenemeEntry = !!e.fromDeneme;
+        var denemeBadge = isDenemeEntry ? '<span style="font-size:0.55rem;background:var(--accent2)22;color:var(--accent2);border-radius:4px;padding:1px 4px;font-weight:900;margin-left:3px">DENEME</span>' : '';
         html += '<div class="week-day-entry">' +
           '<div style="width:32px;height:32px;border-radius:10px;background:' + (e.color||'#38bdf8') + '22;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0">' + (e.emoji||'📚') + '</div>' +
           '<div style="flex:1;min-width:0">' +
-            '<div style="font-weight:800;font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.subject + '</div>' +
+            '<div style="font-weight:800;font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.subject + denemeBadge + '</div>' +
             '<div style="font-size:0.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (e.topic||'') + '</div>' +
           '</div>' +
           '<div style="font-family:\'Space Mono\',monospace;font-size:0.7rem;color:var(--muted);font-weight:700;text-align:right;flex-shrink:0">' + valParts.join('<br>') + '</div>' +
