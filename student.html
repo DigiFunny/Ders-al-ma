@@ -5514,7 +5514,6 @@ function loadCoachSuggestionsForStudent() {
       _fbDb.collection('suggestions')
         .where('studentUid', '==', _currentUser.uid)
         .where('coachUid', '==', _myCoachUid)
-        .orderBy('createdAt', 'desc')
         .limit(10)
         .get().then(function(sSnap) {
           if (sSnap.empty) {
@@ -5522,12 +5521,19 @@ function loadCoachSuggestionsForStudent() {
             return;
           }
 
+          // Client-side sırala
+          var docs = [];
+          sSnap.forEach(function(d) { docs.push(d); });
+          docs.sort(function(a, b) {
+            return (b.data().createdAt || '').localeCompare(a.data().createdAt || '');
+          });
+
           // Koç adını al
           _fbDb.collection('users').doc(_myCoachUid).get().then(function(uDoc) {
             var coachName = uDoc.exists ? (uDoc.data().displayName || 'Koçun') : 'Koçun';
             list.innerHTML = '';
 
-            sSnap.forEach(function(doc) {
+            docs.forEach(function(doc) {
               var d = doc.data();
               var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : '📖 Konu Çalışması';
               var typeColor = d.type === 'test' ? '#f59e0b' : d.type === 'deneme' ? '#8b5cf6' : 'var(--accent)';
