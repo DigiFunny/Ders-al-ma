@@ -253,6 +253,12 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <select class="suggest-select" id="suggestStudent">
       <option value="">Öğrenci seç...</option>
     </select>
+    <div style="font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Öneri Türü</div>
+    <select class="suggest-select" id="suggestType">
+      <option value="konu">📖 Konu Çalışması</option>
+      <option value="test">✏️ Test / Soru</option>
+      <option value="deneme">📝 Deneme Sınavı</option>
+    </select>
     <div style="font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Ders</div>
     <select class="suggest-select" id="suggestSubject">
       <option value="">Ders seç...</option>
@@ -977,6 +983,7 @@ function closeStudentDetail() {
 function sendSuggestion() {
   var studentUid = document.getElementById('suggestStudent').value;
   var subject = document.getElementById('suggestSubject').value;
+  var type = document.getElementById('suggestType').value;
   var target = document.getElementById('suggestTarget').value;
   var note = document.getElementById('suggestNote').value.trim();
 
@@ -987,13 +994,16 @@ function sendSuggestion() {
     coachUid: _user.uid,
     studentUid: studentUid,
     subject: subject,
+    type: type || 'konu',
     targetMinutes: parseInt(target) || 0,
     note: note,
     createdAt: new Date().toISOString(),
-    read: false
+    read: false,
+    done: false
   }).then(function() {
     showToast('✅ Öneri gönderildi!');
     document.getElementById('suggestSubject').value = '';
+    document.getElementById('suggestType').value = 'konu';
     document.getElementById('suggestTarget').value = '';
     document.getElementById('suggestNote').value = '';
     loadSentSuggestions();
@@ -1022,7 +1032,13 @@ function loadSentSuggestions() {
             '<span style="font-size:0.78rem;font-weight:900;color:var(--coach)">' + d.subject + '</span>' +
             '<span style="font-size:0.65rem;color:var(--muted);font-weight:700">' + (d.createdAt || '').slice(0,10) + '</span>' +
           '</div>' +
-          '<div style="font-size:0.72rem;color:var(--muted);font-weight:800;margin-bottom:4px">→ ' + studentName + (d.targetMinutes ? ' · Hedef: ' + d.targetMinutes + 'dk/gün' : '') + '</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">' +
+            '<span style="font-size:0.68rem;font-weight:800;background:var(--bg3);padding:2px 8px;border-radius:6px;color:var(--text)">' +
+              (d.type === 'test' ? '✏️ Test' : d.type === 'deneme' ? '📝 Deneme' : '📖 Konu') +
+            '</span>' +
+            '<span style="font-size:0.72rem;color:var(--muted);font-weight:800">→ ' + studentName + (d.targetMinutes ? ' · ' + d.targetMinutes + 'dk' : '') + '</span>' +
+            (d.done ? '<span style="font-size:0.68rem;color:var(--accent3);font-weight:800;margin-left:auto">✅ Tamamlandı</span>' : '') +
+          '</div>' +
           (d.note ? '<div style="font-size:0.78rem;color:var(--text);font-style:italic;border-left:2px solid var(--coach);padding-left:8px;margin-top:6px">' + d.note + '</div>' : '');
         list.appendChild(card);
       });
