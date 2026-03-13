@@ -5457,13 +5457,13 @@ function sendFeedback() {
 
   msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Gönderiliyor...';
 
-  // users/{uid} dökümanına arrayUnion ile yaz — mevcut kural zaten bu yola izin veriyor
-  _fbDb.collection('users').doc(_currentUser.uid).set({
-    feedbacks: firebase.firestore.FieldValue.arrayUnion({
-      text: text,
-      sentAt: new Date().toISOString()
-    })
-  }, { merge: true }).then(function() {
+  _fbDb.collection('feedback').add({
+    uid: _currentUser.uid,
+    username: _currentUser._username || '',
+    email: _currentUser.email || '',
+    text: text,
+    sentAt: new Date().toISOString()
+  }).then(function() {
     msgEl.style.color = 'var(--accent3)';
     msgEl.textContent = '✅ Teşekkürler! Geri bildiriminiz iletildi.';
     document.getElementById('feedbackText').value = '';
