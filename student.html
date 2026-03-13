@@ -893,7 +893,11 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <div class="user-uname" id="userUnameBar">@—</div>
     </div>
   </div>
-  <button class="user-logout" onclick="logoutUser()">Çıkış</button>
+  <div onclick="openStreakModal()" style="display:flex;align-items:center;gap:5px;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer;font-weight:800;font-size:0.82rem;color:var(--text)">
+    <span style="font-size:1rem">🔥</span>
+    <span id="streakNumBar">0</span>
+    <span style="color:var(--muted);font-size:0.72rem">gün</span>
+  </div>
 </div>
 
 <!-- STREAK MODAL -->
@@ -935,10 +939,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <div class="header">
   <div class="header-row">
     <div class="logo">Pugi</div>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
-      <div class="streak-badge" onclick="openStreakModal()">🔥 <span id="streakNum">0</span> gün</div>
-    </div>
+    <div style="display:flex;gap:8px;align-items:center;"></div>
   </div>
 
   <div class="yks-bar">
@@ -1284,6 +1285,15 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <div style="font-size:1.1rem;font-weight:900">Ayarlar</div>
     </div>
 
+    <!-- Tema -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Tema</div><div id="themeModeLabel" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Karanlık mod</div></div>
+      <div onclick="toggleThemeSettings()" id="themeToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="themeToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+      </div>
+    </div>
+
     <!-- Bildirim toggle -->
     <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
       <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
@@ -1485,11 +1495,17 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 var isDark = localStorage.getItem('yks_theme') !== 'light';
 function applyTheme() {
   document.body.classList.toggle('light', !isDark);
-  var btn = document.getElementById('themeBtn');
-  if (btn) btn.textContent = isDark ? '🌙' : '☀️';
   localStorage.setItem('yks_theme', isDark ? 'dark' : 'light');
+  // Settings toggle güncelle
+  var wrap = document.getElementById('themeToggleWrap');
+  var thumb = document.getElementById('themeToggleThumb');
+  var label = document.getElementById('themeModeLabel');
+  if (wrap) wrap.style.background = isDark ? 'var(--accent)' : 'var(--bg3)';
+  if (thumb) thumb.style.left = isDark ? '23px' : '3px';
+  if (label) label.textContent = isDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif';
 }
 function toggleTheme() { isDark = !isDark; applyTheme(); }
+function toggleThemeSettings() { toggleTheme(); }
 // Sayfa yüklenince hemen uygula
 // applyTheme init'te çağrılıyor
 
@@ -2981,7 +2997,10 @@ function updateStreak() {
     if (dates.includes(d.toLocaleDateString('tr-TR'))) streak++;
     else break;
   }
-  document.getElementById('streakNum').textContent = streak;
+  var streakNumEl = document.getElementById('streakNum');
+  if (streakNumEl) streakNumEl.textContent = streak;
+  var barEl = document.getElementById('streakNumBar');
+  if (barEl) barEl.textContent = streak;
 }
 // updateStreak DOMContentLoaded'da
 
@@ -5249,7 +5268,7 @@ function renderNotifToggle() {
 }
 
 function toggleNotifSetting() {
-  if (!_currentUser) { showToast('⚠️ Önce giriş yap!'); return; }
+  if (!_currentUser) { showToast('👋 Bu özellik için hesap oluşturman yeterli!'); return; }
   _notifEnabled = !_notifEnabled;
   localStorage.setItem('yks_notif_' + _currentUser.uid, _notifEnabled ? '1' : '0');
   renderNotifToggle();
@@ -5339,13 +5358,23 @@ function changeUsername() {
 // ── Şifre Değiştir ────────────────────────────
 function changePassword() {
   if (!_currentUser || !_fbAuth) return;
-  var currentPw = document.getElementById('currentPwInput').value;
-  var newPw = document.getElementById('newPwInput').value;
   var msgEl = document.getElementById('passwordChangeMsg');
   msgEl.style.color = 'var(--muted)'; msgEl.textContent = '';
 
+  // Google ile giriş yapan kullanıcılar şifre değiştiremez
+  var providers = _currentUser.providerData.map(function(p){ return p.providerId; });
+  if (providers.indexOf('password') === -1) {
+    msgEl.style.color = 'var(--warn)';
+    msgEl.textContent = 'Google ile giriş yaptığın için şifre değiştiremezsin.';
+    return;
+  }
+
+  var currentPw = document.getElementById('currentPwInput').value;
+  var newPw = document.getElementById('newPwInput').value;
+
   if (!currentPw || !newPw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Tüm alanları doldur.'; return; }
   if (newPw.length < 6) { msgEl.style.color='var(--warn)'; msgEl.textContent='Şifre en az 6 karakter olmalı.'; return; }
+  if (currentPw === newPw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Yeni şifre mevcut şifreyle aynı olamaz.'; return; }
 
   msgEl.textContent = 'Doğrulanıyor...';
   var cred = firebase.auth.EmailAuthProvider.credential(_currentUser.email, currentPw);
@@ -5353,67 +5382,96 @@ function changePassword() {
     return _currentUser.updatePassword(newPw);
   }).then(function() {
     msgEl.style.color = 'var(--accent3)';
-    msgEl.textContent = '✅ Şifre değiştirildi!';
+    msgEl.textContent = '✅ Şifre başarıyla değiştirildi!';
     document.getElementById('currentPwInput').value = '';
     document.getElementById('newPwInput').value = '';
     showToast('✅ Şifren güncellendi!');
   }).catch(function(e) {
     msgEl.style.color = 'var(--warn)';
-    msgEl.textContent = e.code === 'auth/wrong-password' ? 'Mevcut şifre yanlış.' : e.message;
+    var code = e.code || '';
+    if (code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/user-mismatch') {
+      msgEl.textContent = '❌ Mevcut şifre yanlış. Lütfen tekrar dene.';
+    } else if (code === 'auth/too-many-requests') {
+      msgEl.textContent = '⚠️ Çok fazla hatalı deneme. Birkaç dakika bekle.';
+    } else if (code === 'auth/requires-recent-login') {
+      msgEl.textContent = '⚠️ Güvenlik için önce çıkış yapıp tekrar giriş yap.';
+    } else if (code === 'auth/weak-password') {
+      msgEl.textContent = '❌ Şifre çok zayıf. Daha güçlü bir şifre seç.';
+    } else {
+      msgEl.textContent = '❌ Hata: ' + (code || e.message);
+    }
   });
 }
 
 // ── Email Değiştir ────────────────────────────
 function changeEmail() {
   if (!_currentUser || !_fbAuth) return;
-  var newEmail = (document.getElementById('newEmailInput').value || '').trim();
-  var pw = document.getElementById('emailPwInput').value;
   var msgEl = document.getElementById('emailChangeMsg');
   msgEl.style.color = 'var(--muted)'; msgEl.textContent = '';
 
+  var providers = _currentUser.providerData.map(function(p){ return p.providerId; });
+  if (providers.indexOf('password') === -1) {
+    msgEl.style.color = 'var(--warn)';
+    msgEl.textContent = 'Google ile giriş yaptığın için e-posta değiştiremezsin.';
+    return;
+  }
+
+  var newEmail = (document.getElementById('newEmailInput').value || '').trim();
+  var pw = document.getElementById('emailPwInput').value;
+
   if (!newEmail || !pw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Tüm alanları doldur.'; return; }
-  if (!/\S+@\S+\.\S+/.test(newEmail)) { msgEl.style.color='var(--warn)'; msgEl.textContent='Geçerli bir e-posta gir.'; return; }
+  if (newEmail === _currentUser.email) { msgEl.style.color='var(--warn)'; msgEl.textContent='Yeni e-posta mevcut adresle aynı.'; return; }
+  if (!/[^@]+@[^@]+\.[^@]+/.test(newEmail)) { msgEl.style.color='var(--warn)'; msgEl.textContent='Geçerli bir e-posta gir.'; return; }
 
   msgEl.textContent = 'Doğrulanıyor...';
   var cred = firebase.auth.EmailAuthProvider.credential(_currentUser.email, pw);
   _currentUser.reauthenticateWithCredential(cred).then(function() {
-    return _currentUser.updateEmail(newEmail);
+    return _currentUser.verifyBeforeUpdateEmail(newEmail);
   }).then(function() {
     msgEl.style.color = 'var(--accent3)';
-    msgEl.textContent = '✅ E-posta güncellendi!';
+    msgEl.textContent = '✅ Doğrulama e-postası gönderildi. Onayladıktan sonra değişir.';
     document.getElementById('newEmailInput').value = '';
     document.getElementById('emailPwInput').value = '';
-    var emailEl = document.getElementById('currentEmailDisplay');
-    if (emailEl) emailEl.textContent = newEmail;
-    showToast('✅ E-posta güncellendi!');
+    showToast('📧 Doğrulama maili gönderildi!');
   }).catch(function(e) {
     msgEl.style.color = 'var(--warn)';
-    msgEl.textContent = e.code === 'auth/wrong-password' ? 'Şifre yanlış.' :
-      e.code === 'auth/email-already-in-use' ? 'Bu e-posta zaten kullanımda.' : e.message;
+    var code = e.code || '';
+    if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+      msgEl.textContent = 'Şifre yanlış. Lütfen tekrar dene.';
+    } else if (code === 'auth/email-already-in-use') {
+      msgEl.textContent = 'Bu e-posta zaten kullanımda.';
+    } else if (code === 'auth/too-many-requests') {
+      msgEl.textContent = 'Çok fazla deneme. Biraz bekle.';
+    } else {
+      msgEl.textContent = e.message;
+    }
   });
 }
 
 // ── Geri Bildirim ─────────────────────────────
 function sendFeedback() {
-  if (!_currentUser || !_fbDb) { showToast('⚠️ Giriş gerekli'); return; }
+  if (!_currentUser || !_fbDb) { showToast('👋 Geri bildirim göndermek için giriş yapman gerekiyor.'); return; }
   var text = (document.getElementById('feedbackText').value || '').trim();
   var msgEl = document.getElementById('feedbackMsg');
   if (!text || text.length < 5) { msgEl.style.color='var(--warn)'; msgEl.textContent='Lütfen daha uzun bir mesaj yaz.'; return; }
 
   msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Gönderiliyor...';
-  _fbDb.collection('feedback').add({
-    uid: _currentUser.uid,
-    username: _currentUser._username || '',
-    text: text,
-    sentAt: new Date().toISOString()
-  }).then(function() {
+
+  // users/{uid} dökümanına arrayUnion ile yaz — mevcut kural zaten bu yola izin veriyor
+  _fbDb.collection('users').doc(_currentUser.uid).set({
+    feedbacks: firebase.firestore.FieldValue.arrayUnion({
+      text: text,
+      sentAt: new Date().toISOString()
+    })
+  }, { merge: true }).then(function() {
     msgEl.style.color = 'var(--accent3)';
     msgEl.textContent = '✅ Teşekkürler! Geri bildiriminiz iletildi.';
     document.getElementById('feedbackText').value = '';
     showToast('💬 Geri bildirim gönderildi!');
   }).catch(function(e) {
     msgEl.style.color = 'var(--warn)';
-    msgEl.textContent = 'Gönderilemedi: ' + e.message;
+    msgEl.textContent = 'Gönderilemedi. Lütfen tekrar dene.';
+    console.error('Feedback error:', e);
   });
 }
 
