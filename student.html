@@ -991,6 +991,12 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="sec">Haftalık Özet</div>
   <div id="weeklySummaryCard"></div>
 
+  <!-- Koç Önerileri -->
+  <div id="coachSuggestionsWrap" style="display:none">
+    <div class="sec">Koçunun Önerileri</div>
+    <div id="coachSuggestionsList"></div>
+  </div>
+
   <div class="sec">Son Çalışmalar</div>
   <div class="log-list" id="anaLog"></div>
   <div style="height:100px"></div>
@@ -1328,7 +1334,17 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <input id="currentPwInput" type="password" placeholder="Mevcut şifre" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
         <input id="newPwInput" type="password" placeholder="Yeni şifre (en az 6 karakter)" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
         <div id="passwordChangeMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
-        <button onclick="changePassword()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Değiştir</button>
+        <button onclick="changePassword()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer;margin-bottom:10px">Değiştir</button>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <span style="font-size:0.68rem;color:var(--muted);font-weight:700">veya</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+        <button onclick="sendPasswordResetFromSettings()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Mail ile sıfırlama bağlantısı gönder
+        </button>
+        <div id="pwResetMailMsg" style="font-size:0.72rem;color:var(--muted);margin-top:8px;min-height:16px;text-align:center"></div>
       </div>
     </div>
 
@@ -3209,6 +3225,7 @@ function onUserLoggedIn(user) {
     renderFriends();
     renderAnaFriends();
     loadCoachRequests();
+  loadCoachSuggestionsForStudent();
   });
 }
 
@@ -3371,7 +3388,8 @@ function logoutUser() {
     btnColor: 'linear-gradient(135deg,#ef4444,#b91c1c)',
     onOk: function() {
       _fbAuth.signOut().then(function() {
-        window.location.href = 'index.html';
+        var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        window.location.href = base + 'index.html';
       });
     }
   });
@@ -5356,6 +5374,26 @@ function changeUsername() {
 }
 
 // ── Şifre Değiştir ────────────────────────────
+function sendPasswordResetFromSettings() {
+  if (!_currentUser) return;
+  var msgEl = document.getElementById('pwResetMailMsg');
+  msgEl.style.color = 'var(--muted)';
+  msgEl.textContent = 'Gönderiliyor...';
+  _fbAuth.sendPasswordResetEmail(_currentUser.email).then(function() {
+    msgEl.style.color = 'var(--accent3)';
+    msgEl.textContent = '✅ ' + _currentUser.email + ' adresine gönderildi.';
+    showToast('📧 Şifre sıfırlama maili gönderildi!');
+  }).catch(function(e) {
+    msgEl.style.color = 'var(--warn)';
+    var code = e.code || '';
+    if (code === 'auth/too-many-requests') {
+      msgEl.textContent = '⚠️ Çok fazla deneme. Biraz bekle.';
+    } else {
+      msgEl.textContent = '❌ Gönderilemedi. Tekrar dene.';
+    }
+  });
+}
+
 function changePassword() {
   if (!_currentUser || !_fbAuth) return;
   var msgEl = document.getElementById('passwordChangeMsg');
@@ -5446,6 +5484,92 @@ function changeEmail() {
       msgEl.textContent = e.message;
     }
   });
+}
+
+// ════════════════════════════════════════════════
+// KOÇ ÖNERİLERİ
+// ════════════════════════════════════════════════
+var _myCoachUid = null;
+
+function loadCoachSuggestionsForStudent() {
+  if (!_currentUser || !_fbDb) return;
+  var wrap = document.getElementById('coachSuggestionsWrap');
+  var list = document.getElementById('coachSuggestionsList');
+  if (!wrap || !list) return;
+
+  // Önce kabul edilmiş koç isteği var mı kontrol et
+  _fbDb.collection('coachRequests')
+    .where('studentUid', '==', _currentUser.uid)
+    .where('status', '==', 'accepted')
+    .get().then(function(snap) {
+      if (snap.empty) {
+        wrap.style.display = 'none';
+        _myCoachUid = null;
+        return;
+      }
+      _myCoachUid = snap.docs[0].data().coachUid;
+      wrap.style.display = 'block';
+
+      // Önerileri yükle
+      _fbDb.collection('suggestions')
+        .where('studentUid', '==', _currentUser.uid)
+        .where('coachUid', '==', _myCoachUid)
+        .orderBy('createdAt', 'desc')
+        .limit(10)
+        .get().then(function(sSnap) {
+          if (sSnap.empty) {
+            list.innerHTML = '<div style="text-align:center;padding:16px;font-size:0.78rem;color:var(--muted);font-weight:700">Henüz öneri gönderilmedi.</div>';
+            return;
+          }
+
+          // Koç adını al
+          _fbDb.collection('users').doc(_myCoachUid).get().then(function(uDoc) {
+            var coachName = uDoc.exists ? (uDoc.data().displayName || 'Koçun') : 'Koçun';
+            list.innerHTML = '';
+
+            sSnap.forEach(function(doc) {
+              var d = doc.data();
+              var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : '📖 Konu Çalışması';
+              var typeColor = d.type === 'test' ? '#f59e0b' : d.type === 'deneme' ? '#8b5cf6' : 'var(--accent)';
+              var isDone = !!d.done;
+              var dateStr = d.createdAt ? d.createdAt.slice(0,10).split('-').reverse().join('.') : '';
+
+              var card = document.createElement('div');
+              card.style.cssText = 'background:var(--card);border:1.5px solid ' + (isDone ? 'var(--border)' : typeColor) + ';border-radius:14px;padding:14px 16px;margin-bottom:8px;opacity:' + (isDone ? '0.55' : '1') + ';transition:all 0.2s';
+              card.innerHTML =
+                '<div style="display:flex;align-items:flex-start;gap:12px">' +
+                  '<div style="width:36px;height:36px;border-radius:10px;background:' + typeColor + '20;border:1.5px solid ' + typeColor + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">' +
+                    (d.type === 'test' ? '✏️' : d.type === 'deneme' ? '📝' : '📖') +
+                  '</div>' +
+                  '<div style="flex:1;min-width:0">' +
+                    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">' +
+                      '<span style="font-size:0.82rem;font-weight:900;color:' + typeColor + '">' + typeLabel + '</span>' +
+                      (isDone ? '<span style="font-size:0.65rem;background:var(--accent3)20;color:var(--accent3);font-weight:800;padding:1px 7px;border-radius:6px">Tamamlandı</span>' : '') +
+                    '</div>' +
+                    '<div style="font-size:0.88rem;font-weight:900;margin-bottom:4px">' + (d.subject || '') + (d.targetMinutes ? ' <span style="font-size:0.72rem;font-weight:700;color:var(--muted)">· ' + d.targetMinutes + ' dk</span>' : '') + '</div>' +
+                    (d.note ? '<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:6px;font-style:italic">"' + d.note + '"</div>' : '') +
+                    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">' +
+                      '<span style="font-size:0.65rem;color:var(--muted);font-weight:700">' + coachName + ' · ' + dateStr + '</span>' +
+                      (!isDone ?
+                        '<button onclick="markSuggestionDone(\'' + doc.id + '\', this)" style="font-size:0.72rem;font-weight:800;background:var(--accent3)20;color:var(--accent3);border:1.5px solid var(--accent3);border-radius:8px;padding:4px 12px;cursor:pointer">✓ Tamamlandı</button>'
+                        : '') +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+              list.appendChild(card);
+            });
+          });
+        });
+    });
+}
+
+function markSuggestionDone(docId, btn) {
+  if (!_fbDb) return;
+  _fbDb.collection('suggestions').doc(docId).update({ done: true, doneAt: new Date().toISOString() })
+    .then(function() {
+      showToast('✅ Öneri tamamlandı olarak işaretlendi!');
+      loadCoachSuggestionsForStudent();
+    }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
 // ── Geri Bildirim ─────────────────────────────
