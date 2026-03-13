@@ -1238,34 +1238,136 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <!-- PAGE: ROZETLER -->
 <div class="page" id="page-rozet">
   <div id="loginPromptBanner" style="display:none;background:var(--card);border:1.5px solid var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-    <div style="font-size:0.78rem;font-weight:700;color:var(--text)">🔗 Giriş yap, arkadaşını ekle, verilerini kaydet!</div>
+    <div style="font-size:0.78rem;font-weight:700;color:var(--text)">&#128279; Giriş yap, arkadaşını ekle, verilerini kaydet!</div>
     <button onclick="openAuthModal()" style="background:var(--accent);border:none;border-radius:8px;padding:7px 12px;color:#fff;font-weight:800;font-size:0.75rem;cursor:pointer">Giriş</button>
   </div>
-  <div class="sec">Seviye & XP</div>
-  <div class="xp-bar-wrap" id="xpBarWrap2" style="margin-bottom:10px;display:none">
-    <div class="xp-row">
-      <div><span class="xp-level">Seviye <span id="xpLevel2">1</span></span> <span class="xp-title" id="xpTitle2">Başlangıç</span></div>
-      <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal2">0</span> XP</div>
+
+  <!-- Ayarlar butonu - sağ üstte -->
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+    <button onclick="openSettingsModal()" style="display:flex;align-items:center;gap:7px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:8px 14px;font-size:0.8rem;font-weight:800;color:var(--text);cursor:pointer;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Ayarlar
+    </button>
+  </div>
+
+  <!-- PROFİL PANELİ -->
+  <div id="profilPanel">
+    <div class="sec" id="rozetXpSec" style="display:none">Seviye &amp; XP</div>
+    <div class="xp-bar-wrap" id="xpBarWrap2" style="margin-bottom:10px;display:none">
+      <div class="xp-row">
+        <div><span class="xp-level">Seviye <span id="xpLevel2">1</span></span> <span class="xp-title" id="xpTitle2">Başlangıç</span></div>
+        <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal2">0</span> XP</div>
+      </div>
+      <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
+      <div class="xp-pts"><span id="xpCurrent2">0</span> / <span id="xpNext2">100</span> XP</div>
     </div>
-    <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
-    <div class="xp-pts"><span id="xpCurrent2">0</span> / <span id="xpNext2">100</span> XP</div>
+    <div class="summary-grid" id="rozetStats" style="display:none"></div>
+    <div class="sec">Arkadaşlar</div>
+    <div id="friendsWrap"></div>
+    <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
+      <div class="sec" style="margin-bottom:8px">Koç İsteklerim</div>
+      <div id="coachRequestsList"></div>
+    </div>
+    <div class="sec">Başarımlarım</div>
+    <div class="badges-grid" id="badgesGrid"></div>
   </div>
-  <div class="summary-grid" id="rozetStats"></div>
-  <div class="sec">Arkadaşlar</div>
-  <div id="friendsWrap"></div>
-
-  <!-- Koç İstekleri -->
-  <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
-    <div class="sec" style="margin-bottom:8px">Koç İsteklerim</div>
-    <div id="coachRequestsList"></div>
-  </div>
-
-  <div class="sec">Başarımlarım</div>
-  <div class="badges-grid" id="badgesGrid"></div>
 
   <div style="height:100px"></div>
 </div>
 
+<!-- AYARLAR SAYFASI (tam ekran modal) -->
+<div id="settingsPage" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;overflow-y:auto">
+  <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:8px">
+      <button onclick="closeSettingsModal()" style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div style="font-size:1.1rem;font-weight:900">Ayarlar</div>
+    </div>
+
+    <!-- Bildirim toggle -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Bildirimler</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Zamanlayıcı bitince uyar</div></div>
+      <div onclick="toggleNotifSetting()" id="notifToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="notifToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+      </div>
+    </div>
+
+    <!-- Kullanıcı adı -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('usernameExpand','usernameExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#6d28d9);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Kullanıcı Adını Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Ayda bir kez değiştirilebilir</div></div>
+        <span id="usernameExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="usernameExpand" style="display:none;margin-top:12px">
+        <input id="newUsernameInput" type="text" placeholder="yeni_kullanici_adi" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="usernameChangeMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="changeUsername()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Değiştir</button>
+      </div>
+    </div>
+
+    <!-- Şifre -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('passwordExpand','passwordExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#374151,#111827);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Şifremi Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Yeni şifre belirle</div></div>
+        <span id="passwordExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="passwordExpand" style="display:none;margin-top:12px">
+        <input id="currentPwInput" type="password" placeholder="Mevcut şifre" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <input id="newPwInput" type="password" placeholder="Yeni şifre (en az 6 karakter)" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="passwordChangeMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="changePassword()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Değiştir</button>
+      </div>
+    </div>
+
+    <!-- Mail -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('emailExpand','emailExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0ea5e9,#0284c7);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Mail Adresimi Düzenle</div><div id="currentEmailDisplay" style="font-size:0.7rem;color:var(--muted);margin-top:2px">—</div></div>
+        <span id="emailExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="emailExpand" style="display:none;margin-top:12px">
+        <input id="newEmailInput" type="email" placeholder="yeni@email.com" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <input id="emailPwInput" type="password" placeholder="Şifrenizi doğrulayın" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="emailChangeMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="changeEmail()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Değiştir</button>
+      </div>
+    </div>
+
+    <!-- Geri bildirim -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('feedbackExpand','feedbackExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Geri Bildirim Yolla</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Öneri, hata veya görüş bildir</div></div>
+        <span id="feedbackExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="feedbackExpand" style="display:none;margin-top:12px">
+        <textarea id="feedbackText" placeholder="Uygulama hakkındaki düşüncelerini yaz..." rows="4" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.85rem;color:var(--text);outline:none;resize:none;font-family:'Nunito',sans-serif;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        <div id="feedbackMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="sendFeedback()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Gönder</button>
+      </div>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+    <!-- Veri temizle -->
+    <div onclick="clearAllDataFromSettings()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900;color:var(--warn)">Verilerimi Temizle</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Tüm çalışma kayıtlarını sil</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <!-- Çıkış yap -->
+    <div onclick="logoutUser()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900;color:var(--warn)">Çıkış Yap</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Hesabından güvenli çıkış yap</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  </div>
+</div>
 <!-- PAGE: YEDEK -->
 <div class="page" id="page-yedek">
   <div class="sec">Yedekleme</div>
@@ -1354,6 +1456,19 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   </div>
 </div>
 
+
+<!-- ONAY MODALI -->
+<div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:500;display:flex;align-items:flex-end;justify-content:center;pointer-events:none" class="confirm-modal-wrap">
+  <div id="confirmModalOverlay" onclick="closeConfirmModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);opacity:0;transition:opacity 0.25s;pointer-events:none"></div>
+  <div id="confirmModalSheet" style="position:relative;width:100%;max-width:480px;background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 36px;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:auto">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+    <div id="confirmModalIcon" style="text-align:center;font-size:2.8rem;margin-bottom:12px">⚠️</div>
+    <div id="confirmModalTitle" style="text-align:center;font-size:1rem;font-weight:900;margin-bottom:8px">Emin misiniz?</div>
+    <div id="confirmModalDesc" style="text-align:center;font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:24px"></div>
+    <button id="confirmModalOkBtn" onclick="confirmModalOk()" style="width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;font-size:0.95rem;cursor:pointer;margin-bottom:10px;transition:opacity 0.15s">Evet, devam et</button>
+    <button onclick="closeConfirmModal()" style="width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.9rem;cursor:pointer">Vazgeç</button>
+  </div>
+</div>
 </div><!-- /app-wrap -->
 <!-- BOTTOM TABS -->
 <div class="tabs">
@@ -1653,18 +1768,24 @@ function startTimer() {
   timerRunning = true;
   _timerStartedAt = Date.now();
   _timerRemainAtStart = timerRemain;
-  requestWakeLock(); // Ekranı açık tut
+  requestWakeLock();
 
-  // Ekran kapandığında kurtarma için localStorage'a kaydet
   localStorage.setItem('yks_timer_start', _timerStartedAt);
   localStorage.setItem('yks_timer_remain', _timerRemainAtStart);
   localStorage.setItem('yks_timer_running', '1');
 
   document.getElementById('playBtn').innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>`;
 
+  // Başlangıç bildirimi + milestone planla
+  _scheduleTimerNotifications(timerRemain);
+
   timerInterval = setInterval(() => {
     timerRemain = Math.max(0, _timerRemainAtStart - Math.floor((Date.now() - _timerStartedAt) / 1000));
     updateTimerUI();
+    // Başlık güncelle (bildirim çubuğunda görünür)
+    _updateDocTitle();
+    // Badge güncelle
+    _updateBadge();
     if (timerRemain <= 0) {
       stopTimer();
       timerDone();
@@ -1676,10 +1797,13 @@ function stopTimer() {
   timerRunning = false;
   clearInterval(timerInterval);
   _timerStartedAt = null;
-  releaseWakeLock(); // Ekran kilidini serbest bırak
+  releaseWakeLock();
   localStorage.removeItem('yks_timer_start');
   localStorage.removeItem('yks_timer_remain');
   localStorage.removeItem('yks_timer_running');
+  _clearMilestoneTimers();
+  _clearDocTitle();
+  _clearBadge();
   var pb2 = document.getElementById('playBtn'); pb2.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>`; pb2.classList.remove('running');
   updateTimerUI();
 }
@@ -2883,7 +3007,8 @@ function saveToCloud() {
       updatedAt: new Date().toISOString()
     }).then(function() {
       console.log('☁️ Buluta kaydedildi');
-      syncWeeklyStats(); // Koç görünümünü de güncelle
+      syncWeeklyStats();
+      _checkGoalNotification();
     }).catch(function(e) {
       console.warn('☁️ Bulut kayıt hatası:', e.message);
     });
@@ -3059,6 +3184,7 @@ function onUserLoggedIn(user) {
 
     // ☁️ Buluttan veri yükle
     loadFromCloud(user.uid);
+    loadNotifSetting();
 
     // Arkadaşları render et
     renderFriends();
@@ -3218,11 +3344,18 @@ function sendPasswordReset() {
 }
 
 function logoutUser() {
-  if (confirm('Çıkış yapmak istediğine emin misin?')) {
-    _fbAuth.signOut().then(function() {
-      window.location.href = 'index.html';
-    });
-  }
+  showConfirmModal({
+    icon: '🚪',
+    title: 'Çıkış Yapmak İstediğine Emin Misin?',
+    desc: 'Hesabından çıkış yapılacak.<br>Tekrar giriş yapabilirsin.',
+    btnLabel: 'Evet, Çıkış Yap',
+    btnColor: 'linear-gradient(135deg,#ef4444,#b91c1c)',
+    onOk: function() {
+      _fbAuth.signOut().then(function() {
+        window.location.href = 'index.html';
+      });
+    }
+  });
 }
 
 // ── Haftalık İstatistik Sync ────────────────────
@@ -3979,19 +4112,108 @@ function requestNotificationPermission() {
   });
 }
 
-function sendNotification(title, body, icon) {
+// ── Başlık & Badge Güncelleme ─────────────────
+var _origTitle = document.title || 'Pugi';
+
+function _updateDocTitle() {
+  if (!timerRunning) return;
+  var m = String(Math.floor(timerRemain / 60)).padStart(2, '0');
+  var s = String(timerRemain % 60).padStart(2, '0');
+  var subj = currentSubject ? ' · ' + currentSubject : '';
+  document.title = '⏱ ' + m + ':' + s + subj + ' | Pugi';
+}
+
+function _clearDocTitle() {
+  document.title = _origTitle;
+}
+
+function _updateBadge() {
+  try {
+    if ('setAppBadge' in navigator) {
+      var mins = Math.ceil(timerRemain / 60);
+      navigator.setAppBadge(mins);
+    }
+  } catch(e) {}
+}
+
+function _clearBadge() {
+  try { if ('clearAppBadge' in navigator) navigator.clearAppBadge(); } catch(e) {}
+}
+
+// ── Kilometre Taşı Bildirimleri ───────────────
+var _milestoneTimers = [];
+
+function _clearMilestoneTimers() {
+  _milestoneTimers.forEach(function(t) { clearTimeout(t); });
+  _milestoneTimers = [];
+}
+
+function _scheduleTimerNotifications(totalSecs) {
+  _clearMilestoneTimers();
+  if (!_notifEnabled) return;
+
+  var subj = currentSubject || 'Çalışma';
+  var totalMins = Math.round(totalSecs / 60);
+  var isBreak = timerModes[timerMode] && timerModes[timerMode].isBreak;
+
+  // Başlangıç bildirimi (1sn sonra)
+  var t0 = setTimeout(function() {
+    if (!timerRunning) return;
+    if (isBreak) {
+      sendNotification('☕ Mola Başladı', totalMins + ' dk dinlenme zamanı. Telefonu bırak 😌', 'pugi-timer-start');
+    } else {
+      sendNotification('▶ Zamanlayıcı Başladı', totalMins + ' dk · ' + subj, 'pugi-timer-start');
+    }
+  }, 1000);
+  _milestoneTimers.push(t0);
+
+  if (isBreak) return; // Molada sadece başlangıç bildirimi
+
+  // Yarı yol bildirimi
+  var halfMs = (totalSecs / 2) * 1000;
+  if (halfMs > 30000) { // 30sn'den uzunsa
+    var tHalf = setTimeout(function() {
+      if (!timerRunning) return;
+      var remMins = Math.ceil(timerRemain / 60);
+      sendNotification('⏱ Yarı Yoldasın!', remMins + ' dakika kaldı · ' + subj + ' 💪', 'pugi-timer-half');
+    }, halfMs);
+    _milestoneTimers.push(tHalf);
+  }
+
+  // 5 dakika kala (toplam > 8dk ise)
+  if (totalSecs > 480) {
+    var t5 = setTimeout(function() {
+      if (!timerRunning) return;
+      sendNotification('⏳ 5 Dakika Kaldı!', subj + ' · Son sürüyor 🔥', 'pugi-timer-5');
+    }, (totalSecs - 300) * 1000);
+    _milestoneTimers.push(t5);
+  }
+
+  // 1 dakika kala (toplam > 2dk ise)
+  if (totalSecs > 120) {
+    var t1 = setTimeout(function() {
+      if (!timerRunning) return;
+      sendNotification('🏁 Son 1 Dakika!', subj + ' · Neredeyse bitti!', 'pugi-timer-1');
+    }, (totalSecs - 60) * 1000);
+    _milestoneTimers.push(t1);
+  }
+}
+
+function sendNotification(title, body, tag) {
+  if (!_notifEnabled) return;
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   try {
     var n = new Notification(title, {
       body: body,
-      icon: icon || 'icon-192.png',
+      icon: 'icon-192.png',
       badge: 'icon-192.png',
       vibrate: [200, 100, 200],
-      tag: 'pugi-timer',
-      renotify: true
+      tag: tag || 'pugi-general',
+      renotify: true,
+      silent: false
     });
     n.onclick = function() { window.focus(); n.close(); };
-    setTimeout(function(){ n.close(); }, 8000);
+    setTimeout(function(){ n.close(); }, 9000);
   } catch(e) { console.log('Bildirim hatası:', e); }
 }
 
@@ -4962,6 +5184,328 @@ function applyCustomTimer() {
 
   updateTimerUI();
   showToast('✅ ' + (h>0?h+' saat ':'') + (m>0?m+' dk ':'') + (s>0?s+' sn':'') + ' ayarlandı!');
+}
+
+// ═══════════════════════════════════════════════
+// AYARLAR SEKMESİ
+// ═══════════════════════════════════════════════
+var _notifEnabled = true; // default açık
+
+function openSettingsModal() {
+  var page = document.getElementById('settingsPage');
+  if (!page) return;
+  page.style.display = 'block';
+  page.scrollTop = 0;
+  if (_currentUser) {
+    var emailEl = document.getElementById('currentEmailDisplay');
+    if (emailEl) emailEl.textContent = _currentUser.email || '—';
+    renderNotifToggle();
+  }
+}
+
+function closeSettingsModal() {
+  var page = document.getElementById('settingsPage');
+  if (page) page.style.display = 'none';
+}
+
+function switchProfilTab(tab) {} // legacy compat
+
+function toggleSettingExpand(panelId, arrowId) {
+  var panel = document.getElementById(panelId);
+  var arrow = document.getElementById(arrowId);
+  if (!panel) return;
+  var open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
+}
+
+// ── Bildirim Toggle ──────────────────────────
+function loadNotifSetting() {
+  if (!_currentUser) return;
+  var key = 'yks_notif_' + _currentUser.uid;
+  var stored = localStorage.getItem(key);
+  if (stored === null) {
+    // İlk giriş: varsayılan açık, otomatik izin iste
+    _notifEnabled = true;
+    localStorage.setItem(key, '1');
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(function(p) {
+        if (p === 'granted') sendNotification('🦊 Pugi hazır!', 'Bildirimler açık!');
+        updateNotifBtn();
+      });
+    }
+  } else {
+    _notifEnabled = stored === '1';
+  }
+  renderNotifToggle();
+}
+
+function renderNotifToggle() {
+  var wrap = document.getElementById('notifToggleWrap');
+  var thumb = document.getElementById('notifToggleThumb');
+  if (!wrap || !thumb) return;
+  wrap.style.background = _notifEnabled ? 'var(--accent3)' : 'var(--bg3)';
+  thumb.style.left = _notifEnabled ? '23px' : '3px';
+}
+
+function toggleNotifSetting() {
+  if (!_currentUser) { showToast('⚠️ Önce giriş yap!'); return; }
+  _notifEnabled = !_notifEnabled;
+  localStorage.setItem('yks_notif_' + _currentUser.uid, _notifEnabled ? '1' : '0');
+  renderNotifToggle();
+  if (_notifEnabled) {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(function(p) {
+        if (p === 'granted') {
+          showToast('🔔 Bildirimler açıldı!');
+          sendNotification('🦊 Pugi', 'Bildirimler açık!');
+        } else {
+          _notifEnabled = false;
+          localStorage.setItem('yks_notif_' + _currentUser.uid, '0');
+          renderNotifToggle();
+          showToast('⚠️ Tarayıcı bildirim izni verilmedi.');
+        }
+        updateNotifBtn();
+      });
+    } else {
+      showToast('🔔 Bildirimler açıldı!');
+    }
+  } else {
+    showToast('🔕 Bildirimler kapatıldı.');
+  }
+  updateNotifBtn();
+}
+
+// ── Kullanıcı Adı Değiştir ────────────────────
+function changeUsername() {
+  if (!_currentUser || !_fbDb) { showToast('⚠️ Giriş gerekli'); return; }
+  var newUname = (document.getElementById('newUsernameInput').value || '').trim().toLowerCase();
+  var msgEl = document.getElementById('usernameChangeMsg');
+  msgEl.style.color = 'var(--muted)';
+
+  if (!/^[a-z0-9_]{3,20}$/.test(newUname)) {
+    msgEl.style.color = 'var(--warn)';
+    msgEl.textContent = '3-20 karakter, sadece harf/rakam/alt çizgi';
+    return;
+  }
+
+  // Aylık limit kontrolü
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (doc.exists && doc.data().lastUsernameChange) {
+      var lastChange = new Date(doc.data().lastUsernameChange);
+      var diffDays = (Date.now() - lastChange.getTime()) / 86400000;
+      if (diffDays < 30) {
+        var daysLeft = Math.ceil(30 - diffDays);
+        msgEl.style.color = 'var(--warn)';
+        msgEl.textContent = 'Kullanıcı adını ' + daysLeft + ' gün sonra değiştirebilirsin.';
+        return;
+      }
+    }
+    // Kullanıcı adı benzersizlik kontrolü
+    msgEl.textContent = 'Kontrol ediliyor...';
+    _fbDb.collection('usernames').doc(newUname).get().then(function(uDoc) {
+      if (uDoc.exists && uDoc.data().uid !== _currentUser.uid) {
+        msgEl.style.color = 'var(--warn)';
+        msgEl.textContent = 'Bu kullanıcı adı alınmış.';
+        return;
+      }
+      // Eski kullanıcı adını bul ve sil
+      _fbDb.collection('users').doc(_currentUser.uid).get().then(function(userDoc) {
+        var oldUname = userDoc.exists ? userDoc.data().username : null;
+        var batch = _fbDb.batch();
+        if (oldUname) batch.delete(_fbDb.collection('usernames').doc(oldUname));
+        batch.set(_fbDb.collection('usernames').doc(newUname), { uid: _currentUser.uid });
+        batch.update(_fbDb.collection('users').doc(_currentUser.uid), {
+          username: newUname,
+          lastUsernameChange: new Date().toISOString()
+        });
+        return batch.commit();
+      }).then(function() {
+        msgEl.style.color = 'var(--accent3)';
+        msgEl.textContent = '✅ Kullanıcı adı değiştirildi!';
+        document.getElementById('newUsernameInput').value = '';
+        // Update bar
+        var ubar = document.getElementById('userUnameBar');
+        if (ubar) ubar.textContent = '@' + newUname;
+        showToast('✅ Kullanıcı adın: @' + newUname);
+      }).catch(function(e) {
+        msgEl.style.color = 'var(--warn)';
+        msgEl.textContent = 'Hata: ' + e.message;
+      });
+    });
+  });
+}
+
+// ── Şifre Değiştir ────────────────────────────
+function changePassword() {
+  if (!_currentUser || !_fbAuth) return;
+  var currentPw = document.getElementById('currentPwInput').value;
+  var newPw = document.getElementById('newPwInput').value;
+  var msgEl = document.getElementById('passwordChangeMsg');
+  msgEl.style.color = 'var(--muted)'; msgEl.textContent = '';
+
+  if (!currentPw || !newPw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Tüm alanları doldur.'; return; }
+  if (newPw.length < 6) { msgEl.style.color='var(--warn)'; msgEl.textContent='Şifre en az 6 karakter olmalı.'; return; }
+
+  msgEl.textContent = 'Doğrulanıyor...';
+  var cred = firebase.auth.EmailAuthProvider.credential(_currentUser.email, currentPw);
+  _currentUser.reauthenticateWithCredential(cred).then(function() {
+    return _currentUser.updatePassword(newPw);
+  }).then(function() {
+    msgEl.style.color = 'var(--accent3)';
+    msgEl.textContent = '✅ Şifre değiştirildi!';
+    document.getElementById('currentPwInput').value = '';
+    document.getElementById('newPwInput').value = '';
+    showToast('✅ Şifren güncellendi!');
+  }).catch(function(e) {
+    msgEl.style.color = 'var(--warn)';
+    msgEl.textContent = e.code === 'auth/wrong-password' ? 'Mevcut şifre yanlış.' : e.message;
+  });
+}
+
+// ── Email Değiştir ────────────────────────────
+function changeEmail() {
+  if (!_currentUser || !_fbAuth) return;
+  var newEmail = (document.getElementById('newEmailInput').value || '').trim();
+  var pw = document.getElementById('emailPwInput').value;
+  var msgEl = document.getElementById('emailChangeMsg');
+  msgEl.style.color = 'var(--muted)'; msgEl.textContent = '';
+
+  if (!newEmail || !pw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Tüm alanları doldur.'; return; }
+  if (!/\S+@\S+\.\S+/.test(newEmail)) { msgEl.style.color='var(--warn)'; msgEl.textContent='Geçerli bir e-posta gir.'; return; }
+
+  msgEl.textContent = 'Doğrulanıyor...';
+  var cred = firebase.auth.EmailAuthProvider.credential(_currentUser.email, pw);
+  _currentUser.reauthenticateWithCredential(cred).then(function() {
+    return _currentUser.updateEmail(newEmail);
+  }).then(function() {
+    msgEl.style.color = 'var(--accent3)';
+    msgEl.textContent = '✅ E-posta güncellendi!';
+    document.getElementById('newEmailInput').value = '';
+    document.getElementById('emailPwInput').value = '';
+    var emailEl = document.getElementById('currentEmailDisplay');
+    if (emailEl) emailEl.textContent = newEmail;
+    showToast('✅ E-posta güncellendi!');
+  }).catch(function(e) {
+    msgEl.style.color = 'var(--warn)';
+    msgEl.textContent = e.code === 'auth/wrong-password' ? 'Şifre yanlış.' :
+      e.code === 'auth/email-already-in-use' ? 'Bu e-posta zaten kullanımda.' : e.message;
+  });
+}
+
+// ── Geri Bildirim ─────────────────────────────
+function sendFeedback() {
+  if (!_currentUser || !_fbDb) { showToast('⚠️ Giriş gerekli'); return; }
+  var text = (document.getElementById('feedbackText').value || '').trim();
+  var msgEl = document.getElementById('feedbackMsg');
+  if (!text || text.length < 5) { msgEl.style.color='var(--warn)'; msgEl.textContent='Lütfen daha uzun bir mesaj yaz.'; return; }
+
+  msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Gönderiliyor...';
+  _fbDb.collection('feedback').add({
+    uid: _currentUser.uid,
+    username: _currentUser._username || '',
+    text: text,
+    sentAt: new Date().toISOString()
+  }).then(function() {
+    msgEl.style.color = 'var(--accent3)';
+    msgEl.textContent = '✅ Teşekkürler! Geri bildiriminiz iletildi.';
+    document.getElementById('feedbackText').value = '';
+    showToast('💬 Geri bildirim gönderildi!');
+  }).catch(function(e) {
+    msgEl.style.color = 'var(--warn)';
+    msgEl.textContent = 'Gönderilemedi: ' + e.message;
+  });
+}
+
+// ── Haftalık Hedef Bildirimleri ───────────────
+var _lastGoalNotifPct = 0;
+
+function _checkGoalNotification() {
+  if (!_notifEnabled) return;
+  var done = getThisWeekMins();
+  var pct = Math.min(100, Math.round((done / weeklyGoal) * 100));
+  var milestones = [50, 75, 100];
+  milestones.forEach(function(m) {
+    if (pct >= m && _lastGoalNotifPct < m) {
+      _lastGoalNotifPct = m;
+      var msgs = {
+        50:  { title: '🎯 Hedefin Yarısına Ulaştın!',  body: 'Bu hafta ' + done + '/' + weeklyGoal + ' dk tamamlandı. Devam et! 💪' },
+        75:  { title: '🔥 Hedefe %75 Ulaştın!',         body: 'Harika gidiyorsun! ' + done + '/' + weeklyGoal + ' dk. Biraz daha! ⚡' },
+        100: { title: '🏆 Haftalık Hedefi Tamamladın!', body: done + ' dk çalıştın! Muhteşem bir hafta! 🎉' }
+      };
+      var msg = msgs[m];
+      setTimeout(function() {
+        sendNotification(msg.title, msg.body, 'pugi-goal-' + m);
+      }, 1500);
+    }
+  });
+}
+
+// ── Ayarlardan Veri Temizle ───────────────────
+function clearAllDataFromSettings() {
+  showConfirmModal({
+    icon: '🗑️',
+    title: 'Tüm Verilerini Silmek İstediğine Emin Misin?',
+    desc: 'Tüm çalışma kayıtların ve denemeler <b>kalıcı olarak silinecek.</b><br><br>Bu işlem geri alınamaz!',
+    btnLabel: 'Evet, Tümünü Sil',
+    btnColor: 'linear-gradient(135deg,#ef4444,#b91c1c)',
+    onOk: function() {
+      entries = []; denemeler = [];
+      save(); saveToCloud();
+      renderAna(); renderBackupSummary(); updateStreak();
+      showToast('🗑 Tüm veriler silindi');
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════
+// ONAY MODALI
+// ═══════════════════════════════════════════════
+var _confirmModalCallback = null;
+
+function showConfirmModal(opts) {
+  var modal = document.getElementById('confirmModal');
+  var overlay = document.getElementById('confirmModalOverlay');
+  var sheet = document.getElementById('confirmModalSheet');
+  if (!modal) return;
+
+  document.getElementById('confirmModalIcon').textContent = opts.icon || '⚠️';
+  document.getElementById('confirmModalTitle').textContent = opts.title || 'Emin misiniz?';
+  document.getElementById('confirmModalDesc').innerHTML = opts.desc || '';
+  var btn = document.getElementById('confirmModalOkBtn');
+  btn.textContent = opts.btnLabel || 'Evet, devam et';
+  btn.style.background = opts.btnColor || 'linear-gradient(135deg,var(--accent),var(--accent2))';
+  btn.style.color = '#fff';
+  _confirmModalCallback = opts.onOk || null;
+
+  modal.style.display = 'flex';
+  modal.style.pointerEvents = 'auto';
+  requestAnimationFrame(function() {
+    overlay.style.opacity = '1';
+    overlay.style.pointerEvents = 'auto';
+    sheet.style.transform = 'translateY(0)';
+  });
+}
+
+function closeConfirmModal() {
+  var modal = document.getElementById('confirmModal');
+  var overlay = document.getElementById('confirmModalOverlay');
+  var sheet = document.getElementById('confirmModalSheet');
+  if (!modal) return;
+  overlay.style.opacity = '0';
+  sheet.style.transform = 'translateY(100%)';
+  overlay.style.pointerEvents = 'none';
+  setTimeout(function() {
+    modal.style.display = 'none';
+    modal.style.pointerEvents = 'none';
+    _confirmModalCallback = null;
+  }, 300);
+}
+
+function confirmModalOk() {
+  var cb = _confirmModalCallback;
+  closeConfirmModal();
+  setTimeout(function() { if (cb) cb(); }, 320);
 }
 
 </script>
