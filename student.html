@@ -5917,6 +5917,86 @@ function renderGoalPieChart() {
 function renderPersonalGoals() { renderAnaGoals(); }
 
 
+// ════════════════════════════════════════════════
+// KOÇ ÖNERİLERİ
+// ════════════════════════════════════════════════
+var _myCoachUid = null;
+
+function loadCoachSuggestionsForStudent() {
+  if (!_currentUser || !_fbDb) return;
+  var wrap = document.getElementById('coachSuggestionsWrap');
+  var list = document.getElementById('coachSuggestionsList');
+  if (!wrap || !list) return;
+
+  _fbDb.collection('coachRequests')
+    .where('studentUid', '==', _currentUser.uid)
+    .where('status', '==', 'accepted')
+    .get().then(function(snap) {
+      if (snap.empty) { wrap.style.display = 'none'; _myCoachUid = null; return; }
+      _myCoachUid = snap.docs[0].data().coachUid;
+      wrap.style.display = 'block';
+
+      _fbDb.collection('suggestions')
+        .where('studentUid', '==', _currentUser.uid)
+        .where('coachUid', '==', _myCoachUid)
+        .limit(10)
+        .get().then(function(sSnap) {
+          if (sSnap.empty) {
+            list.innerHTML = '<div style="text-align:center;padding:16px;font-size:0.78rem;color:var(--muted);font-weight:700">Henüz öneri gönderilmedi.</div>';
+            return;
+          }
+          var docs = [];
+          sSnap.forEach(function(doc) { docs.push(doc); });
+          docs.sort(function(a, b) {
+            return (b.data().createdAt || '').localeCompare(a.data().createdAt || '');
+          });
+
+          _fbDb.collection('users').doc(_myCoachUid).get().then(function(uDoc) {
+            var coachName = uDoc.exists ? (uDoc.data().displayName || 'Koçun') : 'Koçun';
+            list.innerHTML = '';
+            docs.forEach(function(doc) {
+              var d = doc.data();
+              var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : '📖 Konu Çalışması';
+              var typeColor = d.type === 'test' ? '#f59e0b' : d.type === 'deneme' ? '#8b5cf6' : 'var(--accent)';
+              var isDone = !!d.done;
+              var dateStr = d.createdAt ? d.createdAt.slice(0,10).split('-').reverse().join('.') : '';
+              var card = document.createElement('div');
+              card.style.cssText = 'background:var(--card);border:1.5px solid '+(isDone?'var(--border)':typeColor)+';border-radius:14px;padding:14px 16px;margin-bottom:8px;opacity:'+(isDone?'0.55':'1');
+              card.innerHTML =
+                '<div style="display:flex;align-items:flex-start;gap:12px">' +
+                  '<div style="width:36px;height:36px;border-radius:10px;background:'+typeColor+'20;border:1.5px solid '+typeColor+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">' +
+                    (d.type==='test'?'✏️':d.type==='deneme'?'📝':'📖') +
+                  '</div>' +
+                  '<div style="flex:1;min-width:0">' +
+                    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">' +
+                      '<span style="font-size:0.82rem;font-weight:900;color:'+typeColor+'">'+typeLabel+'</span>' +
+                      (isDone?'<span style="font-size:0.65rem;background:var(--accent3)20;color:var(--accent3);font-weight:800;padding:1px 7px;border-radius:6px">Tamamlandı</span>':'') +
+                    '</div>' +
+                    '<div style="font-size:0.88rem;font-weight:900;margin-bottom:4px">'+(d.subject||'')+(d.targetMinutes?'<span style="font-size:0.72rem;font-weight:700;color:var(--muted)"> · '+d.targetMinutes+' dk</span>':'')+'</div>' +
+                    (d.note?'<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:6px;font-style:italic">"'+d.note+'"</div>':'') +
+                    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">' +
+                      '<span style="font-size:0.65rem;color:var(--muted);font-weight:700">'+coachName+' · '+dateStr+'</span>' +
+                      (!isDone?'<button onclick=\"markSuggestionDone(\'' + doc.id + '\')\" style="font-size:0.72rem;font-weight:800;background:var(--accent3)20;color:var(--accent3);border:1.5px solid var(--accent3);border-radius:8px;padding:4px 12px;cursor:pointer">✓ Tamamlandı</button>':'') +
+                    '</div>' +
+                  '</div>' +
+                '</div>';
+              list.appendChild(card);
+            });
+          });
+        });
+    });
+}
+
+function markSuggestionDone(docId) {
+  if (!_fbDb) return;
+  _fbDb.collection('suggestions').doc(docId).update({ done: true, doneAt: new Date().toISOString() })
+    .then(function() {
+      showToast('✅ Öneri tamamlandı olarak işaretlendi!');
+      loadCoachSuggestionsForStudent();
+    }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+
 // ── Ayarlardan Veri Temizle ───────────────────
 function clearAllDataFromSettings() {
   showConfirmModal({
