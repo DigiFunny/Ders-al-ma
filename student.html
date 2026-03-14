@@ -991,6 +991,18 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="sec">Haftalık Özet</div>
   <div id="weeklySummaryCard"></div>
 
+  <!-- Kişisel Hedefler -->
+  <div id="anaGoalsWrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="sec" style="margin-bottom:0">Hedeflerim</div>
+      <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:var(--accent)18;border:1.5px solid var(--accent);border-radius:10px;padding:5px 11px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Hedef Seti
+      </button>
+    </div>
+    <div id="anaGoalsList"></div>
+  </div>
+
   <!-- Koç Önerileri -->
   <div id="coachSuggestionsWrap" style="display:none">
     <div onclick="toggleCollapse('coachSuggestionsBody','coachSuggestionsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
@@ -1217,6 +1229,39 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="sec">En Güçlü & En Zayıf Konu</div>
   <div class="analysis-row" id="analysisRow"></div>
 
+
+  <div id="goalPieSection" style="display:none">
+    <div class="sec">Hedef İlerlemesi</div>
+    <!-- Günlük -->
+    <div id="goalPieDailyWrap" style="display:none;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:8px">
+      <div style="font-size:0.65rem;font-weight:900;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Günlük</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="position:relative;width:110px;height:110px;flex-shrink:0">
+          <svg id="goalPieSvgDaily" viewBox="0 0 200 200" width="110" height="110" style="display:block"></svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+            <div id="goalPiePctDaily" style="font-size:1rem;font-weight:900;color:var(--text)">0%</div>
+            <div style="font-size:0.52rem;color:var(--muted);font-weight:700">bugün</div>
+          </div>
+        </div>
+        <div id="goalPieLegendDaily" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;overflow:hidden"></div>
+      </div>
+    </div>
+    <!-- Haftalık -->
+    <div id="goalPieWeeklyWrap" style="display:none;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px">
+      <div style="font-size:0.65rem;font-weight:900;color:var(--accent2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Haftalık</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="position:relative;width:110px;height:110px;flex-shrink:0">
+          <svg id="goalPieSvgWeekly" viewBox="0 0 200 200" width="110" height="110" style="display:block"></svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+            <div id="goalPiePctWeekly" style="font-size:1rem;font-weight:900;color:var(--text)">0%</div>
+            <div style="font-size:0.52rem;color:var(--muted);font-weight:700">bu hafta</div>
+          </div>
+        </div>
+        <div id="goalPieLegendWeekly" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;overflow:hidden"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="sec">Ders Bazında Konu Haritası</div>
   <div class="topic-map-wrap" id="topicMapWrap"></div>
 
@@ -1248,6 +1293,8 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
   <div class="sec">Haftalık Hedef</div>
   <div class="goal-card" id="goalCard"></div>
+
+
 
   <div style="height:100px"></div>
 </div>
@@ -1295,6 +1342,41 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   </div>
 
   <div style="height:100px"></div>
+</div>
+
+
+
+<!-- HEDEF SETİ MODALI -->
+<div id="goalSetModal" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;overflow-y:auto">
+  <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:8px">
+      <button onclick="closeGoalSetModal()" style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="font-size:1.1rem;font-weight:900">Hedef Seti</div>
+    </div>
+
+    <!-- Periyot -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Periyot</div>
+      <div style="display:flex;gap:8px">
+        <button id="gsPeriodDaily" onclick="selectGsPeriod('daily')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:var(--accent)20;color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer">Günlük</button>
+        <button id="gsPeriodWeekly" onclick="selectGsPeriod('weekly')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer">Haftalık</button>
+      </div>
+      <div id="gsPeriodHint" style="font-size:0.7rem;color:#f59e0b;font-weight:700;margin-top:8px;min-height:16px"></div>
+    </div>
+
+    <!-- Hedef Kalemleri -->
+    <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Hedef Kalemleri</div>
+    <div id="gsItemsList" style="margin-bottom:10px"></div>
+    <button onclick="addGsItem()" style="width:100%;padding:11px;border-radius:12px;border:1.5px dashed var(--border);background:transparent;color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Kalem Ekle
+    </button>
+
+    <button onclick="saveGoalSet()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:900;font-size:0.9rem;cursor:pointer;margin-bottom:10px">Hedefi Kaydet</button>
+    <button onclick="closeGoalSetModal()" style="width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.85rem;cursor:pointer">Vazgeç</button>
+  </div>
 </div>
 
 <!-- AYARLAR SAYFASI (tam ekran modal) -->
@@ -1703,11 +1785,11 @@ function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'ana') renderAna();
-  if (name === 'stat') { renderStat(); renderCharts(); renderGoalCard(); renderAnalysis(); renderTopicMap(); }
+  if (name === 'ana') { renderAna(); renderAnaGoals(); }
+  if (name === 'stat') { renderStat(); renderCharts(); renderGoalCard(); renderAnalysis(); renderTopicMap(); renderGoalPieChart(); }
   if (name === 'deneme') { renderDenemeFields(); renderDenemeLog(); }
   if (name === 'yedek') renderBackupSummary();
-  if (name === 'rozet') { renderBadges(); renderFriends(); }
+  if (name === 'rozet') { renderBadges(); renderFriends(); renderPersonalGoals(); }
 }
 
 // ════════════════════════════════════════════
@@ -3063,6 +3145,14 @@ function saveToCloud() {
       denemeler: denemeler,
       badges: badges,
       goal: weeklyGoal,
+      personalGoals: personalGoals.filter ? personalGoals.filter(function(g){ return g && g.id; }) : [],
+      goalMeta: {
+        dailyDoneCount: personalGoals._dailyDoneCount||0,
+        weeklyDoneCount: personalGoals._weeklyDoneCount||0,
+        dailyStreak: personalGoals._dailyStreak||0,
+        lastDailyDate: personalGoals._lastDailyDate||'',
+        lastDailyStreakDate: personalGoals._lastDailyStreakDate||''
+      },
       updatedAt: new Date().toISOString()
     }).then(function() {
       console.log('☁️ Buluta kaydedildi');
@@ -3102,6 +3192,16 @@ function loadFromCloud(uid) {
     denemeler= (data.denemeler&& Array.isArray(data.denemeler))? data.denemeler: [];
     badges   = (data.badges   && Array.isArray(data.badges))   ? data.badges   : [];
     weeklyGoal = data.goal ? parseInt(data.goal) : 600;
+    var rawGoals = (data.personalGoals && Array.isArray(data.personalGoals)) ? data.personalGoals : [];
+    personalGoals = rawGoals;
+    if (data.goalMeta) {
+      personalGoals._dailyDoneCount = data.goalMeta.dailyDoneCount||0;
+      personalGoals._weeklyDoneCount = data.goalMeta.weeklyDoneCount||0;
+      personalGoals._dailyStreak = data.goalMeta.dailyStreak||0;
+      personalGoals._lastDailyDate = data.goalMeta.lastDailyDate||'';
+      personalGoals._lastDailyStreakDate = data.goalMeta.lastDailyStreakDate||'';
+    }
+    checkAndResetGoals();
     showSyncIndicator('✓');
     setTimeout(function(){ showSyncIndicator(''); }, 2000);
     renderAna();
@@ -3111,6 +3211,7 @@ function loadFromCloud(uid) {
     renderBadges();
     renderWeeklySummaryCard();
     renderGoalCard();
+    renderAnaGoals();
     renderBackupSummary();
     syncWeeklyStats();
   }).catch(function(e) {
@@ -4502,6 +4603,12 @@ var BADGES = [
   { id:'xp500',    icon:'⭐', name:'Yükselen Yıldız',   hint:'500 XP biriktir',                        check: () => getTotalXP() >= 500 },
   { id:'xp2000',   icon:'🏆', name:'Şampiyon Ruhu',     hint:'2000 XP biriktir',                       check: () => getTotalXP() >= 2000 },
   { id:'earlybird',icon:'🌅', name:'Sabah Kuşu',        hint:'Sabah saat 07:00den önce çalış',           check: () => entries.some(e => parseInt(e.time?.split(':')[0]) < 7) },
+  { id:'goal1',    icon:'🎯', name:'Hedefe Tam İsabet',  hint:'İlk günlük ya da haftalık hedefini tamamla', check: () => _checkAnyGoalEverDone() },
+  { id:'goal7d',   icon:'📅', name:'Tutarlı Hedefçi',    hint:'7 farklı günde günlük hedefini tamamla',     check: () => (personalGoals._dailyDoneCount||0) >= 7 },
+  { id:'goal30d',  icon:'🏅', name:'Ay Boyu Kararlılık', hint:'30 farklı günde günlük hedefini tamamla',    check: () => (personalGoals._dailyDoneCount||0) >= 30 },
+  { id:'goal4w',   icon:'📆', name:'Dört Hafta Ustası',  hint:'4 haftalık hedefini tamamla',                check: () => (personalGoals._weeklyDoneCount||0) >= 4 },
+  { id:'goal_streak3', icon:'🔗', name:'3 Gün Seri Hedef', hint:'3 gün üst üste günlük hedefini tamamla',  check: () => (personalGoals._dailyStreak||0) >= 3 },
+  { id:'goal_streak7', icon:'⚡', name:'7 Gün Seri Hedef', hint:'7 gün üst üste günlük hedefini tamamla',  check: () => (personalGoals._dailyStreak||0) >= 7 },
 ];
 
 function calcStreak() {
@@ -4953,6 +5060,7 @@ function renderAnalysis() {
 // HAFTALIK HEDEF
 // ═══════════════════════════════════════════════
 var weeklyGoal = 600; // uid-specific, loaded in loadFromCloud
+var personalGoals = []; // {id, period, metric, subject, topic, target}
 
 function getThisWeekMins() {
   const now = new Date();
@@ -5398,260 +5506,416 @@ function changeUsername() {
 }
 
 // ── Şifre Değiştir ────────────────────────────
-function sendPasswordResetFromSettings() {
-  if (!_currentUser) return;
-  var msgEl = document.getElementById('pwResetMailMsg');
-  msgEl.style.color = 'var(--muted)';
-  msgEl.textContent = 'Gönderiliyor...';
-  _fbAuth.sendPasswordResetEmail(_currentUser.email).then(function() {
-    msgEl.style.color = 'var(--accent3)';
-    msgEl.textContent = '✅ ' + _currentUser.email + ' adresine gönderildi.';
-    showToast('📧 Şifre sıfırlama maili gönderildi!');
-  }).catch(function(e) {
-    msgEl.style.color = 'var(--warn)';
-    var code = e.code || '';
-    if (code === 'auth/too-many-requests') {
-      msgEl.textContent = '⚠️ Çok fazla deneme. Biraz bekle.';
-    } else {
-      msgEl.textContent = '❌ Gönderilemedi. Tekrar dene.';
-    }
-  });
-}
-
-function changePassword() {
-  if (!_currentUser || !_fbAuth) return;
-  var msgEl = document.getElementById('passwordChangeMsg');
-  msgEl.style.color = 'var(--muted)'; msgEl.textContent = '';
-
-  // Google ile giriş yapan kullanıcılar şifre değiştiremez
-  var providers = _currentUser.providerData.map(function(p){ return p.providerId; });
-  if (providers.indexOf('password') === -1) {
-    msgEl.style.color = 'var(--warn)';
-    msgEl.textContent = 'Google ile giriş yaptığın için şifre değiştiremezsin.';
-    return;
-  }
-
-  var currentPw = document.getElementById('currentPwInput').value;
-  var newPw = document.getElementById('newPwInput').value;
-
-  if (!currentPw || !newPw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Tüm alanları doldur.'; return; }
-  if (newPw.length < 6) { msgEl.style.color='var(--warn)'; msgEl.textContent='Şifre en az 6 karakter olmalı.'; return; }
-  if (currentPw === newPw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Yeni şifre mevcut şifreyle aynı olamaz.'; return; }
-
-  msgEl.textContent = 'Doğrulanıyor...';
-  var cred = firebase.auth.EmailAuthProvider.credential(_currentUser.email, currentPw);
-  _currentUser.reauthenticateWithCredential(cred).then(function() {
-    return _currentUser.updatePassword(newPw);
-  }).then(function() {
-    msgEl.style.color = 'var(--accent3)';
-    msgEl.textContent = '✅ Şifre başarıyla değiştirildi!';
-    document.getElementById('currentPwInput').value = '';
-    document.getElementById('newPwInput').value = '';
-    showToast('✅ Şifren güncellendi!');
-  }).catch(function(e) {
-    msgEl.style.color = 'var(--warn)';
-    var code = e.code || '';
-    if (code === 'auth/wrong-password' || code === 'auth/invalid-credential' || code === 'auth/user-mismatch') {
-      msgEl.textContent = '❌ Mevcut şifre yanlış. Lütfen tekrar dene.';
-    } else if (code === 'auth/too-many-requests') {
-      msgEl.textContent = '⚠️ Çok fazla hatalı deneme. Birkaç dakika bekle.';
-    } else if (code === 'auth/requires-recent-login') {
-      msgEl.textContent = '⚠️ Güvenlik için önce çıkış yapıp tekrar giriş yap.';
-    } else if (code === 'auth/weak-password') {
-      msgEl.textContent = '❌ Şifre çok zayıf. Daha güçlü bir şifre seç.';
-    } else {
-      msgEl.textContent = '❌ Hata: ' + (code || e.message);
-    }
-  });
-}
-
-// ── Email Değiştir ────────────────────────────
-function changeEmail() {
-  if (!_currentUser || !_fbAuth) return;
-  var msgEl = document.getElementById('emailChangeMsg');
-  msgEl.style.color = 'var(--muted)'; msgEl.textContent = '';
-
-  var providers = _currentUser.providerData.map(function(p){ return p.providerId; });
-  if (providers.indexOf('password') === -1) {
-    msgEl.style.color = 'var(--warn)';
-    msgEl.textContent = 'Google ile giriş yaptığın için e-posta değiştiremezsin.';
-    return;
-  }
-
-  var newEmail = (document.getElementById('newEmailInput').value || '').trim();
-  var pw = document.getElementById('emailPwInput').value;
-
-  if (!newEmail || !pw) { msgEl.style.color='var(--warn)'; msgEl.textContent='Tüm alanları doldur.'; return; }
-  if (newEmail === _currentUser.email) { msgEl.style.color='var(--warn)'; msgEl.textContent='Yeni e-posta mevcut adresle aynı.'; return; }
-  if (!/[^@]+@[^@]+\.[^@]+/.test(newEmail)) { msgEl.style.color='var(--warn)'; msgEl.textContent='Geçerli bir e-posta gir.'; return; }
-
-  msgEl.textContent = 'Doğrulanıyor...';
-  var cred = firebase.auth.EmailAuthProvider.credential(_currentUser.email, pw);
-  _currentUser.reauthenticateWithCredential(cred).then(function() {
-    return _currentUser.verifyBeforeUpdateEmail(newEmail);
-  }).then(function() {
-    msgEl.style.color = 'var(--accent3)';
-    msgEl.textContent = '✅ Doğrulama e-postası gönderildi. Onayladıktan sonra değişir.';
-    document.getElementById('newEmailInput').value = '';
-    document.getElementById('emailPwInput').value = '';
-    showToast('📧 Doğrulama maili gönderildi!');
-  }).catch(function(e) {
-    msgEl.style.color = 'var(--warn)';
-    var code = e.code || '';
-    if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
-      msgEl.textContent = 'Şifre yanlış. Lütfen tekrar dene.';
-    } else if (code === 'auth/email-already-in-use') {
-      msgEl.textContent = 'Bu e-posta zaten kullanımda.';
-    } else if (code === 'auth/too-many-requests') {
-      msgEl.textContent = 'Çok fazla deneme. Biraz bekle.';
-    } else {
-      msgEl.textContent = e.message;
-    }
-  });
-}
 
 // ════════════════════════════════════════════════
-// KOÇ ÖNERİLERİ
+// HEDEF SIFIRLAMA & TAMAMLANMA TAKİBİ
 // ════════════════════════════════════════════════
-var _myCoachUid = null;
+function checkAndResetGoals() {
+  if (!personalGoals || !personalGoals.filter) return;
+  var now = new Date();
+  var todayStr = now.toLocaleDateString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric'});
 
-function loadCoachSuggestionsForStudent() {
-  if (!_currentUser || !_fbDb) return;
-  var wrap = document.getElementById('coachSuggestionsWrap');
-  var list = document.getElementById('coachSuggestionsList');
-  if (!wrap || !list) return;
+  // ── Günlük hedef tamamlanma kontrolü ──
+  var dailySet = personalGoals.find(function(g){ return g && g.period==='daily'; });
+  if (dailySet) {
+    var dailyDone = (dailySet.items||[]).every(function(it){ return getItemProgress(it,'daily') >= it.target; });
+    var lastDate = personalGoals._lastDailyDate || '';
 
-  // Önce kabul edilmiş koç isteği var mı kontrol et
-  _fbDb.collection('coachRequests')
-    .where('studentUid', '==', _currentUser.uid)
-    .where('status', '==', 'accepted')
-    .get().then(function(snap) {
-      if (snap.empty) {
-        wrap.style.display = 'none';
-        _myCoachUid = null;
-        return;
+    if (dailyDone && lastDate !== todayStr) {
+      // Mark today as completed
+      personalGoals._lastDailyDate = todayStr;
+      personalGoals._dailyDoneCount = (personalGoals._dailyDoneCount||0) + 1;
+
+      // Streak: check if yesterday was also done
+      var yd = new Date(now); yd.setDate(yd.getDate()-1);
+      var ydStr = yd.toLocaleDateString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric'});
+      var lastStreak = personalGoals._lastDailyStreakDate || '';
+      if (lastStreak === ydStr || lastStreak === todayStr) {
+        personalGoals._dailyStreak = (personalGoals._dailyStreak||0) + (lastStreak===ydStr ? 1 : 0);
+      } else if (lastStreak !== todayStr) {
+        personalGoals._dailyStreak = 1;
       }
-      _myCoachUid = snap.docs[0].data().coachUid;
-      wrap.style.display = 'block';
+      personalGoals._lastDailyStreakDate = todayStr;
 
-      // Önerileri yükle
-      _fbDb.collection('suggestions')
-        .where('studentUid', '==', _currentUser.uid)
-        .where('coachUid', '==', _myCoachUid)
-        .limit(10)
-        .get().then(function(sSnap) {
-          if (sSnap.empty) {
-            list.innerHTML = '<div style="text-align:center;padding:16px;font-size:0.78rem;color:var(--muted);font-weight:700">Henüz öneri gönderilmedi.</div>';
-            return;
-          }
-
-          // Client-side sırala
-          var docs = [];
-          sSnap.forEach(function(d) { docs.push(d); });
-          docs.sort(function(a, b) {
-            return (b.data().createdAt || '').localeCompare(a.data().createdAt || '');
-          });
-
-          // Koç adını al
-          _fbDb.collection('users').doc(_myCoachUid).get().then(function(uDoc) {
-            var coachName = uDoc.exists ? (uDoc.data().displayName || 'Koçun') : 'Koçun';
-            list.innerHTML = '';
-
-            docs.forEach(function(doc) {
-              var d = doc.data();
-              var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : '📖 Konu Çalışması';
-              var typeColor = d.type === 'test' ? '#f59e0b' : d.type === 'deneme' ? '#8b5cf6' : 'var(--accent)';
-              var isDone = !!d.done;
-              var dateStr = d.createdAt ? d.createdAt.slice(0,10).split('-').reverse().join('.') : '';
-
-              var card = document.createElement('div');
-              card.style.cssText = 'background:var(--card);border:1.5px solid ' + (isDone ? 'var(--border)' : typeColor) + ';border-radius:14px;padding:14px 16px;margin-bottom:8px;opacity:' + (isDone ? '0.55' : '1') + ';transition:all 0.2s';
-              card.innerHTML =
-                '<div style="display:flex;align-items:flex-start;gap:12px">' +
-                  '<div style="width:36px;height:36px;border-radius:10px;background:' + typeColor + '20;border:1.5px solid ' + typeColor + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">' +
-                    (d.type === 'test' ? '✏️' : d.type === 'deneme' ? '📝' : '📖') +
-                  '</div>' +
-                  '<div style="flex:1;min-width:0">' +
-                    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">' +
-                      '<span style="font-size:0.82rem;font-weight:900;color:' + typeColor + '">' + typeLabel + '</span>' +
-                      (isDone ? '<span style="font-size:0.65rem;background:var(--accent3)20;color:var(--accent3);font-weight:800;padding:1px 7px;border-radius:6px">Tamamlandı</span>' : '') +
-                    '</div>' +
-                    '<div style="font-size:0.88rem;font-weight:900;margin-bottom:4px">' + (d.subject || '') + (d.targetMinutes ? ' <span style="font-size:0.72rem;font-weight:700;color:var(--muted)">· ' + d.targetMinutes + ' dk</span>' : '') + '</div>' +
-                    (d.note ? '<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:6px;font-style:italic">"' + d.note + '"</div>' : '') +
-                    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">' +
-                      '<span style="font-size:0.65rem;color:var(--muted);font-weight:700">' + coachName + ' · ' + dateStr + '</span>' +
-                      (!isDone ?
-                        '<button onclick="markSuggestionDone(\'' + doc.id + '\', this)" style="font-size:0.72rem;font-weight:800;background:var(--accent3)20;color:var(--accent3);border:1.5px solid var(--accent3);border-radius:8px;padding:4px 12px;cursor:pointer">✓ Tamamlandı</button>'
-                        : '') +
-                    '</div>' +
-                  '</div>' +
-                '</div>';
-              list.appendChild(card);
-            });
-          });
-        });
-    });
-}
-
-function markSuggestionDone(docId, btn) {
-  if (!_fbDb) return;
-  _fbDb.collection('suggestions').doc(docId).update({ done: true, doneAt: new Date().toISOString() })
-    .then(function() {
-      showToast('✅ Öneri tamamlandı olarak işaretlendi!');
-      loadCoachSuggestionsForStudent();
-    }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
-}
-
-// ── Geri Bildirim ─────────────────────────────
-function sendFeedback() {
-  if (!_currentUser || !_fbDb) { showToast('👋 Geri bildirim göndermek için giriş yapman gerekiyor.'); return; }
-  var text = (document.getElementById('feedbackText').value || '').trim();
-  var msgEl = document.getElementById('feedbackMsg');
-  if (!text || text.length < 5) { msgEl.style.color='var(--warn)'; msgEl.textContent='Lütfen daha uzun bir mesaj yaz.'; return; }
-
-  msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Gönderiliyor...';
-
-  _fbDb.collection('feedback').add({
-    uid: _currentUser.uid,
-    username: _currentUser._username || '',
-    email: _currentUser.email || '',
-    text: text,
-    sentAt: new Date().toISOString()
-  }).then(function() {
-    msgEl.style.color = 'var(--accent3)';
-    msgEl.textContent = '✅ Teşekkürler! Geri bildiriminiz iletildi.';
-    document.getElementById('feedbackText').value = '';
-    showToast('💬 Geri bildirim gönderildi!');
-  }).catch(function(e) {
-    msgEl.style.color = 'var(--warn)';
-    msgEl.textContent = 'Gönderilemedi. Lütfen tekrar dene.';
-    console.error('Feedback error:', e);
-  });
-}
-
-// ── Haftalık Hedef Bildirimleri ───────────────
-var _lastGoalNotifPct = 0;
-
-function _checkGoalNotification() {
-  if (!_notifEnabled) return;
-  var done = getThisWeekMins();
-  var pct = Math.min(100, Math.round((done / weeklyGoal) * 100));
-  var milestones = [50, 75, 100];
-  milestones.forEach(function(m) {
-    if (pct >= m && _lastGoalNotifPct < m) {
-      _lastGoalNotifPct = m;
-      var msgs = {
-        50:  { title: '🎯 Hedefin Yarısına Ulaştın!',  body: 'Bu hafta ' + done + '/' + weeklyGoal + ' dk tamamlandı. Devam et! 💪' },
-        75:  { title: '🔥 Hedefe %75 Ulaştın!',         body: 'Harika gidiyorsun! ' + done + '/' + weeklyGoal + ' dk. Biraz daha! ⚡' },
-        100: { title: '🏆 Haftalık Hedefi Tamamladın!', body: done + ' dk çalıştın! Muhteşem bir hafta! 🎉' }
-      };
-      var msg = msgs[m];
-      setTimeout(function() {
-        sendNotification(msg.title, msg.body, 'pugi-goal-' + m);
-      }, 1500);
+      saveToCloud();
+      checkBadges();
+      showToast('🎯 Günlük hedef tamamlandı! 🎉');
     }
+  }
+
+  // ── Haftalık hedef tamamlanma kontrolü ──
+  var weeklySet = personalGoals.find(function(g){ return g && g.period==='weekly'; });
+  if (weeklySet) {
+    // Get this week's Monday
+    var mon = new Date(now);
+    mon.setDate(mon.getDate() - ((mon.getDay()+6)%7));
+    mon.setHours(0,0,0,0);
+    var weekKey = mon.toLocaleDateString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric'});
+
+    var weeklyDone = (weeklySet.items||[]).every(function(it){ return getItemProgress(it,'weekly') >= it.target; });
+    var lastWeek = personalGoals._lastWeeklyDate || '';
+
+    if (weeklyDone && lastWeek !== weekKey) {
+      personalGoals._lastWeeklyDate = weekKey;
+      personalGoals._weeklyDoneCount = (personalGoals._weeklyDoneCount||0) + 1;
+      saveToCloud();
+      checkBadges();
+      showToast('🏆 Haftalık hedef tamamlandı! Harika iş! 🎉');
+    }
+  }
+}
+
+
+// ════════════════════════════════════════════════
+// KİŞİSEL HEDEFLER — YENİ MODEL
+// goalSet = { id, period, items:[{id,metric,subject,topic,target}] }
+// ════════════════════════════════════════════════
+var GOAL_COLORS = ['#38bdf8','#818cf8','#34d399','#fbbf24','#f472b6','#fb923c','#a78bfa','#4ade80'];
+var _gsPeriod = 'daily';
+var _gsItems  = [];
+var _gsEditId = null;
+
+function openGoalSetModal(editId) {
+  _gsEditId = editId || null;
+  var page = document.getElementById('goalSetModal');
+  if (!page) return;
+  if (editId) {
+    var gs = personalGoals.find(function(g){ return g.id === editId; });
+    if (gs) { _gsPeriod = gs.period; _gsItems = gs.items.map(function(it){ return Object.assign({},it); }); }
+  } else {
+    _gsPeriod = 'daily'; _gsItems = [];
+  }
+  selectGsPeriod(_gsPeriod);
+  page.style.display = 'block'; page.scrollTop = 0;
+  renderGsItems();
+}
+
+function closeGoalSetModal() {
+  var p = document.getElementById('goalSetModal');
+  if (p) p.style.display = 'none';
+}
+
+function selectGsPeriod(p) {
+  _gsPeriod = p;
+  var d = document.getElementById('gsPeriodDaily');
+  var w = document.getElementById('gsPeriodWeekly');
+  if (!d) return;
+  d.style.borderColor = p==='daily'?'var(--accent)':'var(--border)';
+  d.style.background  = p==='daily'?'var(--accent)20':'transparent';
+  d.style.color       = p==='daily'?'var(--accent)':'var(--muted)';
+  w.style.borderColor = p==='weekly'?'var(--accent)':'var(--border)';
+  w.style.background  = p==='weekly'?'var(--accent)20':'transparent';
+  w.style.color       = p==='weekly'?'var(--accent)':'var(--muted)';
+  // Show warning if period slot is taken (new goal only)
+  if (!_gsEditId) {
+    var taken = personalGoals.find(function(g){ return g.period===p; });
+    var hint = document.getElementById('gsPeriodHint');
+    if (hint) hint.textContent = taken ? '⚠️ Bu periyot için zaten bir hedef var.' : '';
+  }
+}
+
+function addGsItem() {
+  _gsItems.push({ id: Date.now().toString(), metric:'time', examType:'TYT', subject:'', topic:'', target:60 });
+  renderGsItems();
+}
+
+function renderGsItems() {
+  var container = document.getElementById('gsItemsList');
+  if (!container) return;
+  container.innerHTML = '';
+  if (_gsItems.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:14px;font-size:0.78rem;color:var(--muted);font-weight:700">Kalem ekleyerek hedefini oluştur.</div>';
+    return;
+  }
+
+  var EXAM_TABS = [
+    { key:'TYT',  label:'TYT' },
+    { key:'AYT',  label:'AYT Sayısal' },
+    { key:'SOZ',  label:'AYT Sözel' },
+    { key:'EA',   label:'AYT EA' }
+  ];
+
+  _gsItems.forEach(function(item, idx) {
+    var color = GOAL_COLORS[idx % GOAL_COLORS.length];
+    var examKey = item.examType || 'TYT';
+    var examData = EXAM_DATA[examKey] || EXAM_DATA['TYT'];
+    var subjects = Object.keys(examData);
+
+    var card = document.createElement('div');
+    card.style.cssText = 'background:var(--card);border:2px solid '+color+';border-radius:14px;padding:14px;margin-bottom:10px';
+
+    // Header
+    var header = document.createElement('div');
+    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:12px';
+    var lbl = document.createElement('div');
+    lbl.style.cssText = 'display:flex;align-items:center;gap:8px';
+    lbl.innerHTML = '<div style="width:10px;height:10px;border-radius:50%;background:'+color+'"></div><span style="font-size:0.78rem;font-weight:900;color:'+color+'">Kalem '+(idx+1)+'</span>';
+    var removeBtn = document.createElement('button');
+    removeBtn.style.cssText = 'width:26px;height:26px;border-radius:7px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#ef4444';
+    removeBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    (function(id){ removeBtn.onclick = function(){ removeGsItem(id); }; })(item.id);
+    header.appendChild(lbl); header.appendChild(removeBtn);
+    card.appendChild(header);
+
+    // Metric buttons
+    var metricRow = document.createElement('div');
+    metricRow.style.cssText = 'display:flex;gap:6px;margin-bottom:10px';
+    ['time','questions'].forEach(function(m) {
+      var btn = document.createElement('button');
+      var active = item.metric === m;
+      btn.style.cssText = 'flex:1;padding:8px;border-radius:9px;font-weight:800;font-size:0.75rem;cursor:pointer;border:1.5px solid '+(active?color:'var(--border)')+';background:'+(active?color+'20':'transparent')+';color:'+(active?color:'var(--muted)');
+      btn.textContent = m === 'time' ? '⏱ Süre' : '✏️ Soru';
+      (function(id, metric){ btn.onclick = function(){ setGsItemMetric(id, metric); }; })(item.id, m);
+      metricRow.appendChild(btn);
+    });
+    card.appendChild(metricRow);
+
+    // Exam type tabs
+    var examTabRow = document.createElement('div');
+    examTabRow.style.cssText = 'display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap';
+    EXAM_TABS.forEach(function(et) {
+      var btn = document.createElement('button');
+      var active = examKey === et.key;
+      btn.style.cssText = 'flex:1;min-width:60px;padding:6px 4px;border-radius:8px;font-weight:800;font-size:0.68rem;cursor:pointer;border:1.5px solid '+(active?color:'var(--border)')+';background:'+(active?color+'20':'transparent')+';color:'+(active?color:'var(--muted)');
+      btn.textContent = et.label;
+      (function(id, key){ btn.onclick = function(){ setGsItemExamType(id, key); }; })(item.id, et.key);
+      examTabRow.appendChild(btn);
+    });
+    card.appendChild(examTabRow);
+
+    // Subject select
+    var subjSel = document.createElement('select');
+    subjSel.style.cssText = "width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 10px;outline:none;margin-bottom:8px";
+    var opt0 = document.createElement('option'); opt0.value=''; opt0.textContent='Tüm Dersler'; subjSel.appendChild(opt0);
+    subjects.forEach(function(s) {
+      var o = document.createElement('option');
+      o.value = s; o.textContent = (examData[s]||{}).emoji+' '+s;
+      if (item.subject === s) o.selected = true;
+      subjSel.appendChild(o);
+    });
+    (function(id){ subjSel.onchange = function(){ setGsItemSubject(id, this.value); }; })(item.id);
+    card.appendChild(subjSel);
+
+    // Topic select
+    if (item.subject && examData[item.subject]) {
+      var topicSel = document.createElement('select');
+      topicSel.style.cssText = "width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 10px;outline:none;margin-bottom:8px";
+      var topt0 = document.createElement('option'); topt0.value=''; topt0.textContent='Tüm Konular'; topicSel.appendChild(topt0);
+      (examData[item.subject].topics||[]).forEach(function(t) {
+        var o = document.createElement('option');
+        o.value = t; o.textContent = t;
+        if (item.topic === t) o.selected = true;
+        topicSel.appendChild(o);
+      });
+      (function(id){ topicSel.onchange = function(){ setGsItemTopic(id, this.value); }; })(item.id);
+      card.appendChild(topicSel);
+    }
+
+    // Target input
+    var targetRow = document.createElement('div');
+    targetRow.style.cssText = 'display:flex;align-items:center;gap:8px';
+    var targetInput = document.createElement('input');
+    targetInput.type='number'; targetInput.min='1'; targetInput.max='9999'; targetInput.value=item.target;
+    targetInput.style.cssText = "flex:1;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;padding:9px 10px;font-size:0.9rem;font-weight:900;color:var(--text);outline:none;font-family:'Nunito',sans-serif";
+    targetInput.onfocus = function(){ this.style.borderColor=color; };
+    targetInput.onblur  = function(){ this.style.borderColor='var(--border)'; };
+    (function(id){ targetInput.onchange = function(){ setGsItemTarget(id, this.value); }; })(item.id);
+    var unitSpan = document.createElement('span');
+    unitSpan.style.cssText = 'font-size:0.78rem;font-weight:800;color:var(--muted);white-space:nowrap';
+    unitSpan.textContent = item.metric==='time' ? 'dakika' : 'soru';
+    targetRow.appendChild(targetInput); targetRow.appendChild(unitSpan);
+    card.appendChild(targetRow);
+
+    container.appendChild(card);
   });
 }
+
+function removeGsItem(id) { _gsItems = _gsItems.filter(function(it){ return it.id!==id; }); renderGsItems(); }
+function setGsItemExamType(id, et) { var it = _gsItems.find(function(x){ return x.id===id; }); if(it){ it.examType=et; it.subject=''; it.topic=''; renderGsItems(); } }
+function setGsItemMetric(id, m) { var it = _gsItems.find(function(x){ return x.id===id; }); if(it){ it.metric=m; renderGsItems(); } }
+function setGsItemSubject(id, s) { var it = _gsItems.find(function(x){ return x.id===id; }); if(it){ it.subject=s; it.topic=''; renderGsItems(); } }
+function setGsItemTopic(id, t) { var it = _gsItems.find(function(x){ return x.id===id; }); if(it) it.topic=t; }
+function setGsItemTarget(id, v) { var it = _gsItems.find(function(x){ return x.id===id; }); if(it) it.target=parseInt(v)||1; }
+
+function saveGoalSet() {
+  if (_gsItems.length === 0) { showToast('⚠️ En az bir kalem ekle!'); return; }
+  if (_gsItems.find(function(it){ return !it.target||it.target<1; })) { showToast('⚠️ Tüm kalemlere miktar gir!'); return; }
+  if (_gsEditId) {
+    var idx = personalGoals.findIndex(function(g){ return g.id===_gsEditId; });
+    if (idx>-1) personalGoals[idx] = { id:_gsEditId, period:_gsPeriod, items:_gsItems.slice() };
+  } else {
+    var existing = personalGoals.find(function(g){ return g.period===_gsPeriod; });
+    if (existing) {
+      var lbl = _gsPeriod==='daily' ? 'Günlük' : 'Haftalık';
+      showToast('⚠️ Zaten bir ' + lbl + ' hedef var. Düzenlemek için kaleme tıkla.');
+      return;
+    }
+    personalGoals.push({ id:Date.now().toString(), period:_gsPeriod, items:_gsItems.slice() });
+  }
+  saveToCloud(); renderAnaGoals(); renderGoalPieChart(); closeGoalSetModal(); showToast('🎯 Hedef kaydedildi!');
+}
+
+function deleteGoalSet(id) {
+  personalGoals = personalGoals.filter(function(g){ return g.id!==id; });
+  saveToCloud(); renderAnaGoals(); renderGoalPieChart(); showToast('🗑 Hedef silindi');
+}
+
+function getItemProgress(item, period) {
+  var now = new Date();
+  var todayStr = now.toLocaleDateString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric'});
+  var weekStart = new Date(now);
+  weekStart.setDate(weekStart.getDate() - ((weekStart.getDay()+6)%7));
+  weekStart.setHours(0,0,0,0);
+  var filtered = entries.filter(function(e){
+    if (item.subject && e.subject!==item.subject) return false;
+    if (item.topic && e.topic!==item.topic) return false;
+    if (period==='daily') return (e.date||'')===todayStr;
+    var p = (e.date||'').split('.');
+    if (p.length===3) { var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0])); return d>=weekStart; }
+    return false;
+  });
+  if (item.metric==='time') return filtered.reduce(function(s,e){ return s+(parseInt(e.minutes)||parseInt(e.sure)||0); },0);
+  return filtered.reduce(function(s,e){ return s+(parseInt(e.soru)||0); },0);
+}
+
+function renderAnaGoals() {
+  var list = document.getElementById('anaGoalsList');
+  if (!list) return;
+  if (!personalGoals||personalGoals.length===0) {
+    list.innerHTML = '<div style="background:var(--card);border:1.5px dashed var(--border);border-radius:14px;padding:20px;text-align:center;margin-bottom:10px">' +
+      '<div style="font-size:1.5rem;margin-bottom:8px">🎯</div>' +
+      '<div style="font-size:0.78rem;color:var(--muted);font-weight:700;margin-bottom:10px">Henüz hedef eklemedin.</div>' +
+      '<button onclick="openGoalSetModal()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:9px 18px;color:#fff;font-weight:800;font-size:0.78rem;cursor:pointer">+ Hedef Oluştur</button>' +
+      '</div>';
+    return;
+  }
+  list.innerHTML = '';
+  personalGoals.forEach(function(gs) {
+    var periodLabel = gs.period==='daily'?'Günlük':'Haftalık';
+    var allDone = gs.items.every(function(it){ return getItemProgress(it,gs.period)>=it.target; });
+    var card = document.createElement('div');
+    card.style.cssText = 'background:var(--card);border:1.5px solid '+(allDone?'rgba(52,211,153,0.35)':'var(--border)')+';border-radius:14px;padding:14px 15px;margin-bottom:10px';
+    var header =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+        '<div style="display:flex;align-items:center;gap:7px">' +
+          '<span style="font-size:0.65rem;font-weight:800;background:var(--accent)18;color:var(--accent);padding:2px 9px;border-radius:6px">'+periodLabel+'</span>' +
+          (allDone?'<span style="font-size:0.65rem;font-weight:800;color:var(--accent3)">✅ Tamamlandı</span>':'') +
+        '</div>' +
+        '<div style="display:flex;gap:5px">' +
+          '<button onclick=\"openGoalSetModal(\'' + gs.id + '\')\" style="width:26px;height:26px;border-radius:7px;border:1.5px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>' +
+          '</button>' +
+          '<button onclick=\"deleteGoalSet(\'' + gs.id + '\')\" style="width:26px;height:26px;border-radius:7px;border:1.5px solid rgba(248,113,113,0.25);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#ef4444">' +
+            '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    var itemsHtml = (gs.items||[]).map(function(item,idx){
+      var color = GOAL_COLORS[idx%GOAL_COLORS.length];
+      var done = getItemProgress(item, gs.period);
+      var pct = Math.min(100,Math.round((done/item.target)*100));
+      var isDone = pct>=100;
+      var unit = item.metric==='time'?'dk':'soru';
+      var examPrefix = item.examType && item.examType!=='TYT' ? item.examType+' ' : (item.examType==='TYT'?'TYT ':'');
+      var label = (item.subject ? examPrefix+item.subject : 'Genel')+(item.topic?' · '+item.topic:'');
+      return '<div style="margin-bottom:8px">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">' +
+          '<div style="display:flex;align-items:center;gap:5px">' +
+            '<div style="width:8px;height:8px;border-radius:50%;background:'+color+';flex-shrink:0"></div>' +
+            '<span style="font-size:0.78rem;font-weight:800;color:'+(isDone?'var(--accent3)':color)+'">'+label+'</span>' +
+            (isDone?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>':'') +
+          '</div>' +
+          '<span style="font-size:0.72rem;font-weight:800;color:var(--muted)">'+done+'/'+item.target+' '+unit+'</span>' +
+        '</div>' +
+        '<div style="height:5px;background:var(--bg3);border-radius:3px;overflow:hidden">' +
+          '<div style="height:100%;width:'+pct+'%;background:'+(isDone?'var(--accent3)':color)+';border-radius:3px;transition:width 0.4s ease"></div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    card.innerHTML = header + itemsHtml;
+    list.appendChild(card);
+  });
+}
+
+function _drawGoalPie(svgId, pctId, legendId, wrapId, period) {
+  var svg = document.getElementById(svgId);
+  var pctEl = document.getElementById(pctId);
+  var legend = document.getElementById(legendId);
+  var wrap = document.getElementById(wrapId);
+  if (!svg || !legend || !wrap) return;
+
+  // Collect segments for this period
+  var segments = [];
+  personalGoals.forEach(function(gs) {
+    if (gs.period !== period) return;
+    (gs.items||[]).forEach(function(item, idx) {
+      var color = GOAL_COLORS[idx % GOAL_COLORS.length];
+      var done = Math.min(getItemProgress(item, period), item.target);
+      var examPrefix = item.examType ? item.examType+' ' : '';
+      var label = (item.subject ? examPrefix+item.subject : 'Genel') + (item.topic?' · '+item.topic:'');
+      segments.push({ label:label, done:done, total:item.target, color:color, unit:item.metric==='time'?'dk':'soru', isDone:done>=item.target });
+    });
+  });
+
+  if (segments.length === 0) { wrap.style.display='none'; return; }
+  wrap.style.display = 'block';
+
+  var totalW = segments.reduce(function(s,seg){ return s+seg.total; }, 0);
+  var doneW  = segments.reduce(function(s,seg){ return s+seg.done; }, 0);
+  if (pctEl) pctEl.textContent = (totalW>0 ? Math.round((doneW/totalW)*100) : 0)+'%';
+
+  var cx=100,cy=100,r=80,hr=52,cur=-Math.PI/2;
+  var allSlices = [];
+  segments.forEach(function(seg){
+    var dA = totalW>0 ? (seg.done/totalW)*2*Math.PI : 0;
+    var rA = totalW>0 ? ((seg.total-seg.done)/totalW)*2*Math.PI : 0;
+    if (seg.done>0) allSlices.push({ angle:dA, color:seg.isDone?'#34d399':seg.color, op:1 });
+    if (seg.total-seg.done>0) allSlices.push({ angle:rA, color:seg.color, op:0.18 });
+  });
+
+  var paths = '';
+  allSlices.forEach(function(sl){
+    if (sl.angle<0.005){ cur+=sl.angle; return; }
+    var e=cur+sl.angle;
+    var x1=cx+r*Math.cos(cur),y1=cy+r*Math.sin(cur);
+    var x2=cx+r*Math.cos(e), y2=cy+r*Math.sin(e);
+    var xh1=cx+hr*Math.cos(e),yh1=cy+hr*Math.sin(e);
+    var xh2=cx+hr*Math.cos(cur),yh2=cy+hr*Math.sin(cur);
+    var lg=sl.angle>Math.PI?1:0;
+    paths+='<path d="M'+x1+' '+y1+' A'+r+' '+r+' 0 '+lg+' 1 '+x2+' '+y2+' L'+xh1+' '+yh1+' A'+hr+' '+hr+' 0 '+lg+' 0 '+xh2+' '+yh2+' Z" fill="'+sl.color+'" opacity="'+sl.op+'"/>';
+    cur=e;
+  });
+  svg.innerHTML = paths;
+
+  legend.innerHTML = '';
+  segments.forEach(function(seg){
+    var p2 = seg.total>0 ? Math.round((seg.done/seg.total)*100) : 0;
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:6px';
+    row.innerHTML =
+      '<div style="display:flex;gap:2px;flex-shrink:0;margin-top:2px">' +
+        '<div style="width:9px;height:9px;border-radius:2px;background:'+seg.color+'"></div>' +
+        '<div style="width:9px;height:9px;border-radius:2px;background:'+seg.color+';opacity:0.18"></div>' +
+      '</div>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:0.68rem;font-weight:800;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+seg.label+'</div>' +
+        '<div style="font-size:0.6rem;color:var(--muted);font-weight:700">'+seg.done+'/'+seg.total+' '+seg.unit+' · %'+p2+'</div>' +
+      '</div>';
+    legend.appendChild(row);
+  });
+}
+
+function renderGoalPieChart() {
+  var section = document.getElementById('goalPieSection');
+  if (!section) return;
+  if (!personalGoals||personalGoals.length===0) { section.style.display='none'; return; }
+  section.style.display='block';
+  _drawGoalPie('goalPieSvgDaily',  'goalPiePctDaily',  'goalPieLegendDaily',  'goalPieDailyWrap',  'daily');
+  _drawGoalPie('goalPieSvgWeekly', 'goalPiePctWeekly', 'goalPieLegendWeekly', 'goalPieWeeklyWrap', 'weekly');
+}
+
+function renderPersonalGoals() { renderAnaGoals(); }
+
 
 // ── Ayarlardan Veri Temizle ───────────────────
 function clearAllDataFromSettings() {

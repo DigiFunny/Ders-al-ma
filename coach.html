@@ -15,6 +15,11 @@
   --text: #e2e8f0; --muted: #4b6280;
   --coach: #34d399; --coach2: #fbbf24;
 }
+body.light {
+  --bg: #f0f4f8; --bg2: #e2e8f0; --bg3: #d1dce8;
+  --card: #ffffff; --border: #c8d6e5;
+  --text: #1a202c; --muted: #718096;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; max-width: 430px; margin: 0 auto; min-height: 100dvh; overflow-x: hidden; padding-bottom: 100px; }
 
@@ -104,6 +109,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 20px; font-size: 0.82rem; font-weight: 800; opacity: 0; transition: all 0.3s; z-index: 300; white-space: nowrap; pointer-events: none; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* BADGES */
+.badges-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom:10px; }
+.badge-item { display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer; }
+.badge-icon-wrap { width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:2px solid transparent; }
+.badge-icon-wrap.earned { border-color:var(--coach); background:rgba(52,211,153,0.1); }
+.badge-icon-wrap.locked { filter:grayscale(1);opacity:0.35; }
+.badge-name { font-size:0.58rem;font-weight:800;color:var(--muted);text-align:center;line-height:1.3; }
+
 /* EMPTY STATE */
 .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
 .empty-icon { font-size: 3rem; margin-bottom: 12px; }
@@ -139,7 +152,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
       <div id="coachName" style="font-size:0.82rem;font-weight:900"></div>
       <div id="coachUname" style="font-size:0.62rem;color:var(--muted);font-weight:700"></div>
     </div>
-    <button onclick="logout()" style="background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 10px;font-size:0.68rem;font-weight:800;color:var(--muted);cursor:pointer;margin-left:4px">Çıkış</button>
+    <button id="coachSettingsBtn" onclick="openCoachSettings()" style="display:none;width:34px;height:34px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;margin-left:4px;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--coach)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
   </div>
 </div>
 
@@ -300,6 +315,157 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 </div>
 
 <!-- Tab Bar -->
+
+<!-- SAYFA: Profil -->
+<div class="page" id="page-profile">
+  <!-- Profil Kartı -->
+  <div style="background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(251,191,36,0.08));border:1.5px solid rgba(52,211,153,0.2);border-radius:18px;padding:20px 16px;margin-bottom:14px;text-align:center">
+    <div id="profileAvatarBig" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--coach),var(--coach2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.6rem;color:#000;margin:0 auto 12px">K</div>
+    <div id="profileNameBig" style="font-size:1rem;font-weight:900;margin-bottom:3px">—</div>
+    <div id="profileUnameBig" style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:12px">@—</div>
+    <div style="display:flex;justify-content:center;gap:16px">
+      <div style="text-align:center">
+        <div id="profileStudentCount" style="font-size:1.2rem;font-weight:900;color:var(--coach)">—</div>
+        <div style="font-size:0.62rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px">Öğrenci</div>
+      </div>
+      <div style="width:1px;background:var(--border)"></div>
+      <div style="text-align:center">
+        <div id="profileSuggCount" style="font-size:1.2rem;font-weight:900;color:var(--coach2)">—</div>
+        <div style="font-size:0.62rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px">Öneri</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rozetler -->
+  <div onclick="toggleCoachCollapse('coachBadgesBody','coachBadgesArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+    <div class="sec" style="margin-bottom:0">Başarımlarım</div>
+    <svg id="coachBadgesArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div id="coachBadgesBody" style="display:none">
+    <div class="badges-grid" id="coachBadgesGrid"></div>
+  </div>
+
+  <!-- Arkadaşlar -->
+  <div onclick="toggleCoachCollapse('coachFriendsBody','coachFriendsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+    <div class="sec" style="margin-bottom:0">Arkadaşlar</div>
+    <svg id="coachFriendsArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div id="coachFriendsBody" style="display:none">
+    <div id="coachFriendsWrap">
+      <div style="text-align:center;padding:20px;font-size:0.78rem;color:var(--muted);font-weight:700;background:var(--card);border:1.5px solid var(--border);border-radius:14px">Arkadaş ekle özelliği yakında.</div>
+    </div>
+  </div>
+
+  <div style="height:100px"></div>
+</div>
+
+<!-- AYARLAR SAYFASI (Koç) -->
+<div id="coachSettingsPage" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;overflow-y:auto">
+  <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:8px">
+      <button onclick="closeCoachSettings()" style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="font-size:1.1rem;font-weight:900">Ayarlar</div>
+    </div>
+
+    <!-- Tema -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Tema</div><div id="coachThemeLabel" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Karanlık mod aktif</div></div>
+      <div onclick="toggleCoachTheme()" id="coachThemeToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--coach);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="coachThemeToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:23px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+      </div>
+    </div>
+
+    <!-- Kullanıcı adı -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleCoachCollapse('coachUnameExpand','coachUnameArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#6d28d9);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Kullanıcı Adını Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Ayda bir kez değiştirilebilir</div></div>
+        <span id="coachUnameArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="coachUnameExpand" style="display:none;margin-top:12px">
+        <input id="coachNewUsernameInput" type="text" placeholder="yeni_kullanici_adi" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="coachUsernameMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="coachChangeUsername()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.85rem;cursor:pointer">Değiştir</button>
+      </div>
+    </div>
+
+    <!-- Şifre -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleCoachCollapse('coachPwExpand','coachPwArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#374151,#111827);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Şifremi Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Yeni şifre belirle</div></div>
+        <span id="coachPwArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="coachPwExpand" style="display:none;margin-top:12px">
+        <input id="coachCurrentPw" type="password" placeholder="Mevcut şifre" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'">
+        <input id="coachNewPw" type="password" placeholder="Yeni şifre (en az 6 karakter)" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="coachPwMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="coachChangePassword()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.85rem;cursor:pointer;margin-bottom:10px">Değiştir</button>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="flex:1;height:1px;background:var(--border)"></div><span style="font-size:0.68rem;color:var(--muted);font-weight:700">veya</span><div style="flex:1;height:1px;background:var(--border)"></div></div>
+        <button onclick="coachSendPasswordReset()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Mail ile sıfırlama bağlantısı gönder
+        </button>
+        <div id="coachPwResetMsg" style="font-size:0.72rem;color:var(--muted);margin-top:8px;min-height:16px;text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- Mail -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleCoachCollapse('coachEmailExpand','coachEmailArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0ea5e9,#0284c7);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Mail Adresimi Düzenle</div><div id="coachEmailDisplay" style="font-size:0.7rem;color:var(--muted);margin-top:2px">—</div></div>
+        <span id="coachEmailArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="coachEmailExpand" style="display:none;margin-top:12px">
+        <input id="coachNewEmail" type="email" placeholder="yeni@email.com" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'">
+        <input id="coachEmailPw" type="password" placeholder="Şifrenizi doğrulayın" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="coachEmailMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="coachChangeEmail()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.85rem;cursor:pointer">Değiştir</button>
+      </div>
+    </div>
+
+    <!-- Geri bildirim -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleCoachCollapse('coachFeedbackExpand','coachFeedbackArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Geri Bildirim Yolla</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Öneri, hata veya görüş bildir</div></div>
+        <span id="coachFeedbackArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="coachFeedbackExpand" style="display:none;margin-top:12px">
+        <textarea id="coachFeedbackText" placeholder="Uygulama hakkındaki düşüncelerini yaz..." rows="4" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.85rem;color:var(--text);outline:none;resize:none;font-family:'Nunito',sans-serif;margin-bottom:8px" onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        <div id="coachFeedbackMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="coachSendFeedback()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.85rem;cursor:pointer">Gönder</button>
+      </div>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+    <!-- Çıkış -->
+    <div id="coachLogoutRow" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900;color:#ef4444">Çıkış Yap</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Hesabından güvenli çıkış yap</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- Onay Modalı (Koç) -->
+<div id="coachConfirmModal" style="display:none;position:fixed;inset:0;z-index:500;align-items:flex-end;justify-content:center" class="confirm-modal-wrap">
+  <div id="coachConfirmOverlay" onclick="closeCoachConfirm()" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);opacity:0;transition:opacity 0.25s;pointer-events:none"></div>
+  <div id="coachConfirmSheet" style="position:relative;width:100%;max-width:480px;background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px 36px;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:auto">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px"></div>
+    <div id="coachConfirmIcon" style="text-align:center;font-size:2.8rem;margin-bottom:12px">⚠️</div>
+    <div id="coachConfirmTitle" style="text-align:center;font-size:1rem;font-weight:900;margin-bottom:8px"></div>
+    <div id="coachConfirmDesc" style="text-align:center;font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:24px"></div>
+    <button id="coachConfirmOkBtn" onclick="coachConfirmOk()" style="width:100%;padding:14px;border-radius:12px;border:none;font-weight:900;font-size:0.95rem;cursor:pointer;margin-bottom:10px;color:#fff"></button>
+    <button onclick="closeCoachConfirm()" style="width:100%;padding:13px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.9rem;cursor:pointer">Vazgeç</button>
+  </div>
+</div>
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('overview',this)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -316,6 +482,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   <button class="tab-btn" onclick="switchTab('reports',this)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     <span>Raporlar</span>
+  </button>
+  <button class="tab-btn" id="profileTabBtn" onclick="switchTab('profile',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
   </button>
 </div>
 
@@ -1189,6 +1359,285 @@ function showToast(msg) {
   t.textContent = msg; t.classList.add('show');
   clearTimeout(_toastTimer);
   _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+
+// ════════════════════════════════════════════
+// KOÇ PROFİL SAYFASI
+// ════════════════════════════════════════════
+
+// Tema
+var _coachIsDark = localStorage.getItem('coach_theme') !== 'light';
+function applyCoachTheme() {
+  document.body.classList.toggle('light', !_coachIsDark);
+  localStorage.setItem('coach_theme', _coachIsDark ? 'dark' : 'light');
+  var wrap = document.getElementById('coachThemeToggleWrap');
+  var thumb = document.getElementById('coachThemeToggleThumb');
+  var lbl = document.getElementById('coachThemeLabel');
+  if (wrap) wrap.style.background = _coachIsDark ? 'var(--coach)' : 'var(--bg3)';
+  if (thumb) thumb.style.left = _coachIsDark ? '23px' : '3px';
+  if (lbl) lbl.textContent = _coachIsDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif';
+}
+function toggleCoachTheme() { _coachIsDark = !_coachIsDark; applyCoachTheme(); }
+
+// Collapse
+function toggleCoachCollapse(bodyId, arrowId) {
+  var body = document.getElementById(bodyId);
+  var arrow = document.getElementById(arrowId);
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+}
+
+// Settings open/close
+function openCoachSettings() {
+  var pg = document.getElementById('coachSettingsPage');
+  if (!pg) return;
+  pg.style.display = 'block';
+  pg.scrollTop = 0;
+  if (_user) {
+    var el = document.getElementById('coachEmailDisplay');
+    if (el) el.textContent = _user.email || '—';
+  }
+  applyCoachTheme();
+}
+function closeCoachSettings() {
+  var pg = document.getElementById('coachSettingsPage');
+  if (pg) pg.style.display = 'none';
+}
+
+// switchTab override to show/hide settings btn
+var _origSwitchTab = switchTab;
+switchTab = function(tab, el) {
+  _origSwitchTab(tab, el);
+  var sb = document.getElementById('coachSettingsBtn');
+  if (sb) sb.style.display = tab === 'profile' ? 'flex' : 'none';
+  if (tab === 'profile') loadCoachProfilePage();
+};
+
+// Load profile page data
+function loadCoachProfilePage() {
+  if (!_user || !_db) return;
+  // Avatar/name
+  var av = document.getElementById('profileAvatarBig');
+  var nm = document.getElementById('profileNameBig');
+  var un = document.getElementById('profileUnameBig');
+  if (av) av.textContent = (document.getElementById('coachAvatar') || {}).textContent || 'K';
+  if (nm) nm.textContent = (document.getElementById('coachName') || {}).textContent || '—';
+  if (un) un.textContent = (document.getElementById('coachUname') || {}).textContent || '@—';
+
+  // Student count
+  _db.collection('coachRequests').where('coachUid','==',_user.uid).where('status','==','accepted').get().then(function(s){
+    var el = document.getElementById('profileStudentCount');
+    if (el) el.textContent = s.size;
+  });
+  // Suggestion count
+  _db.collection('suggestions').where('coachUid','==',_user.uid).get().then(function(s){
+    var el = document.getElementById('profileSuggCount');
+    if (el) el.textContent = s.size;
+    renderCoachBadges(s.size);
+  });
+}
+
+// Coach Badges
+var _coachBadgeDefs = [
+  { id:'ilk_ogrenci',  icon:'🎓', name:'İlk Öğrenci',     hint:'İlk öğrencini kabul et',           check: function(d){ return d.students >= 1; } },
+  { id:'bes_ogrenci',  icon:'👥', name:'5 Öğrenci',        hint:'5 öğrenci ile çalış',              check: function(d){ return d.students >= 5; } },
+  { id:'on_ogrenci',   icon:'🏫', name:'10 Öğrenci',       hint:'10 öğrenci ile çalış',             check: function(d){ return d.students >= 10; } },
+  { id:'ilk_oneri',    icon:'💡', name:'İlk Öneri',        hint:'İlk ders önerini gönder',          check: function(d){ return d.suggestions >= 1; } },
+  { id:'on_oneri',     icon:'🚀', name:'10 Öneri',         hint:'10 öneri gönder',                  check: function(d){ return d.suggestions >= 10; } },
+  { id:'elli_oneri',   icon:'⚡', name:'50 Öneri',         hint:'50 öneri gönder',                  check: function(d){ return d.suggestions >= 50; } },
+  { id:'rehber',       icon:'🧭', name:'Rehber',           hint:'Hem öneri hem rapor yaz',          check: function(d){ return d.suggestions >= 5 && d.students >= 3; } },
+  { id:'uzman_koc',    icon:'🏆', name:'Uzman Koç',        hint:'10 öğrenci + 50 öneri',            check: function(d){ return d.students >= 10 && d.suggestions >= 50; } },
+];
+
+function renderCoachBadges(suggCount) {
+  var grid = document.getElementById('coachBadgesGrid');
+  if (!grid) return;
+  _db.collection('coachRequests').where('coachUid','==',_user.uid).where('status','==','accepted').get().then(function(s){
+    var data = { students: s.size, suggestions: suggCount || 0 };
+    grid.innerHTML = '';
+    _coachBadgeDefs.forEach(function(b) {
+      var earned = b.check(data);
+      var item = document.createElement('div');
+      item.className = 'badge-item';
+      item.title = earned ? b.name : b.hint;
+      item.innerHTML =
+        '<div class="badge-icon-wrap ' + (earned ? 'earned' : 'locked') + '">' + b.icon + '</div>' +
+        '<div class="badge-name">' + b.name + '</div>';
+      grid.appendChild(item);
+    });
+  });
+}
+
+// Confirm modal
+var _coachConfirmCb = null;
+function showCoachConfirm(opts) {
+  var modal = document.getElementById('coachConfirmModal');
+  var overlay = document.getElementById('coachConfirmOverlay');
+  var sheet = document.getElementById('coachConfirmSheet');
+  if (!modal) return;
+  document.getElementById('coachConfirmIcon').textContent = opts.icon || '⚠️';
+  document.getElementById('coachConfirmTitle').textContent = opts.title || '';
+  document.getElementById('coachConfirmDesc').innerHTML = opts.desc || '';
+  var btn = document.getElementById('coachConfirmOkBtn');
+  btn.textContent = opts.btnLabel || 'Evet';
+  btn.style.background = opts.btnColor || '#ef4444';
+  _coachConfirmCb = opts.onOk || null;
+  modal.style.display = 'flex';
+  modal.style.pointerEvents = 'auto';
+  requestAnimationFrame(function() {
+    overlay.style.opacity = '1';
+    overlay.style.pointerEvents = 'auto';
+    sheet.style.transform = 'translateY(0)';
+  });
+}
+function closeCoachConfirm() {
+  var modal = document.getElementById('coachConfirmModal');
+  var overlay = document.getElementById('coachConfirmOverlay');
+  var sheet = document.getElementById('coachConfirmSheet');
+  overlay.style.opacity = '0'; sheet.style.transform = 'translateY(100%)';
+  overlay.style.pointerEvents = 'none';
+  setTimeout(function() { modal.style.display = 'none'; _coachConfirmCb = null; }, 300);
+}
+function coachConfirmOk() {
+  var cb = _coachConfirmCb;
+  closeCoachConfirm();
+  setTimeout(function() { if (cb) cb(); }, 320);
+}
+
+// Logout via confirm
+document.addEventListener('DOMContentLoaded', function() {
+  var row = document.getElementById('coachLogoutRow');
+  if (row) row.onclick = function() {
+    showCoachConfirm({
+      icon: '🚪', title: 'Çıkış Yapmak İstediğine Emin Misin?',
+      desc: 'Hesabından çıkış yapılacak.<br>Tekrar giriş yapabilirsin.',
+      btnLabel: 'Evet, Çıkış Yap', btnColor: 'linear-gradient(135deg,#ef4444,#b91c1c)',
+      onOk: function() {
+        _auth.signOut().then(function() {
+          var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+          window.location.href = base + 'index.html';
+        });
+      }
+    });
+  };
+  applyCoachTheme();
+});
+
+// Settings functions
+function coachChangeUsername() {
+  if (!_user || !_db) return;
+  var newUname = (document.getElementById('coachNewUsernameInput').value || '').trim().toLowerCase().replace(/[^a-z0-9_]/g,'');
+  var msgEl = document.getElementById('coachUsernameMsg');
+  msgEl.style.color = 'var(--muted)'; msgEl.textContent = '';
+  if (!newUname || newUname.length < 3) { msgEl.style.color='#ef4444'; msgEl.textContent='En az 3 karakter gir.'; return; }
+
+  _db.collection('users').doc(_user.uid).get().then(function(uDoc) {
+    if (uDoc.exists) {
+      var lu = uDoc.data().lastUsernameChange;
+      if (lu) {
+        var diff = (Date.now() - new Date(lu).getTime()) / (1000*60*60*24);
+        if (diff < 30) { msgEl.style.color='#ef4444'; msgEl.textContent = Math.ceil(30-diff) + ' gün sonra değiştirebilirsin.'; return; }
+      }
+    }
+    msgEl.textContent = 'Kontrol ediliyor...';
+    _db.collection('usernames').doc(newUname).get().then(function(uDoc2) {
+      if (uDoc2.exists && uDoc2.data().uid !== _user.uid) { msgEl.style.color='#ef4444'; msgEl.textContent='Bu kullanıcı adı alınmış.'; return; }
+      var oldUname = uDoc.exists ? uDoc.data().username : null;
+      var batch = _db.batch();
+      if (oldUname) batch.delete(_db.collection('usernames').doc(oldUname));
+      batch.set(_db.collection('usernames').doc(newUname), { uid: _user.uid });
+      batch.update(_db.collection('users').doc(_user.uid), { username: newUname, lastUsernameChange: new Date().toISOString() });
+      batch.commit().then(function() {
+        msgEl.style.color = 'var(--coach)'; msgEl.textContent = '✅ Kullanıcı adı değiştirildi!';
+        document.getElementById('coachUname').textContent = '@' + newUname;
+        document.getElementById('profileUnameBig').textContent = '@' + newUname;
+        document.getElementById('coachNewUsernameInput').value = '';
+        showToast('✅ Kullanıcı adın: @' + newUname);
+      }).catch(function(e){ msgEl.style.color='#ef4444'; msgEl.textContent='Hata: '+e.message; });
+    });
+  });
+}
+
+function coachChangePassword() {
+  if (!_user) return;
+  var msgEl = document.getElementById('coachPwMsg');
+  msgEl.style.color='var(--muted)'; msgEl.textContent='';
+  var providers = _user.providerData.map(function(p){ return p.providerId; });
+  if (providers.indexOf('password') === -1) { msgEl.style.color='#ef4444'; msgEl.textContent='Google ile giriş yaptığın için şifre değiştiremezsin.'; return; }
+  var cur = document.getElementById('coachCurrentPw').value;
+  var nw = document.getElementById('coachNewPw').value;
+  if (!cur || !nw) { msgEl.style.color='#ef4444'; msgEl.textContent='Tüm alanları doldur.'; return; }
+  if (nw.length < 6) { msgEl.style.color='#ef4444'; msgEl.textContent='Şifre en az 6 karakter olmalı.'; return; }
+  if (cur === nw) { msgEl.style.color='#ef4444'; msgEl.textContent='Yeni şifre mevcut şifreyle aynı olamaz.'; return; }
+  msgEl.textContent = 'Doğrulanıyor...';
+  var cred = firebase.auth.EmailAuthProvider.credential(_user.email, cur);
+  _user.reauthenticateWithCredential(cred).then(function(){ return _user.updatePassword(nw); }).then(function(){
+    msgEl.style.color='var(--coach)'; msgEl.textContent='✅ Şifre başarıyla değiştirildi!';
+    document.getElementById('coachCurrentPw').value=''; document.getElementById('coachNewPw').value='';
+    showToast('✅ Şifren güncellendi!');
+  }).catch(function(e){
+    msgEl.style.color='#ef4444';
+    var code = e.code||'';
+    if (code==='auth/wrong-password'||code==='auth/invalid-credential') msgEl.textContent='❌ Mevcut şifre yanlış.';
+    else if (code==='auth/too-many-requests') msgEl.textContent='⚠️ Çok fazla deneme. Biraz bekle.';
+    else msgEl.textContent='❌ '+code;
+  });
+}
+
+function coachSendPasswordReset() {
+  if (!_user) return;
+  var msgEl = document.getElementById('coachPwResetMsg');
+  msgEl.style.color='var(--muted)'; msgEl.textContent='Gönderiliyor...';
+  _auth.sendPasswordResetEmail(_user.email).then(function(){
+    msgEl.style.color='var(--coach)'; msgEl.textContent='✅ '+_user.email+' adresine gönderildi.';
+    showToast('📧 Şifre sıfırlama maili gönderildi!');
+  }).catch(function(){ msgEl.style.color='#ef4444'; msgEl.textContent='❌ Gönderilemedi. Tekrar dene.'; });
+}
+
+function coachChangeEmail() {
+  if (!_user) return;
+  var msgEl = document.getElementById('coachEmailMsg');
+  msgEl.style.color='var(--muted)'; msgEl.textContent='';
+  var providers = _user.providerData.map(function(p){ return p.providerId; });
+  if (providers.indexOf('password') === -1) { msgEl.style.color='#ef4444'; msgEl.textContent='Google ile giriş yaptığın için e-posta değiştiremezsin.'; return; }
+  var newEmail = (document.getElementById('coachNewEmail').value||'').trim();
+  var pw = document.getElementById('coachEmailPw').value;
+  if (!newEmail||!pw) { msgEl.style.color='#ef4444'; msgEl.textContent='Tüm alanları doldur.'; return; }
+  if (newEmail===_user.email) { msgEl.style.color='#ef4444'; msgEl.textContent='Yeni e-posta mevcut adresle aynı.'; return; }
+  msgEl.textContent='Doğrulanıyor...';
+  var cred = firebase.auth.EmailAuthProvider.credential(_user.email, pw);
+  _user.reauthenticateWithCredential(cred).then(function(){ return _user.verifyBeforeUpdateEmail(newEmail); }).then(function(){
+    msgEl.style.color='var(--coach)'; msgEl.textContent='✅ Doğrulama e-postası gönderildi.';
+    document.getElementById('coachNewEmail').value=''; document.getElementById('coachEmailPw').value='';
+    showToast('📧 Doğrulama maili gönderildi!');
+  }).catch(function(e){
+    msgEl.style.color='#ef4444';
+    var code=e.code||'';
+    if (code==='auth/wrong-password'||code==='auth/invalid-credential') msgEl.textContent='❌ Şifre yanlış.';
+    else if (code==='auth/email-already-in-use') msgEl.textContent='❌ Bu e-posta zaten kullanımda.';
+    else msgEl.textContent='❌ '+code;
+  });
+}
+
+function coachSendFeedback() {
+  if (!_user||!_db) { showToast('⚠️ Giriş gerekli'); return; }
+  var text = (document.getElementById('coachFeedbackText').value||'').trim();
+  var msgEl = document.getElementById('coachFeedbackMsg');
+  if (!text||text.length<5) { msgEl.style.color='#ef4444'; msgEl.textContent='Lütfen daha uzun bir mesaj yaz.'; return; }
+  msgEl.style.color='var(--muted)'; msgEl.textContent='Gönderiliyor...';
+  _db.collection('feedback').add({ uid:_user.uid, text:text, role:'coach', sentAt:new Date().toISOString() }).then(function(){
+    msgEl.style.color='var(--coach)'; msgEl.textContent='✅ Teşekkürler! Geri bildiriminiz iletildi.';
+    document.getElementById('coachFeedbackText').value='';
+    showToast('💬 Geri bildirim gönderildi!');
+  }).catch(function(){
+    // fallback: users collection
+    _db.collection('users').doc(_user.uid).set({ feedbacks: firebase.firestore.FieldValue.arrayUnion({ text:text, sentAt:new Date().toISOString() }) },{merge:true})
+      .then(function(){ msgEl.style.color='var(--coach)'; msgEl.textContent='✅ Teşekkürler!'; document.getElementById('coachFeedbackText').value=''; })
+      .catch(function(){ msgEl.style.color='#ef4444'; msgEl.textContent='❌ Gönderilemedi.'; });
+  });
 }
 
 document.addEventListener('DOMContentLoaded', initFirebase);
