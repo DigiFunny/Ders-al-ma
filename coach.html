@@ -219,6 +219,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <button onclick="switchStatsTab('alltime',this)" id="stab-alltime" class="dtab">Tüm Zamanlar</button>
     <button onclick="switchStatsTab('deneme',this)" id="stab-deneme" class="dtab">Denemeler</button>
     <button onclick="switchStatsTab('chart',this)" id="stab-chart" class="dtab">Grafik</button>
+    <button onclick="switchStatsTab('pies',this)" id="stab-pies" class="dtab">Dağılım</button>
+    <button onclick="switchStatsTab('strong',this)" id="stab-strong" class="dtab">Güçlü/Zayıf</button>
   </div>
 
   <!-- Bu Hafta -->
@@ -575,6 +577,7 @@ var firebaseConfig = {
 };
 
 var _db = null, _auth = null, _user = null;
+var _currentStatsData = null;
 var _students = []; // [{uid, username, displayName, stats}]
 var _snapListeners = {}; // uid -> unsubscribe fn
 var _detailSnapUnsub = null; // aktif öğrenci detay listener
@@ -956,6 +959,8 @@ function openStudentStatsPage(s) {
       totalDeneme: denemeler.length
     });
 
+    // Cache data for tab switching
+    _currentStatsData = fullWs;
     // Detay sayfası hâlâ bu öğrencide mi?
     if (_currentDetailUid !== s.uid) return;
 
@@ -1040,13 +1045,141 @@ function netRow(label, val) {
   '</div>';
 }
 
+
+function _drawCoachPie(svgId, legendId, segments) {
+  var svg = document.getElementById(svgId);
+  var legend = document.getElementById(legendId);
+  if (!svg || !legend) return;
+  if (!segments || !segments.length) {
+    svg.innerHTML = '<text x="100" y="105" text-anchor="middle" fill="#4b6280" font-size="11" font-family="Nunito">Veri yok</text>';
+    legend.innerHTML = '';
+    return;
+  }
+  var total = segments.reduce(function(s,x){ return s+(x.val||0); }, 0);
+  if (!total) { svg.innerHTML = '<text x="100" y="105" text-anchor="middle" fill="#4b6280" font-size="11" font-family="Nunito">Veri yok</text>'; return; }
+  var cx=100,cy=100,r=80,hr=52,cur=-Math.PI/2,paths='';
+  segments.forEach(function(seg) {
+    var angle = (seg.val/total)*2*Math.PI;
+    if (angle < 0.01) return;
+    var e=cur+angle;
+    var x1=cx+r*Math.cos(cur),y1=cy+r*Math.sin(cur);
+    var x2=cx+r*Math.cos(e),y2=cy+r*Math.sin(e);
+    var xh1=cx+hr*Math.cos(e),yh1=cy+hr*Math.sin(e);
+    var xh2=cx+hr*Math.cos(cur),yh2=cy+hr*Math.sin(cur);
+    var lg=angle>Math.PI?1:0;
+    paths+='<path d="M'+x1+' '+y1+' A'+r+' '+r+' 0 '+lg+' 1 '+x2+' '+y2+' L'+xh1+' '+yh1+' A'+hr+' '+hr+' 0 '+lg+' 0 '+xh2+' '+yh2+' Z" fill="'+seg.color+'"/>';
+    cur=e;
+  });
+  svg.innerHTML = paths;
+  legend.innerHTML = '';
+  segments.forEach(function(seg) {
+    var pct = total>0?Math.round((seg.val/total)*100):0;
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:6px;margin-bottom:5px';
+    row.innerHTML = '<div style="width:10px;height:10px;border-radius:3px;background:'+seg.color+';flex-shrink:0;margin-top:2px"></div>' +
+      '<div><div style="font-size:0.7rem;font-weight:800;color:var(--text)">'+seg.label+'</div>' +
+      '<div style="font-size:0.6rem;color:var(--muted);font-weight:700">'+seg.val+'dk · %'+pct+'</div></div>';
+    legend.appendChild(row);
+  });
+}
+
+var SUBJECT_COLORS = ['#38bdf8','#818cf8','#34d399','#fbbf24','#f472b6','#fb923c','#a78bfa','#4ade80','#60a5fa','#f87171'];
+
+function renderStatsPies(ws) {
+  // Subject pie
+  var subj = ws.subjectAllTime ? Object.entries(ws.subjectAllTime) : [];
+  subj.sort(function(a,b){ return (b[1].mins||0)-(a[1].mins||0); });
+  var subjSegs = subj.map(function(x,i){ return { label:x[0], val:x[1].mins||0, color:SUBJECT_COLORS[i%SUBJECT_COLORS.length] }; });
+  _drawCoachPie('statsSubjectPieSvg','statsSubjectPieLegend', subjSegs);
+
+  // Type pie
+  var td = ws.typeDist || {};
+  var typeSegs = [
+    { label:'Konu Anlatımı', val:td.konu||0, color:'#38bdf8' },
+    { label:'Soru Çözme',    val:td.soru||0, color:'#818cf8' },
+    { label:'Genel Tekrar',  val:td.genel||0, color:'#34d399' }
+  ].filter(function(x){ return x.val>0; });
+  _drawCoachPie('statsTypePieSvg','statsTypePieLegend', typeSegs);
+
+  // Monthly chart (last 30 days)
+  var svg = document.getElementById('statsMonthSvg');
+  var listEl = document.getElementById('statsMonthList');
+  if (!svg) return;
+  var daily = (ws.dailySummary && ws.dailySummary.length) ? ws.dailySummary.slice(-30) : [];
+  if (!daily.length) { svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#4b6280" font-size="12" font-family="Nunito">Veri yok</text>'; return; }
+  var maxM = Math.max.apply(null, daily.map(function(d){ return d.mins; })) || 1;
+  var W = Math.max(300, daily.length * 14);
+  svg.setAttribute('width', W);
+  var barW = Math.max(8, (W / daily.length) - 3);
+  var bars = daily.map(function(d, i) {
+    var h = Math.round((d.mins/maxM)*80);
+    var x = i*(W/daily.length);
+    return '<rect x="'+x+'" y="'+(90-h)+'" width="'+barW+'" height="'+Math.max(h,2)+'" rx="3" fill="'+(d.mins>0?'url(#coachGrad)':'rgba(255,255,255,0.05)')+'"/>';
+  }).join('');
+  svg.innerHTML = '<defs><linearGradient id="coachGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#34d399"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient></defs>' + bars;
+  if (listEl) {
+    var last7 = daily.slice(-7).reverse();
+    listEl.innerHTML = last7.map(function(d) {
+      var hrs=Math.floor(d.mins/60),mins=d.mins%60;
+      var ts = hrs>0?hrs+'s '+mins+'dk':(d.mins>0?d.mins+'dk':'—');
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;margin-bottom:6px">'+
+        '<span style="font-size:0.78rem;font-weight:800">'+d.date+'</span>'+
+        '<div style="display:flex;gap:14px">'+
+          '<span style="font-size:0.72rem;font-weight:800;color:var(--accent)">⏱ '+ts+'</span>'+
+          '<span style="font-size:0.72rem;font-weight:800;color:var(--accent2)">✏️ '+(d.soru||0)+'</span>'+
+        '</div></div>';
+    }).join('');
+  }
+}
+
+function renderStatsStrongWeak(ws) {
+  var strongEl = document.getElementById('statsStrongTopics');
+  var weakEl = document.getElementById('statsWeakTopics');
+  if (!strongEl || !weakEl) return;
+
+  // Build topic stats from subjectAllTime (approximation) + use entries if available
+  var subj = ws.subjectAllTime ? Object.entries(ws.subjectAllTime) : [];
+  if (!subj.length) {
+    strongEl.innerHTML = noData(); weakEl.innerHTML = noData(); return;
+  }
+
+  // Rank by accuracy (dogru/soru ratio), min 5 soru
+  var ranked = subj
+    .filter(function(x){ return (x[1].soru||0) >= 5; })
+    .map(function(x) {
+      var acc = (x[1].soru||0) > 0 ? Math.round((x[1].dogru||0)/(x[1].soru||1)*100) : 0;
+      return { name:x[0], acc:acc, soru:x[1].soru||0, mins:x[1].mins||0 };
+    })
+    .sort(function(a,b){ return b.acc-a.acc; });
+
+  var unranked = subj
+    .filter(function(x){ return (x[1].soru||0) < 5; })
+    .map(function(x){ return { name:x[0], acc:0, soru:x[1].soru||0, mins:x[1].mins||0 }; });
+
+  function topicCard(t, color) {
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:6px">' +
+      '<div><div style="font-size:0.82rem;font-weight:900">'+t.name+'</div>' +
+      '<div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">'+t.soru+' soru · '+t.mins+'dk</div></div>' +
+      '<span style="font-family:Space Mono,monospace;font-size:1rem;font-weight:700;color:'+color+'">%'+t.acc+'</span>' +
+    '</div>';
+  }
+
+  var strong = ranked.slice(0,5);
+  var weak = ranked.slice(-5).reverse();
+
+  strongEl.innerHTML = strong.length ? strong.map(function(t){ return topicCard(t,'var(--accent3)'); }).join('') : noData();
+  weakEl.innerHTML = weak.length ? weak.map(function(t){ return topicCard(t,'var(--warn)'); }).join('') : noData();
+}
+
 function switchStatsTab(tab, el) {
-  ['week','alltime','deneme','chart'].forEach(function(t) {
+  ['week','alltime','deneme','chart','pies','strong'].forEach(function(t) {
     var el2 = document.getElementById('stab-content-' + t);
     if (el2) el2.style.display = t === tab ? 'block' : 'none';
     var btn = document.getElementById('stab-' + t);
     if (btn) btn.classList.toggle('active-dtab', t === tab);
   });
+  if (tab === 'pies' && _currentStatsData) renderStatsPies(_currentStatsData);
+  if (tab === 'strong' && _currentStatsData) renderStatsStrongWeak(_currentStatsData);
 }
 
 function renderStatsWeekTab(stats) {
