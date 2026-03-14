@@ -78,7 +78,7 @@ body {
 
 /* TABS */
 .tabs {
-  position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+  position: fixed; bottom: 14px; left: 50%;
   width: calc(100% - 24px); max-width: 406px;
   border: 1px solid rgba(56,189,248,0.2);
   border-radius: 28px;
@@ -86,12 +86,15 @@ body {
   padding: 8px 6px 8px;
   gap: 2px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(56,189,248,0.1);
-  background: rgba(8,13,24,0.82);
+  background: rgba(8,13,24,0.96);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  will-change: transform;
+  transform: translate(-50%, 0) translateZ(0);
+  -webkit-transform: translate(-50%, 0) translateZ(0);
 }
 body.light .tabs {
-  background: rgba(240,244,248,0.82);
+  background: rgba(240,244,248,0.96);
 }
 .tab-btn {
   flex: 1; background: none; border: none; color: var(--muted);
