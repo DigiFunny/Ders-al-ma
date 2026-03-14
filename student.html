@@ -40,7 +40,7 @@ body {
   max-width: 430px;
   margin: 0 auto;
   padding-bottom: 120px;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 
@@ -78,7 +78,7 @@ body {
 
 /* TABS */
 .tabs {
-  position: fixed; bottom: 14px; left: 50%;
+  position: fixed; bottom: max(14px, env(safe-area-inset-bottom, 14px)); left: 50%;
   transform: translateX(-50%) translateZ(0);
   width: calc(100% - 24px); max-width: 406px;
   border: 1.5px solid rgba(56,189,248,0.2);
@@ -113,7 +113,7 @@ body {
 /* PAGES */
 .page { display: none; padding: 0 14px; animation: fadeUp 0.25s ease; }
 .page.active { display: block; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
 
 /* SECTION TITLE */
 .sec { font-size: 0.7rem; font-weight: 800; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; margin-top: 16px; }
