@@ -5922,8 +5922,40 @@ function renderPersonalGoals() { renderAnaGoals(); }
 // ════════════════════════════════════════════════
 var _myCoachUid = null;
 
+function autoDeleteOldDoneSuggestions() {
+  if (!_currentUser || !_fbDb) return;
+  var cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  _fbDb.collection('suggestions')
+    .where('studentUid', '==', _currentUser.uid)
+    .where('done', '==', true)
+    .where('deletedByStudent', '==', false)
+    .get().then(function(snap) {
+      snap.forEach(function(doc) {
+        var doneAt = doc.data().doneAt;
+        if (doneAt && new Date(doneAt).getTime() < cutoff) {
+          doc.ref.update({ deletedByStudent: true });
+        }
+      });
+    }).catch(function() {
+      // Fallback without deletedByStudent filter (first run)
+      _fbDb.collection('suggestions')
+        .where('studentUid', '==', _currentUser.uid)
+        .where('done', '==', true)
+        .get().then(function(snap) {
+          snap.forEach(function(doc) {
+            if (doc.data().deletedByStudent) return;
+            var doneAt = doc.data().doneAt;
+            if (doneAt && new Date(doneAt).getTime() < cutoff) {
+              doc.ref.update({ deletedByStudent: true });
+            }
+          });
+        });
+    });
+}
+
 function loadCoachSuggestionsForStudent() {
   if (!_currentUser || !_fbDb) return;
+  autoDeleteOldDoneSuggestions();
   var wrap = document.getElementById('coachSuggestionsWrap');
   var list = document.getElementById('coachSuggestionsList');
   if (!wrap || !list) return;
@@ -5946,7 +5978,9 @@ function loadCoachSuggestionsForStudent() {
             return;
           }
           var docs = [];
-          sSnap.forEach(function(doc) { docs.push(doc); });
+          sSnap.forEach(function(doc) {
+            if (!doc.data().deletedByStudent) docs.push(doc);
+          });
           docs.sort(function(a, b) {
             return (b.data().createdAt || '').localeCompare(a.data().createdAt || '');
           });
@@ -5976,7 +6010,10 @@ function loadCoachSuggestionsForStudent() {
                     (d.note?'<div style="font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:6px;font-style:italic">"'+d.note+'"</div>':'') +
                     '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">' +
                       '<span style="font-size:0.65rem;color:var(--muted);font-weight:700">'+coachName+' · '+dateStr+'</span>' +
-                      (!isDone?'<button onclick=\"markSuggestionDone(\'' + doc.id + '\')\" style="font-size:0.72rem;font-weight:800;background:var(--accent3)20;color:var(--accent3);border:1.5px solid var(--accent3);border-radius:8px;padding:4px 12px;cursor:pointer">✓ Tamamlandı</button>':'') +
+                      '<div style="display:flex;gap:6px">' +
+                      (!isDone?'<button onclick=\"markSuggestionDone(\'' + doc.id + '\')\" style="font-size:0.72rem;font-weight:800;background:var(--accent3)20;color:var(--accent3);border:1.5px solid var(--accent3);border-radius:8px;padding:4px 10px;cursor:pointer">✓ Tamamlandı</button>':'') +
+                      '<button onclick=\"deleteSuggestion(\'' + doc.id + '\')\" style="width:28px;height:28px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#ef4444;flex-shrink:0"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"3 6 5 6 21 6\"/><path d=\"M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6\"/><path d=\"M10 11v6\"/><path d=\"M14 11v6\"/><path d=\"M9 6V4h6v2\"/></svg></button>' +
+                      '</div>' +
                     '</div>' +
                   '</div>' +
                 '</div>';
@@ -5994,6 +6031,24 @@ function markSuggestionDone(docId) {
       showToast('✅ Öneri tamamlandı olarak işaretlendi!');
       loadCoachSuggestionsForStudent();
     }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function deleteSuggestion(docId) {
+  if (!_fbDb) return;
+  showConfirmModal({
+    icon: '🗑️',
+    title: 'Öneriyi Kaldır',
+    desc: 'Bu öneri listenden kaldırılacak.',
+    btnLabel: 'Evet, Kaldır',
+    btnColor: 'linear-gradient(135deg,#ef4444,#b91c1c)',
+    onOk: function() {
+      _fbDb.collection('suggestions').doc(docId).update({ deletedByStudent: true })
+        .then(function() {
+          showToast('🗑 Öneri kaldırıldı');
+          loadCoachSuggestionsForStudent();
+        }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+    }
+  });
 }
 
 
