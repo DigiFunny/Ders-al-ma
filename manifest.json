@@ -2,7 +2,7 @@
   "name": "Pugi",
   "short_name": "Pugi",
   "description": "YKS sınavına hazırlanmak için akıllı çalışma takip uygulaması — Pugi ile çalış, kazan!",
-  "start_url": "/Ders-al-ma/",
+  "start_url": "pugiapp.com",
   "display": "standalone",
   "background_color": "#080d18",
   "theme_color": "#080d18",
