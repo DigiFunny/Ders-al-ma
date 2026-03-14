@@ -28,20 +28,39 @@
       "name": "Zamanlayıcı Başlat",
       "short_name": "Çalış",
       "url": "/yks-takip-uygulamasi.html?page=calis",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "Hedeflerim",
       "short_name": "Hedefler",
       "url": "/yks-takip-uygulamasi.html?page=ana",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     },
     {
       "name": "İstatistikler",
       "short_name": "İstatistik",
       "url": "/yks-takip-uygulamasi.html?page=stat",
-      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+      "icons": [
+        {
+          "src": "/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ],
-  "categories": ["education", "productivity"]
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "id": "/"
 }
