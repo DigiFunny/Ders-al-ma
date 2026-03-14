@@ -1,8 +1,9 @@
 {
-  "name": "Pugi",
+  "name": "Pugi - YKS Çalışma Takip",
   "short_name": "Pugi",
-  "description": "YKS sınavına hazırlanmak için akıllı çalışma takip uygulaması — Pugi ile çalış, kazan!",
-  "start_url": "/Ders-al-ma/index.html",
+  "description": "YKS sınavına hazırlanmak için akıllı çalışma takip uygulaması",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#080d18",
   "theme_color": "#080d18",
@@ -10,16 +11,37 @@
   "lang": "tr",
   "icons": [
     {
-      "src": "/Ders-al-ma/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/Ders-al-ma/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Zamanlayıcı Başlat",
+      "short_name": "Çalış",
+      "url": "/yks-takip-uygulamasi.html?page=calis",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Hedeflerim",
+      "short_name": "Hedefler",
+      "url": "/yks-takip-uygulamasi.html?page=ana",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "İstatistikler",
+      "short_name": "İstatistik",
+      "url": "/yks-takip-uygulamasi.html?page=stat",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "categories": ["education", "productivity"]
 }
