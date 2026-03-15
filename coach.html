@@ -219,7 +219,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <button onclick="switchStatsTab('alltime',this)" id="stab-alltime" class="dtab">Tüm Zamanlar</button>
     <button onclick="switchStatsTab('deneme',this)" id="stab-deneme" class="dtab">Denemeler</button>
     <button onclick="switchStatsTab('chart',this)" id="stab-chart" class="dtab">Grafik</button>
-    <button onclick="switchStatsTab('pies',this)" id="stab-pies" class="dtab">Dağılım</button>
     <button onclick="switchStatsTab('strong',this)" id="stab-strong" class="dtab">Güçlü/Zayıf</button>
   </div>
 
@@ -257,11 +256,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     </div>
     <div class="sec">Günlük Detaylar</div>
     <div id="statsChartList"></div>
-  </div>
 
-  <!-- Pasta Grafikler -->
-  <div id="stab-content-pies" style="display:none">
-    <div style="display:flex;gap:8px;margin-bottom:12px">
+    <div style="display:flex;gap:8px;margin:16px 0 12px">
       <button onclick="setPiesFilter('week',this)" class="dtab active-dtab" id="pies-btn-week" style="flex:1">Bu Hafta</button>
       <button onclick="setPiesFilter('alltime',this)" class="dtab" id="pies-btn-alltime" style="flex:1">Tüm Zamanlar</button>
     </div>
@@ -283,12 +279,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
         <div id="statsTypePieLegend" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"></div>
       </div>
     </div>
-    <div class="sec">Aylık Grafik</div>
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;overflow-x:auto;margin-bottom:10px">
-      <svg id="statsMonthSvg" height="100" style="min-width:100%;display:block"></svg>
-    </div>
-    <div id="statsMonthList"></div>
   </div>
+
 
   <!-- En Güçlü / En Zayıf -->
   <div id="stab-content-strong" style="display:none">
@@ -1301,13 +1293,13 @@ function renderStatsStrongWeak(ws) {
 }
 
 function switchStatsTab(tab, el) {
-  ['week','alltime','deneme','chart','pies','strong'].forEach(function(t) {
+  ['week','alltime','deneme','chart','strong'].forEach(function(t) {
     var el2 = document.getElementById('stab-content-' + t);
     if (el2) el2.style.display = t === tab ? 'block' : 'none';
     var btn = document.getElementById('stab-' + t);
     if (btn) btn.classList.toggle('active-dtab', t === tab);
   });
-  if (tab === 'pies' && _currentStatsData) renderStatsPies(_currentStatsData);
+  if (tab === 'chart' && _currentStatsData) renderStatsPies(_currentStatsData);
   if (tab === 'strong' && _currentStatsData) renderStatsStrongWeak(_currentStatsData);
 }
 
