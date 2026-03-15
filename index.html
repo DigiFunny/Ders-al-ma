@@ -4,7 +4,26 @@
   <link rel="manifest" href="/manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Pugi — YKS Çalışma Takip</title>
+<title>Pugi — YKS Çalışma Takip Uygulaması | TYT AYT Hazırlık</title>
+<meta name="description" content="Pugi — YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik, hedef takibi ve koç paneli ile sınava hazırlan.">
+<meta name="keywords" content="YKS çalışma takip, TYT hazırlık, AYT hazırlık, YKS uygulaması, sınav hazırlık, çalışma zamanlayıcı, öğrenci takip, Pugi">
+<meta name="author" content="Pugi">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://pugiapp.com/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pugiapp.com/">
+<meta property="og:title" content="Pugi — YKS Çalışma Takip Uygulaması">
+<meta property="og:description" content="YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik ve hedef takibi.">
+<meta property="og:image" content="https://pugiapp.com/icon-512.png">
+<meta property="og:locale" content="tr_TR">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pugi — YKS Çalışma Takip">
+<meta name="twitter:description" content="YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması.">
+<meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -512,7 +531,7 @@ function checkAccountTypeAndRedirect(user) {
     if (accountType === 'coach') {
       window.location.href = 'coach.html';
     } else {
-      window.location.href = 'yks-takip-uygulamasi.html';
+      window.location.href = 'student.html';
     }
   }).catch(function() {
     hideLoading();
@@ -605,7 +624,7 @@ function submitAuth() {
         if (selectedAccountType === 'coach') {
           window.location.href = 'coach.html';
         } else {
-          window.location.href = 'yks-takip-uygulamasi.html';
+          window.location.href = 'student.html';
         }
       });
     }).catch(function(e) {
@@ -629,7 +648,7 @@ function signInWithGoogle() {
       var displayName = user.displayName || autoUname;
       var type = selectedAccountType || 'student';
       return createUserProfile(result.user, displayName, autoUname, type).then(function() {
-        window.location.href = type === 'coach' ? 'coach.html' : 'yks-takip-uygulamasi.html';
+        window.location.href = type === 'coach' ? 'coach.html' : 'student.html';
       });
     }
     // Mevcut Google kullanıcısı — onAuthStateChanged halleder
