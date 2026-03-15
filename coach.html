@@ -939,7 +939,7 @@ function openStudentStatsPage(s) {
     entries.forEach(function(e) {
       if (!e.subject) return;
       if (!subjectAllTime[e.subject]) subjectAllTime[e.subject] = {mins:0, soru:0, dogru:0, yanlis:0};
-      subjectAllTime[e.subject].mins   += (e.sure   || 0);
+      subjectAllTime[e.subject].mins   += (e.sure || e.minutes || 0);
       subjectAllTime[e.subject].soru   += (e.dogru  || 0) + (e.yanlis || 0);
       subjectAllTime[e.subject].dogru  += (e.dogru  || 0);
       subjectAllTime[e.subject].yanlis += (e.yanlis || 0);
@@ -960,7 +960,7 @@ function openStudentStatsPage(s) {
         if (d < last60) return;
       } catch(x) { return; }
       if (!dailyMap[e.date]) dailyMap[e.date] = {date:e.date, mins:0, soru:0, konu:0};
-      dailyMap[e.date].mins += (e.sure || 0);
+      dailyMap[e.date].mins += (e.sure || e.minutes || 0);
       dailyMap[e.date].soru += (e.dogru || 0) + (e.yanlis || 0);
       if (e.type === 'konu') dailyMap[e.date].konu++;
     });
@@ -1009,14 +1009,33 @@ function openStudentStatsPage(s) {
 
     // snapshot güncellemelerinde de bu veriyi kullan
     s._fullData = fullWs;
-  }).catch(function(e) {
-    console.warn('userData fetch err:', e);
-    if (_currentDetailUid === s.uid) {
-      document.getElementById('statsLevel').textContent = 'Veri yüklenemedi';
-      renderStatsAllTime(null, ws);
-      renderStatsDeneme(null, ws);
-      renderStatsChart(null, ws);
-    }
+  }).catch(function(err) {
+    console.warn('userData fetch err:', err.code, err.message);
+    // Fallback: try coachView collection
+    _db.collection('coachView').doc(s.uid).get().then(function(cvDoc) {
+      if (!cvDoc.exists) {
+        if (_currentDetailUid === s.uid) {
+          document.getElementById('statsLevel').textContent = 'Veri yok (öğrenci henüz giriş yapmamış)';
+        }
+        return;
+      }
+      var cvData = cvDoc.data();
+      var fallbackWs = Object.assign({}, ws || {}, cvData);
+      _currentStatsData = fallbackWs;
+      if (_currentDetailUid === s.uid) {
+        document.getElementById('statsLevel').textContent = (fallbackWs.totalAllMins || 0) + ' toplam dk';
+        renderStatsAllTime(null, fallbackWs);
+        renderStatsDeneme(null, fallbackWs);
+        renderStatsChart(null, fallbackWs);
+        renderStatsPies(fallbackWs);
+        renderStatsStrongWeak(fallbackWs);
+      }
+    }).catch(function(err) {
+      console.error('userData fetch err:', err);
+      if (_currentDetailUid === s.uid) {
+        document.getElementById('statsLevel').textContent = 'Hata: ' + (err.code || err.message || 'Bilinmeyen hata');
+      }
+    });
   });
 }
 
