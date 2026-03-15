@@ -259,6 +259,49 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div id="statsChartList"></div>
   </div>
 
+  <!-- Pasta Grafikler -->
+  <div id="stab-content-pies" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button onclick="setPiesFilter('week',this)" class="dtab active-dtab" id="pies-btn-week" style="flex:1">Bu Hafta</button>
+      <button onclick="setPiesFilter('alltime',this)" class="dtab" id="pies-btn-alltime" style="flex:1">Tüm Zamanlar</button>
+    </div>
+    <div class="sec" style="margin-top:0">Ders Dağılımı</div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex-shrink:0;width:130px;height:130px">
+          <svg id="statsSubjectPieSvg" viewBox="0 0 200 200" width="130" height="130" style="display:block"></svg>
+        </div>
+        <div id="statsSubjectPieLegend" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+    </div>
+    <div class="sec">Çalışma Türü</div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="flex-shrink:0;width:130px;height:130px">
+          <svg id="statsTypePieSvg" viewBox="0 0 200 200" width="130" height="130" style="display:block"></svg>
+        </div>
+        <div id="statsTypePieLegend" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"></div>
+      </div>
+    </div>
+    <div class="sec">Aylık Grafik</div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;overflow-x:auto;margin-bottom:10px">
+      <svg id="statsMonthSvg" height="100" style="min-width:100%;display:block"></svg>
+    </div>
+    <div id="statsMonthList"></div>
+  </div>
+
+  <!-- En Güçlü / En Zayıf -->
+  <div id="stab-content-strong" style="display:none">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button onclick="setStrongFilter('week',this)" class="dtab active-dtab" id="strong-btn-week" style="flex:1">Bu Hafta</button>
+      <button onclick="setStrongFilter('alltime',this)" class="dtab" id="strong-btn-alltime" style="flex:1">Tüm Zamanlar</button>
+    </div>
+    <div class="sec" style="margin-top:0">En Güçlü Konular</div>
+    <div id="statsStrongTopics"></div>
+    <div class="sec">En Zayıf Konular</div>
+    <div id="statsWeakTopics"></div>
+  </div>
+
   <div style="height:20px"></div>
 </div>
 
@@ -960,6 +1003,7 @@ function openStudentStatsPage(s) {
     });
 
     // Cache data for tab switching
+    fullWs._rawEntries = entries;
     _currentStatsData = fullWs;
     // Detay sayfası hâlâ bu öğrencide mi?
     if (_currentDetailUid !== s.uid) return;
@@ -971,6 +1015,8 @@ function openStudentStatsPage(s) {
     renderStatsAllTime(null, fullWs);
     renderStatsDeneme(null, fullWs);
     renderStatsChart(null, fullWs);
+    renderStatsPies(fullWs);
+    renderStatsStrongWeak(fullWs);
 
     // snapshot güncellemelerinde de bu veriyi kullan
     s._fullData = fullWs;
@@ -1085,21 +1131,85 @@ function _drawCoachPie(svgId, legendId, segments) {
 
 var SUBJECT_COLORS = ['#38bdf8','#818cf8','#34d399','#fbbf24','#f472b6','#fb923c','#a78bfa','#4ade80','#60a5fa','#f87171'];
 
+
+var _piesFilter = 'alltime';
+var _strongFilter = 'alltime';
+
+function setPiesFilter(period, btn) {
+  _piesFilter = period;
+  document.getElementById('pies-btn-week').classList.toggle('active-dtab', period === 'week');
+  document.getElementById('pies-btn-alltime').classList.toggle('active-dtab', period === 'alltime');
+  if (_currentStatsData) renderStatsPies(_currentStatsData);
+}
+
+function setStrongFilter(period, btn) {
+  _strongFilter = period;
+  document.getElementById('strong-btn-week').classList.toggle('active-dtab', period === 'week');
+  document.getElementById('strong-btn-alltime').classList.toggle('active-dtab', period === 'alltime');
+  if (_currentStatsData) renderStatsStrongWeak(_currentStatsData);
+}
+
+function _filterEntriesByPeriod(entries, period) {
+  if (period === 'alltime') return entries;
+  var now = new Date();
+  var mon = new Date(now);
+  mon.setDate(mon.getDate() - ((mon.getDay()+6)%7));
+  mon.setHours(0,0,0,0);
+  return (entries||[]).filter(function(e) {
+    var p = (e.date||'').split('.');
+    if (p.length !== 3) return false;
+    var d = new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+    return d >= mon;
+  });
+}
+
+
+var _piesFilter = 'week';
+var _strongFilter = 'week';
+
+function setPiesFilter(period, btn) {
+  _piesFilter = period;
+  document.getElementById('pies-btn-week').classList.toggle('active-dtab', period === 'week');
+  document.getElementById('pies-btn-alltime').classList.toggle('active-dtab', period === 'alltime');
+  if (_currentStatsData) renderStatsPies(_currentStatsData);
+}
+
+function setStrongFilter(period, btn) {
+  _strongFilter = period;
+  document.getElementById('strong-btn-week').classList.toggle('active-dtab', period === 'week');
+  document.getElementById('strong-btn-alltime').classList.toggle('active-dtab', period === 'alltime');
+  if (_currentStatsData) renderStatsStrongWeak(_currentStatsData);
+}
+
 function renderStatsPies(ws) {
   // Subject pie
-  var subj = ws.subjectAllTime ? Object.entries(ws.subjectAllTime) : [];
-  subj.sort(function(a,b){ return (b[1].mins||0)-(a[1].mins||0); });
-  var subjSegs = subj.map(function(x,i){ return { label:x[0], val:x[1].mins||0, color:SUBJECT_COLORS[i%SUBJECT_COLORS.length] }; });
-  _drawCoachPie('statsSubjectPieSvg','statsSubjectPieLegend', subjSegs);
-
-  // Type pie
-  var td = ws.typeDist || {};
-  var typeSegs = [
-    { label:'Konu Anlatımı', val:td.konu||0, color:'#38bdf8' },
-    { label:'Soru Çözme',    val:td.soru||0, color:'#818cf8' },
-    { label:'Genel Tekrar',  val:td.genel||0, color:'#34d399' }
-  ].filter(function(x){ return x.val>0; });
-  _drawCoachPie('statsTypePieSvg','statsTypePieLegend', typeSegs);
+  var filteredEntries = _filterEntriesByPeriod(ws._rawEntries || [], _piesFilter);
+  // Build subject data from filtered entries if available, else use allTime
+  var subj;
+  if (filteredEntries.length > 0) {
+    var subjMap = {};
+    filteredEntries.forEach(function(e) {
+      if (!e.subject) return;
+      if (!subjMap[e.subject]) subjMap[e.subject] = 0;
+      subjMap[e.subject] += (e.sure || e.minutes || 0);
+    });
+    subj = Object.entries(subjMap).sort(function(a,b){ return b[1]-a[1]; });
+    var subjSegs = subj.map(function(x,i){ return { label:x[0], val:x[1], color:SUBJECT_COLORS[i%SUBJECT_COLORS.length] }; });
+    _drawCoachPie('statsSubjectPieSvg','statsSubjectPieLegend', subjSegs);
+    // Type pie from filtered
+    var td2 = {konu:0,soru:0,genel:0};
+    filteredEntries.forEach(function(e){ if(td2.hasOwnProperty(e.type)) td2[e.type]+=(e.sure||0); });
+    var typeSegs = [{label:'Konu',val:td2.konu,color:'#38bdf8'},{label:'Soru',val:td2.soru,color:'#818cf8'},{label:'Genel',val:td2.genel,color:'#34d399'}].filter(function(x){return x.val>0;});
+    _drawCoachPie('statsTypePieSvg','statsTypePieLegend', typeSegs);
+  } else {
+    subj = ws.subjectAllTime ? Object.entries(ws.subjectAllTime) : [];
+    subj.sort(function(a,b){ return (b[1].mins||0)-(a[1].mins||0); });
+    var subjSegs2 = subj.map(function(x,i){ return { label:x[0], val:x[1].mins||0, color:SUBJECT_COLORS[i%SUBJECT_COLORS.length] }; });
+    _drawCoachPie('statsSubjectPieSvg','statsSubjectPieLegend', subjSegs2);
+    var td = ws.typeDist || {};
+    var typeSegs2 = [{label:'Konu Anlatımı',val:td.konu||0,color:'#38bdf8'},{label:'Soru Çözme',val:td.soru||0,color:'#818cf8'},{label:'Genel Tekrar',val:td.genel||0,color:'#34d399'}].filter(function(x){return x.val>0;});
+    _drawCoachPie('statsTypePieSvg','statsTypePieLegend', typeSegs2);
+  }
 
   // Monthly chart (last 30 days)
   var svg = document.getElementById('statsMonthSvg');
@@ -1138,23 +1248,42 @@ function renderStatsStrongWeak(ws) {
   if (!strongEl || !weakEl) return;
 
   // Build topic stats from subjectAllTime (approximation) + use entries if available
-  var subj = ws.subjectAllTime ? Object.entries(ws.subjectAllTime) : [];
+  var useWeekS = _strongFilter === 'week';
+  var subjSrc = useWeekS
+    ? (ws.subjectMins || ws.topSubjects || []).reduce(function(acc,s){ acc[s.name||s[0]] = {mins:s.mins||s[1]||0,soru:0,dogru:0,yanlis:0}; return acc; }, {})
+    : (ws.subjectAllTime || {});
+  var subj = Object.entries(subjSrc).filter(function(x){ return (x[1].mins||0)>0; });
   if (!subj.length) {
     strongEl.innerHTML = noData(); weakEl.innerHTML = noData(); return;
   }
 
   // Rank by accuracy (dogru/soru ratio), min 5 soru
-  var ranked = subj
-    .filter(function(x){ return (x[1].soru||0) >= 5; })
-    .map(function(x) {
-      var acc = (x[1].soru||0) > 0 ? Math.round((x[1].dogru||0)/(x[1].soru||1)*100) : 0;
-      return { name:x[0], acc:acc, soru:x[1].soru||0, mins:x[1].mins||0 };
-    })
-    .sort(function(a,b){ return b.acc-a.acc; });
+  var filteredE = _filterEntriesByPeriod(ws._rawEntries || [], _strongFilter);
+  var subjMap2 = {};
+  if (filteredE.length > 0) {
+    filteredE.forEach(function(e) {
+      if (!e.subject) return;
+      if (!subjMap2[e.subject]) subjMap2[e.subject] = {mins:0,soru:0,dogru:0};
+      subjMap2[e.subject].mins += (e.sure||0);
+      subjMap2[e.subject].soru += (e.dogru||0)+(e.yanlis||0);
+      subjMap2[e.subject].dogru += (e.dogru||0);
+    });
+    subj = Object.entries(subjMap2);
+  }
+  var allSubjData = subj.map(function(x) {
+    var d = x[1];
+    var soru = typeof d === 'object' ? (d.soru||0) : 0;
+    var dogru = typeof d === 'object' ? (d.dogru||0) : 0;
+    var mins = typeof d === 'object' ? (d.mins||0) : (d||0);
+    var acc = soru > 0 ? Math.round(dogru/soru*100) : 0;
+    return { name:x[0], acc:acc, soru:soru, mins:mins };
+  });
 
-  var unranked = subj
-    .filter(function(x){ return (x[1].soru||0) < 5; })
-    .map(function(x){ return { name:x[0], acc:0, soru:x[1].soru||0, mins:x[1].mins||0 }; });
+  // If we have accuracy data use it, otherwise rank by time
+  var hasSoru = allSubjData.some(function(x){ return x.soru >= 5; });
+  var ranked = hasSoru
+    ? allSubjData.filter(function(x){ return x.soru >= 5; }).sort(function(a,b){ return b.acc-a.acc; })
+    : allSubjData.sort(function(a,b){ return b.mins-a.mins; });
 
   function topicCard(t, color) {
     return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:6px">' +
@@ -1236,7 +1365,7 @@ function renderStatsAllTime(cv, ws) {
   }
 
   var typeEl = document.getElementById('statsTypeDist');
-  var td = d.typeDist || {};
+  var td = useWeek ? {} : (d.typeDist || {});
   var total = (td.konu||0)+(td.soru||0)+(td.genel||0);
   if (!total) { typeEl.innerHTML = noData(); }
   else {
