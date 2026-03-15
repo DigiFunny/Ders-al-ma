@@ -309,14 +309,15 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
 /* BADGES */
 .badges-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px; }
-.badge-item { background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px 6px;text-align:center;transition:all 0.3s;cursor:pointer;position:relative; }
-.badge-item.earned { border-color:var(--yellow);background:rgba(251,191,36,0.1); }
+.badge-item { background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;transition:all 0.2s;cursor:pointer;position:relative;overflow:hidden; }
+.badge-item.earned { border-color:rgba(251,191,36,0.4); }
 .badge-item:active { transform:scale(0.94); }
-.badge-item .b-icon { font-size:1.6rem;display:block;margin-bottom:4px;filter:grayscale(1);opacity:0.4;transition:all 0.3s; }
-.badge-item.earned .b-icon { filter:none;opacity:1; }
-.badge-item .b-name { font-size:0.58rem;font-weight:800;color:var(--muted);line-height:1.2; }
-.badge-item.earned .b-name { color:var(--yellow); }
-.badge-lock { position:absolute;top:5px;right:5px;font-size:0.6rem;opacity:0.45;line-height:1; }
+.badge-item .b-icon-wrap { width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;filter:grayscale(1);opacity:0.3;transition:all 0.3s; }
+.badge-item .b-icon-wrap svg { width:22px;height:22px; }
+.badge-item.earned .b-icon-wrap { filter:none;opacity:1; }
+.badge-item .b-name { font-size:0.58rem;font-weight:800;color:var(--muted);line-height:1.3; }
+.badge-item.earned .b-name { color:var(--text); }
+.badge-lock { position:absolute;top:6px;right:6px;width:14px;height:14px;opacity:0.35; }
 /* Badge tooltip modal */
 .badge-tooltip { position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;pointer-events:none; }
 .badge-tooltip.open { display:flex; pointer-events:all; }
@@ -1318,31 +1319,60 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
 <!-- PAGE: ROZETLER -->
 <div class="page" id="page-rozet">
-  <div id="loginPromptBanner" style="display:none;background:var(--card);border:1.5px solid var(--accent);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px">
-    <div style="font-size:0.78rem;font-weight:700;color:var(--text)">&#128279; Giriş yap, arkadaşını ekle, verilerini kaydet!</div>
-    <button onclick="openAuthModal()" style="background:var(--accent);border:none;border-radius:8px;padding:7px 12px;color:#fff;font-weight:800;font-size:0.75rem;cursor:pointer">Giriş</button>
-  </div>
 
-  <!-- Ayarlar butonu - sağ üstte -->
-  <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-    <button onclick="openSettingsModal()" style="display:flex;align-items:center;gap:7px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:8px 14px;font-size:0.8rem;font-weight:800;color:var(--text);cursor:pointer;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Ayarlar
-    </button>
+  <!-- Login banner -->
+  <div id="loginPromptBanner" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.1));border:1.5px solid rgba(56,189,248,0.25);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+    <div>
+      <div style="font-size:0.82rem;font-weight:800;color:var(--text);margin-bottom:2px">Hesap oluştur</div>
+      <div style="font-size:0.7rem;color:var(--muted);font-weight:600">Verilerini kaydet, arkadaşlarınla bağlan</div>
+    </div>
+    <button onclick="openAuthModal()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:9px 16px;color:#fff;font-weight:800;font-size:0.78rem;cursor:pointer;white-space:nowrap;flex-shrink:0">Giriş Yap</button>
   </div>
 
   <!-- PROFİL PANELİ -->
   <div id="profilPanel">
-    <div class="sec" id="rozetXpSec" style="display:none">Seviye &amp; XP</div>
-    <div class="xp-bar-wrap" id="xpBarWrap2" style="margin-bottom:10px;display:none">
-      <div class="xp-row">
-        <div><span class="xp-level">Seviye <span id="xpLevel2">1</span></span> <span class="xp-title" id="xpTitle2">Başlangıç</span></div>
-        <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal2">0</span> XP</div>
+
+    <!-- Profil Kartı -->
+    <div id="profileHeroCard" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1.5px solid rgba(56,189,248,0.15);border-radius:20px;padding:20px 18px;margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div id="profileHeroAvatar" style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;color:#fff;flex-shrink:0">?</div>
+        <div style="flex:1;min-width:0">
+          <div id="profileHeroName" style="font-size:1rem;font-weight:900;margin-bottom:2px">—</div>
+          <div id="profileHeroUname" style="font-size:0.72rem;color:var(--muted);font-weight:700">@—</div>
+        </div>
       </div>
-      <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
-      <div class="xp-pts"><span id="xpCurrent2">0</span> / <span id="xpNext2">100</span> XP</div>
+      <!-- XP Bar -->
+      <div id="xpBarWrap2" style="display:none">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="xp-level" style="font-size:0.78rem;font-weight:900">Seviye <span id="xpLevel2">1</span></span>
+            <span class="xp-title" id="xpTitle2" style="font-size:0.72rem;color:var(--accent);font-weight:800;background:rgba(56,189,248,0.12);padding:2px 8px;border-radius:6px">Başlangıç</span>
+          </div>
+          <span style="font-size:0.72rem;color:var(--yellow);font-weight:800"><span id="xpTotal2">0</span> XP</span>
+        </div>
+        <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px">
+          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpCurrent2">0</span> XP</span>
+          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpNext2">100</span> XP sonraki seviye</span>
+        </div>
+      </div>
     </div>
-    <div class="summary-grid" id="rozetStats" style="display:none"></div>
+
+    <!-- Stats grid -->
+    <div class="summary-grid" id="rozetStats" style="display:none;margin-bottom:14px"></div>
+
+    <!-- Koç İsteklerim -->
+    <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
+      <div onclick="toggleCollapse('coachReqBody','coachReqArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+        <div class="sec" style="margin-bottom:0">Koç İsteklerim</div>
+        <svg id="coachReqArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div id="coachReqBody" style="display:none">
+        <div id="coachRequestsList"></div>
+      </div>
+    </div>
+
+    <!-- Arkadaşlar -->
     <div onclick="toggleCollapse('friendsBody','friendsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
       <div class="sec" style="margin-bottom:0">Arkadaşlar</div>
       <svg id="friendsArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
@@ -1350,12 +1380,16 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <div id="friendsBody" style="display:none">
       <div id="friendsWrap"></div>
     </div>
-    <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
-      <div class="sec" style="margin-bottom:8px">Koç İsteklerim</div>
-      <div id="coachRequestsList"></div>
+
+    <!-- Başarımlar -->
+    <div onclick="toggleCollapse('badgesBody','badgesArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+      <div class="sec" style="margin-bottom:0">Başarımlarım</div>
+      <svg id="badgesArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
-    <div class="sec">Başarımlarım</div>
-    <div class="badges-grid" id="badgesGrid"></div>
+    <div id="badgesBody">
+      <div class="badges-grid" id="badgesGrid"></div>
+    </div>
+
   </div>
 
   <div style="height:100px"></div>
@@ -4132,6 +4166,7 @@ function loadCoachRequests() {
   if (!_currentUser) return;
   var wrap = document.getElementById('coachRequestsWrap');
   var list = document.getElementById('coachRequestsList');
+  var body = document.getElementById('coachReqBody'); if(body) body.style.display='block';
   if (!wrap || !list) return;
 
   _fbDb.collection('coachRequests')
@@ -4667,11 +4702,65 @@ function renderBadges() {
     '<div class="summary-card"><span class="summary-val" style="color:var(--accent3)">' + calcStreak() + '</span><div class="summary-lbl">Günlük Seri</div></div>' +
     '<div class="summary-card"><span class="summary-val" style="color:var(--accent2)">' + xp + '</span><div class="summary-lbl">Toplam XP</div></div>';
 
+
+  var BADGE_SVG_PATHS = {
+    'first': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    's7': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+    's30': '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+    'q100': '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+    'q500': '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+    'h10': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+    'h50': '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+    'h100': '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>',
+    'konu5': '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+    'konu20': '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+    'ders5': '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+    'deneme1': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>',
+    'deneme5': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    'xp500': '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
+    'xp2000': '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>',
+    'earlybird': '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>',
+    'goal1': '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    'goal7d': '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+    'goal30d': '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+    'goal4w': '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+    'goal_streak3': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+    'goal_streak7': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>'
+  };
+    var BADGE_COLOR_MAP = {
+    "first": ["#34d399", "#064e3b"],
+    "s7": ["#f59e0b", "#451a03"],
+    "s30": ["#818cf8", "#1e1b4b"],
+    "q100": ["#38bdf8", "#0c4a6e"],
+    "q500": ["#a78bfa", "#2e1065"],
+    "h10": ["#34d399", "#064e3b"],
+    "h50": ["#f59e0b", "#451a03"],
+    "h100": ["#fbbf24", "#451a03"],
+    "konu5": ["#60a5fa", "#1e3a5f"],
+    "konu20": ["#4ade80", "#052e16"],
+    "ders5": ["#fb923c", "#431407"],
+    "deneme1": ["#94a3b8", "#1e293b"],
+    "deneme5": ["#f472b6", "#4a0d2e"],
+    "xp500": ["#34d399", "#064e3b"],
+    "xp2000": ["#fbbf24", "#451a03"],
+    "earlybird": ["#f59e0b", "#451a03"],
+    "goal1": ["#38bdf8", "#0c4a6e"],
+    "goal7d": ["#818cf8", "#1e1b4b"],
+    "goal30d": ["#34d399", "#064e3b"],
+    "goal4w": ["#f59e0b", "#451a03"],
+    "goal_streak3": ["#fb923c", "#431407"],
+    "goal_streak7": ["#a78bfa", "#2e1065"]
+  };
   document.getElementById('badgesGrid').innerHTML = BADGES.map(b => {
     const isEarned = earned.includes(b.id);
+    const colorData = BADGE_COLOR_MAP[b.id] || ['#64748b', '#1e293b'];
+    const color = colorData[0], bg = colorData[1];
+    const paths = BADGE_SVG_PATHS[b.id] || '';
+    const svgStr = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="' + (isEarned ? color : '#4b5563') + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+    const wrapBg = isEarned ? bg : 'rgba(255,255,255,0.04)';
     return '<div class="badge-item ' + (isEarned?'earned':'') + '" onclick="showBadgeTooltip(\'' + b.id + '\')">' +
-      (isEarned ? '' : '<span class="badge-lock">🔒</span>') +
-      '<span class="b-icon">' + b.icon + '</span>' +
+      (!isEarned ? '<svg class="badge-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="12" height="12"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>' : '') +
+      '<div class="b-icon-wrap" style="background:' + wrapBg + ';">' + svgStr + '</div>' +
       '<div class="b-name">' + b.name + '</div>' +
       '</div>';
   }).join('');
@@ -5513,6 +5602,8 @@ function changeUsername() {
         // Update bar
         var ubar = document.getElementById('userUnameBar');
         if (ubar) ubar.textContent = '@' + newUname;
+        var heroUname2 = document.getElementById('profileHeroUname');
+        if (heroUname2) heroUname2.textContent = '@' + newUname;
         showToast('✅ Kullanıcı adın: @' + newUname);
       }).catch(function(e) {
         msgEl.style.color = 'var(--warn)';
