@@ -2,7 +2,7 @@
   "name": "Pugi - YKS Çalışma Takip",
   "short_name": "Pugi",
   "description": "YKS sınavına hazırlanmak için akıllı çalışma takip uygulaması",
-  "start_url": "/yks-takip-uygulamasi.html",
+  "start_url": "/student.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#080d18",
@@ -27,7 +27,7 @@
     {
       "name": "Zamanlayıcı Başlat",
       "short_name": "Çalış",
-      "url": "/yks-takip-uygulamasi.html?page=calis",
+      "url": "/student.html?page=calis",
       "icons": [
         {
           "src": "/icon-192.png",
@@ -38,7 +38,7 @@
     {
       "name": "Hedeflerim",
       "short_name": "Hedefler",
-      "url": "/yks-takip-uygulamasi.html?page=ana",
+      "url": "/student.html?page=ana",
       "icons": [
         {
           "src": "/icon-192.png",
@@ -49,7 +49,7 @@
     {
       "name": "İstatistikler",
       "short_name": "İstatistik",
-      "url": "/yks-takip-uygulamasi.html?page=stat",
+      "url": "/student.html?page=stat",
       "icons": [
         {
           "src": "/icon-192.png",
@@ -62,7 +62,7 @@
     "education",
     "productivity"
   ],
-  "id": "/yks-takip-uygulamasi.html",
+  "id": "/student.html",
   "screenshots": [
     {
       "src": "/screenshot1.png",
