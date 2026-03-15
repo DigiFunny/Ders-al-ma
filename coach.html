@@ -1376,7 +1376,7 @@ function renderStatsAllTime(cv, ws) {
   }
 
   var typeEl = document.getElementById('statsTypeDist');
-  var td = useWeek ? {} : (d.typeDist || {});
+  var td = (_piesFilter === 'week') ? {} : (d.typeDist || {});
   var total = (td.konu||0)+(td.soru||0)+(td.genel||0);
   if (!total) { typeEl.innerHTML = noData(); }
   else {
