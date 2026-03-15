@@ -218,7 +218,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <button onclick="switchStatsTab('week',this)" id="stab-week" class="dtab active-dtab">Bu Hafta</button>
     <button onclick="switchStatsTab('alltime',this)" id="stab-alltime" class="dtab">Tüm Zamanlar</button>
     <button onclick="switchStatsTab('deneme',this)" id="stab-deneme" class="dtab">Denemeler</button>
-    <button onclick="switchStatsTab('chart',this)" id="stab-chart" class="dtab">Grafik</button>
+    <button onclick="switchStatsTab('chart',this)" id="stab-chart" class="dtab">Grafikler</button>
     <button onclick="switchStatsTab('strong',this)" id="stab-strong" class="dtab">Güçlü/Zayıf</button>
   </div>
 
@@ -248,18 +248,15 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div id="statsDenemeler"></div>
   </div>
 
-  <!-- Günlük Grafik -->
+  <!-- Grafikler -->
   <div id="stab-content-chart" style="display:none">
-    <div class="sec" style="margin-top:0">Son 30 Gün (Dakika)</div>
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;overflow-x:auto">
-      <svg id="statsChartSvg" height="100" style="min-width:100%;display:block"></svg>
-    </div>
-    <div class="sec">Günlük Detaylar</div>
-    <div id="statsChartList"></div>
-
-    <div style="display:flex;gap:8px;margin:16px 0 12px">
+    <div style="display:flex;gap:8px;margin-bottom:12px">
       <button onclick="setPiesFilter('week',this)" class="dtab active-dtab" id="pies-btn-week" style="flex:1">Bu Hafta</button>
       <button onclick="setPiesFilter('alltime',this)" class="dtab" id="pies-btn-alltime" style="flex:1">Tüm Zamanlar</button>
+    </div>
+    <div id="statsChartList" style="margin-bottom:12px"></div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;overflow-x:auto;margin-bottom:12px">
+      <svg id="statsChartSvg" height="100" style="min-width:100%;display:block"></svg>
     </div>
     <div class="sec" style="margin-top:0">Ders Dağılımı</div>
     <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px">
@@ -1131,7 +1128,10 @@ function setPiesFilter(period, btn) {
   _piesFilter = period;
   document.getElementById('pies-btn-week').classList.toggle('active-dtab', period === 'week');
   document.getElementById('pies-btn-alltime').classList.toggle('active-dtab', period === 'alltime');
-  if (_currentStatsData) renderStatsPies(_currentStatsData);
+  if (_currentStatsData) {
+    renderStatsChart(null, _currentStatsData);
+    renderStatsPies(_currentStatsData);
+  }
 }
 
 function setStrongFilter(period, btn) {
@@ -1394,7 +1394,10 @@ function renderStatsChart(cv, ws) {
   var listEl = document.getElementById('statsChartList');
   if (!svg) return;
   var d = ws || {};
-  var daily = (d.dailySummary && d.dailySummary.length) ? d.dailySummary.slice(-30) : [];
+  // Use filter: week shows last 7 days, alltime shows last 30
+  var useWeekChart = (typeof _piesFilter !== 'undefined') && _piesFilter === 'week';
+  var allDaily = (d.dailySummary && d.dailySummary.length) ? d.dailySummary : [];
+  var daily = useWeekChart ? allDaily.slice(-7) : allDaily.slice(-30);
   if (!daily.length) { svg.innerHTML = '<text x="50%" y="50%" text-anchor="middle" fill="#4b6280" font-size="12" font-family="Nunito">Öğrencinin uygulamayı açması gerekiyor</text>'; return; }
 
   var maxM = Math.max.apply(null, daily.map(function(d){ return d.mins; })) || 1;
