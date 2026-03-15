@@ -957,7 +957,11 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <div class="header">
   <div class="header-row">
     <div class="logo">Pugi</div>
-    <div style="display:flex;gap:8px;align-items:center;"></div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button id="settingsHeaderBtn" onclick="openSettingsModal()" style="display:none;width:36px;height:36px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);align-items:center;justify-content:center;cursor:pointer;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
   </div>
 
   <div class="yks-bar">
@@ -2964,9 +2968,17 @@ function showBadgeTooltip(id) {
   const b = BADGES.find(x => x.id === id);
   if (!b) return;
   const isEarned = earned.includes(id);
-  document.getElementById('btIcon').textContent = b.icon;
-  document.getElementById('btIcon').style.filter = isEarned ? 'none' : 'grayscale(1)';
-  document.getElementById('btIcon').style.opacity = isEarned ? '1' : '0.4';
+  // Show SVG icon in tooltip
+  var tooltipIconEl = document.getElementById('btIcon');
+  var paths = (typeof BADGE_SVG_PATHS !== 'undefined' && BADGE_SVG_PATHS[b.id]) || '';
+  var colorData = (typeof BADGE_COLOR_MAP !== 'undefined' && BADGE_COLOR_MAP[b.id]) || ['#fbbf24', '#451a03'];
+  var iconColor = isEarned ? colorData[0] : '#4b5563';
+  var bgColor = isEarned ? colorData[1] : 'var(--bg3)';
+  if (paths) {
+    tooltipIconEl.innerHTML = '<div style="width:56px;height:56px;border-radius:16px;background:' + bgColor + ';display:flex;align-items:center;justify-content:center;margin:0 auto"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="' + iconColor + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg></div>';
+  } else {
+    tooltipIconEl.innerHTML = b.icon;
+  }
   document.getElementById('btName').textContent = b.name;
   document.getElementById('btName').style.color = isEarned ? 'var(--yellow)' : 'var(--text)';
   document.getElementById('btStatus').textContent = isEarned ? '✅ KAZANILDI' : '🔒 KİLİTLİ';
@@ -4685,25 +4697,7 @@ function checkBadges() {
   }
 }
 
-function renderBadges() {
-  const earned = badges;
-  const xp = getTotalXP();
-  const info = getLevelInfo(xp);
-  document.getElementById('xpLevel2').textContent = info.lvNum;
-  document.getElementById('xpTitle2').textContent = info.title;
-  document.getElementById('xpFill2').style.width = info.pct + '%';
-  document.getElementById('xpCurrent2').textContent = info.current;
-  document.getElementById('xpNext2').textContent = info.next;
-  document.getElementById('xpTotal2').textContent = xp;
-
-  document.getElementById('rozetStats').innerHTML =
-    '<div class="summary-card"><span class="summary-val" style="color:var(--yellow)">' + earned.length + '/' + BADGES.length + '</span><div class="summary-lbl">Kazanılan Rozet</div></div>' +
-    '<div class="summary-card"><span class="summary-val" style="color:var(--accent)">' + info.lvNum + '</span><div class="summary-lbl">Mevcut Seviye</div></div>' +
-    '<div class="summary-card"><span class="summary-val" style="color:var(--accent3)">' + calcStreak() + '</span><div class="summary-lbl">Günlük Seri</div></div>' +
-    '<div class="summary-card"><span class="summary-val" style="color:var(--accent2)">' + xp + '</span><div class="summary-lbl">Toplam XP</div></div>';
-
-
-  var BADGE_SVG_PATHS = {
+var BADGE_SVG_PATHS = {
     'first': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
     's7': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
     's30': '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
@@ -4727,7 +4721,7 @@ function renderBadges() {
     'goal_streak3': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
     'goal_streak7': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>'
   };
-    var BADGE_COLOR_MAP = {
+var BADGE_COLOR_MAP = {
     "first": ["#34d399", "#064e3b"],
     "s7": ["#f59e0b", "#451a03"],
     "s30": ["#818cf8", "#1e1b4b"],
@@ -4751,6 +4745,26 @@ function renderBadges() {
     "goal_streak3": ["#fb923c", "#431407"],
     "goal_streak7": ["#a78bfa", "#2e1065"]
   };
+
+function renderBadges() {
+  const earned = badges;
+  const xp = getTotalXP();
+  const info = getLevelInfo(xp);
+  document.getElementById('xpLevel2').textContent = info.lvNum;
+  document.getElementById('xpTitle2').textContent = info.title;
+  document.getElementById('xpFill2').style.width = info.pct + '%';
+  document.getElementById('xpCurrent2').textContent = info.current;
+  document.getElementById('xpNext2').textContent = info.next;
+  document.getElementById('xpTotal2').textContent = xp;
+
+  document.getElementById('rozetStats').innerHTML =
+    '<div class="summary-card"><span class="summary-val" style="color:var(--yellow)">' + earned.length + '/' + BADGES.length + '</span><div class="summary-lbl">Kazanılan Rozet</div></div>' +
+    '<div class="summary-card"><span class="summary-val" style="color:var(--accent)">' + info.lvNum + '</span><div class="summary-lbl">Mevcut Seviye</div></div>' +
+    '<div class="summary-card"><span class="summary-val" style="color:var(--accent3)">' + calcStreak() + '</span><div class="summary-lbl">Günlük Seri</div></div>' +
+    '<div class="summary-card"><span class="summary-val" style="color:var(--accent2)">' + xp + '</span><div class="summary-lbl">Toplam XP</div></div>';
+
+
+
   document.getElementById('badgesGrid').innerHTML = BADGES.map(b => {
     const isEarned = earned.includes(b.id);
     const colorData = BADGE_COLOR_MAP[b.id] || ['#64748b', '#1e293b'];
