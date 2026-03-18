@@ -4224,29 +4224,28 @@ function doAddFriend() {
   msgEl.style.color='var(--muted)'; msgEl.textContent = 'İstek gönderiliyor...';
   document.getElementById('btnAddFriend').disabled = true;
 
-  // Zaten arkadaş mı?
-  _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_foundUser.uid).get()
-    .then(function(doc) {
-      if (doc.exists) throw new Error('Zaten arkadaşsınız!');
-      // Daha önce istek var mı?
-      return _fbDb.collection('friendRequests')
-        .where('fromUid','==',_currentUser.uid)
-        .where('toUid','==',_foundUser.uid)
-        .where('status','==','pending')
-        .get();
-    }).then(function(snap) {
-      if (snap.empty === false) throw new Error('Zaten istek gönderilmiş!');
-      return _fbDb.collection('friendRequests').add({
+  // Zaten arkadaş mı ve istek daha önce gönderilmiş mi?
+  // Her ikisini de kendi friends listesi + alıcının users dokümanından kontrol et
+  Promise.all([
+    _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_foundUser.uid).get(),
+    _fbDb.collection('users').doc(_foundUser.uid).get()
+  ]).then(function(results) {
+    var friendDoc = results[0];
+    var targetUserDoc = results[1];
+    if (friendDoc.exists) throw new Error('Zaten arkadaşsınız!');
+    // Daha önce istek gönderilmiş mi? (hedefin pendingFriendRequests içinde fromUid'i ara)
+    var pending = (targetUserDoc.exists && targetUserDoc.data().pendingFriendRequests) || [];
+    var alreadySent = pending.some(function(r) { return r.fromUid === _currentUser.uid; });
+    if (alreadySent) throw new Error('Zaten istek gönderilmiş!');
+    return _fbDb.collection('users').doc(_foundUser.uid).update({
+      pendingFriendRequests: firebase.firestore.FieldValue.arrayUnion({
         fromUid: _currentUser.uid,
         fromUsername: _currentUser._username || '',
         fromDisplayName: _currentUser.displayName || _currentUser._username || '',
-        toUid: _foundUser.uid,
-        toUsername: _foundUser.username,
-        toDisplayName: _foundUser.displayName,
-        status: 'pending',
         sentAt: new Date().toISOString()
-      });
-    }).then(function() {
+      })
+    });
+  }).then(function() {
       msgEl.style.color='var(--accent3)'; msgEl.textContent = '✅ Arkadaşlık isteği gönderildi!';
       document.getElementById('btnAddFriend').disabled = false;
       setTimeout(closeAddFriendModal, 1500);
@@ -4290,58 +4289,53 @@ function loadFriendRequests() {
   var listEl = document.getElementById('friendsList');
   if (!listEl) return;
 
-  _fbDb.collection('friendRequests')
-    .where('toUid', '==', _currentUser.uid)
-    .where('status', '==', 'pending')
-    .get().then(function(snap) {
-      if (snap.empty) {
-        loadStudyInvites(); // gelen davetleri de yükle
-        return;
-      }
-      // Bekleyen istekleri listenin başına ekle
-      var pendingWrap = document.getElementById('pendingRequestsWrap');
-      var reqWrap = document.createElement('div');
-      reqWrap.style.cssText = 'background:rgba(251,191,36,0.08);border:1.5px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px 14px;margin-bottom:10px';
-      reqWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:#fbbf24;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📬 Bekleyen İstekler</div>';
-      snap.forEach(function(docSnap) {
-        var req = docSnap.data();
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)';
-        row.innerHTML =
-          '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;flex-shrink:0">' + (req.fromDisplayName||req.fromUsername||'?').charAt(0).toUpperCase() + '</div>' +
-          '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:0.82rem;font-weight:900">' + (req.fromDisplayName || req.fromUsername) + '</div>' +
-            '<div style="font-size:0.65rem;color:var(--muted)">@' + req.fromUsername + ' · arkadaşlık isteği</div>' +
-          '</div>' +
-          '<button class="fr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Kabul</button>' +
-          '<button class="fr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:var(--warn);font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✕</button>';
-        (function(id, fUid, fUser, fName) {
-          row.querySelector('.fr-acc').onclick = function() { acceptFriendRequest(id, fUid, fUser, fName); };
-          row.querySelector('.fr-rej').onclick = function() { rejectFriendRequest(id); };
-        })(docSnap.id, req.fromUid, req.fromUsername||'', req.fromDisplayName||req.fromUsername||'');
-        reqWrap.appendChild(row);
-      });
-      if (pendingWrap) { pendingWrap.innerHTML = ''; pendingWrap.appendChild(reqWrap); }
-      else listEl.insertBefore(reqWrap, listEl.firstChild);
-      loadStudyInvites();
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    var reqs = (doc.exists && doc.data().pendingFriendRequests) ? doc.data().pendingFriendRequests : [];
+    loadStudyInvites();
+    if (reqs.length === 0) return;
+
+    var pendingWrap = document.getElementById('pendingRequestsWrap');
+    var reqWrap = document.createElement('div');
+    reqWrap.style.cssText = 'background:rgba(251,191,36,0.08);border:1.5px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+    reqWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:#fbbf24;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📬 Bekleyen İstekler</div>';
+
+    reqs.forEach(function(req) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)';
+      row.innerHTML =
+        '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;flex-shrink:0">' + (req.fromDisplayName||req.fromUsername||'?').charAt(0).toUpperCase() + '</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:0.82rem;font-weight:900">' + (req.fromDisplayName||req.fromUsername) + '</div>' +
+          '<div style="font-size:0.65rem;color:var(--muted)">@' + (req.fromUsername||'') + ' · arkadaşlık isteği</div>' +
+        '</div>' +
+        '<button class="fr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Kabul</button>' +
+        '<button class="fr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:var(--warn);font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✕</button>';
+      (function(reqObj) {
+        row.querySelector('.fr-acc').onclick = function() { acceptFriendRequest(reqObj); };
+        row.querySelector('.fr-rej').onclick = function() { rejectFriendRequest(reqObj); };
+      })(req);
+      reqWrap.appendChild(row);
     });
+    if (pendingWrap) { pendingWrap.innerHTML = ''; pendingWrap.appendChild(reqWrap); }
+    else listEl.insertBefore(reqWrap, listEl.firstChild);
+  });
 }
 
-function acceptFriendRequest(reqId, fromUid, fromUsername, fromDisplayName) {
+function acceptFriendRequest(reqObj) {
   if (!_currentUser || !_fbDb) return;
   var myUsername = _currentUser._username || '';
   var myName = _currentUser.displayName || myUsername;
   var batch = _fbDb.batch();
   // Her iki tarafa arkadaş ekle
-  batch.set(_fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(fromUid), {
-    username: fromUsername, displayName: fromDisplayName, addedAt: new Date().toISOString()
+  batch.set(_fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(reqObj.fromUid), {
+    username: reqObj.fromUsername||'', displayName: reqObj.fromDisplayName||'', addedAt: new Date().toISOString()
   });
-  batch.set(_fbDb.collection('friends').doc(fromUid).collection('list').doc(_currentUser.uid), {
+  batch.set(_fbDb.collection('friends').doc(reqObj.fromUid).collection('list').doc(_currentUser.uid), {
     username: myUsername, displayName: myName, addedAt: new Date().toISOString()
   });
-  // İsteği güncelle
-  batch.update(_fbDb.collection('friendRequests').doc(reqId), {
-    status: 'accepted', acceptedAt: new Date().toISOString()
+  // İsteği kendi dokümanımızdan kaldır
+  batch.update(_fbDb.collection('users').doc(_currentUser.uid), {
+    pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
   });
   batch.commit().then(function() {
     showToast('🤝 Arkadaşlık kabul edildi!');
@@ -4351,9 +4345,10 @@ function acceptFriendRequest(reqId, fromUid, fromUsername, fromDisplayName) {
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
-function rejectFriendRequest(reqId) {
-  _fbDb.collection('friendRequests').doc(reqId).update({ status: 'rejected' })
-    .then(function() { showToast('İstek reddedildi.'); loadFriendRequests(); });
+function rejectFriendRequest(reqObj) {
+  _fbDb.collection('users').doc(_currentUser.uid).update({
+    pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
+  }).then(function() { showToast('İstek reddedildi.'); loadFriendRequests(); });
 }
 
 // ════════════════════════════════════════════════
@@ -4370,20 +4365,19 @@ function sendStudyInvite(toUid, toName) {
   }
 
   var myName = _currentUser.displayName || _currentUser._username || 'Arkadaşın';
-  _fbDb.collection('studyInvites').add({
-    fromUid: _currentUser.uid,
-    fromName: myName,
-    toUid: toUid,
-    sentAt: new Date().toISOString(),
-    date: todayKey,
-    seen: false
+  // Daveti alıcının kendi users/{uid} dokümanına yazıyoruz.
+  // Bu sayede Firestore kuralı sorun çıkarmaz — her kullanıcı kendi dokümanını yazabilir.
+  _fbDb.collection('users').doc(toUid).update({
+    pendingInvites: firebase.firestore.FieldValue.arrayUnion({
+      fromUid: _currentUser.uid,
+      fromName: myName,
+      sentAt: new Date().toISOString(),
+      date: todayKey
+    })
   }).then(function() {
-    // Günlük sayacı güncelle
     if (_todayInviteDate !== todayKey) { _todayInviteDate = todayKey; _todayInviteCount = 0; }
     _todayInviteCount++;
     _totalInvitesSent++;
-
-    // Seri güncelle
     _updateInviteStreak(todayKey);
     showToast('📣 ' + toName + ' çalışmaya davet edildi!');
     loadFriends();
@@ -4407,7 +4401,9 @@ function _updateInviteStreak(todayKey) {
     _fbDb.collection('users').doc(_currentUser.uid).update({
       inviteStreak: streak,
       inviteStreakDate: todayKey,
-      totalInvitesSent: firebase.firestore.FieldValue.increment(1)
+      totalInvitesSent: firebase.firestore.FieldValue.increment(1),
+      todayInviteDate: todayKey,
+      todayInviteCount: firebase.firestore.FieldValue.increment(1)
     }).then(function() { checkBadges(); });
   });
 }
@@ -4424,15 +4420,11 @@ function loadInviteStats() {
     var numEl = document.getElementById('inviteStreakNum');
     if (banner && _inviteStreakCount > 0) { banner.style.display='flex'; }
     if (numEl) numEl.textContent = _inviteStreakCount;
-    // Bugünün davet sayısını da yükle
+    // Bugünün davet sayısını users dokümanındaki todayInviteCount alanından al
     var todayKey = new Date().toISOString().slice(0,10);
-    _fbDb.collection('studyInvites')
-      .where('fromUid','==',_currentUser.uid)
-      .where('date','==',todayKey)
-      .get().then(function(snap) {
-        _todayInviteDate = todayKey;
-        _todayInviteCount = snap.size;
-      });
+    var storedDate = data.todayInviteDate || '';
+    _todayInviteDate = todayKey;
+    _todayInviteCount = (storedDate === todayKey) ? (data.todayInviteCount || 0) : 0;
   });
 }
 
@@ -4441,43 +4433,43 @@ function loadStudyInvites() {
   var listEl = document.getElementById('friendsList');
   if (!listEl) return;
 
-  var todayKey = new Date().toISOString().slice(0,10);
-  _fbDb.collection('studyInvites')
-    .where('toUid','==',_currentUser.uid)
-    .where('seen','==',false)
-    .get().then(function(snap) {
-      if (snap.empty) return;
-      var invWrap = document.createElement('div');
-      invWrap.style.cssText = 'background:rgba(56,189,248,0.08);border:1.5px solid rgba(56,189,248,0.25);border-radius:14px;padding:12px 14px;margin-bottom:10px';
-      invWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📣 Çalışma Davetleri</div>';
-      snap.forEach(function(docSnap) {
-        var inv = docSnap.data();
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)';
-        row.innerHTML =
-          '<div style="font-size:1.2rem">📣</div>' +
-          '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:0.82rem;font-weight:900">' + (inv.fromName||'Arkadaşın') + '</div>' +
-            '<div style="font-size:0.65rem;color:var(--muted)">seni ders çalışmaya davet etti!</div>' +
-          '</div>' +
-          '<button class="inv-seen-btn" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(56,189,248,0.15);color:var(--accent);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Gördüm</button>';
-        (function(id, r) {
-          row.querySelector('.inv-seen-btn').onclick = function() { markInviteSeen(id, r); };
-        })(docSnap.id, row);
-        invWrap.appendChild(row);
-      });
-      listEl.insertBefore(invWrap, listEl.firstChild);
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (!doc.exists) return;
+    var invites = doc.data().pendingInvites || [];
+    if (invites.length === 0) return;
+
+    var invWrap = document.createElement('div');
+    invWrap.style.cssText = 'background:rgba(56,189,248,0.08);border:1.5px solid rgba(56,189,248,0.25);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+    invWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📣 Çalışma Davetleri</div>';
+
+    invites.forEach(function(inv, idx) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)';
+      row.innerHTML =
+        '<div style="font-size:1.2rem">📣</div>' +
+        '<div style="flex:1;min-width:0">' +
+          '<div style="font-size:0.82rem;font-weight:900">' + (inv.fromName||'Arkadaşın') + '</div>' +
+          '<div style="font-size:0.65rem;color:var(--muted)">seni ders çalışmaya davet etti!</div>' +
+        '</div>' +
+        '<button class="inv-seen-btn" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(56,189,248,0.15);color:var(--accent);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Gördüm</button>';
+      (function(invObj, rowEl) {
+        row.querySelector('.inv-seen-btn').onclick = function() { markInviteSeen(invObj, rowEl); };
+      })(inv, row);
+      invWrap.appendChild(row);
     });
+    listEl.insertBefore(invWrap, listEl.firstChild);
+  });
 }
 
-function markInviteSeen(inviteId, rowEl) {
-  _fbDb.collection('studyInvites').doc(inviteId).update({ seen: true })
-    .then(function() {
-      if (rowEl) rowEl.remove();
-      // Seriye katkı: karşı taraftan davet alındıysa bugün için sayıldı
-      var todayKey = new Date().toISOString().slice(0,10);
-      _updateInviteStreak(todayKey);
-    });
+function markInviteSeen(invObj, rowEl) {
+  // pendingInvites array'inden bu daveti kaldır — kendi dokümanımız, izin var
+  _fbDb.collection('users').doc(_currentUser.uid).update({
+    pendingInvites: firebase.firestore.FieldValue.arrayRemove(invObj)
+  }).then(function() {
+    if (rowEl) rowEl.remove();
+    var todayKey = new Date().toISOString().slice(0,10);
+    _updateInviteStreak(todayKey);
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
 function sendCoachRequest(coach) {

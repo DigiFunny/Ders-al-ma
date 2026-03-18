@@ -2027,25 +2027,23 @@ function coachDoAddFriend() {
   msgEl.style.color='var(--muted)'; msgEl.textContent = 'İstek gönderiliyor...';
   document.getElementById('coachBtnAddFriend').disabled = true;
 
-  _db.collection('friends').doc(_user.uid).collection('list').doc(_coachFoundUser.uid).get()
-    .then(function(doc) {
-      if (doc.exists) throw new Error('Zaten arkadaşsınız!');
-      return _db.collection('friendRequests')
-        .where('fromUid','==',_user.uid)
-        .where('toUid','==',_coachFoundUser.uid)
-        .where('status','==','pending')
-        .get();
-    }).then(function(snap) {
-      if (!snap.empty) throw new Error('Zaten istek gönderilmiş!');
-      return _db.collection('friendRequests').add({
-        fromUid: _user.uid,
-        fromUsername: _user._username || '',
-        fromDisplayName: _user.displayName || _user._username || '',
-        toUid: _coachFoundUser.uid,
-        toUsername: _coachFoundUser.username,
-        toDisplayName: _coachFoundUser.displayName,
-        status: 'pending',
-        sentAt: new Date().toISOString()
+  Promise.all([
+    _db.collection('friends').doc(_user.uid).collection('list').doc(_coachFoundUser.uid).get(),
+    _db.collection('users').doc(_coachFoundUser.uid).get()
+  ]).then(function(results) {
+    var friendDoc = results[0];
+    var targetDoc = results[1];
+    if (friendDoc.exists) throw new Error('Zaten arkadaşsınız!');
+    var pending = (targetDoc.exists && targetDoc.data().pendingFriendRequests) || [];
+    var alreadySent = pending.some(function(r) { return r.fromUid === _user.uid; });
+    if (alreadySent) throw new Error('Zaten istek gönderilmiş!');
+    return _db.collection('users').doc(_coachFoundUser.uid).update({
+        pendingFriendRequests: firebase.firestore.FieldValue.arrayUnion({
+          fromUid: _user.uid,
+          fromUsername: _user._username || '',
+          fromDisplayName: _user.displayName || _user._username || '',
+          sentAt: new Date().toISOString()
+        })
       });
     }).then(function() {
       msgEl.style.color='var(--coach)'; msgEl.textContent = '✅ Arkadaşlık isteği gönderildi!';
@@ -2115,47 +2113,46 @@ function coachLoadFriendRequests() {
   var listEl = document.getElementById('coachFriendsList');
   if (!listEl) return;
 
-  _db.collection('friendRequests')
-    .where('toUid','==',_user.uid)
-    .where('status','==','pending')
-    .get().then(function(snap) {
-      if (snap.empty) { coachLoadStudyInvites(); return; }
-      var reqWrap = document.createElement('div');
-      reqWrap.style.cssText = 'background:rgba(251,191,36,0.08);border:1.5px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px 14px;margin-bottom:10px';
-      reqWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:#fbbf24;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📬 Bekleyen İstekler</div>';
-      snap.forEach(function(docSnap) {
-        var req = docSnap.data();
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)';
-        row.innerHTML =
-          '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;flex-shrink:0">' + (req.fromDisplayName||req.fromUsername||'?').charAt(0).toUpperCase() + '</div>' +
-          '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:900">' + (req.fromDisplayName||req.fromUsername) + '</div><div style="font-size:0.65rem;color:var(--muted)">@' + req.fromUsername + ' · arkadaşlık isteği</div></div>' +
-          '<button class="cfr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Kabul</button>' +
-          '<button class="cfr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:#ef4444;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✕</button>';
-        (function(id, fUid, fUser, fName) {
-          row.querySelector('.cfr-acc').onclick = function() { coachAcceptFriendRequest(id, fUid, fUser, fName); };
-          row.querySelector('.cfr-rej').onclick = function() { coachRejectFriendRequest(id); };
-        })(docSnap.id, req.fromUid, req.fromUsername||'', req.fromDisplayName||req.fromUsername||'');
-        reqWrap.appendChild(row);
-      });
-      listEl.insertBefore(reqWrap, listEl.firstChild);
-      coachLoadStudyInvites();
+  _db.collection('users').doc(_user.uid).get().then(function(userDoc) {
+    var reqs = (userDoc.exists && userDoc.data().pendingFriendRequests) ? userDoc.data().pendingFriendRequests : [];
+    coachLoadStudyInvites();
+    if (reqs.length === 0) return;
+
+    var reqWrap = document.createElement('div');
+    reqWrap.style.cssText = 'background:rgba(251,191,36,0.08);border:1.5px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+    reqWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:#fbbf24;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📬 Bekleyen İstekler</div>';
+
+    reqs.forEach(function(req) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)';
+      row.innerHTML =
+        '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;flex-shrink:0">' + (req.fromDisplayName||req.fromUsername||'?').charAt(0).toUpperCase() + '</div>' +
+        '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:900">' + (req.fromDisplayName||req.fromUsername) + '</div><div style="font-size:0.65rem;color:var(--muted)">@' + (req.fromUsername||'') + ' · arkadaşlık isteği</div></div>' +
+        '<button class="cfr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Kabul</button>' +
+        '<button class="cfr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:#ef4444;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✕</button>';
+      (function(reqObj) {
+        row.querySelector('.cfr-acc').onclick = function() { coachAcceptFriendRequest(reqObj); };
+        row.querySelector('.cfr-rej').onclick = function() { coachRejectFriendRequest(reqObj); };
+      })(req);
+      reqWrap.appendChild(row);
     });
+    listEl.insertBefore(reqWrap, listEl.firstChild);
+  });
 }
 
-function coachAcceptFriendRequest(reqId, fromUid, fromUsername, fromDisplayName) {
+function coachAcceptFriendRequest(reqObj) {
   if (!_user || !_db) return;
   var myUsername = _user._username || '';
   var myName = _user.displayName || myUsername;
   var batch = _db.batch();
-  batch.set(_db.collection('friends').doc(_user.uid).collection('list').doc(fromUid), {
-    username: fromUsername, displayName: fromDisplayName, addedAt: new Date().toISOString()
+  batch.set(_db.collection('friends').doc(_user.uid).collection('list').doc(reqObj.fromUid), {
+    username: reqObj.fromUsername||'', displayName: reqObj.fromDisplayName||'', addedAt: new Date().toISOString()
   });
-  batch.set(_db.collection('friends').doc(fromUid).collection('list').doc(_user.uid), {
+  batch.set(_db.collection('friends').doc(reqObj.fromUid).collection('list').doc(_user.uid), {
     username: myUsername, displayName: myName, addedAt: new Date().toISOString()
   });
-  batch.update(_db.collection('friendRequests').doc(reqId), {
-    status: 'accepted', acceptedAt: new Date().toISOString()
+  batch.update(_db.collection('users').doc(_user.uid), {
+    pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
   });
   batch.commit().then(function() {
     showToast('🤝 Arkadaşlık kabul edildi!');
@@ -2163,9 +2160,10 @@ function coachAcceptFriendRequest(reqId, fromUid, fromUsername, fromDisplayName)
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
-function coachRejectFriendRequest(reqId) {
-  _db.collection('friendRequests').doc(reqId).update({ status: 'rejected' })
-    .then(function() { showToast('İstek reddedildi.'); coachLoadFriends(); });
+function coachRejectFriendRequest(reqObj) {
+  _db.collection('users').doc(_user.uid).update({
+    pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
+  }).then(function() { showToast('İstek reddedildi.'); coachLoadFriends(); });
 }
 
 function coachSendStudyInvite(toUid, toName) {
@@ -2176,10 +2174,13 @@ function coachSendStudyInvite(toUid, toName) {
     return;
   }
   var myName = _user.displayName || _user._username || 'Koçun';
-  _db.collection('studyInvites').add({
-    fromUid: _user.uid, fromName: myName,
-    toUid: toUid, sentAt: new Date().toISOString(),
-    date: todayKey, seen: false
+  _db.collection('users').doc(toUid).update({
+    pendingInvites: firebase.firestore.FieldValue.arrayUnion({
+      fromUid: _user.uid,
+      fromName: myName,
+      sentAt: new Date().toISOString(),
+      date: todayKey
+    })
   }).then(function() {
     if (_coachTodayInviteDate !== todayKey) { _coachTodayInviteDate = todayKey; _coachTodayInviteCount = 0; }
     _coachTodayInviteCount++;
@@ -2208,50 +2209,47 @@ function coachLoadStudyInvites() {
   if (!_user || !_db) return;
   var listEl = document.getElementById('coachFriendsList');
   if (!listEl) return;
-  _db.collection('studyInvites')
-    .where('toUid','==',_user.uid)
-    .where('seen','==',false)
-    .get().then(function(snap) {
-      if (snap.empty) return;
-      var invWrap = document.createElement('div');
-      invWrap.style.cssText = 'background:rgba(52,211,153,0.08);border:1.5px solid rgba(52,211,153,0.25);border-radius:14px;padding:12px 14px;margin-bottom:10px';
-      invWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:var(--coach);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📣 Çalışma Davetleri</div>';
-      snap.forEach(function(docSnap) {
-        var inv = docSnap.data();
-        var row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)';
-        row.innerHTML =
-          '<div style="font-size:1.2rem">📣</div>' +
-          '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:900">' + (inv.fromName||'Arkadaşın') + '</div><div style="font-size:0.65rem;color:var(--muted)">seni ders çalışmaya davet etti!</div></div>' +
-          '<button class="cinv-seen" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(52,211,153,0.15);color:var(--coach);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Gördüm</button>';
-        (function(id, r) {
-          row.querySelector('.cinv-seen').onclick = function() { coachMarkInviteSeen(id, r); };
-        })(docSnap.id, row);
-        invWrap.appendChild(row);
-      });
-      listEl.insertBefore(invWrap, listEl.firstChild);
+  _db.collection('users').doc(_user.uid).get().then(function(doc) {
+    var invites = (doc.exists && doc.data().pendingInvites) ? doc.data().pendingInvites : [];
+    if (invites.length === 0) return;
+    var invWrap = document.createElement('div');
+    invWrap.style.cssText = 'background:rgba(52,211,153,0.08);border:1.5px solid rgba(52,211,153,0.25);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+    invWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:var(--coach);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📣 Çalışma Davetleri</div>';
+    invites.forEach(function(inv) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)';
+      row.innerHTML =
+        '<div style="font-size:1.2rem">📣</div>' +
+        '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:900">' + (inv.fromName||'Arkadaşın') + '</div><div style="font-size:0.65rem;color:var(--muted)">seni ders çalışmaya davet etti!</div></div>' +
+        '<button class="cinv-seen" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(52,211,153,0.15);color:var(--coach);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Gördüm</button>';
+      (function(invObj, r) {
+        row.querySelector('.cinv-seen').onclick = function() { coachMarkInviteSeen(invObj, r); };
+      })(inv, row);
+      invWrap.appendChild(row);
     });
+    listEl.insertBefore(invWrap, listEl.firstChild);
+  });
 }
 
-function coachMarkInviteSeen(inviteId, rowEl) {
-  _db.collection('studyInvites').doc(inviteId).update({ seen: true })
-    .then(function() {
-      if (rowEl) rowEl.remove();
-      var todayKey = new Date().toISOString().slice(0,10);
-      // Seri katkısı — alınan davet de sayılır
-      _db.collection('users').doc(_user.uid).get().then(function(doc) {
-        var data = doc.exists ? doc.data() : {};
-        var lastDate = data.inviteStreakDate || '';
-        var streak = data.inviteStreak || 0;
-        var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-        var yKey = yesterday.toISOString().slice(0,10);
-        if (lastDate !== todayKey) {
-          streak = (lastDate === yKey) ? streak + 1 : 1;
-          _coachInviteStreak = streak;
-          _db.collection('users').doc(_user.uid).update({ inviteStreak: streak, inviteStreakDate: todayKey });
-        }
-      });
+function coachMarkInviteSeen(invObj, rowEl) {
+  _db.collection('users').doc(_user.uid).update({
+    pendingInvites: firebase.firestore.FieldValue.arrayRemove(invObj)
+  }).then(function() {
+    if (rowEl) rowEl.remove();
+    var todayKey = new Date().toISOString().slice(0,10);
+    _db.collection('users').doc(_user.uid).get().then(function(doc) {
+      var data = doc.exists ? doc.data() : {};
+      var lastDate = data.inviteStreakDate || '';
+      var streak = data.inviteStreak || 0;
+      var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+      var yKey = yesterday.toISOString().slice(0,10);
+      if (lastDate !== todayKey) {
+        streak = (lastDate === yKey) ? streak + 1 : 1;
+        _coachInviteStreak = streak;
+        _db.collection('users').doc(_user.uid).update({ inviteStreak: streak, inviteStreakDate: todayKey });
+      }
     });
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
 
