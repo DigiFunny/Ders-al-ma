@@ -1639,8 +1639,9 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
     <div class="day-modal-body">
       <div id="fdContent"></div>
-      <div style="padding:4px 0 8px">
-        <button onclick="removeFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:var(--warn);font-size:0.85rem;font-weight:800;cursor:pointer">Arkadaşlıktan Çıkar</button>
+      <div style="padding:4px 0 8px;display:flex;flex-direction:column;gap:8px">
+        <button id="fdInviteBtn" onclick="inviteFriendFromModal()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif">🔔 Derse Çağır</button>
+        <button onclick="removeFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:var(--warn);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">Arkadaşlıktan Çıkar</button>
       </div>
     </div>
   </div>
@@ -3933,9 +3934,11 @@ function closeAddFriendModal() {
 }
 
 var _openFriendUid = null;
+var _openFriendName = '';
 
 function openFriendDetail(friendUid, displayName, username, stats) {
   _openFriendUid = friendUid;
+  _openFriendName = displayName;
 
   var typeLabels = { TYT:'TYT', AYT_SAY:'Sayısal', AYT_SOZ:'Sözel', AYT_EA:'EA' };
   var typeColors = { TYT:'#38bdf8', AYT_SAY:'#818cf8', AYT_SOZ:'#f472b6', AYT_EA:'#fb923c' };
@@ -4088,7 +4091,45 @@ function openFriendDetail(friendUid, displayName, username, stats) {
   html += '</div>';
 
   document.getElementById('fdContent').innerHTML = html;
+  // Derse Çağır butonunu cooldown'a göre güncelle
+  var btn = document.getElementById('fdInviteBtn');
+  if (btn) {
+    var now = Date.now();
+    var lastSent = _lastInviteTimes[friendUid] || 0;
+    var canInv = (now - lastSent) >= _INVITE_COOLDOWN_MS;
+    var remMins = canInv ? 0 : Math.ceil((_INVITE_COOLDOWN_MS - (now - lastSent)) / 60000);
+    if (canInv) {
+      btn.textContent = '🔔 Derse Çağır';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      btn.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))';
+    } else {
+      btn.textContent = '⏳ ' + remMins + ' dakika sonra tekrar çağırabilirsin';
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+      btn.style.cursor = 'not-allowed';
+      btn.style.background = 'var(--card)';
+    }
+  }
   document.getElementById('friendDetailModal').classList.add('open');
+}
+
+function inviteFriendFromModal() {
+  if (!_openFriendUid) return;
+  sendStudyInvite(_openFriendUid, _openFriendName);
+  // Butonu hemen güncelle
+  var btn = document.getElementById('fdInviteBtn');
+  if (btn) {
+    btn.textContent = '✅ Davet gönderildi!';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    btn.style.cursor = 'not-allowed';
+    btn.style.background = 'var(--card)';
+    setTimeout(function() {
+      btn.textContent = '⏳ 4 saat sonra tekrar çağırabilirsin';
+    }, 1500);
+  }
 }
 
 function closeFriendModal() {
@@ -4171,8 +4212,9 @@ function removeFriendFromModal() {
 var _friendCount = 0;
 var _totalInvitesSent = 0;
 var _inviteStreakCount = 0;
-var _todayInviteCount = 0;
-var _todayInviteDate = '';
+// Arkadaş başına son davet zamanı: { [friendUid]: timestamp_ms }
+var _lastInviteTimes = {};
+var _INVITE_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 saat
 
 var _foundUser = null; // {uid, username, displayName, accountType}
 
@@ -4358,15 +4400,18 @@ function rejectFriendRequest(reqObj) {
 function sendStudyInvite(toUid, toName) {
   if (!_currentUser || !_fbDb) return;
 
-  var todayKey = new Date().toISOString().slice(0,10);
-  if (_todayInviteDate === todayKey && _todayInviteCount >= 3) {
-    showToast('⚠️ Bugün en fazla 3 davet gönderebilirsin!');
+  // 4 saatlik cooldown kontrolü — arkadaş başına ayrı
+  var now = Date.now();
+  var lastSent = _lastInviteTimes[toUid] || 0;
+  var elapsed = now - lastSent;
+  if (elapsed < _INVITE_COOLDOWN_MS) {
+    var remaining = Math.ceil((_INVITE_COOLDOWN_MS - elapsed) / 60000);
+    showToast('⏳ ' + toName + ' için ' + remaining + ' dakika sonra tekrar davet edebilirsin.');
     return;
   }
 
+  var todayKey = new Date().toISOString().slice(0,10);
   var myName = _currentUser.displayName || _currentUser._username || 'Arkadaşın';
-  // Daveti alıcının kendi users/{uid} dokümanına yazıyoruz.
-  // Bu sayede Firestore kuralı sorun çıkarmaz — her kullanıcı kendi dokümanını yazabilir.
   _fbDb.collection('users').doc(toUid).set({
     pendingInvites: firebase.firestore.FieldValue.arrayUnion({
       fromUid: _currentUser.uid,
@@ -4375,9 +4420,12 @@ function sendStudyInvite(toUid, toName) {
       date: todayKey
     })
   }, { merge: true }).then(function() {
-    if (_todayInviteDate !== todayKey) { _todayInviteDate = todayKey; _todayInviteCount = 0; }
-    _todayInviteCount++;
+    _lastInviteTimes[toUid] = now;
     _totalInvitesSent++;
+    // lastInviteTimes'ı da Firebase'e yaz (sayfa yenilenince de doğru kalsın)
+    var timesUpdate = {};
+    timesUpdate['lastInviteTimes.' + toUid] = now;
+    _fbDb.collection('users').doc(_currentUser.uid).set(timesUpdate, { merge: true });
     _updateInviteStreak(todayKey);
     showToast('📣 ' + toName + ' çalışmaya davet edildi!');
     loadFriends();
@@ -4402,9 +4450,7 @@ function _updateInviteStreak(todayKey) {
     _fbDb.collection('users').doc(_currentUser.uid).set({
       inviteStreak: streak,
       inviteStreakDate: todayKey,
-      totalInvitesSent: firebase.firestore.FieldValue.increment(1),
-      todayInviteDate: todayKey,
-      todayInviteCount: firebase.firestore.FieldValue.increment(1)
+      totalInvitesSent: firebase.firestore.FieldValue.increment(1)
     }, { merge: true }).then(function() { checkBadges(); });
   });
 }
@@ -4421,11 +4467,8 @@ function loadInviteStats() {
     var numEl = document.getElementById('inviteStreakNum');
     if (banner && _inviteStreakCount > 0) { banner.style.display='flex'; }
     if (numEl) numEl.textContent = _inviteStreakCount;
-    // Bugünün davet sayısını users dokümanındaki todayInviteCount alanından al
-    var todayKey = new Date().toISOString().slice(0,10);
-    var storedDate = data.todayInviteDate || '';
-    _todayInviteDate = todayKey;
-    _todayInviteCount = (storedDate === todayKey) ? (data.todayInviteCount || 0) : 0;
+    // Arkadaş başına son davet zamanlarını yükle
+    _lastInviteTimes = data.lastInviteTimes || {};
   });
 }
 
@@ -4590,10 +4633,6 @@ function loadFriends() {
         var mins2 = totalMins % 60;
         var timeStr = hours > 0 ? hours + 's ' + mins2 + 'dk' : (totalMins > 0 ? mins2 + 'dk' : '—');
 
-        // Bugün kaç davet gönderildi?
-        var todayKey = new Date().toISOString().slice(0,10);
-        var canInvite = (_todayInviteDate !== todayKey) || (_todayInviteCount < 3);
-        var inviteLabel = canInvite ? '📣 Davet Et' : '📣 <span style="font-size:0.55rem">(' + _todayInviteCount + '/3)</span>';
 
         var card = document.createElement('div');
         card.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;transition:border-color 0.2s';
@@ -4611,11 +4650,10 @@ function loadFriends() {
               '</div>' +
             '</div>' +
           '</div>' +
-          '<button class="inv-btn"' + (canInvite ? '' : ' disabled') + ' style="flex-shrink:0;padding:7px 10px;border-radius:9px;border:1.5px solid rgba(56,189,248,0.3);background:rgba(56,189,248,0.08);color:var(--accent);font-family:Nunito,sans-serif;font-size:0.68rem;font-weight:800;cursor:pointer;white-space:nowrap' + (canInvite ? '' : ';opacity:0.4;cursor:not-allowed') + '">📣 Davet</button>';
+          '';  // Davet butonu artık profil modalinde
         (function(fUid, dName, uname, st) {
           card.querySelector('.fd-open').onclick = function() { openFriendDetail(fUid, dName, uname, st); };
-          var invBtn = card.querySelector('.inv-btn');
-          if (invBtn && !invBtn.disabled) invBtn.onclick = function() { sendStudyInvite(fUid, dName); };
+
         })(friendUid, displayName, username, stats);
 
         if (listEl) listEl.appendChild(card);

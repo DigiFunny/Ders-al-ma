@@ -1753,6 +1753,12 @@ switchTab = function(tab, el) {
 
 // Load profile page data
 function loadCoachProfilePage() {
+  // lastInviteTimes yükle
+  if (_user && _db) {
+    _db.collection('users').doc(_user.uid).get().then(function(doc) {
+      if (doc.exists) _coachLastInviteTimes = doc.data().lastInviteTimes || {};
+    });
+  }
   if (!_user || !_db) return;
   // Avatar/name
   var av = document.getElementById('profileAvatarBig');
@@ -1981,6 +1987,7 @@ function coachSendFeedback() {
 // ════════════════════════════════════════════════
 var _coachFoundUser = null;
 var _coachOpenFriendUid = null;
+var _coachOpenFriendName = '';
 
 function coachSearchUser() {
   if (!_user || !_db) return;
@@ -2104,8 +2111,8 @@ function coachConfirmAddUser() { coachDoAddFriend(); } // legacy compat
 // ════════════════════════════════════════════════
 // COACH — ARKADAŞLIK İSTEKLERİ + DAVET
 // ════════════════════════════════════════════════
-var _coachTodayInviteCount = 0;
-var _coachTodayInviteDate = '';
+var _coachLastInviteTimes = {};
+var _COACH_INVITE_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 saat
 var _coachInviteStreak = 0;
 
 function coachLoadFriendRequests() {
@@ -2168,11 +2175,15 @@ function coachRejectFriendRequest(reqObj) {
 
 function coachSendStudyInvite(toUid, toName) {
   if (!_user || !_db) return;
-  var todayKey = new Date().toISOString().slice(0,10);
-  if (_coachTodayInviteDate === todayKey && _coachTodayInviteCount >= 3) {
-    showToast('⚠️ Bugün en fazla 3 davet gönderebilirsin!');
+  var now = Date.now();
+  var lastSent = _coachLastInviteTimes[toUid] || 0;
+  var elapsed = now - lastSent;
+  if (elapsed < _COACH_INVITE_COOLDOWN_MS) {
+    var remaining = Math.ceil((_COACH_INVITE_COOLDOWN_MS - elapsed) / 60000);
+    showToast('⏳ ' + toName + ' için ' + remaining + ' dakika sonra tekrar davet edebilirsin.');
     return;
   }
+  var todayKey = new Date().toISOString().slice(0,10);
   var myName = _user.displayName || _user._username || 'Koçun';
   _db.collection('users').doc(toUid).set({
     pendingInvites: firebase.firestore.FieldValue.arrayUnion({
@@ -2182,8 +2193,10 @@ function coachSendStudyInvite(toUid, toName) {
       date: todayKey
     })
   }, { merge: true }).then(function() {
-    if (_coachTodayInviteDate !== todayKey) { _coachTodayInviteDate = todayKey; _coachTodayInviteCount = 0; }
-    _coachTodayInviteCount++;
+    _coachLastInviteTimes[toUid] = now;
+    var timesUpdate = {};
+    timesUpdate['lastInviteTimes.' + toUid] = now;
+    _db.collection('users').doc(_user.uid).set(timesUpdate, { merge: true });
     // Seri güncelle
     _db.collection('users').doc(_user.uid).get().then(function(doc) {
       var data = doc.exists ? doc.data() : {};
@@ -2290,8 +2303,7 @@ function coachLoadFriends() {
         card.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color 0.2s';
         card.onmouseenter = function(){ this.style.borderColor='var(--coach)'; };
         card.onmouseleave = function(){ this.style.borderColor='var(--border)'; };
-        var todayKey = new Date().toISOString().slice(0,10);
-        var canInvite = (_coachTodayInviteDate !== todayKey) || (_coachTodayInviteCount < 3);
+
         card.innerHTML =
           '<div class="cfd-open" style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;min-width:0">' +
             '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--coach),var(--coach2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#000;flex-shrink:0">' + displayName.charAt(0).toUpperCase() + '</div>' +
@@ -2303,11 +2315,10 @@ function coachLoadFriends() {
               '</div>' +
             '</div>' +
           '</div>' +
-          '<button class="cinv-btn"' + (canInvite ? '' : ' disabled') + ' style="flex-shrink:0;padding:7px 10px;border-radius:9px;border:1.5px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:var(--coach);font-family:Nunito,sans-serif;font-size:0.68rem;font-weight:800;cursor:pointer' + (canInvite ? '' : ';opacity:0.4;cursor:not-allowed') + '">📣 Davet</button>';
+          '';  // Davet butonu artık profil modalinde
         (function(fUid, dName, uname, st) {
           card.querySelector('.cfd-open').onclick = function() { openCoachFriendDetail(fUid, dName, uname, st); };
-          var invBtn = card.querySelector('.cinv-btn');
-          if (invBtn && !invBtn.disabled) invBtn.onclick = function() { coachSendStudyInvite(fUid, dName); };
+
         })(friendUid, displayName, username, stats);
         listEl.appendChild(card);
       });
@@ -2319,6 +2330,7 @@ function coachLoadFriends() {
 
 function openCoachFriendDetail(friendUid, displayName, username, stats) {
   _coachOpenFriendUid = friendUid;
+  _coachOpenFriendName = displayName;
 
   document.getElementById('coachFdAvatar').textContent = displayName.charAt(0).toUpperCase();
   document.getElementById('coachFdName').textContent = displayName;
@@ -2363,6 +2375,28 @@ function openCoachFriendDetail(friendUid, displayName, username, stats) {
 
   document.getElementById('coachFdContent').innerHTML = html;
 
+  // Derse Çağır butonunu cooldown'a göre güncelle
+  var invBtn = document.getElementById('coachFdInviteBtn');
+  if (invBtn) {
+    var now = Date.now();
+    var lastSent = _coachLastInviteTimes[friendUid] || 0;
+    var canInv = (now - lastSent) >= _COACH_INVITE_COOLDOWN_MS;
+    var remMins = canInv ? 0 : Math.ceil((_COACH_INVITE_COOLDOWN_MS - (now - lastSent)) / 60000);
+    if (canInv) {
+      invBtn.textContent = '🔔 Derse Çağır';
+      invBtn.disabled = false;
+      invBtn.style.opacity = '1';
+      invBtn.style.cursor = 'pointer';
+      invBtn.style.background = 'linear-gradient(135deg,var(--coach),var(--coach2))';
+    } else {
+      invBtn.textContent = '⏳ ' + remMins + ' dakika sonra tekrar çağırabilirsin';
+      invBtn.disabled = true;
+      invBtn.style.opacity = '0.5';
+      invBtn.style.cursor = 'not-allowed';
+      invBtn.style.background = 'var(--card)';
+    }
+  }
+
   // Modal aç
   var modal = document.getElementById('coachFriendDetailModal');
   var sheet = document.getElementById('coachFriendDetailSheet');
@@ -2370,6 +2404,22 @@ function openCoachFriendDetail(friendUid, displayName, username, stats) {
   modal.style.pointerEvents = 'all';
   overlay.style.background = 'rgba(0,0,0,0.6)';
   sheet.style.transform = 'translateY(0)';
+}
+
+function coachInviteFriendFromModal() {
+  if (!_coachOpenFriendUid) return;
+  coachSendStudyInvite(_coachOpenFriendUid, _coachOpenFriendName);
+  var btn = document.getElementById('coachFdInviteBtn');
+  if (btn) {
+    btn.textContent = '✅ Davet gönderildi!';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+    btn.style.cursor = 'not-allowed';
+    btn.style.background = 'var(--card)';
+    setTimeout(function() {
+      btn.textContent = '⏳ 4 saat sonra tekrar çağırabilirsin';
+    }, 1500);
+  }
 }
 
 function closeCoachFriendModal() {
@@ -2414,7 +2464,8 @@ document.addEventListener('DOMContentLoaded', initFirebase);
       <button onclick="closeCoachFriendModal()" style="background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px">✕</button>
     </div>
     <div id="coachFdContent" style="padding:14px 16px"></div>
-    <div style="padding:0 16px">
+    <div style="padding:0 16px;display:flex;flex-direction:column;gap:8px">
+      <button id="coachFdInviteBtn" onclick="coachInviteFriendFromModal()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--coach),var(--coach2));border:none;border-radius:12px;color:#000;font-size:0.9rem;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">🔔 Derse Çağır</button>
       <button onclick="coachRemoveFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:#ef4444;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Arkadaşlıktan Çıkar</button>
     </div>
   </div>
