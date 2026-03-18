@@ -5026,6 +5026,10 @@ var BADGES = [
   { id:'invite_s30', icon:'🏅', name:'Efsane Dost',     hint:'30 gün üst üste davet serisi koru',               check: () => _inviteStreakCount >= 30 },
 ];
 
+function _checkAnyGoalEverDone() {
+  return (personalGoals._dailyDoneCount || 0) >= 1 || (personalGoals._weeklyDoneCount || 0) >= 1;
+}
+
 function calcStreak() {
   const dates = [...new Set(entries.map(e => e.date))];
   const now = new Date(); let s = 0;
