@@ -637,6 +637,7 @@ function initFirebase() {
           _user = user;
           loadCoachProfile();
       coachProcessPendingAccepted();
+      coachProcessPendingRemoved();
         });
       });
     });
@@ -2176,6 +2177,21 @@ function coachAcceptFriendRequest(reqObj) {
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
+function coachProcessPendingRemoved() {
+  if (!_user || !_db) return;
+  _db.collection('users').doc(_user.uid).get().then(function(doc) {
+    if (!doc.exists) return;
+    var removed = doc.data().pendingRemoved || [];
+    if (removed.length === 0) return;
+    var batch = _db.batch();
+    removed.forEach(function(uid) {
+      batch.delete(_db.collection('friends').doc(_user.uid).collection('list').doc(uid));
+    });
+    batch.set(_db.collection('users').doc(_user.uid), { pendingRemoved: [] }, { merge: true });
+    batch.commit().then(function() { coachLoadFriends(); });
+  });
+}
+
 function coachProcessPendingAccepted() {
   if (!_user || !_db) return;
   _db.collection('users').doc(_user.uid).get().then(function(doc) {
@@ -2462,10 +2478,18 @@ function closeCoachFriendModal() {
 function coachRemoveFriendFromModal() {
   if (!_coachOpenFriendUid) return;
   if (!confirm('Bu arkadaşı listenden çıkarmak istiyor musun?')) return;
-  var batch = _db.batch();
-  batch.delete(_db.collection('friends').doc(_user.uid).collection('list').doc(_coachOpenFriendUid));
-  batch.delete(_db.collection('friends').doc(_coachOpenFriendUid).collection('list').doc(_user.uid));
-  batch.commit().then(function() {
+
+  var targetUid = _coachOpenFriendUid;
+
+  // 1) Kendi friends listesinden sil
+  var p1 = _db.collection('friends').doc(_user.uid).collection('list').doc(targetUid).delete();
+
+  // 2) Karşı tarafa pendingRemoved bildirimi gönder
+  var p2 = _db.collection('users').doc(targetUid).set({
+    pendingRemoved: firebase.firestore.FieldValue.arrayUnion(_user.uid)
+  }, { merge: true });
+
+  Promise.all([p1, p2]).then(function() {
     closeCoachFriendModal();
     coachLoadFriends();
     showToast('Arkadaş listeden çıkarıldı.');

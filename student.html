@@ -4310,10 +4310,23 @@ function renderAnaFriends() {
 function removeFriendFromModal() {
   if (!_openFriendUid) return;
   if (!confirm('Bu arkadaşı listenden çıkarmak istediğine emin misin?')) return;
-  var batch = _fbDb.batch();
-  batch.delete(_fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_openFriendUid));
-  batch.delete(_fbDb.collection('friends').doc(_openFriendUid).collection('list').doc(_currentUser.uid));
-  batch.commit().then(function() {
+
+  var targetUid = _openFriendUid;
+  var myUid = _currentUser.uid;
+  var myUsername = _currentUser._username || '';
+  var myName = _currentUser.displayName || myUsername;
+
+  // 1) Kendi friends listesinden sil (kendi dokümanı — izin var)
+  var p1 = _fbDb.collection('friends').doc(myUid).collection('list').doc(targetUid).delete();
+
+  // 2) Karşı tarafa "seni listeden çıkardım" bildir —
+  //    users/{targetUid} dokümanına pendingRemoved array'ine kendi UID'ini yaz.
+  //    Firestore kuralında pendingRemoved alanına yazma izni verilmeli.
+  var p2 = _fbDb.collection('users').doc(targetUid).set({
+    pendingRemoved: firebase.firestore.FieldValue.arrayUnion(myUid)
+  }, { merge: true });
+
+  Promise.all([p1, p2]).then(function() {
     _friendCount = Math.max(0, _friendCount - 1);
     closeFriendModal();
     loadFriends();
@@ -4511,6 +4524,28 @@ function acceptFriendRequest(reqObj) {
     loadFriends();
     checkBadges();
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function processPendingRemoved() {
+  // Karşı taraf bizi arkadaş listesinden çıkarmışsa kendi listemizden de sil
+  if (!_currentUser || !_fbDb) return;
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (!doc.exists) return;
+    var removed = doc.data().pendingRemoved || [];
+    if (removed.length === 0) return;
+
+    var batch = _fbDb.batch();
+    removed.forEach(function(uid) {
+      batch.delete(_fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(uid));
+    });
+    // Bildirimi temizle
+    batch.set(_fbDb.collection('users').doc(_currentUser.uid), {
+      pendingRemoved: []
+    }, { merge: true });
+    batch.commit().then(function() {
+      _friendCount = Math.max(0, _friendCount - removed.length);
+    });
+  });
 }
 
 function processPendingAccepted() {
@@ -6794,6 +6829,7 @@ function markSuggestionDone(docId) {
       loadCoachSuggestionsForStudent();
     loadInviteStats();
     processPendingAccepted();
+    processPendingRemoved();
     }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
