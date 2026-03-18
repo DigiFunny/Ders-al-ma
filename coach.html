@@ -664,6 +664,7 @@ function initFirebase() {
           if (!user) { window.location.href = 'index.html'; return; }
           _user = user;
           loadCoachProfile();
+      coachProcessPendingAccepted();
         });
       });
     });
@@ -2151,20 +2152,45 @@ function coachAcceptFriendRequest(reqObj) {
   if (!_user || !_db) return;
   var myUsername = _user._username || '';
   var myName = _user.displayName || myUsername;
-  var batch = _db.batch();
-  batch.set(_db.collection('friends').doc(_user.uid).collection('list').doc(reqObj.fromUid), {
-    username: reqObj.fromUsername||'', displayName: reqObj.fromDisplayName||'', addedAt: new Date().toISOString()
+  var now = new Date().toISOString();
+
+  var p1 = _db.collection('friends').doc(_user.uid).collection('list').doc(reqObj.fromUid).set({
+    username: reqObj.fromUsername||'', displayName: reqObj.fromDisplayName||'', addedAt: now
   });
-  batch.set(_db.collection('friends').doc(reqObj.fromUid).collection('list').doc(_user.uid), {
-    username: myUsername, displayName: myName, addedAt: new Date().toISOString()
-  });
-  batch.set(_db.collection('users').doc(_user.uid), {
+  var p2 = _db.collection('users').doc(_user.uid).set({
     pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
   }, { merge: true });
-  batch.commit().then(function() {
+  var p3 = _db.collection('users').doc(reqObj.fromUid).set({
+    pendingAccepted: firebase.firestore.FieldValue.arrayUnion({
+      uid: _user.uid,
+      username: myUsername,
+      displayName: myName,
+      addedAt: now
+    })
+  }, { merge: true });
+
+  Promise.all([p1, p2, p3]).then(function() {
     showToast('🤝 Arkadaşlık kabul edildi!');
     coachLoadFriends();
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function coachProcessPendingAccepted() {
+  if (!_user || !_db) return;
+  _db.collection('users').doc(_user.uid).get().then(function(doc) {
+    if (!doc.exists) return;
+    var accepted = doc.data().pendingAccepted || [];
+    if (accepted.length === 0) return;
+    var batch = _db.batch();
+    accepted.forEach(function(a) {
+      batch.set(
+        _db.collection('friends').doc(_user.uid).collection('list').doc(a.uid),
+        { username: a.username||'', displayName: a.displayName||'', addedAt: a.addedAt||new Date().toISOString() }
+      );
+    });
+    batch.set(_db.collection('users').doc(_user.uid), { pendingAccepted: [] }, { merge: true });
+    batch.commit();
+  });
 }
 
 function coachRejectFriendRequest(reqObj) {

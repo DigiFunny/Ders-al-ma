@@ -4367,24 +4367,60 @@ function acceptFriendRequest(reqObj) {
   if (!_currentUser || !_fbDb) return;
   var myUsername = _currentUser._username || '';
   var myName = _currentUser.displayName || myUsername;
-  var batch = _fbDb.batch();
-  // Her iki tarafa arkadaş ekle
-  batch.set(_fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(reqObj.fromUid), {
-    username: reqObj.fromUsername||'', displayName: reqObj.fromDisplayName||'', addedAt: new Date().toISOString()
+  var now = new Date().toISOString();
+
+  // 1) Kendi friends listesine ekle (kendi dokümanı — izin var)
+  var p1 = _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(reqObj.fromUid).set({
+    username: reqObj.fromUsername||'', displayName: reqObj.fromDisplayName||'', addedAt: now
   });
-  batch.set(_fbDb.collection('friends').doc(reqObj.fromUid).collection('list').doc(_currentUser.uid), {
-    username: myUsername, displayName: myName, addedAt: new Date().toISOString()
-  });
-  // İsteği kendi dokümanımızdan kaldır (set+merge: alan yoksa da çalışır)
-  batch.set(_fbDb.collection('users').doc(_currentUser.uid), {
+
+  // 2) Kendi users dokümanından isteği kaldır (kendi dokümanı — izin var)
+  var p2 = _fbDb.collection('users').doc(_currentUser.uid).set({
     pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
   }, { merge: true });
-  batch.commit().then(function() {
+
+  // 3) Karşı tarafa "seni kabul etti" bildirimi gönder —
+  //    users/{fromUid} dokümanına pendingAccepted array'i yaz (Firestore kuralında izin verilen alan)
+  var p3 = _fbDb.collection('users').doc(reqObj.fromUid).set({
+    pendingAccepted: firebase.firestore.FieldValue.arrayUnion({
+      uid: _currentUser.uid,
+      username: myUsername,
+      displayName: myName,
+      addedAt: now
+    })
+  }, { merge: true });
+
+  Promise.all([p1, p2, p3]).then(function() {
     showToast('🤝 Arkadaşlık kabul edildi!');
     _friendCount++;
     loadFriends();
     checkBadges();
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function processPendingAccepted() {
+  // Karşı taraf bizi kabul etmişse, kendi friends listemize ekle
+  if (!_currentUser || !_fbDb) return;
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (!doc.exists) return;
+    var accepted = doc.data().pendingAccepted || [];
+    if (accepted.length === 0) return;
+    var batch = _fbDb.batch();
+    accepted.forEach(function(a) {
+      batch.set(
+        _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(a.uid),
+        { username: a.username||'', displayName: a.displayName||'', addedAt: a.addedAt||new Date().toISOString() }
+      );
+    });
+    // Bildirimleri temizle
+    batch.set(_fbDb.collection('users').doc(_currentUser.uid), {
+      pendingAccepted: []
+    }, { merge: true });
+    batch.commit().then(function() {
+      _friendCount += accepted.length;
+      checkBadges();
+    });
+  });
 }
 
 function rejectFriendRequest(reqObj) {
@@ -6558,6 +6594,7 @@ function markSuggestionDone(docId) {
       showToast('✅ Öneri tamamlandı olarak işaretlendi!');
       loadCoachSuggestionsForStudent();
     loadInviteStats();
+    processPendingAccepted();
     }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
