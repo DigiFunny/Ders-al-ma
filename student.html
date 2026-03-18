@@ -1420,6 +1420,14 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
     <div id="friendsBody" style="display:none">
       <div id="friendsWrap"></div>
+      <!-- Davet Serisi Banner -->
+      <div id="inviteStreakBanner" style="display:none;background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(251,146,60,0.12));border:1.5px solid rgba(244,114,182,0.3);border-radius:12px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.4rem">🔗</span>
+        <div style="flex:1">
+          <div style="font-size:0.8rem;font-weight:900">Davet Serisi <span id="inviteStreakNum" style="color:#f472b6;font-family:monospace">0</span> Gün 🔥</div>
+          <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Her gün davet et ya da davet al, seriyi kır!</div>
+        </div>
+      </div>
     </div>
 
     <!-- Başarımlar -->
@@ -1664,9 +1672,11 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         </div>
       </div>
       <button onclick="searchUser()" id="searchUserBtn" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;margin-bottom:8px">🔍 Ara</button>
-      <button onclick="confirmAddUser()" id="confirmAddBtn" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;margin-bottom:8px" id="confirmAddBtn"></button>
-      <div id="friendAddMsg" style="text-align:center;font-size:0.8rem;font-weight:700;color:var(--muted);margin-top:4px"></div>
-      <div id="friendAddMsg" style="font-size:0.75rem;color:var(--muted);margin-top:10px;min-height:18px;text-align:center"></div>
+      <div id="studentAddBtns" style="display:none;display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+        <button onclick="doAddFriend()" id="btnAddFriend" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">➕ Arkadaş Ekle</button>
+        <button onclick="doSendCoachRequest()" id="btnSendCoachReq" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">🎯 Koçluk İsteği Gönder</button>
+      </div>
+      <div id="friendAddMsg" style="font-size:0.75rem;min-height:18px;text-align:center;font-weight:700;color:var(--muted)"></div>
     </div>
   </div>
 </div>
@@ -1881,7 +1891,7 @@ function switchTab(name, btn) {
   if (name === 'stat') { renderStat(); renderCharts(); renderGoalCard(); renderAnalysis(); renderTopicMap(); renderGoalPieChart(); }
   if (name === 'deneme') { renderDenemeFields(); renderDenemeLog(); }
   if (name === 'yedek') renderBackupSummary();
-  if (name === 'rozet') { renderBadges(); renderFriends(); renderPersonalGoals(); }
+  if (name === 'rozet') { renderBadges(); renderFriends(); renderPersonalGoals(); loadInviteStats(); }
 }
 
 // ════════════════════════════════════════════
@@ -3888,7 +3898,8 @@ function renderFriends() {
     '<button onclick="event.stopPropagation();openAddFriendModal()" style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);border-radius:8px;padding:5px 10px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer;margin-right:10px">+ Ekle</button>' +
     '<span id="friendsArrow" style="color:var(--muted);font-size:0.8rem;transition:transform 0.25s;display:inline-block;transform:rotate(180deg)">▼</span>' +
   '</div>' +
-  '<div id="friendsList" style="display:block;margin-top:8px"></div>';
+  '<div id="pendingRequestsWrap" style="margin-top:8px"></div>' +
+  '<div id="friendsList" style="display:block;margin-top:4px"></div>';
 
   loadFriends();
 }
@@ -3915,8 +3926,9 @@ function closeAddFriendModal() {
   document.getElementById('friendUsernameInput').value = '';
   var preview = document.getElementById('userPreview');
   if (preview) preview.style.display = 'none';
-  var confirmBtn = document.getElementById('confirmAddBtn');
-  if (confirmBtn) confirmBtn.style.display = 'none';
+  document.getElementById('btnAddFriend').style.display = 'none';
+  document.getElementById('btnSendCoachReq').style.display = 'none';
+  document.getElementById('studentAddBtns').style.display = 'none';
   _foundUser = null;
 }
 
@@ -4143,14 +4155,24 @@ function renderAnaFriends() {
 function removeFriendFromModal() {
   if (!_openFriendUid) return;
   if (!confirm('Bu arkadaşı listenden çıkarmak istediğine emin misin?')) return;
-  _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_openFriendUid).delete()
-    .then(function() {
-      closeFriendModal();
-      loadFriends();
-      showToast('Arkadaş listeden çıkarıldı.');
-    });
+  var batch = _fbDb.batch();
+  batch.delete(_fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_openFriendUid));
+  batch.delete(_fbDb.collection('friends').doc(_openFriendUid).collection('list').doc(_currentUser.uid));
+  batch.commit().then(function() {
+    _friendCount = Math.max(0, _friendCount - 1);
+    closeFriendModal();
+    loadFriends();
+    showToast('Arkadaş listeden çıkarıldı.');
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
+
+// Arkadaş / davet state
+var _friendCount = 0;
+var _totalInvitesSent = 0;
+var _inviteStreakCount = 0;
+var _todayInviteCount = 0;
+var _todayInviteDate = '';
 
 var _foundUser = null; // {uid, username, displayName, accountType}
 
@@ -4187,45 +4209,275 @@ function searchUser() {
         typeEl.innerHTML = '<span style="color:var(--accent)">📚 Öğrenci</span>';
       }
 
-      // Confirm butonu
-      var confirmBtn = document.getElementById('confirmAddBtn');
-      confirmBtn.style.display = 'block';
-      if (isCoach) {
-        confirmBtn.textContent = '🎯 Koçluk İsteği Gönder';
-        confirmBtn.style.background = 'linear-gradient(135deg,var(--accent3),#fbbf24)';
-      } else {
-        confirmBtn.textContent = '➕ Arkadaş Olarak Ekle';
-        confirmBtn.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))';
-      }
+      // Butonları göster — her zaman "Arkadaş Ekle", sadece koç ise ek olarak "Koçluk İsteği"
+      document.getElementById('btnAddFriend').style.display = 'block';
+      document.getElementById('btnSendCoachReq').style.display = isCoach ? 'block' : 'none';
+      document.getElementById('studentAddBtns').style.display = 'flex';
       msgEl.textContent = '';
     });
   }).catch(function(e) { msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ Hata: ' + e.message; });
 }
 
-function confirmAddUser() {
+function doAddFriend() {
   if (!_foundUser || !_currentUser) return;
   var msgEl = document.getElementById('friendAddMsg');
-  msgEl.style.color='var(--muted)'; msgEl.textContent = 'Ekleniyor...';
+  msgEl.style.color='var(--muted)'; msgEl.textContent = 'İstek gönderiliyor...';
+  document.getElementById('btnAddFriend').disabled = true;
 
-  if (_foundUser.accountType === 'coach') {
-    // Koçluk isteği gönder
-    sendCoachRequest(_foundUser).then(function() {
-      msgEl.style.color='var(--accent3)';
-      msgEl.textContent = '✅ Koçluk isteği gönderildi!';
-      document.getElementById('confirmAddBtn').style.display = 'none';
-      setTimeout(closeAddFriendModal, 1500);
-    }).catch(function(e) { msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ ' + e.message; });
-  } else {
-    // Normal arkadaş ekle
-    _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_foundUser.uid).set({
-      username: _foundUser.username,
-      displayName: _foundUser.displayName,
-      addedAt: new Date().toISOString()
+  // Zaten arkadaş mı?
+  _fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(_foundUser.uid).get()
+    .then(function(doc) {
+      if (doc.exists) throw new Error('Zaten arkadaşsınız!');
+      // Daha önce istek var mı?
+      return _fbDb.collection('friendRequests')
+        .where('fromUid','==',_currentUser.uid)
+        .where('toUid','==',_foundUser.uid)
+        .where('status','==','pending')
+        .get();
+    }).then(function(snap) {
+      if (snap.empty === false) throw new Error('Zaten istek gönderilmiş!');
+      return _fbDb.collection('friendRequests').add({
+        fromUid: _currentUser.uid,
+        fromUsername: _currentUser._username || '',
+        fromDisplayName: _currentUser.displayName || _currentUser._username || '',
+        toUid: _foundUser.uid,
+        toUsername: _foundUser.username,
+        toDisplayName: _foundUser.displayName,
+        status: 'pending',
+        sentAt: new Date().toISOString()
+      });
     }).then(function() {
-      msgEl.style.color='var(--accent3)'; msgEl.textContent = '✅ Arkadaş listene eklendi!';
-      setTimeout(function(){ closeAddFriendModal(); loadFriends(); }, 1200);
-    }).catch(function(e) { msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ ' + e.message; });
+      msgEl.style.color='var(--accent3)'; msgEl.textContent = '✅ Arkadaşlık isteği gönderildi!';
+      document.getElementById('btnAddFriend').disabled = false;
+      setTimeout(closeAddFriendModal, 1500);
+    }).catch(function(e) {
+      document.getElementById('btnAddFriend').disabled = false;
+      msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ ' + e.message;
+    });
+}
+
+function doSendCoachRequest() {
+  if (!_foundUser || !_currentUser) return;
+  if (_foundUser.accountType !== 'coach') {
+    document.getElementById('friendAddMsg').style.color='var(--warn)';
+    document.getElementById('friendAddMsg').textContent = '❌ Sadece koç hesaplarına koçluk isteği gönderilebilir.';
+    return;
   }
+  var msgEl = document.getElementById('friendAddMsg');
+  msgEl.style.color='var(--muted)'; msgEl.textContent = 'Gönderiliyor...';
+  document.getElementById('btnSendCoachReq').disabled = true;
+
+  sendCoachRequest(_foundUser).then(function() {
+    msgEl.style.color='var(--accent3)'; msgEl.textContent = '✅ Koçluk isteği gönderildi!';
+    document.getElementById('btnSendCoachReq').disabled = false;
+    document.getElementById('btnSendCoachReq').style.display = 'none';
+    setTimeout(closeAddFriendModal, 1500);
+  }).catch(function(e) {
+    document.getElementById('btnSendCoachReq').disabled = false;
+    msgEl.style.color='var(--warn)'; msgEl.textContent = '❌ ' + e.message;
+  });
+}
+
+function confirmAddUser() { doAddFriend(); } // legacy compat
+
+
+// ════════════════════════════════════════════════
+// ARKADAŞLIK İSTEKLERİ
+// ════════════════════════════════════════════════
+
+function loadFriendRequests() {
+  if (!_currentUser || !_fbDb) return;
+  var listEl = document.getElementById('friendsList');
+  if (!listEl) return;
+
+  _fbDb.collection('friendRequests')
+    .where('toUid', '==', _currentUser.uid)
+    .where('status', '==', 'pending')
+    .get().then(function(snap) {
+      if (snap.empty) {
+        loadStudyInvites(); // gelen davetleri de yükle
+        return;
+      }
+      // Bekleyen istekleri listenin başına ekle
+      var pendingWrap = document.getElementById('pendingRequestsWrap');
+      var reqWrap = document.createElement('div');
+      reqWrap.style.cssText = 'background:rgba(251,191,36,0.08);border:1.5px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+      reqWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:#fbbf24;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📬 Bekleyen İstekler</div>';
+      snap.forEach(function(docSnap) {
+        var req = docSnap.data();
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)';
+        row.innerHTML =
+          '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;flex-shrink:0">' + (req.fromDisplayName||req.fromUsername||'?').charAt(0).toUpperCase() + '</div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<div style="font-size:0.82rem;font-weight:900">' + (req.fromDisplayName || req.fromUsername) + '</div>' +
+            '<div style="font-size:0.65rem;color:var(--muted)">@' + req.fromUsername + ' · arkadaşlık isteği</div>' +
+          '</div>' +
+          '<button class="fr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Kabul</button>' +
+          '<button class="fr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:var(--warn);font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✕</button>';
+        (function(id, fUid, fUser, fName) {
+          row.querySelector('.fr-acc').onclick = function() { acceptFriendRequest(id, fUid, fUser, fName); };
+          row.querySelector('.fr-rej').onclick = function() { rejectFriendRequest(id); };
+        })(docSnap.id, req.fromUid, req.fromUsername||'', req.fromDisplayName||req.fromUsername||'');
+        reqWrap.appendChild(row);
+      });
+      if (pendingWrap) { pendingWrap.innerHTML = ''; pendingWrap.appendChild(reqWrap); }
+      else listEl.insertBefore(reqWrap, listEl.firstChild);
+      loadStudyInvites();
+    });
+}
+
+function acceptFriendRequest(reqId, fromUid, fromUsername, fromDisplayName) {
+  if (!_currentUser || !_fbDb) return;
+  var myUsername = _currentUser._username || '';
+  var myName = _currentUser.displayName || myUsername;
+  var batch = _fbDb.batch();
+  // Her iki tarafa arkadaş ekle
+  batch.set(_fbDb.collection('friends').doc(_currentUser.uid).collection('list').doc(fromUid), {
+    username: fromUsername, displayName: fromDisplayName, addedAt: new Date().toISOString()
+  });
+  batch.set(_fbDb.collection('friends').doc(fromUid).collection('list').doc(_currentUser.uid), {
+    username: myUsername, displayName: myName, addedAt: new Date().toISOString()
+  });
+  // İsteği güncelle
+  batch.update(_fbDb.collection('friendRequests').doc(reqId), {
+    status: 'accepted', acceptedAt: new Date().toISOString()
+  });
+  batch.commit().then(function() {
+    showToast('🤝 Arkadaşlık kabul edildi!');
+    _friendCount++;
+    loadFriends();
+    checkBadges();
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function rejectFriendRequest(reqId) {
+  _fbDb.collection('friendRequests').doc(reqId).update({ status: 'rejected' })
+    .then(function() { showToast('İstek reddedildi.'); loadFriendRequests(); });
+}
+
+// ════════════════════════════════════════════════
+// ÇALIŞMAYA DAVET SİSTEMİ
+// ════════════════════════════════════════════════
+
+function sendStudyInvite(toUid, toName) {
+  if (!_currentUser || !_fbDb) return;
+
+  var todayKey = new Date().toISOString().slice(0,10);
+  if (_todayInviteDate === todayKey && _todayInviteCount >= 3) {
+    showToast('⚠️ Bugün en fazla 3 davet gönderebilirsin!');
+    return;
+  }
+
+  var myName = _currentUser.displayName || _currentUser._username || 'Arkadaşın';
+  _fbDb.collection('studyInvites').add({
+    fromUid: _currentUser.uid,
+    fromName: myName,
+    toUid: toUid,
+    sentAt: new Date().toISOString(),
+    date: todayKey,
+    seen: false
+  }).then(function() {
+    // Günlük sayacı güncelle
+    if (_todayInviteDate !== todayKey) { _todayInviteDate = todayKey; _todayInviteCount = 0; }
+    _todayInviteCount++;
+    _totalInvitesSent++;
+
+    // Seri güncelle
+    _updateInviteStreak(todayKey);
+    showToast('📣 ' + toName + ' çalışmaya davet edildi!');
+    loadFriends();
+    checkBadges();
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function _updateInviteStreak(todayKey) {
+  if (!_currentUser || !_fbDb) return;
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    var data = doc.exists ? doc.data() : {};
+    var lastDate = data.inviteStreakDate || '';
+    var streak = data.inviteStreak || 0;
+    var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+    var yKey = yesterday.toISOString().slice(0,10);
+
+    if (lastDate === todayKey) return; // bugün zaten sayıldı
+    if (lastDate === yKey) streak++; else streak = 1; // zincir kırıldıysa sıfırla
+
+    _inviteStreakCount = streak;
+    _fbDb.collection('users').doc(_currentUser.uid).update({
+      inviteStreak: streak,
+      inviteStreakDate: todayKey,
+      totalInvitesSent: firebase.firestore.FieldValue.increment(1)
+    }).then(function() { checkBadges(); });
+  });
+}
+
+function loadInviteStats() {
+  if (!_currentUser || !_fbDb) return;
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (!doc.exists) return;
+    var data = doc.data();
+    _inviteStreakCount = data.inviteStreak || 0;
+    _totalInvitesSent = data.totalInvitesSent || 0;
+    // Davet serisi banner güncelle
+    var banner = document.getElementById('inviteStreakBanner');
+    var numEl = document.getElementById('inviteStreakNum');
+    if (banner && _inviteStreakCount > 0) { banner.style.display='flex'; }
+    if (numEl) numEl.textContent = _inviteStreakCount;
+    // Bugünün davet sayısını da yükle
+    var todayKey = new Date().toISOString().slice(0,10);
+    _fbDb.collection('studyInvites')
+      .where('fromUid','==',_currentUser.uid)
+      .where('date','==',todayKey)
+      .get().then(function(snap) {
+        _todayInviteDate = todayKey;
+        _todayInviteCount = snap.size;
+      });
+  });
+}
+
+function loadStudyInvites() {
+  if (!_currentUser || !_fbDb) return;
+  var listEl = document.getElementById('friendsList');
+  if (!listEl) return;
+
+  var todayKey = new Date().toISOString().slice(0,10);
+  _fbDb.collection('studyInvites')
+    .where('toUid','==',_currentUser.uid)
+    .where('seen','==',false)
+    .get().then(function(snap) {
+      if (snap.empty) return;
+      var invWrap = document.createElement('div');
+      invWrap.style.cssText = 'background:rgba(56,189,248,0.08);border:1.5px solid rgba(56,189,248,0.25);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+      invWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📣 Çalışma Davetleri</div>';
+      snap.forEach(function(docSnap) {
+        var inv = docSnap.data();
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)';
+        row.innerHTML =
+          '<div style="font-size:1.2rem">📣</div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<div style="font-size:0.82rem;font-weight:900">' + (inv.fromName||'Arkadaşın') + '</div>' +
+            '<div style="font-size:0.65rem;color:var(--muted)">seni ders çalışmaya davet etti!</div>' +
+          '</div>' +
+          '<button class="inv-seen-btn" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(56,189,248,0.15);color:var(--accent);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Gördüm</button>';
+        (function(id, r) {
+          row.querySelector('.inv-seen-btn').onclick = function() { markInviteSeen(id, r); };
+        })(docSnap.id, row);
+        invWrap.appendChild(row);
+      });
+      listEl.insertBefore(invWrap, listEl.firstChild);
+    });
+}
+
+function markInviteSeen(inviteId, rowEl) {
+  _fbDb.collection('studyInvites').doc(inviteId).update({ seen: true })
+    .then(function() {
+      if (rowEl) rowEl.remove();
+      // Seriye katkı: karşı taraftan davet alındıysa bugün için sayıldı
+      var todayKey = new Date().toISOString().slice(0,10);
+      _updateInviteStreak(todayKey);
+    });
 }
 
 function sendCoachRequest(coach) {
@@ -4324,6 +4576,7 @@ function loadFriends() {
     }
 
     if (listEl) listEl.innerHTML = '';
+    _friendCount = snap.size;
     snap.forEach(function(doc) {
       var friendUid = doc.id;
       var username = doc.data().username;
@@ -4344,27 +4597,40 @@ function loadFriends() {
         var mins2 = totalMins % 60;
         var timeStr = hours > 0 ? hours + 's ' + mins2 + 'dk' : (totalMins > 0 ? mins2 + 'dk' : '—');
 
+        // Bugün kaç davet gönderildi?
+        var todayKey = new Date().toISOString().slice(0,10);
+        var canInvite = (_todayInviteDate !== todayKey) || (_todayInviteCount < 3);
+        var inviteLabel = canInvite ? '📣 Davet Et' : '📣 <span style="font-size:0.55rem">(' + _todayInviteCount + '/3)</span>';
+
         var card = document.createElement('div');
-        card.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color 0.2s';
+        card.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;transition:border-color 0.2s';
         card.onmouseenter = function(){ this.style.borderColor = 'var(--accent)'; };
         card.onmouseleave = function(){ this.style.borderColor = 'var(--border)'; };
-        card.onclick = function(){ openFriendDetail(friendUid, displayName, username, stats); };
         card.innerHTML =
-          '<div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#fff;flex-shrink:0">' + displayName.charAt(0).toUpperCase() + '</div>' +
-          '<div style="flex:1;min-width:0">' +
-            '<div style="font-size:0.85rem;font-weight:900">' + displayName + ' <span style="color:var(--muted);font-size:0.65rem;font-weight:600">@' + username + '</span></div>' +
-            '<div style="display:flex;gap:10px;margin-top:4px">' +
-              '<span style="font-size:0.68rem;font-weight:700;color:var(--accent)">⏱ ' + timeStr + '</span>' +
-              (topSubjectName ? '<span style="font-size:0.68rem;font-weight:700;color:var(--accent2)">📚 ' + topSubjectName + '</span>' : '') +
-              (badgeCount > 0 ? '<span style="font-size:0.68rem;font-weight:700;color:var(--yellow)">🏆 ' + badgeCount + '</span>' : '') +
+          '<div class="fd-open" style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;min-width:0">' +
+            '<div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#fff;flex-shrink:0">' + displayName.charAt(0).toUpperCase() + '</div>' +
+            '<div style="flex:1;min-width:0">' +
+              '<div style="font-size:0.85rem;font-weight:900">' + displayName + ' <span style="color:var(--muted);font-size:0.65rem;font-weight:600">@' + username + '</span></div>' +
+              '<div style="display:flex;gap:10px;margin-top:4px">' +
+                '<span style="font-size:0.68rem;font-weight:700;color:var(--accent)">⏱ ' + timeStr + '</span>' +
+                (topSubjectName ? '<span style="font-size:0.68rem;font-weight:700;color:var(--accent2)">📚 ' + topSubjectName + '</span>' : '') +
+                (badgeCount > 0 ? '<span style="font-size:0.68rem;font-weight:700;color:var(--yellow)">🏆 ' + badgeCount + '</span>' : '') +
+              '</div>' +
             '</div>' +
           '</div>' +
-          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>';
+          '<button class="inv-btn"' + (canInvite ? '' : ' disabled') + ' style="flex-shrink:0;padding:7px 10px;border-radius:9px;border:1.5px solid rgba(56,189,248,0.3);background:rgba(56,189,248,0.08);color:var(--accent);font-family:Nunito,sans-serif;font-size:0.68rem;font-weight:800;cursor:pointer;white-space:nowrap' + (canInvite ? '' : ';opacity:0.4;cursor:not-allowed') + '">📣 Davet</button>';
+        (function(fUid, dName, uname, st) {
+          card.querySelector('.fd-open').onclick = function() { openFriendDetail(fUid, dName, uname, st); };
+          var invBtn = card.querySelector('.inv-btn');
+          if (invBtn && !invBtn.disabled) invBtn.onclick = function() { sendStudyInvite(fUid, dName); };
+        })(friendUid, displayName, username, stats);
 
         if (listEl) listEl.appendChild(card);
       });
     });
+    loadFriendRequests();
     renderAnaFriends();
+    checkBadges();
   }).catch(function() {
     if (listEl) listEl.innerHTML = '<div style="color:var(--muted);font-size:0.78rem;padding:16px">Yüklenemedi.</div>';
   });
@@ -4759,6 +5025,12 @@ var BADGES = [
   { id:'goal4w',   icon:'📆', name:'Dört Hafta Ustası',  hint:'4 haftalık hedefini tamamla',                check: () => (personalGoals._weeklyDoneCount||0) >= 4 },
   { id:'goal_streak3', icon:'🔗', name:'3 Gün Seri Hedef', hint:'3 gün üst üste günlük hedefini tamamla',  check: () => (personalGoals._dailyStreak||0) >= 3 },
   { id:'goal_streak7', icon:'⚡', name:'7 Gün Seri Hedef', hint:'7 gün üst üste günlük hedefini tamamla',  check: () => (personalGoals._dailyStreak||0) >= 7 },
+  { id:'friend1',    icon:'🤝', name:'İlk Arkadaş',    hint:'İlk arkadaşlık isteğini kabul ettir',             check: () => _friendCount >= 1 },
+  { id:'friend5',    icon:'👥', name:'Sosyal Kaşif',    hint:'5 arkadaş edin',                                  check: () => _friendCount >= 5 },
+  { id:'invite1',    icon:'📣', name:'Davetçi',         hint:'Bir arkadaşını çalışmaya davet et',               check: () => _totalInvitesSent >= 1 },
+  { id:'invite_s3',  icon:'🔗', name:'Sıkı Dost',       hint:'3 gün üst üste davet serisi koru',                check: () => _inviteStreakCount >= 3 },
+  { id:'invite_s7',  icon:'💞', name:'Vazgeçmez Dost',  hint:'7 gün üst üste davet serisi koru',                check: () => _inviteStreakCount >= 7 },
+  { id:'invite_s30', icon:'🏅', name:'Efsane Dost',     hint:'30 gün üst üste davet serisi koru',               check: () => _inviteStreakCount >= 30 },
 ];
 
 function calcStreak() {
@@ -4805,7 +5077,13 @@ var BADGE_SVG_PATHS = {
     'goal30d': '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
     'goal4w': '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
     'goal_streak3': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
-    'goal_streak7': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>'
+    'goal_streak7': '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
+    'friend1':     '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    'friend5':     '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    'invite1':     '<path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4 20-7z"/>',
+    'invite_s3':   '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+    'invite_s7':   '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+    'invite_s30':  '<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>'
   };
 var BADGE_COLOR_MAP = {
     "first": ["#34d399", "#064e3b"],
@@ -4829,7 +5107,13 @@ var BADGE_COLOR_MAP = {
     "goal30d": ["#34d399", "#064e3b"],
     "goal4w": ["#f59e0b", "#451a03"],
     "goal_streak3": ["#fb923c", "#431407"],
-    "goal_streak7": ["#a78bfa", "#2e1065"]
+    "goal_streak7": ["#a78bfa", "#2e1065"],
+    "friend1":     ["#34d399", "#064e3b"],
+    "friend5":     ["#22d3ee", "#083344"],
+    "invite1":     ["#f472b6", "#4a0d2e"],
+    "invite_s3":   ["#fb923c", "#431407"],
+    "invite_s7":   ["#f472b6", "#4a0d2e"],
+    "invite_s30":  ["#fbbf24", "#451a03"]
   };
 
 function renderBadges() {
@@ -6238,6 +6522,7 @@ function markSuggestionDone(docId) {
     .then(function() {
       showToast('✅ Öneri tamamlandı olarak işaretlendi!');
       loadCoachSuggestionsForStudent();
+    loadInviteStats();
     }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 

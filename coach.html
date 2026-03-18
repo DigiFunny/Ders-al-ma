@@ -394,9 +394,30 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <svg id="coachFriendsArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
   </div>
   <div id="coachFriendsBody" style="display:none">
-    <div id="coachFriendsWrap">
-      <div style="text-align:center;padding:20px;font-size:0.78rem;color:var(--muted);font-weight:700;background:var(--card);border:1.5px solid var(--border);border-radius:14px">Arkadaş ekle özelliği yakında.</div>
+    <!-- Arkadaş Ekle Satırı -->
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <input type="text" id="coachFriendInput" placeholder="@kullaniciadi" autocomplete="off"
+        style="flex:1;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:0.85rem;color:var(--text);font-family:Nunito,sans-serif;outline:none"
+        onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'"
+        onkeydown="if(event.key==='Enter')coachSearchUser()">
+      <button onclick="coachSearchUser()" style="background:linear-gradient(135deg,var(--coach),var(--coach2));border:none;border-radius:10px;padding:10px 16px;color:#000;font-weight:900;font-size:0.85rem;cursor:pointer;white-space:nowrap;font-family:Nunito,sans-serif">Ara</button>
     </div>
+    <!-- Arama Sonucu Önizleme -->
+    <div id="coachFriendPreview" style="display:none;background:var(--card);border:1.5px solid var(--coach);border-radius:12px;padding:12px 14px;margin-bottom:10px;align-items:center;gap:12px">
+      <div id="coachPreviewAvatar" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--coach),var(--coach2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#000;flex-shrink:0">?</div>
+      <div style="flex:1;min-width:0">
+        <div id="coachPreviewName" style="font-size:0.88rem;font-weight:900"></div>
+        <div id="coachPreviewType" style="font-size:0.68rem;margin-top:2px"></div>
+      </div>
+    </div>
+    <!-- İki ayrı buton -->
+    <div id="coachAddBtns" style="display:none;flex-direction:column;gap:8px;margin-bottom:8px">
+      <button onclick="coachDoAddFriend()" id="coachBtnAddFriend" style="display:none;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:Nunito,sans-serif">➕ Arkadaş Ekle</button>
+      <button onclick="coachDoSendCoachRequest()" id="coachBtnSendCoachReq" style="display:none;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:Nunito,sans-serif">🎯 Koçluk İsteği Gönder</button>
+    </div>
+    <div id="coachFriendMsg" style="font-size:0.75rem;color:var(--muted);min-height:18px;margin-bottom:8px;font-weight:700;text-align:center"></div>
+    <!-- Arkadaş Listesi -->
+    <div id="coachFriendsList"></div>
   </div>
 
   <div style="height:100px"></div>
@@ -1700,6 +1721,8 @@ function toggleCoachCollapse(bodyId, arrowId) {
   var isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
+  // Arkadaşlar bölümü açılınca listeyi yükle
+  if (bodyId === 'coachFriendsBody' && !isOpen) coachLoadFriends();
 }
 
 // Settings open/close
@@ -1952,7 +1975,451 @@ function coachSendFeedback() {
   });
 }
 
+
+// ════════════════════════════════════════════════
+// COACH — ARKADAŞ SİSTEMİ
+// ════════════════════════════════════════════════
+var _coachFoundUser = null;
+var _coachOpenFriendUid = null;
+
+function coachSearchUser() {
+  if (!_user || !_db) return;
+  var username = (document.getElementById('coachFriendInput').value || '').trim().toLowerCase().replace(/^@/, '');
+  var msgEl = document.getElementById('coachFriendMsg');
+  var preview = document.getElementById('coachFriendPreview');
+  if (!username) { msgEl.style.color='#ef4444'; msgEl.textContent = 'Kullanıcı adı gir.'; return; }
+
+  msgEl.style.color='var(--muted)'; msgEl.textContent = 'Aranıyor...';
+  preview.style.display = 'none';
+  document.getElementById('coachBtnAddFriend').style.display = 'none';
+  document.getElementById('coachBtnSendCoachReq').style.display = 'none';
+  document.getElementById('coachAddBtns').style.display = 'none';
+  _coachFoundUser = null;
+
+  _db.collection('usernames').doc(username).get().then(function(uDoc) {
+    if (!uDoc.exists) { msgEl.style.color='#ef4444'; msgEl.textContent = 'Kullanıcı bulunamadı.'; return; }
+    var uid = uDoc.data().uid;
+    if (uid === _user.uid) { msgEl.style.color='#ef4444'; msgEl.textContent = 'Kendini ekleyemezsin.'; return; }
+    return _db.collection('users').doc(uid).get().then(function(userDoc) {
+      var data = userDoc.exists ? userDoc.data() : {};
+      _coachFoundUser = { uid: uid, username: username, displayName: data.displayName || username, accountType: data.accountType || 'student' };
+
+      preview.style.display = 'flex';
+      document.getElementById('coachPreviewAvatar').textContent = _coachFoundUser.displayName.charAt(0).toUpperCase();
+      document.getElementById('coachPreviewName').textContent = _coachFoundUser.displayName + ' · @' + username;
+      var typeEl = document.getElementById('coachPreviewType');
+      typeEl.innerHTML = _coachFoundUser.accountType === 'coach'
+        ? '<span style="color:var(--coach)">🎯 Koç</span>'
+        : '<span style="color:var(--accent)">📚 Öğrenci</span>';
+
+      // Her zaman arkadaş ekle butonu, sadece koç ise koçluk isteği butonu da
+      document.getElementById('coachBtnAddFriend').style.display = 'block';
+      document.getElementById('coachBtnSendCoachReq').style.display = (_coachFoundUser.accountType === 'coach') ? 'block' : 'none';
+      document.getElementById('coachAddBtns').style.display = 'flex';
+      msgEl.textContent = '';
+    });
+  }).catch(function(e) { msgEl.style.color='#ef4444'; msgEl.textContent = '❌ Hata: ' + e.message; });
+}
+
+function coachDoAddFriend() {
+  if (!_coachFoundUser || !_user) return;
+  var msgEl = document.getElementById('coachFriendMsg');
+  msgEl.style.color='var(--muted)'; msgEl.textContent = 'İstek gönderiliyor...';
+  document.getElementById('coachBtnAddFriend').disabled = true;
+
+  _db.collection('friends').doc(_user.uid).collection('list').doc(_coachFoundUser.uid).get()
+    .then(function(doc) {
+      if (doc.exists) throw new Error('Zaten arkadaşsınız!');
+      return _db.collection('friendRequests')
+        .where('fromUid','==',_user.uid)
+        .where('toUid','==',_coachFoundUser.uid)
+        .where('status','==','pending')
+        .get();
+    }).then(function(snap) {
+      if (!snap.empty) throw new Error('Zaten istek gönderilmiş!');
+      return _db.collection('friendRequests').add({
+        fromUid: _user.uid,
+        fromUsername: _user._username || '',
+        fromDisplayName: _user.displayName || _user._username || '',
+        toUid: _coachFoundUser.uid,
+        toUsername: _coachFoundUser.username,
+        toDisplayName: _coachFoundUser.displayName,
+        status: 'pending',
+        sentAt: new Date().toISOString()
+      });
+    }).then(function() {
+      msgEl.style.color='var(--coach)'; msgEl.textContent = '✅ Arkadaşlık isteği gönderildi!';
+      document.getElementById('coachBtnAddFriend').disabled = false;
+      document.getElementById('coachFriendInput').value = '';
+      document.getElementById('coachFriendPreview').style.display = 'none';
+      document.getElementById('coachAddBtns').style.display = 'none';
+      _coachFoundUser = null;
+      setTimeout(function() { msgEl.textContent = ''; }, 1500);
+    }).catch(function(e) {
+      document.getElementById('coachBtnAddFriend').disabled = false;
+      msgEl.style.color='#ef4444'; msgEl.textContent = '❌ ' + e.message;
+    });
+}
+
+function coachDoSendCoachRequest() {
+  if (!_coachFoundUser || !_user) return;
+  if (_coachFoundUser.accountType !== 'coach') {
+    document.getElementById('coachFriendMsg').style.color = '#ef4444';
+    document.getElementById('coachFriendMsg').textContent = '❌ Sadece koç hesaplarına koçluk isteği gönderilebilir.';
+    return;
+  }
+  var msgEl = document.getElementById('coachFriendMsg');
+  msgEl.style.color='var(--muted)'; msgEl.textContent = 'Gönderiliyor...';
+  document.getElementById('coachBtnSendCoachReq').disabled = true;
+
+  // Daha önce istek gönderilmiş mi kontrol et
+  _db.collection('coachRequests')
+    .where('studentUid', '==', _user.uid)
+    .where('coachUid', '==', _coachFoundUser.uid)
+    .get().then(function(snap) {
+      if (!snap.empty) throw new Error('Zaten istek gönderilmiş!');
+      return _db.collection('coachRequests').add({
+        studentUid: _user.uid,
+        studentUsername: _user._username || '',
+        coachUid: _coachFoundUser.uid,
+        status: 'pending',
+        sentAt: new Date().toISOString()
+      });
+    }).then(function() {
+      msgEl.style.color = 'var(--coach)'; msgEl.textContent = '✅ Koçluk isteği gönderildi!';
+      document.getElementById('coachBtnSendCoachReq').disabled = false;
+      document.getElementById('coachBtnSendCoachReq').style.display = 'none';
+      setTimeout(function() {
+        msgEl.textContent = '';
+        document.getElementById('coachFriendInput').value = '';
+        document.getElementById('coachFriendPreview').style.display = 'none';
+        document.getElementById('coachAddBtns').style.display = 'none';
+        _coachFoundUser = null;
+      }, 1500);
+    }).catch(function(e) {
+      document.getElementById('coachBtnSendCoachReq').disabled = false;
+      msgEl.style.color='#ef4444'; msgEl.textContent = '❌ ' + e.message;
+    });
+}
+
+function coachConfirmAddUser() { coachDoAddFriend(); } // legacy compat
+// ════════════════════════════════════════════════
+// COACH — ARKADAŞLIK İSTEKLERİ + DAVET
+// ════════════════════════════════════════════════
+var _coachTodayInviteCount = 0;
+var _coachTodayInviteDate = '';
+var _coachInviteStreak = 0;
+
+function coachLoadFriendRequests() {
+  if (!_user || !_db) return;
+  var listEl = document.getElementById('coachFriendsList');
+  if (!listEl) return;
+
+  _db.collection('friendRequests')
+    .where('toUid','==',_user.uid)
+    .where('status','==','pending')
+    .get().then(function(snap) {
+      if (snap.empty) { coachLoadStudyInvites(); return; }
+      var reqWrap = document.createElement('div');
+      reqWrap.style.cssText = 'background:rgba(251,191,36,0.08);border:1.5px solid rgba(251,191,36,0.3);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+      reqWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:#fbbf24;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📬 Bekleyen İstekler</div>';
+      snap.forEach(function(docSnap) {
+        var req = docSnap.data();
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)';
+        row.innerHTML =
+          '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;flex-shrink:0">' + (req.fromDisplayName||req.fromUsername||'?').charAt(0).toUpperCase() + '</div>' +
+          '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:900">' + (req.fromDisplayName||req.fromUsername) + '</div><div style="font-size:0.65rem;color:var(--muted)">@' + req.fromUsername + ' · arkadaşlık isteği</div></div>' +
+          '<button class="cfr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Kabul</button>' +
+          '<button class="cfr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:#ef4444;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✕</button>';
+        (function(id, fUid, fUser, fName) {
+          row.querySelector('.cfr-acc').onclick = function() { coachAcceptFriendRequest(id, fUid, fUser, fName); };
+          row.querySelector('.cfr-rej').onclick = function() { coachRejectFriendRequest(id); };
+        })(docSnap.id, req.fromUid, req.fromUsername||'', req.fromDisplayName||req.fromUsername||'');
+        reqWrap.appendChild(row);
+      });
+      listEl.insertBefore(reqWrap, listEl.firstChild);
+      coachLoadStudyInvites();
+    });
+}
+
+function coachAcceptFriendRequest(reqId, fromUid, fromUsername, fromDisplayName) {
+  if (!_user || !_db) return;
+  var myUsername = _user._username || '';
+  var myName = _user.displayName || myUsername;
+  var batch = _db.batch();
+  batch.set(_db.collection('friends').doc(_user.uid).collection('list').doc(fromUid), {
+    username: fromUsername, displayName: fromDisplayName, addedAt: new Date().toISOString()
+  });
+  batch.set(_db.collection('friends').doc(fromUid).collection('list').doc(_user.uid), {
+    username: myUsername, displayName: myName, addedAt: new Date().toISOString()
+  });
+  batch.update(_db.collection('friendRequests').doc(reqId), {
+    status: 'accepted', acceptedAt: new Date().toISOString()
+  });
+  batch.commit().then(function() {
+    showToast('🤝 Arkadaşlık kabul edildi!');
+    coachLoadFriends();
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function coachRejectFriendRequest(reqId) {
+  _db.collection('friendRequests').doc(reqId).update({ status: 'rejected' })
+    .then(function() { showToast('İstek reddedildi.'); coachLoadFriends(); });
+}
+
+function coachSendStudyInvite(toUid, toName) {
+  if (!_user || !_db) return;
+  var todayKey = new Date().toISOString().slice(0,10);
+  if (_coachTodayInviteDate === todayKey && _coachTodayInviteCount >= 3) {
+    showToast('⚠️ Bugün en fazla 3 davet gönderebilirsin!');
+    return;
+  }
+  var myName = _user.displayName || _user._username || 'Koçun';
+  _db.collection('studyInvites').add({
+    fromUid: _user.uid, fromName: myName,
+    toUid: toUid, sentAt: new Date().toISOString(),
+    date: todayKey, seen: false
+  }).then(function() {
+    if (_coachTodayInviteDate !== todayKey) { _coachTodayInviteDate = todayKey; _coachTodayInviteCount = 0; }
+    _coachTodayInviteCount++;
+    // Seri güncelle
+    _db.collection('users').doc(_user.uid).get().then(function(doc) {
+      var data = doc.exists ? doc.data() : {};
+      var lastDate = data.inviteStreakDate || '';
+      var streak = data.inviteStreak || 0;
+      var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+      var yKey = yesterday.toISOString().slice(0,10);
+      if (lastDate !== todayKey) {
+        streak = (lastDate === yKey) ? streak + 1 : 1;
+        _coachInviteStreak = streak;
+        _db.collection('users').doc(_user.uid).update({
+          inviteStreak: streak, inviteStreakDate: todayKey,
+          totalInvitesSent: firebase.firestore.FieldValue.increment(1)
+        });
+      }
+    });
+    showToast('📣 ' + toName + ' çalışmaya davet edildi!');
+    coachLoadFriends();
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function coachLoadStudyInvites() {
+  if (!_user || !_db) return;
+  var listEl = document.getElementById('coachFriendsList');
+  if (!listEl) return;
+  _db.collection('studyInvites')
+    .where('toUid','==',_user.uid)
+    .where('seen','==',false)
+    .get().then(function(snap) {
+      if (snap.empty) return;
+      var invWrap = document.createElement('div');
+      invWrap.style.cssText = 'background:rgba(52,211,153,0.08);border:1.5px solid rgba(52,211,153,0.25);border-radius:14px;padding:12px 14px;margin-bottom:10px';
+      invWrap.innerHTML = '<div style="font-size:0.68rem;font-weight:900;color:var(--coach);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📣 Çalışma Davetleri</div>';
+      snap.forEach(function(docSnap) {
+        var inv = docSnap.data();
+        var row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)';
+        row.innerHTML =
+          '<div style="font-size:1.2rem">📣</div>' +
+          '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:900">' + (inv.fromName||'Arkadaşın') + '</div><div style="font-size:0.65rem;color:var(--muted)">seni ders çalışmaya davet etti!</div></div>' +
+          '<button class="cinv-seen" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(52,211,153,0.15);color:var(--coach);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Gördüm</button>';
+        (function(id, r) {
+          row.querySelector('.cinv-seen').onclick = function() { coachMarkInviteSeen(id, r); };
+        })(docSnap.id, row);
+        invWrap.appendChild(row);
+      });
+      listEl.insertBefore(invWrap, listEl.firstChild);
+    });
+}
+
+function coachMarkInviteSeen(inviteId, rowEl) {
+  _db.collection('studyInvites').doc(inviteId).update({ seen: true })
+    .then(function() {
+      if (rowEl) rowEl.remove();
+      var todayKey = new Date().toISOString().slice(0,10);
+      // Seri katkısı — alınan davet de sayılır
+      _db.collection('users').doc(_user.uid).get().then(function(doc) {
+        var data = doc.exists ? doc.data() : {};
+        var lastDate = data.inviteStreakDate || '';
+        var streak = data.inviteStreak || 0;
+        var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+        var yKey = yesterday.toISOString().slice(0,10);
+        if (lastDate !== todayKey) {
+          streak = (lastDate === yKey) ? streak + 1 : 1;
+          _coachInviteStreak = streak;
+          _db.collection('users').doc(_user.uid).update({ inviteStreak: streak, inviteStreakDate: todayKey });
+        }
+      });
+    });
+}
+
+
+
+function coachLoadFriends() {
+  if (!_user || !_db) return;
+  var listEl = document.getElementById('coachFriendsList');
+  if (!listEl) return;
+  listEl.innerHTML = '<div style="text-align:center;padding:14px;font-size:0.75rem;color:var(--muted)">Yükleniyor...</div>';
+
+  _db.collection('friends').doc(_user.uid).collection('list').get().then(function(snap) {
+    if (snap.empty) {
+      listEl.innerHTML = '<div style="text-align:center;padding:16px;font-size:0.78rem;color:var(--muted);font-weight:700;background:var(--card);border:1.5px solid var(--border);border-radius:12px">Henüz arkadaş eklemedin.</div>';
+      coachLoadFriendRequests();
+      return;
+    }
+    listEl.innerHTML = '';
+    coachLoadFriendRequests();
+    snap.forEach(function(doc) {
+      var friendUid = doc.id;
+      var username = doc.data().username;
+
+      Promise.all([
+        _db.collection('weeklyStats').doc(friendUid).get().catch(function(){ return {exists:false}; }),
+        _db.collection('users').doc(friendUid).get().catch(function(){ return {exists:false}; })
+      ]).then(function(results) {
+        var statsDoc = results[0];
+        var userDoc  = results[1];
+        var displayName = (userDoc && userDoc.exists) ? userDoc.data().displayName : username;
+        var stats = (statsDoc && statsDoc.exists) ? statsDoc.data() : null;
+
+        var totalMins = stats ? (stats.totalMins || 0) : 0;
+        var totalSoru = stats ? (stats.totalSoru || 0) : 0;
+        var hours = Math.floor(totalMins / 60), mins2 = totalMins % 60;
+        var timeStr = hours > 0 ? hours + 's ' + mins2 + 'dk' : (totalMins > 0 ? mins2 + 'dk' : '—');
+
+        var card = document.createElement('div');
+        card.style.cssText = 'background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color 0.2s';
+        card.onmouseenter = function(){ this.style.borderColor='var(--coach)'; };
+        card.onmouseleave = function(){ this.style.borderColor='var(--border)'; };
+        var todayKey = new Date().toISOString().slice(0,10);
+        var canInvite = (_coachTodayInviteDate !== todayKey) || (_coachTodayInviteCount < 3);
+        card.innerHTML =
+          '<div class="cfd-open" style="display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;min-width:0">' +
+            '<div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--coach),var(--coach2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#000;flex-shrink:0">' + displayName.charAt(0).toUpperCase() + '</div>' +
+            '<div style="flex:1;min-width:0">' +
+              '<div style="font-size:0.85rem;font-weight:900">' + displayName + ' <span style="color:var(--muted);font-size:0.65rem;font-weight:600">@' + username + '</span></div>' +
+              '<div style="display:flex;gap:10px;margin-top:4px">' +
+                '<span style="font-size:0.68rem;font-weight:700;color:var(--accent)">⏱ ' + timeStr + '</span>' +
+                '<span style="font-size:0.68rem;font-weight:700;color:var(--accent2)">📝 ' + totalSoru + ' soru</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<button class="cinv-btn"' + (canInvite ? '' : ' disabled') + ' style="flex-shrink:0;padding:7px 10px;border-radius:9px;border:1.5px solid rgba(52,211,153,0.3);background:rgba(52,211,153,0.08);color:var(--coach);font-family:Nunito,sans-serif;font-size:0.68rem;font-weight:800;cursor:pointer' + (canInvite ? '' : ';opacity:0.4;cursor:not-allowed') + '">📣 Davet</button>';
+        (function(fUid, dName, uname, st) {
+          card.querySelector('.cfd-open').onclick = function() { openCoachFriendDetail(fUid, dName, uname, st); };
+          var invBtn = card.querySelector('.cinv-btn');
+          if (invBtn && !invBtn.disabled) invBtn.onclick = function() { coachSendStudyInvite(fUid, dName); };
+        })(friendUid, displayName, username, stats);
+        listEl.appendChild(card);
+      });
+    });
+  }).catch(function() {
+    listEl.innerHTML = '<div style="color:var(--muted);font-size:0.78rem;padding:14px">Yüklenemedi.</div>';
+  });
+}
+
+function openCoachFriendDetail(friendUid, displayName, username, stats) {
+  _coachOpenFriendUid = friendUid;
+
+  document.getElementById('coachFdAvatar').textContent = displayName.charAt(0).toUpperCase();
+  document.getElementById('coachFdName').textContent = displayName;
+  document.getElementById('coachFdUname').textContent = '@' + username;
+
+  var totalMins = stats ? (stats.totalMins || 0) : 0;
+  var totalSoru = stats ? (stats.totalSoru || 0) : 0;
+  var totalKonu = stats ? (stats.totalKonu || 0) : 0;
+  var totalAllMins = stats ? (stats.totalAllMins || 0) : 0;
+  var hours = Math.floor(totalMins / 60), mins2 = totalMins % 60;
+  var allH = Math.floor(totalAllMins / 60), allM = totalAllMins % 60;
+  var timeStr = hours > 0 ? hours + 's ' + mins2 + 'dk' : (totalMins > 0 ? mins2 + 'dk' : '—');
+  var allTimeStr = allH > 0 ? allH + 's ' + allM + 'dk' : (totalAllMins > 0 ? allM + 'dk' : '—');
+  var topSubjects = stats ? (stats.topSubjects || []) : [];
+
+  var html = '';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">' +
+    '<div style="background:var(--bg3);border-radius:12px;padding:11px;text-align:center">' +
+      '<div style="font-size:0.58rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bu Hafta</div>' +
+      '<div style="font-family:monospace;font-size:1rem;font-weight:700;color:var(--coach)">' + timeStr + '</div>' +
+      '<div style="font-size:0.62rem;color:var(--muted);margin-top:3px">' + totalSoru + ' soru · ' + totalKonu + ' konu</div>' +
+    '</div>' +
+    '<div style="background:var(--bg3);border-radius:12px;padding:11px;text-align:center">' +
+      '<div style="font-size:0.58rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Toplam</div>' +
+      '<div style="font-family:monospace;font-size:1rem;font-weight:700;color:var(--coach2)">' + allTimeStr + '</div>' +
+    '</div>' +
+  '</div>';
+
+  if (topSubjects.length > 0) {
+    html += '<div style="margin-bottom:12px">' +
+      '<div style="font-size:0.62rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">En Çok Çalışılan</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    topSubjects.slice(0,4).forEach(function(s) {
+      html += '<span style="background:var(--bg3);border-radius:8px;padding:5px 10px;font-size:0.68rem;font-weight:700;color:var(--accent2)">' + s.name + '</span>';
+    });
+    html += '</div></div>';
+  }
+
+  if (!stats) {
+    html = '<div style="text-align:center;padding:28px;color:var(--muted);font-size:0.82rem;font-weight:700">Bu hafta henüz veri yok.</div>';
+  }
+
+  document.getElementById('coachFdContent').innerHTML = html;
+
+  // Modal aç
+  var modal = document.getElementById('coachFriendDetailModal');
+  var sheet = document.getElementById('coachFriendDetailSheet');
+  var overlay = document.getElementById('coachFriendDetailOverlay');
+  modal.style.pointerEvents = 'all';
+  overlay.style.background = 'rgba(0,0,0,0.6)';
+  sheet.style.transform = 'translateY(0)';
+}
+
+function closeCoachFriendModal() {
+  var modal = document.getElementById('coachFriendDetailModal');
+  var sheet = document.getElementById('coachFriendDetailSheet');
+  var overlay = document.getElementById('coachFriendDetailOverlay');
+  modal.style.pointerEvents = 'none';
+  overlay.style.background = 'rgba(0,0,0,0)';
+  sheet.style.transform = 'translateY(100%)';
+  _coachOpenFriendUid = null;
+}
+
+function coachRemoveFriendFromModal() {
+  if (!_coachOpenFriendUid) return;
+  if (!confirm('Bu arkadaşı listenden çıkarmak istiyor musun?')) return;
+  var batch = _db.batch();
+  batch.delete(_db.collection('friends').doc(_user.uid).collection('list').doc(_coachOpenFriendUid));
+  batch.delete(_db.collection('friends').doc(_coachOpenFriendUid).collection('list').doc(_user.uid));
+  batch.commit().then(function() {
+    closeCoachFriendModal();
+    coachLoadFriends();
+    showToast('Arkadaş listeden çıkarıldı.');
+  }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
 document.addEventListener('DOMContentLoaded', initFirebase);
 </script>
+
+<!-- ARKADAŞ DETAY MODALI (Coach) -->
+<div id="coachFriendDetailModal" style="position:fixed;inset:0;z-index:9990;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none">
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.3s" id="coachFriendDetailOverlay" onclick="closeCoachFriendModal()"></div>
+  <div id="coachFriendDetailSheet" style="background:var(--bg2);border-radius:20px 20px 0 0;border-top:1.5px solid rgba(52,211,153,0.3);width:100%;max-width:430px;margin:0 auto;position:relative;padding-bottom:30px;max-height:80vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.35s cubic-bezier(.4,0,.2,1)">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:99px;margin:12px auto 0"></div>
+    <div style="padding:12px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div id="coachFdAvatar" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--coach),var(--coach2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#000">?</div>
+        <div>
+          <div id="coachFdName" style="font-size:0.92rem;font-weight:900"></div>
+          <div id="coachFdUname" style="font-size:0.68rem;color:var(--muted)"></div>
+        </div>
+      </div>
+      <button onclick="closeCoachFriendModal()" style="background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px">✕</button>
+    </div>
+    <div id="coachFdContent" style="padding:14px 16px"></div>
+    <div style="padding:0 16px">
+      <button onclick="coachRemoveFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:#ef4444;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Arkadaşlıktan Çıkar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
