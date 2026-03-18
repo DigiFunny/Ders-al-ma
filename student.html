@@ -4237,14 +4237,14 @@ function doAddFriend() {
     var pending = (targetUserDoc.exists && targetUserDoc.data().pendingFriendRequests) || [];
     var alreadySent = pending.some(function(r) { return r.fromUid === _currentUser.uid; });
     if (alreadySent) throw new Error('Zaten istek gönderilmiş!');
-    return _fbDb.collection('users').doc(_foundUser.uid).update({
+    return _fbDb.collection('users').doc(_foundUser.uid).set({
       pendingFriendRequests: firebase.firestore.FieldValue.arrayUnion({
         fromUid: _currentUser.uid,
         fromUsername: _currentUser._username || '',
         fromDisplayName: _currentUser.displayName || _currentUser._username || '',
         sentAt: new Date().toISOString()
       })
-    });
+    }, { merge: true });
   }).then(function() {
       msgEl.style.color='var(--accent3)'; msgEl.textContent = '✅ Arkadaşlık isteği gönderildi!';
       document.getElementById('btnAddFriend').disabled = false;
@@ -4333,10 +4333,10 @@ function acceptFriendRequest(reqObj) {
   batch.set(_fbDb.collection('friends').doc(reqObj.fromUid).collection('list').doc(_currentUser.uid), {
     username: myUsername, displayName: myName, addedAt: new Date().toISOString()
   });
-  // İsteği kendi dokümanımızdan kaldır
-  batch.update(_fbDb.collection('users').doc(_currentUser.uid), {
+  // İsteği kendi dokümanımızdan kaldır (set+merge: alan yoksa da çalışır)
+  batch.set(_fbDb.collection('users').doc(_currentUser.uid), {
     pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
-  });
+  }, { merge: true });
   batch.commit().then(function() {
     showToast('🤝 Arkadaşlık kabul edildi!');
     _friendCount++;
@@ -4346,9 +4346,9 @@ function acceptFriendRequest(reqObj) {
 }
 
 function rejectFriendRequest(reqObj) {
-  _fbDb.collection('users').doc(_currentUser.uid).update({
+  _fbDb.collection('users').doc(_currentUser.uid).set({
     pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
-  }).then(function() { showToast('İstek reddedildi.'); loadFriendRequests(); });
+  }, { merge: true }).then(function() { showToast('İstek reddedildi.'); loadFriendRequests(); });
 }
 
 // ════════════════════════════════════════════════
@@ -4367,14 +4367,14 @@ function sendStudyInvite(toUid, toName) {
   var myName = _currentUser.displayName || _currentUser._username || 'Arkadaşın';
   // Daveti alıcının kendi users/{uid} dokümanına yazıyoruz.
   // Bu sayede Firestore kuralı sorun çıkarmaz — her kullanıcı kendi dokümanını yazabilir.
-  _fbDb.collection('users').doc(toUid).update({
+  _fbDb.collection('users').doc(toUid).set({
     pendingInvites: firebase.firestore.FieldValue.arrayUnion({
       fromUid: _currentUser.uid,
       fromName: myName,
       sentAt: new Date().toISOString(),
       date: todayKey
     })
-  }).then(function() {
+  }, { merge: true }).then(function() {
     if (_todayInviteDate !== todayKey) { _todayInviteDate = todayKey; _todayInviteCount = 0; }
     _todayInviteCount++;
     _totalInvitesSent++;
@@ -4398,13 +4398,14 @@ function _updateInviteStreak(todayKey) {
     if (lastDate === yKey) streak++; else streak = 1; // zincir kırıldıysa sıfırla
 
     _inviteStreakCount = streak;
-    _fbDb.collection('users').doc(_currentUser.uid).update({
+    // set+merge kullan: alan daha önce yoksa da çalışır
+    _fbDb.collection('users').doc(_currentUser.uid).set({
       inviteStreak: streak,
       inviteStreakDate: todayKey,
       totalInvitesSent: firebase.firestore.FieldValue.increment(1),
       todayInviteDate: todayKey,
       todayInviteCount: firebase.firestore.FieldValue.increment(1)
-    }).then(function() { checkBadges(); });
+    }, { merge: true }).then(function() { checkBadges(); });
   });
 }
 
@@ -4463,9 +4464,9 @@ function loadStudyInvites() {
 
 function markInviteSeen(invObj, rowEl) {
   // pendingInvites array'inden bu daveti kaldır — kendi dokümanımız, izin var
-  _fbDb.collection('users').doc(_currentUser.uid).update({
+  _fbDb.collection('users').doc(_currentUser.uid).set({
     pendingInvites: firebase.firestore.FieldValue.arrayRemove(invObj)
-  }).then(function() {
+  }, { merge: true }).then(function() {
     if (rowEl) rowEl.remove();
     var todayKey = new Date().toISOString().slice(0,10);
     _updateInviteStreak(todayKey);

@@ -2037,14 +2037,14 @@ function coachDoAddFriend() {
     var pending = (targetDoc.exists && targetDoc.data().pendingFriendRequests) || [];
     var alreadySent = pending.some(function(r) { return r.fromUid === _user.uid; });
     if (alreadySent) throw new Error('Zaten istek gönderilmiş!');
-    return _db.collection('users').doc(_coachFoundUser.uid).update({
+    return _db.collection('users').doc(_coachFoundUser.uid).set({
         pendingFriendRequests: firebase.firestore.FieldValue.arrayUnion({
           fromUid: _user.uid,
           fromUsername: _user._username || '',
           fromDisplayName: _user.displayName || _user._username || '',
           sentAt: new Date().toISOString()
         })
-      });
+      }, { merge: true });
     }).then(function() {
       msgEl.style.color='var(--coach)'; msgEl.textContent = '✅ Arkadaşlık isteği gönderildi!';
       document.getElementById('coachBtnAddFriend').disabled = false;
@@ -2151,9 +2151,9 @@ function coachAcceptFriendRequest(reqObj) {
   batch.set(_db.collection('friends').doc(reqObj.fromUid).collection('list').doc(_user.uid), {
     username: myUsername, displayName: myName, addedAt: new Date().toISOString()
   });
-  batch.update(_db.collection('users').doc(_user.uid), {
+  batch.set(_db.collection('users').doc(_user.uid), {
     pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
-  });
+  }, { merge: true });
   batch.commit().then(function() {
     showToast('🤝 Arkadaşlık kabul edildi!');
     coachLoadFriends();
@@ -2161,9 +2161,9 @@ function coachAcceptFriendRequest(reqObj) {
 }
 
 function coachRejectFriendRequest(reqObj) {
-  _db.collection('users').doc(_user.uid).update({
+  _db.collection('users').doc(_user.uid).set({
     pendingFriendRequests: firebase.firestore.FieldValue.arrayRemove(reqObj)
-  }).then(function() { showToast('İstek reddedildi.'); coachLoadFriends(); });
+  }, { merge: true }).then(function() { showToast('İstek reddedildi.'); coachLoadFriends(); });
 }
 
 function coachSendStudyInvite(toUid, toName) {
@@ -2174,14 +2174,14 @@ function coachSendStudyInvite(toUid, toName) {
     return;
   }
   var myName = _user.displayName || _user._username || 'Koçun';
-  _db.collection('users').doc(toUid).update({
+  _db.collection('users').doc(toUid).set({
     pendingInvites: firebase.firestore.FieldValue.arrayUnion({
       fromUid: _user.uid,
       fromName: myName,
       sentAt: new Date().toISOString(),
       date: todayKey
     })
-  }).then(function() {
+  }, { merge: true }).then(function() {
     if (_coachTodayInviteDate !== todayKey) { _coachTodayInviteDate = todayKey; _coachTodayInviteCount = 0; }
     _coachTodayInviteCount++;
     // Seri güncelle
@@ -2194,10 +2194,10 @@ function coachSendStudyInvite(toUid, toName) {
       if (lastDate !== todayKey) {
         streak = (lastDate === yKey) ? streak + 1 : 1;
         _coachInviteStreak = streak;
-        _db.collection('users').doc(_user.uid).update({
+        _db.collection('users').doc(_user.uid).set({
           inviteStreak: streak, inviteStreakDate: todayKey,
           totalInvitesSent: firebase.firestore.FieldValue.increment(1)
-        });
+        }, { merge: true });
       }
     });
     showToast('📣 ' + toName + ' çalışmaya davet edildi!');
@@ -2232,9 +2232,9 @@ function coachLoadStudyInvites() {
 }
 
 function coachMarkInviteSeen(invObj, rowEl) {
-  _db.collection('users').doc(_user.uid).update({
+  _db.collection('users').doc(_user.uid).set({
     pendingInvites: firebase.firestore.FieldValue.arrayRemove(invObj)
-  }).then(function() {
+  }, { merge: true }).then(function() {
     if (rowEl) rowEl.remove();
     var todayKey = new Date().toISOString().slice(0,10);
     _db.collection('users').doc(_user.uid).get().then(function(doc) {
@@ -2246,7 +2246,7 @@ function coachMarkInviteSeen(invObj, rowEl) {
       if (lastDate !== todayKey) {
         streak = (lastDate === yKey) ? streak + 1 : 1;
         _coachInviteStreak = streak;
-        _db.collection('users').doc(_user.uid).update({ inviteStreak: streak, inviteStreakDate: todayKey });
+          _db.collection('users').doc(_user.uid).set({ inviteStreak: streak, inviteStreakDate: todayKey }, { merge: true });
       }
     });
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
