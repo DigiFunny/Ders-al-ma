@@ -120,11 +120,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 
 /* BADGES */
 .badges-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom:10px; }
-.badge-item { display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer; }
-.badge-icon-wrap { width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;border:2px solid transparent; }
-.badge-icon-wrap.earned { border-color:var(--coach); background:rgba(52,211,153,0.1); }
-.badge-icon-wrap.locked { filter:grayscale(1);opacity:0.35; }
+.badge-item { display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 8px;position:relative;overflow:hidden;transition:all 0.2s; }
+.badge-item:active { transform:scale(0.94); }
+.badge-item.earned { border-color:rgba(52,211,153,0.4);box-shadow:0 0 12px rgba(52,211,153,0.15); }
+.badge-icon-wrap { width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:all 0.3s; }
+.badge-icon-wrap.earned { background:rgba(52,211,153,0.15); }
+.badge-icon-wrap.locked { filter:grayscale(1);opacity:0.3; }
 .badge-name { font-size:0.58rem;font-weight:800;color:var(--muted);text-align:center;line-height:1.3; }
+.badge-item.earned .badge-name { color:var(--text); }
 
 /* EMPTY STATE */
 .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
@@ -388,39 +391,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     <div class="badges-grid" id="coachBadgesGrid"></div>
   </div>
 
-  <!-- Arkadaşlar -->
-  <div onclick="toggleCoachCollapse('coachFriendsBody','coachFriendsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-    <div class="sec" style="margin-bottom:0">Arkadaşlar</div>
-    <svg id="coachFriendsArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
-  </div>
-  <div id="coachFriendsBody" style="display:none">
-    <!-- Arkadaş Ekle Satırı -->
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-      <input type="text" id="coachFriendInput" placeholder="@kullaniciadi" autocomplete="off"
-        style="flex:1;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:0.85rem;color:var(--text);font-family:Nunito,sans-serif;outline:none"
-        onfocus="this.style.borderColor='var(--coach)'" onblur="this.style.borderColor='var(--border)'"
-        onkeydown="if(event.key==='Enter')coachSearchUser()">
-      <button onclick="coachSearchUser()" style="background:linear-gradient(135deg,var(--coach),var(--coach2));border:none;border-radius:10px;padding:10px 16px;color:#000;font-weight:900;font-size:0.85rem;cursor:pointer;white-space:nowrap;font-family:Nunito,sans-serif">Ara</button>
-    </div>
-    <!-- Arama Sonucu Önizleme -->
-    <div id="coachFriendPreview" style="display:none;background:var(--card);border:1.5px solid var(--coach);border-radius:12px;padding:12px 14px;margin-bottom:10px;align-items:center;gap:12px">
-      <div id="coachPreviewAvatar" style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--coach),var(--coach2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;color:#000;flex-shrink:0">?</div>
-      <div style="flex:1;min-width:0">
-        <div id="coachPreviewName" style="font-size:0.88rem;font-weight:900"></div>
-        <div id="coachPreviewType" style="font-size:0.68rem;margin-top:2px"></div>
-      </div>
-    </div>
-    <!-- İki ayrı buton -->
-    <div id="coachAddBtns" style="display:none;flex-direction:column;gap:8px;margin-bottom:8px">
-      <button onclick="coachDoAddFriend()" id="coachBtnAddFriend" style="display:none;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:Nunito,sans-serif">➕ Arkadaş Ekle</button>
-      <button onclick="coachDoSendCoachRequest()" id="coachBtnSendCoachReq" style="display:none;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:Nunito,sans-serif">🎯 Koçluk İsteği Gönder</button>
-    </div>
-    <div id="coachFriendMsg" style="font-size:0.75rem;color:var(--muted);min-height:18px;margin-bottom:8px;font-weight:700;text-align:center"></div>
-    <!-- Arkadaş Listesi -->
-    <div id="coachFriendsList"></div>
-  </div>
-
   <div style="height:100px"></div>
+</div>
 </div>
 
 <!-- AYARLAR SAYFASI (Koç) -->
@@ -1722,8 +1694,7 @@ function toggleCoachCollapse(bodyId, arrowId) {
   var isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
-  // Arkadaşlar bölümü açılınca listeyi yükle
-  if (bodyId === 'coachFriendsBody' && !isOpen) coachLoadFriends();
+
 }
 
 // Settings open/close
@@ -1803,14 +1774,44 @@ function renderCoachBadges(suggCount) {
     _coachBadgeDefs.forEach(function(b) {
       var earned = b.check(data);
       var item = document.createElement('div');
-      item.className = 'badge-item';
-      item.title = earned ? b.name : b.hint;
+      item.className = 'badge-item' + (earned ? ' earned' : '');
       item.innerHTML =
         '<div class="badge-icon-wrap ' + (earned ? 'earned' : 'locked') + '">' + b.icon + '</div>' +
-        '<div class="badge-name">' + b.name + '</div>';
+        '<div class="badge-name">' + b.name + '</div>' +
+        (earned ? '' : '<svg style="position:absolute;top:5px;right:5px;opacity:0.3" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>');
+      (function(badge, isEarned) {
+        item.onclick = function() { openCoachBadgeTooltip(badge, isEarned); };
+      })(b, earned);
       grid.appendChild(item);
     });
   });
+}
+
+function openCoachBadgeTooltip(b, earned) {
+  var el = document.getElementById('coachBadgeTooltip');
+  var box = document.getElementById('coachBadgeBox');
+  if (!el) return;
+  document.getElementById('coachBtIcon').textContent = b.icon;
+  document.getElementById('coachBtName').textContent = b.name;
+  var statusEl = document.getElementById('coachBtStatus');
+  statusEl.textContent = earned ? '✅ KAZANILDI' : '🔒 KİLİTLİ';
+  statusEl.style.color = earned ? 'var(--coach)' : 'var(--muted)';
+  document.getElementById('coachBtHint').textContent = b.hint;
+  el.style.display = 'flex';
+  el.style.pointerEvents = 'all';
+  requestAnimationFrame(function() {
+    box.style.transform = 'scale(1)';
+    box.style.opacity = '1';
+  });
+}
+
+function closeCoachBadgeTooltip() {
+  var el = document.getElementById('coachBadgeTooltip');
+  var box = document.getElementById('coachBadgeBox');
+  if (!el) return;
+  box.style.transform = 'scale(0.8)';
+  box.style.opacity = '0';
+  setTimeout(function() { el.style.display = 'none'; el.style.pointerEvents = 'none'; }, 250);
 }
 
 // Confirm modal
@@ -2494,6 +2495,18 @@ document.addEventListener('DOMContentLoaded', initFirebase);
       <button id="coachFdInviteBtn" onclick="coachInviteFriendFromModal()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--coach),var(--coach2));border:none;border-radius:12px;color:#000;font-size:0.9rem;font-weight:900;cursor:pointer;font-family:Nunito,sans-serif">🔔 Derse Çağır</button>
       <button onclick="coachRemoveFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:#ef4444;font-size:0.85rem;font-weight:800;cursor:pointer;font-family:Nunito,sans-serif">Arkadaşlıktan Çıkar</button>
     </div>
+  </div>
+</div>
+
+<!-- COACH BADGE TOOLTIP MODAL -->
+<div id="coachBadgeTooltip" style="position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;pointer-events:none">
+  <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5)" onclick="closeCoachBadgeTooltip()"></div>
+  <div id="coachBadgeBox" style="position:relative;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:24px 22px;text-align:center;max-width:280px;width:90%;transform:scale(0.8);opacity:0;transition:all 0.25s cubic-bezier(.34,1.56,.64,1)">
+    <div id="coachBtIcon" style="font-size:3rem;display:block;margin-bottom:10px">🏆</div>
+    <div id="coachBtName" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;margin-bottom:6px"></div>
+    <div id="coachBtStatus" style="font-size:0.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px"></div>
+    <div id="coachBtHint" style="font-size:0.82rem;color:var(--muted);font-weight:700;line-height:1.5;background:var(--bg3);border-radius:10px;padding:10px"></div>
+    <button onclick="closeCoachBadgeTooltip()" style="margin-top:14px;padding:8px 20px;border:none;border-radius:10px;background:var(--coach);color:#000;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:Nunito,sans-serif">Tamam</button>
   </div>
 </div>
 </body>

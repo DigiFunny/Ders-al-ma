@@ -48,6 +48,11 @@
   --text: #e2e8f0;
   --muted: #4b6280;
   --r: 16px;
+  /* Cam / yarı saydam efekt değişkenleri */
+  --glass-bg: rgba(11, 17, 32, 0.72);
+  --glass-border: rgba(56, 189, 248, 0.14);
+  --glass-blur: blur(18px);
+  --glass-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
 html, body { height: 100%; }
@@ -72,15 +77,18 @@ body {
 .header {
   padding: 16px 16px 8px;
   position: sticky; top: 0; z-index: 50;
-  background: linear-gradient(180deg, var(--bg) 85%, transparent);
+  background: linear-gradient(180deg, rgba(8,13,24,0.92) 75%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 .header-row { display: flex; align-items: center; justify-content: space-between; }
 .logo { font-family: 'Space Mono', monospace; font-size: 1.2rem; background: linear-gradient(135deg, var(--fox-orange), var(--fox-amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
 
 /* YKS COUNTDOWN */
 .yks-bar {
-  background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(129,140,248,0.12));
-  border: 1px solid rgba(56,189,248,0.2);
+  background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(129,140,248,0.1));
+  border: 1px solid rgba(56,189,248,0.18);
+  box-shadow: inset 0 1px 0 rgba(56,189,248,0.1), 0 2px 8px rgba(56,189,248,0.05);
   border-radius: var(--r);
   padding: 10px 14px;
   margin-top: 10px;
@@ -100,13 +108,15 @@ body {
   position: fixed; bottom: max(14px, env(safe-area-inset-bottom, 14px)); left: 50%;
   transform: translateX(-50%) translateZ(0);
   width: calc(100% - 24px); max-width: 406px;
-  border: 1.5px solid rgba(56,189,248,0.2);
+  border: 1.5px solid var(--glass-border);
   border-radius: 28px;
   display: flex; z-index: 100;
   padding: 8px 6px 8px;
   gap: 2px;
-  background: var(--card);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(56,189,248,0.1), inset 0 1px 0 rgba(56,189,248,0.08);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow), 0 0 0 1px rgba(56,189,248,0.08);
 }
 .tab-btn {
   flex: 1; background: none; border: none; color: var(--muted);
@@ -119,7 +129,7 @@ body {
 .tab-btn .ti svg { transition: transform 0.2s; }
 .tab-btn.active .ti svg { transform: scale(1.1); }
 .tab-btn span:last-of-type { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-.tab-btn.active { color: var(--fox-orange); background: rgba(251,146,60,0.1); }
+.tab-btn.active { color: var(--fox-orange); background: linear-gradient(135deg, rgba(251,146,60,0.15), rgba(251,146,60,0.06)); box-shadow: inset 0 1px 0 rgba(251,146,60,0.15); }
 .tab-dot { display: none; }
 
 /* Desktop büyük ekran iyileştirmesi */
@@ -132,17 +142,17 @@ body {
 /* PAGES */
 .page { display: none; padding: 0 14px; animation: fadeUp 0.25s ease; }
 .page.active { display: block; }
-@keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 /* SECTION TITLE */
 .sec { font-size: 0.7rem; font-weight: 800; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; margin-top: 16px; }
 
 /* CARDS */
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
 
 /* TODAY STATS */
 .today-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 4px; }
-.today-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 8px; text-align: center; }
+.today-card { background: linear-gradient(160deg, var(--card), var(--bg2)); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 8px; text-align: center; box-shadow: inset 0 1px 0 rgba(56,189,248,0.06); transition: border-color 0.2s; }
 .today-val { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; display: block; }
 .today-lbl { font-size: 0.6rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
@@ -154,7 +164,7 @@ body {
 .subj-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; margin-bottom: 12px; }
 .subj-scroll::-webkit-scrollbar { display: none; }
 .subj-chip { flex-shrink: 0; padding: 8px 14px; border-radius: 99px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-weight: 800; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-.subj-chip.active { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.1); }
+.subj-chip.active { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.12); box-shadow: 0 0 8px rgba(129,140,248,0.2); }
 
 /* TOPIC LIST */
 .topic-list { max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--r); }
@@ -200,7 +210,8 @@ body {
 
 
 /* BIG BUTTON */
-.btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s; letter-spacing: 0.3px; }
+.btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; letter-spacing: 0.3px; box-shadow: 0 4px 14px rgba(56,189,248,0.25); }
+.btn-save:hover { box-shadow: 0 6px 20px rgba(56,189,248,0.35); }
 .btn-save:active { opacity: 0.85; }
 .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -247,12 +258,13 @@ body {
 .bar-row { display: flex; align-items: center; gap: 10px; }
 .bar-label { font-size: 0.72rem; font-weight: 800; color: var(--muted); min-width: 90px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .bar-track { flex: 1; background: var(--bg3); border-radius: 99px; height: 8px; overflow: hidden; }
-.bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.6s ease; }
+.bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.6s ease; box-shadow: 0 0 6px rgba(56,189,248,0.3); }
 .bar-val { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--muted); min-width: 36px; text-align: right; }
 
 /* LOG LIST */
 .log-list { display: flex; flex-direction: column; gap: 8px; }
-.log-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; display: flex; align-items: center; gap: 12px; animation: fadeUp 0.25s ease; }
+.log-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; display: flex; align-items: center; gap: 12px; animation: fadeUp 0.25s ease; transition: border-color 0.2s, box-shadow 0.2s; }
+.log-item:active { border-color: rgba(56,189,248,0.3); box-shadow: 0 2px 12px rgba(56,189,248,0.08); }
 .log-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
 .log-info { flex: 1; min-width: 0; }
 .log-title { font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -285,7 +297,7 @@ body {
 .heat-lbl { font-size: 0.58rem; color: var(--muted); font-weight: 800; }
 
 .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
-.summary-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; }
+.summary-card { background: linear-gradient(160deg, var(--card), var(--bg2)); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
 .summary-val { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; display: block; }
 .summary-lbl { font-size: 0.65rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
@@ -293,13 +305,13 @@ body {
 .quick-btn:active, .quick-btn.qactive { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.12); }
 
 /* THEME */
-body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2:#f8fafc; --border:#cbd5e1; --text:#1e293b; --muted:#64748b; }
+body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2:#f8fafc; --border:#cbd5e1; --text:#1e293b; --muted:#64748b; --glass-bg:rgba(240,244,248,0.75); --glass-border:rgba(56,189,248,0.18); --glass-shadow:0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8); }
 
 /* THEME TOGGLE */
 .theme-btn { width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s; }
 
 /* XP BAR */
-.xp-bar-wrap { background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:10px; }
+.xp-bar-wrap { background:linear-gradient(160deg,var(--card),var(--bg2));border:1px solid rgba(251,191,36,0.15);border-radius:var(--r);padding:10px 14px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(251,191,36,0.08); }
 .xp-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:6px; }
 .xp-level { font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--yellow); }
 .xp-title { font-size:0.72rem;font-weight:800;color:var(--muted); }
@@ -359,7 +371,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   font-weight: 800;
 }
 
-.motiv-card { background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.1));border:1px solid rgba(56,189,248,0.2);border-radius:var(--r);padding:14px;margin-bottom:10px;position:relative;overflow:hidden; }
+.motiv-card { background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1px solid rgba(56,189,248,0.18);border-radius:var(--r);padding:14px;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(56,189,248,0.1), 0 2px 10px rgba(56,189,248,0.04); }
 .motiv-quote { font-size:0.88rem;font-weight:700;line-height:1.5;font-style:italic;margin-bottom:6px; }
 .motiv-author { font-size:0.7rem;color:var(--muted);font-weight:800; }
 .motiv-refresh { position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer; }
@@ -438,7 +450,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .soru-input-item { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:12px 10px; text-align:center; transition:border-color 0.2s; }
 .soru-input-item:focus-within { border-color:var(--accent); }
 .soru-input-item .soru-lbl { font-size:0.65rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
-.soru-input-item input { background:none; border:none; outline:none; width:100%; text-align:center; font-family:'Space Mono',monospace; font-size:1.4rem; font-weight:700; color:var(--text); }
+.soru-input-item input { background:none; border:none; outline:none; width:100%; text-align:center; font-family:'Space Mono',monospace; font-size:1.4rem; font-weight:700; color:var(--text); -webkit-appearance:none; appearance:none; }
 .soru-net-display { background:var(--card); border:1.5px solid var(--accent2); border-radius:14px; padding:12px; text-align:center; margin-bottom:16px; }
 .soru-net-val { font-family:'Space Mono',monospace; font-size:1.8rem; font-weight:700; color:var(--accent2); }
 .soru-net-lbl { font-size:0.65rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
@@ -758,7 +770,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .auth-pw-toggle svg { width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
 
 /* USER BAR */
-.user-bar { display:flex;align-items:center;gap:10px;padding:8px 16px;background:var(--bg);border-bottom:1px solid var(--border);justify-content:space-between; }
+.user-bar { display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(8,13,24,0.88);border-bottom:1px solid rgba(56,189,248,0.1);justify-content:space-between;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:sticky;top:0;z-index:60; }
 .user-bar-info { display:flex;align-items:center;gap:10px; }
 .user-avatar { width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.82rem;color:#fff;flex-shrink:0;letter-spacing:0; }
 .user-name { font-size:0.8rem;font-weight:800;color:var(--text); }
@@ -830,30 +842,46 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <div class="soru-modal-sub" id="soruModalSub">Sonuçları kaydetmek ister misin?</div>
     </div>
     <div class="soru-modal-body">
-      <div class="soru-input-grid">
+      <!-- Toplam soru — önce bu girilir -->
+      <div style="margin-bottom:12px">
+        <div class="soru-lbl" style="color:#fbbf24;margin-bottom:6px">📦 Toplam Soru Sayısı</div>
+        <div class="soru-input-item" style="border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+          <input type="number" id="soruToplam" placeholder="Kaç soru çözdün?" min="0" max="999"
+            style="flex:1;font-size:1.3rem"
+            oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*">
+          <span style="font-size:0.75rem;color:var(--muted);font-weight:700">soru</span>
+        </div>
+      </div>
+      <!-- D / Y / B grid -->
+      <div class="soru-input-grid" style="margin-bottom:12px">
         <div class="soru-input-item">
           <div class="soru-lbl" style="color:#34d399">✅ Doğru</div>
-          <input type="number" id="soruDogru" placeholder="0" min="0" oninput="calcSoruNet()">
+          <input type="number" id="soruDogru" placeholder="0" min="0"
+            oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*">
+          <div id="soruDograErr" style="font-size:0.6rem;color:#f87171;margin-top:3px;min-height:12px"></div>
         </div>
         <div class="soru-input-item">
           <div class="soru-lbl" style="color:#f87171">❌ Yanlış</div>
-          <input type="number" id="soruYanlis" placeholder="0" min="0" oninput="calcSoruNet()">
+          <input type="number" id="soruYanlis" placeholder="0" min="0"
+            oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*">
+          <div id="soruYanlisErr" style="font-size:0.6rem;color:#f87171;margin-top:3px;min-height:12px"></div>
         </div>
-        <div class="soru-input-item">
-          <div class="soru-lbl" style="color:#94a3b8">⬜ Boş</div>
-          <input type="number" id="soruBos" placeholder="0" min="0" oninput="calcSoruNet()">
-        </div>
-        <div class="soru-input-item">
-          <div class="soru-lbl" style="color:#fbbf24">📦 Toplam</div>
-          <input type="number" id="soruToplam" placeholder="0" min="0" oninput="calcSoruNet()">
+        <div class="soru-input-item" style="grid-column:span 2">
+          <div class="soru-lbl" style="color:#94a3b8">⬜ Boş <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(otomatik hesaplanır)</span></div>
+          <input type="number" id="soruBos" placeholder="—" min="0"
+            oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*"
+            style="color:var(--muted)">
         </div>
       </div>
-      <div class="soru-net-display">
+      <!-- Net -->
+      <div class="soru-net-display" style="margin-bottom:12px">
         <div class="soru-net-val" id="soruNetVal">0.00</div>
-        <div class="soru-net-lbl">NET (D - Y÷4)</div>
+        <div class="soru-net-lbl">NET (D − Y÷4)</div>
       </div>
+      <!-- Hata mesajı -->
+      <div id="soruModalErr" style="font-size:0.75rem;color:#f87171;font-weight:700;text-align:center;min-height:18px;margin-bottom:8px"></div>
       <div class="soru-modal-btns">
-        <button class="btn-save" onclick="saveSoruModal()">💾 Kaydet</button>
+        <button class="btn-save" id="soruKaydetBtn" onclick="saveSoruModal()">💾 Kaydet</button>
         <button class="btn-skip" onclick="skipSoruModal()">Eklemeden Devam Et →</button>
       </div>
     </div>
@@ -931,23 +959,37 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 
 <!-- USER BAR (login sonrası header'ın altında görünür) -->
-<div class="user-bar" id="userBar" style="display:none;position:sticky;top:0;z-index:60;">
-  <div class="user-bar-info">
-    <div class="user-avatar" id="userAvatarBar">?</div>
-    <div>
-      <div class="user-name" id="userNameBar">—</div>
-      <div class="user-uname" id="userUnameBar">@—</div>
+<div class="user-bar" id="userBar" style="position:sticky;top:0;z-index:60;">
+  <!-- Giriş yapılmış hali -->
+  <div id="userBarLoggedIn" style="display:none;width:100%;display:none;align-items:center;justify-content:space-between;gap:10px">
+    <div class="user-bar-info">
+      <div class="user-avatar" id="userAvatarBar">?</div>
+      <div>
+        <div class="user-name" id="userNameBar">—</div>
+        <div class="user-uname" id="userUnameBar">@—</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div id="streakBarBox" onclick="openStreakModal()" style="display:flex;align-items:center;gap:5px;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer;font-weight:800;font-size:0.82rem;color:var(--text);transition:opacity 0.3s">
+        <span id="streakFireIcon" style="font-size:1rem;transition:filter 0.3s">🔥</span>
+        <span id="streakNumBar">0</span>
+        <span style="color:var(--muted);font-size:0.72rem">gün</span>
+      </div>
+      <button onclick="openSettingsModal()" style="width:36px;height:36px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:8px">
-    <div onclick="openStreakModal()" style="display:flex;align-items:center;gap:5px;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:6px 12px;cursor:pointer;font-weight:800;font-size:0.82rem;color:var(--text)">
-      <span style="font-size:1rem">🔥</span>
-      <span id="streakNumBar">0</span>
-      <span style="color:var(--muted);font-size:0.72rem">gün</span>
+  <!-- Misafir hali -->
+  <div id="userBarGuest" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <div class="user-bar-info">
+      <div class="user-avatar" style="background:linear-gradient(135deg,var(--muted),#374151)">👤</div>
+      <div>
+        <div class="user-name">Misafir</div>
+        <div class="user-uname">Giriş yapılmadı</div>
+      </div>
     </div>
-    <button onclick="openSettingsModal()" style="width:36px;height:36px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
+    <button onclick="window.location.href='index.html'" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:7px 14px;color:#fff;font-weight:800;font-size:0.75rem;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif">Giriş Yap</button>
   </div>
 </div>
 
@@ -1034,7 +1076,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="motiv-card" id="motivCard">
     <div class="motiv-quote" id="motivQuote">Yükleniyor...</div>
     <div class="motiv-author" id="motivAuthor"></div>
-    <button class="motiv-refresh" onclick="newMotiv()">🔄</button>
+
   </div>
 
   <div class="sec">Bugün</div>
@@ -1367,7 +1409,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <div style="font-size:0.82rem;font-weight:800;color:var(--text);margin-bottom:2px">Hesap oluştur</div>
       <div style="font-size:0.7rem;color:var(--muted);font-weight:600">Verilerini kaydet, arkadaşlarınla bağlan</div>
     </div>
-    <button onclick="openAuthModal()" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:9px 16px;color:#fff;font-weight:800;font-size:0.78rem;cursor:pointer;white-space:nowrap;flex-shrink:0">Giriş Yap</button>
+    <button onclick="window.location.href='index.html'" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:9px 16px;color:#fff;font-weight:800;font-size:0.78rem;cursor:pointer;white-space:nowrap;flex-shrink:0">Giriş Yap</button>
   </div>
 
   <!-- PROFİL PANELİ -->
@@ -1405,7 +1447,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <!-- Koç İsteklerim -->
     <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
       <div onclick="toggleCollapse('coachReqBody','coachReqArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-        <div class="sec" style="margin-bottom:0">Koç İsteklerim</div>
+        <div class="sec" style="margin-bottom:0">Koçlarım</div>
         <svg id="coachReqArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div id="coachReqBody" style="display:none">
@@ -1420,14 +1462,8 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
     <div id="friendsBody" style="display:none">
       <div id="friendsWrap"></div>
-      <!-- Davet Serisi Banner -->
-      <div id="inviteStreakBanner" style="display:none;background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(251,146,60,0.12));border:1.5px solid rgba(244,114,182,0.3);border-radius:12px;padding:10px 14px;margin-top:8px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:1.4rem">🔗</span>
-        <div style="flex:1">
-          <div style="font-size:0.8rem;font-weight:900">Davet Serisi <span id="inviteStreakNum" style="color:#f472b6;font-family:monospace">0</span> Gün 🔥</div>
-          <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Her gün davet et ya da davet al, seriyi kır!</div>
-        </div>
-      </div>
+      <!-- Davet Serisi Banner — arkadaş kartına taşındı, burada gizli -->
+      <div id="inviteStreakBanner" style="display:none"><span id="inviteStreakNum">0</span></div>
     </div>
 
     <!-- Başarımlar -->
@@ -2207,6 +2243,9 @@ function saveTimerEntry(mins, dogru, yanlis, net, totalSoru) {
   save();
   updateStreak();
   renderAna();
+  renderGoalCard();
+  renderAnaGoals();
+  renderGoalPieChart();
   addXP(entry);
   launchConfetti();
   checkBadges();
@@ -2221,6 +2260,18 @@ function openSoruModal(mins) {
   document.getElementById('soruBos').value = '';
   document.getElementById('soruToplam').value = '';
   document.getElementById('soruNetVal').textContent = '0.00';
+  document.getElementById('soruNetVal').style.color = 'var(--accent2)';
+  var errEl = document.getElementById('soruModalErr');
+  if (errEl) errEl.textContent = '';
+  var dErr = document.getElementById('soruDograErr');
+  if (dErr) dErr.textContent = '';
+  var yErr = document.getElementById('soruYanlisErr');
+  if (yErr) yErr.textContent = '';
+  var btn = document.getElementById('soruKaydetBtn');
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+  // Boş alanı pasif göster
+  var bosEl = document.getElementById('soruBos');
+  if (bosEl) { bosEl.placeholder = '—'; bosEl.style.color = 'var(--muted)'; }
   document.getElementById('soruModalSub').textContent =
     (currentSubject || '') + (currentTopic ? ' · ' + currentTopic : '') + ' · ' + mins + ' dk';
   document.getElementById('soruModal').classList.add('open');
@@ -2231,38 +2282,75 @@ function calcSoruNet() {
   const yEl = document.getElementById('soruYanlis');
   const bEl = document.getElementById('soruBos');
   const tEl = document.getElementById('soruToplam');
+  const netEl = document.getElementById('soruNetVal');
+  const errEl = document.getElementById('soruModalErr');
+  const dErrEl = document.getElementById('soruDograErr');
+  const yErrEl = document.getElementById('soruYanlisErr');
+  const kaydetBtn = document.getElementById('soruKaydetBtn');
 
-  const toplam = parseFloat(tEl.value) || 0;
-  let d = parseFloat(dEl.value) || 0;
-  let y = parseFloat(yEl.value) || 0;
+  const toplam = parseInt(tEl.value) || 0;
+  const d = parseInt(dEl.value) || 0;
+  const y = parseInt(yEl.value) || 0;
 
-  if (toplam > 0 && dEl.value === '' && yEl.value === '') {
-    // Sadece toplam girildi: hepsi doğru kabul
-    d = toplam; y = 0;
-    dEl.value = toplam;
-    bEl.value = 0;
-  } else if (toplam > 0 && dEl.value !== '') {
-    // Toplam var, dogru girildi: kalan = bos (yanlis sıfır kabul)
-    y = parseFloat(yEl.value) || 0;
+  // Hata mesajlarını temizle
+  if (dErrEl) dErrEl.textContent = '';
+  if (yErrEl) yErrEl.textContent = '';
+  if (errEl) errEl.textContent = '';
+
+  // Boş otomatik hesapla (toplam girilmişse)
+  if (toplam > 0) {
     const bos = Math.max(0, toplam - d - y);
     bEl.value = bos;
-  } else if (toplam === 0 && (d > 0 || y > 0)) {
-    // Sadece dogru/yanlis: toplam hesapla
-    const b = parseFloat(bEl.value) || 0;
-    if (!tEl.value) tEl.value = d + y + b || '';
+    bEl.style.color = 'var(--muted)';
   }
 
-  const net = Math.max(0, d - y / 4);
-  document.getElementById('soruNetVal').textContent = net.toFixed(2);
+  // Validasyon
+  let hasErr = false;
+
+  if (toplam > 0 && d > toplam) {
+    if (dErrEl) dErrEl.textContent = 'Toplamı aşamaz!';
+    dEl.style.borderColor = '#f87171';
+    hasErr = true;
+  } else {
+    dEl.style.borderColor = '';
+  }
+
+  if (toplam > 0 && y > toplam) {
+    if (yErrEl) yErrEl.textContent = 'Toplamı aşamaz!';
+    yEl.style.borderColor = '#f87171';
+    hasErr = true;
+  } else {
+    yEl.style.borderColor = '';
+  }
+
+  if (toplam > 0 && (d + y) > toplam) {
+    if (errEl) errEl.textContent = '⚠️ Doğru + Yanlış toplamı, toplam soru sayısını aşıyor!';
+    hasErr = true;
+  }
+
+  // Net hesapla
+  const net = d - y / 4;
+  netEl.textContent = net.toFixed(2);
+  netEl.style.color = net < 0 ? '#f87171' : 'var(--accent2)';
+
+  // Kaydet butonu
+  if (kaydetBtn) kaydetBtn.disabled = hasErr;
+  if (kaydetBtn) kaydetBtn.style.opacity = hasErr ? '0.4' : '1';
 }
 
 function saveSoruModal() {
-  const d = parseFloat(document.getElementById('soruDogru').value) || 0;
-  const y = parseFloat(document.getElementById('soruYanlis').value) || 0;
-  const t = parseFloat(document.getElementById('soruToplam').value) || 0;
-  const net = Math.max(0, d - y / 4);
-  // toplam soru = toplam alanı || dogru+yanlis+bos
-  const b = parseFloat(document.getElementById('soruBos').value) || 0;
+  const d = parseInt(document.getElementById('soruDogru').value) || 0;
+  const y = parseInt(document.getElementById('soruYanlis').value) || 0;
+  const t = parseInt(document.getElementById('soruToplam').value) || 0;
+  const b = parseInt(document.getElementById('soruBos').value) || 0;
+
+  // Son validasyon
+  if (t > 0 && (d + y) > t) {
+    document.getElementById('soruModalErr').textContent = '⚠️ Doğru + Yanlış, Toplam soru sayısını aşıyor!';
+    return;
+  }
+
+  const net = d - y / 4;
   const totalSoru = t || (d + y + b);
   document.getElementById('soruModal').classList.remove('open');
   saveTimerEntry(_soruModalMins, d, y, net, totalSoru);
@@ -2381,6 +2469,9 @@ function saveEntry() {
   showToast('✅ Kaydedildi! +' + xpGained + ' XP' + (sure > 0 ? ' · ' + sure + 'dk' : '') + (dogru > 0 ? ' · ' + dogru + 'D' : ''));
   launchConfetti();
   renderAna();
+  renderGoalCard();
+  renderAnaGoals();
+  renderGoalPieChart();
   updateStreak();
   checkBadges();
 }
@@ -2606,6 +2697,8 @@ function saveDeneme() {
 
   saveToCloud();
   syncWeeklyStats();
+  renderGoalCard();
+  renderAnaGoals();
 
   // Temizle
   fields.forEach(function(f) {
@@ -2797,7 +2890,7 @@ function renderGreeting() {
   if (timeEl) timeEl.textContent = period;
 
   var nameHtml = username
-    ? greeting + ', <span class="greeting-name">@' + username + '</span>'
+    ? greeting + ', <span class="greeting-name">' + username + '</span>'
     : greeting;
 
   textEl.innerHTML = nameHtml;
@@ -3267,19 +3360,33 @@ function drawDonut(svgId, legendId, data) {
 // STREAK
 // ════════════════════════════════════════════
 function updateStreak() {
-  const dates = [...new Set(entries.map(e => e.date))];
-  const now = new Date();
-  let streak = 0;
-  for (let i = 0; i < 365; i++) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    if (dates.includes(d.toLocaleDateString('tr-TR'))) streak++;
-    else break;
-  }
+  const streak = calcStreak();
+  const worked = workedToday();
+
+  // streakNum (streak modal içi)
   var streakNumEl = document.getElementById('streakNum');
   if (streakNumEl) streakNumEl.textContent = streak;
+
+  // streakNumBar (üst bar)
   var barEl = document.getElementById('streakNumBar');
   if (barEl) barEl.textContent = streak;
+
+  // Üst bardaki seri kutusunu renklendir
+  var streakBox = document.getElementById('streakBarBox');
+  if (streakBox) {
+    if (worked || streak === 0) {
+      streakBox.style.opacity = '1';
+      streakBox.title = streak > 0 ? streak + ' günlük seri!' : '';
+      var fireSpan = document.getElementById('streakFireIcon');
+      if (fireSpan) fireSpan.style.filter = '';
+    } else {
+      // Bugün henüz çalışılmadı — seri beklemede, soluk göster
+      streakBox.style.opacity = '0.5';
+      streakBox.title = '⚠️ Bugün çalışmazsan serin biter!';
+      var fireSpan = document.getElementById('streakFireIcon');
+      if (fireSpan) fireSpan.style.filter = 'grayscale(0.7)';
+    }
+  }
 }
 // updateStreak DOMContentLoaded'da
 
@@ -3490,7 +3597,9 @@ function onUserLoggedIn(user) {
     if (_currentUser) { _currentUser._username = username; _currentUser._accountType = accountType; }
 
     // User bar güncelle
-    document.getElementById('userBar').style.display = 'flex';
+    // userBar her zaman görünür — sadece içeriği değiştir
+    document.getElementById('userBarGuest').style.display = 'none';
+    document.getElementById('userBarLoggedIn').style.display = 'flex';
     document.getElementById('userAvatarBar').textContent = displayName.charAt(0).toUpperCase();
     document.getElementById('userNameBar').textContent = displayName;
     document.getElementById('userUnameBar').textContent = '@' + username;
@@ -3513,7 +3622,11 @@ function onUserLoggedIn(user) {
 
 function onUserLoggedOut() {
   entries = []; denemeler = []; badges = []; weeklyGoal = 600;
-  document.getElementById('userBar').style.display = 'none';
+  // userBar görünür kalır, misafir içeriği göster
+  var loggedInBar = document.getElementById('userBarLoggedIn');
+  var guestBar = document.getElementById('userBarGuest');
+  if (loggedInBar) loggedInBar.style.display = 'none';
+  if (guestBar) guestBar.style.display = 'flex';
   var banner = document.getElementById('loginPromptBanner');
   if (banner) banner.style.display = 'flex';
   var xbw = document.getElementById('xpBarWrap');
@@ -3530,7 +3643,8 @@ function onUserLoggedOut() {
 
 // ── Auth Modal ──────────────────────────────────
 function openAuthModal() {
-  document.getElementById('authModal').classList.add('open');
+  // Giriş/kayıt işlemleri index.html üzerinden yapılır
+  window.location.href = 'index.html';
 }
 
 function closeAuthModal() {
@@ -4215,6 +4329,7 @@ var _inviteStreakCount = 0;
 // Arkadaş başına son davet zamanı: { [friendUid]: timestamp_ms }
 var _lastInviteTimes = {};
 var _INVITE_COOLDOWN_MS = 4 * 60 * 60 * 1000; // 4 saat
+var _perFriendStreak = {}; // { [friendUid]: günSayısı }
 
 var _foundUser = null; // {uid, username, displayName, accountType}
 
@@ -4458,15 +4573,37 @@ function sendStudyInvite(toUid, toName) {
   }, { merge: true }).then(function() {
     _lastInviteTimes[toUid] = now;
     _totalInvitesSent++;
-    // lastInviteTimes'ı da Firebase'e yaz (sayfa yenilenince de doğru kalsın)
     var timesUpdate = {};
     timesUpdate['lastInviteTimes.' + toUid] = now;
     _fbDb.collection('users').doc(_currentUser.uid).set(timesUpdate, { merge: true });
+    _updatePerFriendStreak(toUid, todayKey);
     _updateInviteStreak(todayKey);
     showToast('📣 ' + toName + ' çalışmaya davet edildi!');
     loadFriends();
     checkBadges();
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+}
+
+function _updatePerFriendStreak(friendUid, todayKey) {
+  if (!_currentUser || !_fbDb) return;
+  var key = 'perFriendStreak.' + friendUid;
+  var dateKey = 'perFriendStreakDate.' + friendUid;
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    var data = doc.exists ? doc.data() : {};
+    var pfs = data.perFriendStreak || {};
+    var pfsd = data.perFriendStreakDate || {};
+    var lastDate = pfsd[friendUid] || '';
+    var streak = pfs[friendUid] || 0;
+    var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+    var yKey = yesterday.toISOString().slice(0,10);
+    if (lastDate === todayKey) return; // bugün zaten sayıldı
+    streak = (lastDate === yKey) ? streak + 1 : 1;
+    _perFriendStreak[friendUid] = streak;
+    var upd = {};
+    upd[key] = streak;
+    upd[dateKey] = todayKey;
+    _fbDb.collection('users').doc(_currentUser.uid).set(upd, { merge: true });
+  });
 }
 
 function _updateInviteStreak(todayKey) {
@@ -4503,8 +4640,8 @@ function loadInviteStats() {
     var numEl = document.getElementById('inviteStreakNum');
     if (banner && _inviteStreakCount > 0) { banner.style.display='flex'; }
     if (numEl) numEl.textContent = _inviteStreakCount;
-    // Arkadaş başına son davet zamanlarını yükle
     _lastInviteTimes = data.lastInviteTimes || {};
+    _perFriendStreak = data.perFriendStreak || {};
   });
 }
 
@@ -4548,6 +4685,7 @@ function markInviteSeen(invObj, rowEl) {
   }, { merge: true }).then(function() {
     if (rowEl) rowEl.remove();
     var todayKey = new Date().toISOString().slice(0,10);
+    if (invObj && invObj.fromUid) _updatePerFriendStreak(invObj.fromUid, todayKey);
     _updateInviteStreak(todayKey);
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
@@ -4601,7 +4739,7 @@ function loadCoachRequests() {
         var req = docSnap.data();
         var docId = docSnap.id;
         var statusColor = req.status === 'accepted' ? 'var(--accent3)' : req.status === 'rejected' ? 'var(--warn)' : 'var(--yellow)';
-        var statusLabel = req.status === 'accepted' ? '✅ Kabul Edildi' : req.status === 'rejected' ? '❌ Reddedildi' : '⏳ Bekliyor';
+        var statusLabel = req.status === 'rejected' ? '❌ Reddedildi' : req.status !== 'accepted' ? '⏳ İstek Gönderildi' : '';
         var btnLabel = req.status === 'accepted' ? 'Koçtan Ayrıl' : req.status === 'rejected' ? 'Kaldır' : 'Geri Çek';
         var btnColor = req.status === 'accepted' ? 'var(--warn)' : '#64748b';
 
@@ -4683,6 +4821,7 @@ function loadFriends() {
                 '<span style="font-size:0.68rem;font-weight:700;color:var(--accent)">⏱ ' + timeStr + '</span>' +
                 (topSubjectName ? '<span style="font-size:0.68rem;font-weight:700;color:var(--accent2)">📚 ' + topSubjectName + '</span>' : '') +
                 (badgeCount > 0 ? '<span style="font-size:0.68rem;font-weight:700;color:var(--yellow)">🏆 ' + badgeCount + '</span>' : '') +
+                ((_perFriendStreak[friendUid]||0) > 0 ? '<span style="font-size:0.68rem;font-weight:700;color:#f472b6">🔥 ' + (_perFriendStreak[friendUid]||0) + '</span>' : '') +
               '</div>' +
             '</div>' +
           '</div>' +
@@ -4964,30 +5103,65 @@ function renderBackupSummary() {
 // MOTİVASYON SÖZLER
 // ═══════════════════════════════════════════════
 var QUOTES = [
+  { q: "Çalışmak, en büyük zevktir.", a: "Mustafa Kemal Atatürk" },
+  { q: "Hayatta en hakiki mürşit ilimdir.", a: "Mustafa Kemal Atatürk" },
+  { q: "Bilim ve fen nerede ise oradan alacağız ve her milletin ferdinin kafasına koyacağız.", a: "Mustafa Kemal Atatürk" },
   { q: "Başarı, her gün tekrar eden küçük çabaların toplamıdır.", a: "Robert Collier" },
-  { q: "Bugün zor olan şeyler, yarın seni güçlü kılacak.", a: "YKS Ruhu" },
-  { q: "Disiplin, motivasyon olmadığında seni götüren şeydir.", a: "Bilinmeyen" },
-  { q: "Düşmek başarısızlık değildir. Düştükten sonra kalkmamak başarısızlıktır.", a: "Mary Pickford" },
-  { q: "Her çalıştığın dakika, seni hedefe bir adım daha yaklaştırır.", a: "YKS Ruhu" },
+  { q: "Deha, yüzde biri ilham yüzde doksan dokuzu ise ter ve emektir.", a: "Thomas Edison" },
+  { q: "Eğitim, geleceğin pasaportu; çünkü yarın bugünü hazırlayanların olacak.", a: "Malcolm X" },
+  { q: "Çalışmadan, yorulmadan, üretmeden rahat yaşamak isteyen bir millet önce haysiyetini, sonra hürriyetini, sonra geleceğini kaybeder.", a: "Mustafa Kemal Atatürk" },
+  { q: "Zekâ çalışmayla gelişir; her öğrendiğin şey seni bir adım öne taşır.", a: "Albert Einstein" },
+  { q: "Bilginin yatırım getirisi her zaman en yüksektir.", a: "Benjamin Franklin" },
   { q: "Başarının sırrı, başlamaktır.", a: "Mark Twain" },
-  { q: "Dün geceyi iyi harcasaydın, bugün farklı olurdu. Bugünü iyi harca, yarın fark et.", a: "YKS Ruhu" },
-  { q: "Zor günler seni daha güçlü yapar. Kolay günler seni hazırlar.", a: "Bilinmeyen" },
+  { q: "Disiplin, motivasyon olmadığında seni götüren şeydir.", a: "Jim Rohn" },
+  { q: "Büyük başarılar, büyük çabaların ürünüdür.", a: "Nikola Tesla" },
+  { q: "Eğitim hayatın en güçlü silahıdır; dünyayı değiştirmek için kullanabilirsin.", a: "Nelson Mandela" },
+  { q: "Okumak, dünyanın en büyük özgürlüğüdür.", a: "Aziz Nesin" },
+  { q: "İnsanoğlunun en büyük serveti, kafasının içindeki bilgidir.", a: "Farabi" },
+  { q: "Sabır acıdır, fakat meyvesi tatlıdır.", a: "Jean-Jacques Rousseau" },
+  { q: "Çalış, çalış, çalış; bırakma asla hevesi.", a: "Mehmet Akif Ersoy" },
+  { q: "Her zorluk bir fırsatı barındırır.", a: "Albert Einstein" },
+  { q: "Bilgi güçtür.", a: "Francis Bacon" },
+  { q: "Bugün yaptığın fedakarlıklar, yarının başarılarını inşa eder.", a: "Warren Buffett" },
+  { q: "İnsanlar düşündükleri şeylerdir; ne düşünüyorsan o olursun.", a: "Earl Nightingale" },
+  { q: "Beyin bir kas gibidir: ne kadar kullanırsan o kadar güçlenir.", a: "Carl Sagan" },
+  { q: "Bir çalışma seansı yapmak, hiç yapmamaktan sonsuza kadar iyidir.", a: "YKS Ruhu" },
+  { q: "Yarın başlamak istemek, bugün başlamamak için en yaygın bahanedir.", a: "YKS Ruhu" },
+  { q: "Her konu çalıştığında, geleceğin için bir tuğla örüyorsun.", a: "YKS Ruhu" },
+  { q: "Başarıya kestirme yol yoktur; emek ve azim her zaman kazanır.", a: "Thomas Jefferson" },
   { q: "Sabır ve azim her zaman ödüllendirilir.", a: "Benjamin Franklin" },
-  { q: "Sıradan insanlar fırsat bekler, başarılı insanlar fırsat yaratır.", a: "George Bernard Shaw" },
-  { q: "YKS bir yarış değil, kendi rekorunu kırma yolculuğu.", a: "YKS Ruhu" },
-  { q: "Her konu öğrendiğinde, geleceğini inşa ediyorsun.", a: "YKS Ruhu" },
-  { q: "Bugün çalışmazsan, yarın özür dilersin.", a: "Bilinmeyen" },
-  { q: "Hayal et, çalış, kazan.", a: "YKS Ruhu" },
-  { q: "Beyin bir kas gibidir: ne kadar kullanırsan o kadar güçlenir.", a: "Bilinmeyen" },
+  { q: "Eğitim, ruhu özgürleştiren tek kuvvettir.", a: "Socrates" },
+  { q: "Hiçbir şey sürekli çalışmanın yerini tutamaz.", a: "Calvin Coolidge" },
+  { q: "Başarı tesadüf değildir; hazırlık, çalışkanlık ve öğrenmekten doğar.", a: "Colin Powell" },
 ];
 var motivIdx = Math.floor(Math.random() * QUOTES.length);
-function newMotiv() {
-  motivIdx = (motivIdx + 1) % QUOTES.length;
-  const q = QUOTES[motivIdx];
-  document.getElementById('motivQuote').textContent = '"' + q.q + '"';
-  document.getElementById('motivAuthor').textContent = '— ' + q.a;
+
+function _getTodayMotivKey() {
+  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 }
-// newMotiv DOMContentLoaded'da çağrılacak
+
+function showMotiv() {
+  var q = QUOTES[motivIdx];
+  var el1 = document.getElementById('motivQuote');
+  var el2 = document.getElementById('motivAuthor');
+  if (el1) el1.textContent = '"' + q.q + '"';
+  if (el2) el2.textContent = '— ' + q.a;
+}
+
+function newMotiv() {
+  // Günde bir kez — aynı günde aynı söz göster
+  var todayKey = _getTodayMotivKey();
+  var stored = localStorage.getItem('pugi_motiv_date');
+  var storedIdx = parseInt(localStorage.getItem('pugi_motiv_idx') || '-1');
+  if (stored === todayKey && storedIdx >= 0 && storedIdx < QUOTES.length) {
+    motivIdx = storedIdx;
+  } else {
+    motivIdx = Math.floor(Math.random() * QUOTES.length);
+    localStorage.setItem('pugi_motiv_date', todayKey);
+    localStorage.setItem('pugi_motiv_idx', motivIdx);
+  }
+  showMotiv();
+}
 
 // ═══════════════════════════════════════════════
 // XP & SEVİYE
@@ -5105,14 +5279,26 @@ function _checkAnyGoalEverDone() {
 }
 
 function calcStreak() {
-  const dates = [...new Set(entries.map(e => e.date))];
-  const now = new Date(); let s = 0;
-  for (let i = 0; i < 365; i++) {
-    const d = new Date(now); d.setDate(d.getDate() - i);
-    if (dates.includes(d.toLocaleDateString('tr-TR'))) s++;
+  const dates = new Set(entries.map(e => e.date));
+  const now = new Date();
+  const todayStr = now.toLocaleDateString('tr-TR');
+  const workedToday = dates.has(todayStr);
+  // Bugün çalışılmadıysa dünden başla say
+  const startOffset = workedToday ? 0 : 1;
+  let s = 0;
+  for (let i = startOffset; i < 365; i++) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    if (dates.has(d.toLocaleDateString('tr-TR'))) s++;
     else break;
   }
   return s;
+}
+
+// Bugün çalışıldı mı?
+function workedToday() {
+  const todayStr = new Date().toLocaleDateString('tr-TR');
+  return entries.some(function(e) { return e.date === todayStr; });
 }
 
 function checkBadges() {
@@ -6330,15 +6516,28 @@ function getItemProgress(item, period) {
   weekStart.setDate(weekStart.getDate() - ((weekStart.getDay()+6)%7));
   weekStart.setHours(0,0,0,0);
   var filtered = entries.filter(function(e){
-    if (item.subject && e.subject!==item.subject) return false;
-    if (item.topic && e.topic!==item.topic) return false;
-    if (period==='daily') return (e.date||'')===todayStr;
+    // Konu filtresi — boşsa tüm dersler sayılır
+    if (item.subject && item.subject !== '' && e.subject !== item.subject) return false;
+    if (item.topic && item.topic !== '' && e.topic !== item.topic) return false;
+    // Tarih filtresi
+    if (period === 'daily') return (e.date||'') === todayStr;
+    // Haftalık — tr-TR formatı dd.mm.yyyy
     var p = (e.date||'').split('.');
-    if (p.length===3) { var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0])); return d>=weekStart; }
+    if (p.length === 3) {
+      var d = new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+      return d >= weekStart;
+    }
     return false;
   });
-  if (item.metric==='time') return filtered.reduce(function(s,e){ return s+(parseInt(e.minutes)||parseInt(e.sure)||0); },0);
-  return filtered.reduce(function(s,e){ return s+(parseInt(e.soru)||0); },0);
+  if (item.metric === 'time') {
+    // sure alanı dakika cinsinden
+    return filtered.reduce(function(s,e){ return s + (parseInt(e.sure)||parseInt(e.minutes)||0); }, 0);
+  }
+  // Soru sayısı: totalSoru > dogru+yanlis > soru sırasıyla dene
+  return filtered.reduce(function(s,e){
+    var q = parseInt(e.totalSoru) || (parseInt(e.dogru||0) + parseInt(e.yanlis||0)) || parseInt(e.soru||0);
+    return s + q;
+  }, 0);
 }
 
 function renderAnaGoals() {
