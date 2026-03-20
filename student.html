@@ -1586,6 +1586,32 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       </div>
     </div>
 
+    <!-- Sınav Bilgilerim -->
+    <div class="u-settings-row" style="flex-direction:column;align-items:flex-start;gap:12px">
+      <div style="font-size:0.85rem;font-weight:900;width:100%">🎯 Sınav Bilgilerim</div>
+
+      <!-- Dal seçimi -->
+      <div style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Alan</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <button id="settDalSay" onclick="settingSelectDal('sayisal')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📐 Sayısal</button>
+          <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📖 Sözel</button>
+          <button id="settDalEa" onclick="settingSelectDal('ea')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">⚖️ Eşit Ağırlık</button>
+          <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">🌍 Dil</button>
+        </div>
+      </div>
+
+      <!-- Hedef sıralama -->
+      <div style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
+        <input type="number" id="settHedefSiralama" placeholder="örn: 10000" min="1"
+          style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
+          oninput="this.style.borderColor='var(--accent)'">
+      </div>
+
+      <button onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif">Kaydet</button>
+    </div>
+
     <!-- Kullanıcı adı -->
     <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('usernameExpand','usernameExpandArrow')">
@@ -3040,6 +3066,37 @@ function renderGreeting() {
   wrap.style.display = 'block';
 }
 
+/**
+ * _applyDalFilter — Dal profiline göre AYT sınav tab'larını filtreler.
+ * Sayısal seçen kullanıcı Sözel tab'ı görmez, vs.
+ */
+function _applyDalFilter() {
+  if (!_userProfil || !_userProfil.dal) return;
+  var dal = _userProfil.dal;
+  // Her dal için hangi tab'lar görünür
+  var tabMap = {
+    'sayisal': ['etTYT','etAYT'],
+    'sozel':   ['etTYT','etSoz'],
+    'ea':      ['etTYT','etAYT','etEa'],
+    'dil':     ['etTYT']
+  };
+  var aktif = tabMap[dal] || ['etTYT','etAYT','etSoz','etEa'];
+  ['etTYT','etAYT','etSoz','etEa'].forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(aktif.indexOf(id) > -1){
+      el.style.display = '';
+    } else {
+      el.style.display = 'none';
+      if(el.classList.contains('active')){
+        el.classList.remove('active');
+        var tyt = document.getElementById('etTYT');
+        if(tyt){ tyt.classList.add('active'); setExam('TYT', tyt); }
+      }
+    }
+  });
+}
+
 function renderAna() {
   // Misafirde bazı ana sayfa bölümleri gizlenir
   // AI koç kartını yenile
@@ -3681,6 +3738,7 @@ var firebaseConfig = {
 
 var _fbApp = null, _fbDb = null, _fbAuth = null;
 var _currentUser = null;
+var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif, onboardingDone }
 
 // ── AI Koç Sabitleri ──────────────────────────────────
 var GEMINI_API_KEY = 'AIzaSyAsAJGpLcubY0Lie_7WVyWDA4YwBmW6lvc';
@@ -3775,13 +3833,23 @@ function onUserLoggedIn(user) {
   } catch(e) {}
 
   _fbDb.collection('users').doc(user.uid).get().then(function(doc) {
-    var username = doc.exists ? doc.data().username : user.email.split('@')[0];
-    var displayName = doc.exists ? doc.data().displayName : username;
-    var accountType = doc.exists ? (doc.data().accountType || 'student') : 'student';
+    var data = doc.exists ? doc.data() : {};
+    var username    = data.username    || user.email.split('@')[0];
+    var displayName = data.displayName || username;
+    var accountType = data.accountType || 'student';
     if (_currentUser) { _currentUser._username = username; _currentUser._accountType = accountType; }
 
+    // Kullanıcı profilini global state'e yükle
+    _userProfil = {
+      dal:            data.dal            || null,
+      hedefTur:       data.hedefTur       || null,
+      hedefSiralama:  data.hedefSiralama  || null,
+      hedefProgram:   data.hedefProgram   || null,
+      sinif:          data.sinif          || null,
+      onboardingDone: data.onboardingDone || false
+    };
+
     // User bar güncelle
-    // userBar her zaman görünür — sadece içeriği değiştir
     document.getElementById('userBarGuest').style.display = 'none';
     document.getElementById('userBarLoggedIn').style.display = 'flex';
     document.getElementById('userAvatarBar').textContent = displayName.charAt(0).toUpperCase();
@@ -3792,6 +3860,9 @@ function onUserLoggedIn(user) {
     var banner = document.getElementById('loginPromptBanner');
     if (banner) banner.style.display = 'none';
 
+    // Dal bazlı ders filtresi uygula
+    _applyDalFilter();
+
     // ☁️ Buluttan veri yükle
     loadFromCloud(user.uid);
     loadNotifSetting();
@@ -3800,7 +3871,15 @@ function onUserLoggedIn(user) {
     renderFriends();
     renderAnaFriends();
     loadCoachRequests();
-  loadCoachSuggestionsForStudent();
+    loadCoachSuggestionsForStudent();
+    processPendingAccepted();
+    processPendingRemoved();
+    loadAiDailyCoach();
+
+    // Mevcut kullanıcılar için tek seferlik onboarding modalı
+    if (!_userProfil.onboardingDone) {
+      setTimeout(function(){ showOnboardingModal(); }, 1500);
+    }
   });
 }
 
@@ -3865,9 +3944,23 @@ function _buildAiPrompt(isDeep) {
   var weeklyDone = getThisWeekMins();
   var hedefStr = weeklyGoal > 0 ? (weeklyDone+'/'+weeklyGoal+' dk (%'+Math.round(weeklyDone/weeklyGoal*100)+')') : 'Hedef ayarlanmamış';
 
+  // Profil bilgileri
+  var dalLabel = {sayisal:'Sayısal',sozel:'Sözel',ea:'Eşit Ağırlık',dil:'Dil'};
+  var profilStr = '';
+  if (_userProfil) {
+    if (_userProfil.dal) profilStr += 'Alan: ' + (dalLabel[_userProfil.dal]||_userProfil.dal) + '\n';
+    if (_userProfil.sinif) profilStr += 'Sınıf: ' + _userProfil.sinif + '\n';
+    if (_userProfil.hedefTur==='siralama' && _userProfil.hedefSiralama)
+      profilStr += 'Hedef sıralama: ilk ' + _userProfil.hedefSiralama.toLocaleString('tr-TR') + '\n';
+    if (_userProfil.hedefTur==='okul' && _userProfil.hedefProgram)
+      profilStr += 'Hedef okul: ' + _userProfil.hedefProgram.uni + ' — ' + _userProfil.hedefProgram.bolum + '\n';
+  }
+
   var base =
     'Sen Pugi uygulamasının YKS koçusun. Öğrencinin verilerine göre kısa, motive edici ve spesifik bir öneri ver.\n\n' +
-    '=== ÖĞRENCİ VERİLERİ ===\n' +
+    '=== ÖĞRENCİ PROFİLİ ===\n' +
+    profilStr +
+    '\n=== ÇALIŞMA VERİLERİ ===\n' +
     'Günlük seri: ' + streak + ' gün\n' +
     'Bugün çalışılan: ' + todayMins + ' dakika\n' +
     'Bu hafta dersler: ' + dersStr + '\n' +
@@ -4257,6 +4350,60 @@ function _showGuestLockModal(title, desc) {
   document.getElementById('guestLockTitle').textContent = title;
   document.getElementById('guestLockDesc').textContent  = desc;
   modal.classList.add('open');
+}
+
+// ════════════════════════════════════════════
+// ONBOARDİNG MODAL (mevcut kullanıcılar)
+// ════════════════════════════════════════════
+
+var _modalDal = null;
+
+function showOnboardingModal() {
+  // Eğer dal zaten seçilmişse modal'ı gösterme
+  if (_userProfil && _userProfil.dal) return;
+  document.getElementById('onboardingModal').classList.add('open');
+}
+
+function closeOnboardingModal(markShown) {
+  document.getElementById('onboardingModal').classList.remove('open');
+  if (markShown && _currentUser && _fbDb) {
+    _fbDb.collection('users').doc(_currentUser.uid).set({
+      onboardingDone: true
+    }, { merge: true });
+  }
+}
+
+function selectModalDal(dal, el) {
+  _modalDal = dal;
+  document.querySelectorAll('.ob-modal-dal').forEach(function(c){
+    c.style.borderColor = 'var(--border)';
+    c.style.background = 'var(--card)';
+  });
+  el.style.borderColor = 'var(--accent)';
+  el.style.background = 'rgba(56,189,248,0.08)';
+  document.getElementById('modalSaveBtn').disabled = false;
+}
+
+function saveOnboardingModal() {
+  if (!_modalDal || !_currentUser || !_fbDb) return;
+  var siralama = parseInt(document.getElementById('modalHedefSiralama').value) || null;
+  var update = {
+    dal: _modalDal,
+    onboardingDone: true
+  };
+  if (siralama) {
+    update.hedefTur = 'siralama';
+    update.hedefSiralama = siralama;
+  }
+  _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
+    _userProfil = Object.assign(_userProfil || {}, update);
+    _applyDalFilter();
+    closeOnboardingModal(false);
+    showToast('✅ Profil güncellendi!');
+    // AI öneriyi yenile (dal bilgisiyle)
+    localStorage.removeItem('pugi_ai_date');
+    loadAiDailyCoach();
+  });
 }
 
 function closeGuestLockModal() {
@@ -6797,7 +6944,62 @@ function applyCustomTimer() {
 // ═══════════════════════════════════════════════
 var _notifEnabled = true; // default açık
 
+// ════════════════════════════════════════════
+// AYARLAR — PROFİL BİLGİLERİ
+// ════════════════════════════════════════════
+
+var _settDal = null;
+
+/** Ayarlar sayfası açılınca mevcut profil değerlerini doldur */
+function _populateSettingsProfil() {
+  if (!_userProfil) return;
+  // Dal butonlarını güncelle
+  _settDal = _userProfil.dal || null;
+  ['sayisal','sozel','ea','dil'].forEach(function(dal){
+    var btn = document.getElementById('settDal'+dal.charAt(0).toUpperCase()+dal.slice(1));
+    if (!btn) return;
+    var active = dal === _settDal;
+    btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+    btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
+    btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
+  });
+  // Hedef sıralama
+  var sirEl = document.getElementById('settHedefSiralama');
+  if (sirEl && _userProfil.hedefSiralama) sirEl.value = _userProfil.hedefSiralama;
+}
+
+function settingSelectDal(dal) {
+  _settDal = dal;
+  // Buton ID'leri: settDalSay, settDalSoz, settDalEa, settDalDil
+  var idMap = {sayisal:'Say',sozel:'Soz',ea:'Ea',dil:'Dil'};
+  Object.keys(idMap).forEach(function(d){
+    var btn = document.getElementById('settDal'+idMap[d]);
+    if(!btn) return;
+    var active = d === dal;
+    btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+    btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
+    btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
+  });
+}
+
+function saveSettingsProfil() {
+  if (!_currentUser || !_fbDb) return;
+  var siralama = parseInt(document.getElementById('settHedefSiralama').value) || null;
+  var update = { onboardingDone: true };
+  if (_settDal) update.dal = _settDal;
+  if (siralama) { update.hedefTur = 'siralama'; update.hedefSiralama = siralama; }
+  _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
+    _userProfil = Object.assign(_userProfil || {}, update);
+    _applyDalFilter();
+    showToast('✅ Profil güncellendi!');
+    // AI öneriyi yenile
+    localStorage.removeItem('pugi_ai_date');
+    loadAiDailyCoach();
+  }).catch(function(e){ showToast('❌ Hata: ' + e.message); });
+}
+
 function openSettingsModal() {
+  _populateSettingsProfil();
   var page = document.getElementById('settingsPage');
   if (!page) return;
   page.style.display = 'block';
@@ -7563,6 +7765,64 @@ function confirmModalOk() {
 }
 
 </script>
+
+<!-- MEVcut KULLANICI ONBOARDİNG MODALI (tek seferlik) -->
+<div class="day-modal" id="onboardingModal">
+  <div class="day-modal-overlay" onclick="closeOnboardingModal(true)"></div>
+  <div class="day-modal-sheet" style="max-height:85vh">
+    <div class="day-modal-handle"></div>
+    <div class="day-modal-header">
+      <div>
+        <div class="day-modal-title">🎉 Pugi güncellendi!</div>
+        <div style="font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:2px">Sana daha iyi yardımcı olabilmem için birkaç soru</div>
+      </div>
+      <button class="day-modal-close" onclick="closeOnboardingModal(true)">✕</button>
+    </div>
+    <div class="day-modal-body">
+
+      <!-- Dal seçimi -->
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Hangi alanda çalışıyorsun?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
+        <div class="ob-modal-dal" id="mdSay" onclick="selectModalDal('sayisal',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
+          <div style="font-size:1.3rem;margin-bottom:4px">📐</div>
+          <div style="font-size:0.82rem;font-weight:900;color:var(--accent)">Sayısal</div>
+          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Mat·Fiz·Kim·Bio</div>
+        </div>
+        <div class="ob-modal-dal" id="mdSoz" onclick="selectModalDal('sozel',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
+          <div style="font-size:1.3rem;margin-bottom:4px">📖</div>
+          <div style="font-size:0.82rem;font-weight:900;color:var(--warn)">Sözel</div>
+          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Ede·Tar·Coğ·Fel</div>
+        </div>
+        <div class="ob-modal-dal" id="mdEa" onclick="selectModalDal('ea',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
+          <div style="font-size:1.3rem;margin-bottom:4px">⚖️</div>
+          <div style="font-size:0.82rem;font-weight:900;color:var(--accent3)">Eşit Ağırlık</div>
+          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Mat·Ede·Tar·Coğ</div>
+        </div>
+        <div class="ob-modal-dal" id="mdDil" onclick="selectModalDal('dil',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
+          <div style="font-size:1.3rem;margin-bottom:4px">🌍</div>
+          <div style="font-size:0.82rem;font-weight:900;color:var(--accent2)">Dil</div>
+          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">İng·Alm·Fra</div>
+        </div>
+      </div>
+
+      <!-- Hedef sıralama (opsiyonel) -->
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
+      <input type="number" id="modalHedefSiralama" placeholder="örn: 10000" min="1" max="3000000"
+        style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none;margin-bottom:16px"
+        oninput="this.style.borderColor='var(--accent)'">
+
+      <!-- Kaydet butonu -->
+      <button id="modalSaveBtn" onclick="saveOnboardingModal()" disabled
+        style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#fff;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:10px">
+        Kaydet
+      </button>
+      <button onclick="closeOnboardingModal(true)"
+        style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">
+        Eklemeden Devam Et
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- MİSAFİR KİLİT MODALI -->
 <div class="day-modal" id="guestLockModal">

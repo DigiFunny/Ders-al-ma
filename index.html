@@ -162,6 +162,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .fadeIn{animation:fadeUp 0.35s cubic-bezier(.4,0,.2,1) both;}
 #step1{display:block;}
 #step2{display:none;}
+.ob-dal-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px 14px;cursor:pointer;text-align:center;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
+.ob-dal-card:active{transform:scale(0.95);}
+.ob-dal-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);box-shadow:0 0 0 3px rgba(56,189,248,0.12);}
+.ob-sinif-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:0.9rem;transition:all 0.22s;-webkit-tap-highlight-color:transparent;}
+.ob-sinif-card:active{transform:scale(0.97);}
+.ob-sinif-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);color:var(--accent);}
 
 @media(max-height:680px){
   .landing-inner{padding:32px 20px 28px;}
@@ -351,9 +357,165 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
+<!-- ══════════════════════════════════
+     EKRAN 3 — ONBOARDİNG
+     Kayıt sonrası dal / hedef / sınıf
+══════════════════════════════════ -->
+<div class="screen" id="screenOnboarding">
+  <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
+
+    <!-- Progress bar -->
+    <div style="display:flex;gap:6px;margin-bottom:24px">
+      <div id="obStep1Bar" style="flex:1;height:4px;border-radius:99px;background:var(--accent);transition:background 0.3s"></div>
+      <div id="obStep2Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
+      <div id="obStep3Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
+    </div>
+
+    <!-- ADIM 1: Dal seçimi -->
+    <div id="obStep1">
+      <div style="margin-bottom:20px">
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hangi alanda çalışıyorsun?</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">Bu seçim sana özel ders listesi ve AI önerileri için kullanılır</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">
+        <div class="ob-dal-card" id="dalSay" onclick="selectDal('sayisal',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">📐</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--accent)">Sayısal</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Mat · Fiz · Kim · Bio</div>
+        </div>
+        <div class="ob-dal-card" id="dalSoz" onclick="selectDal('sozel',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">📖</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--warn)">Sözel</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Ede · Tar · Coğ · Fel</div>
+        </div>
+        <div class="ob-dal-card" id="dalEa" onclick="selectDal('ea',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">⚖️</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--accent3)">Eşit Ağırlık</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Mat · Ede · Tar · Coğ</div>
+        </div>
+        <div class="ob-dal-card" id="dalDil" onclick="selectDal('dil',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">🌍</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--accent2)">Dil</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">İng · Alm · Fra · Ara</div>
+        </div>
+      </div>
+      <button class="btn-main" id="obStep1Btn" onclick="obGoStep2()" disabled>Devam Et →</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+    <!-- ADIM 2: Hedef -->
+    <div id="obStep2" style="display:none">
+      <button class="btn-back" onclick="obGoStep1()" style="margin-bottom:16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="margin-bottom:20px">
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedefin ne?</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">AI koçun seni hedefe göre yönlendirir</div>
+      </div>
+
+      <!-- Hedef türü seçimi -->
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="hedefSiralamaBtn" onclick="selectHedefTur('siralama')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
+        <button id="hedefOkulBtn" onclick="selectHedefTur('okul')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
+      </div>
+
+      <!-- Sıralama hedefi -->
+      <div id="hedefSiralamaWrap">
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
+        <input type="number" id="hedefSiralamaInput" placeholder="örn: 10000" min="1" max="3000000"
+          style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px"
+          oninput="checkHedefValid()">
+        <div style="font-size:0.68rem;color:var(--muted);font-weight:600">İlk kaçıncı olmak istiyorsun?</div>
+      </div>
+
+      <!-- Okul hedefi -->
+      <div id="hedefOkulWrap" style="display:none">
+        <!-- Öğrenim süresi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Öğrenim Süresi</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button id="sure2Btn" onclick="selectSure(2)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">2 Yıllık</button>
+          <button id="sure4Btn" onclick="selectSure(4)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">4 Yıllık</button>
+        </div>
+
+        <!-- İl seçimi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Şehir</div>
+        <select id="hedefIlSel" onchange="loadHedefUnis()" style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+          <option value="">Şehir seç...</option>
+        </select>
+
+        <!-- Üniversite seçimi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Üniversite</div>
+        <select id="hedefUniSel" onchange="loadHedefBolumler()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+          <option value="">Önce şehir seç...</option>
+        </select>
+
+        <!-- Bölüm seçimi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Bölüm</div>
+        <select id="hedefBolumSel" onchange="selectHedefBolum()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+          <option value="">Önce üniversite seç...</option>
+        </select>
+
+        <!-- Seçilen program önizleme -->
+        <div id="hedefProgramPreview" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1.5px solid rgba(56,189,248,0.2);border-radius:12px;padding:12px 14px;margin-bottom:12px">
+          <div id="hedefPreviewUni" style="font-size:0.82rem;font-weight:900;margin-bottom:4px"></div>
+          <div id="hedefPreviewBolum" style="font-size:0.75rem;font-weight:800;color:var(--accent);margin-bottom:4px"></div>
+          <div id="hedefPreviewDetay" style="font-size:0.68rem;color:var(--muted);font-weight:700"></div>
+        </div>
+      </div>
+
+      <button class="btn-main" id="obStep2Btn" onclick="obGoStep3()" disabled style="margin-top:8px">Devam Et →</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+    <!-- ADIM 3: Sınıf -->
+    <div id="obStep3" style="display:none">
+      <button class="btn-back" onclick="obGoStep2()" style="margin-bottom:16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="margin-bottom:20px">
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Şu an kaçıncı sınıfsın?</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">AI koçun sana uygun strateji önerir</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <div class="ob-sinif-card" onclick="selectSinif('1',this)"><span>1. Sınıf</span><span style="font-size:0.7rem;color:var(--muted)">YKS'ye 2+ yıl var</span></div>
+        <div class="ob-sinif-card" onclick="selectSinif('2',this)"><span>2. Sınıf</span><span style="font-size:0.7rem;color:var(--muted)">YKS'ye ~1.5 yıl var</span></div>
+        <div class="ob-sinif-card" onclick="selectSinif('3',this)"><span>3. Sınıf (Bu yıl)</span><span style="font-size:0.7rem;color:var(--muted)">YKS bu yıl</span></div>
+        <div class="ob-sinif-card" onclick="selectSinif('mezun',this)"><span>Mezun</span><span style="font-size:0.7rem;color:var(--muted)">Tekrar çalışıyorum</span></div>
+      </div>
+      <button class="btn-main" id="obStep3Btn" onclick="finishOnboarding()" disabled>🚀 Başla!</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+  </div>
+</div>
+
 <script>
 'use strict';
 var selectedAccountType=null,selectedExam=null,authMode='login';
+
+// ── Onboarding State ─────────────────────────────
+var _obDal      = null;   // sayisal|sozel|ea|dil
+var _obHedefTur = 'siralama'; // siralama|okul
+var _obSiralama = null;
+var _obProgram  = null;   // seçilen program objesi
+var _obSure     = 4;      // 2|4 yıllık
+var _obSinif    = null;   // 1|2|3|mezun
+var _obUid      = null;   // kayıt sonrası uid
+var _fbDbOb     = null;   // Firestore ref (initFirebase'den alınır)
+
+// İl listesi — Türkiye'nin 81 ili alfabetik
+var IL_LISTESI = [
+  'Adana','Adıyaman','Afyonkarahisar','Ağrı','Aksaray','Amasya','Ankara','Antalya',
+  'Ardahan','Artvin','Aydın','Balıkesir','Bartın','Batman','Bayburt','Bilecik',
+  'Bingöl','Bitlis','Bolu','Burdur','Bursa','Çanakkale','Çankırı','Çorum',
+  'Denizli','Diyarbakır','Düzce','Edirne','Elazığ','Erzincan','Erzurum','Eskişehir',
+  'Gaziantep','Giresun','Gümüşhane','Hakkari','Hatay','Iğdır','Isparta','İstanbul',
+  'İzmir','Kahramanmaraş','Karabük','Karaman','Kars','Kastamonu','Kayseri','Kilis',
+  'Kırıkkale','Kırklareli','Kırşehir','Kocaeli','Konya','Kütahya','Malatya','Manisa',
+  'Mardin','Mersin','Muğla','Muş','Nevşehir','Niğde','Ordu','Osmaniye','Rize',
+  'Sakarya','Samsun','Siirt','Sinop','Sivas','Şanlıurfa','Şırnak','Tekirdağ',
+  'Tokat','Trabzon','Tunceli','Uşak','Van','Yalova','Yozgat','Zonguldak'
+];
 var firebaseConfig = {
   apiKey: "AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
   authDomain: "pugi-app-deeaa.firebaseapp.com",
@@ -414,7 +576,7 @@ function initFirebase(){
   loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js',function(){
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js',function(){
       loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js',function(){
-        _fbApp=firebase.initializeApp(firebaseConfig);_fbDb=firebase.firestore();_fbAuth=firebase.auth();
+        _fbApp=firebase.initializeApp(firebaseConfig);_fbDb=firebase.firestore();_fbAuth=firebase.auth();_fbDbOb=_fbDb;
         _fbAuth.onAuthStateChanged(function(user){if(user){checkAccountTypeAndRedirect(user);}else{hideLoading();}});
       });
     });
@@ -446,7 +608,11 @@ function submitAuth(){
     }).then(function(cred){
       if(!cred)return null;
       return createUserProfile(cred.user,name,uname,selectedAccountType).then(function(){
-        window.location.href=selectedAccountType==='coach'?'coach.html':'student.html';
+        if(selectedAccountType==='coach'){
+          window.location.href='coach.html';
+        } else {
+          showOnboarding(cred.user.uid);
+        }
       });
     }).catch(function(e){hideLoading();showError(e.code?getErrorMsg(e.code):'Bir hata oluştu.');});
   }
@@ -461,7 +627,11 @@ function signInWithGoogle(){
       var autoUname=user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
       var type=selectedAccountType||'student';
       return createUserProfile(user,user.displayName||autoUname,autoUname,type).then(function(){
-        window.location.href=type==='coach'?'coach.html':'student.html';
+        if(type==='coach'){
+          window.location.href='coach.html';
+        } else {
+          showOnboarding(user.uid);
+        }
       });
     }
   }).catch(function(e){hideLoading();if(e.code!=='auth/popup-closed-by-user')showError('Google ile giriş başarısız.');});
@@ -492,6 +662,253 @@ function showError(msg){var el=document.getElementById('errorMsg');el.textConten
 function hideError(){document.getElementById('errorMsg').classList.remove('show');}
 function showLoading(){document.getElementById('loadingOverlay').classList.remove('hidden');}
 function hideLoading(){document.getElementById('loadingOverlay').classList.add('hidden');}
+// ════════════════════════════════════════════
+// ONBOARDİNG FONKSİYONLARI
+// ════════════════════════════════════════════
+
+function showOnboarding(uid) {
+  _obUid = uid;
+  _fbDbOb = _fbDb;
+  showScreen('screenOnboarding');
+  // İl listesini doldur
+  var sel = document.getElementById('hedefIlSel');
+  IL_LISTESI.forEach(function(il) {
+    var o = document.createElement('option');
+    o.value = il.toLowerCase().replace(/\s/g,'_');
+    o.textContent = il;
+    sel.appendChild(o);
+  });
+  _updateObProgress(1);
+}
+
+function _updateObProgress(step) {
+  for(var i=1;i<=3;i++){
+    var bar=document.getElementById('obStep'+i+'Bar');
+    if(bar) bar.style.background = i<=step ? 'var(--accent)' : 'var(--border)';
+  }
+}
+
+// ── Dal seçimi ──
+function selectDal(dal, el) {
+  _obDal = dal;
+  document.querySelectorAll('.ob-dal-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('obStep1Btn').disabled = false;
+}
+
+function obGoStep1() {
+  document.getElementById('obStep2').style.display='none';
+  document.getElementById('obStep1').style.display='block';
+  _updateObProgress(1);
+}
+
+function obGoStep2() {
+  if(!_obDal) return;
+  document.getElementById('obStep1').style.display='none';
+  document.getElementById('obStep2').style.display='block';
+  _updateObProgress(2);
+}
+
+function obGoStep3() {
+  document.getElementById('obStep2').style.display='none';
+  document.getElementById('obStep3').style.display='block';
+  _updateObProgress(3);
+}
+
+// ── Hedef türü ──
+function selectHedefTur(tur) {
+  _obHedefTur = tur;
+  var sirBtn = document.getElementById('hedefSiralamaBtn');
+  var okulBtn = document.getElementById('hedefOkulBtn');
+  var sirWrap = document.getElementById('hedefSiralamaWrap');
+  var okulWrap = document.getElementById('hedefOkulWrap');
+  if(tur==='siralama'){
+    sirBtn.style.borderColor='var(--accent)';sirBtn.style.background='rgba(56,189,248,0.1)';sirBtn.style.color='var(--accent)';
+    okulBtn.style.borderColor='var(--border)';okulBtn.style.background='transparent';okulBtn.style.color='var(--muted)';
+    sirWrap.style.display='block';okulWrap.style.display='none';
+  } else {
+    okulBtn.style.borderColor='var(--accent)';okulBtn.style.background='rgba(56,189,248,0.1)';okulBtn.style.color='var(--accent)';
+    sirBtn.style.borderColor='var(--border)';sirBtn.style.background='transparent';sirBtn.style.color='var(--muted)';
+    okulWrap.style.display='block';sirWrap.style.display='none';
+  }
+  checkHedefValid();
+}
+
+function checkHedefValid() {
+  var btn = document.getElementById('obStep2Btn');
+  if(!btn) return;
+  if(_obHedefTur==='siralama'){
+    var v = parseInt(document.getElementById('hedefSiralamaInput').value)||0;
+    _obSiralama = v > 0 ? v : null;
+    btn.disabled = !_obSiralama;
+  } else {
+    btn.disabled = !_obProgram;
+  }
+}
+
+function selectSure(sure) {
+  _obSure = sure;
+  document.getElementById('sure2Btn').style.borderColor = sure===2?'var(--accent)':'var(--border)';
+  document.getElementById('sure2Btn').style.background  = sure===2?'rgba(56,189,248,0.1)':'transparent';
+  document.getElementById('sure2Btn').style.color       = sure===2?'var(--accent)':'var(--muted)';
+  document.getElementById('sure4Btn').style.borderColor = sure===4?'var(--accent)':'var(--border)';
+  document.getElementById('sure4Btn').style.background  = sure===4?'rgba(56,189,248,0.1)':'transparent';
+  document.getElementById('sure4Btn').style.color       = sure===4?'var(--accent)':'var(--muted)';
+  // Bölüm listesini sıfırla
+  _obProgram = null;
+  var bSel = document.getElementById('hedefBolumSel');
+  bSel.innerHTML = '<option value="">Önce üniversite seç...</option>';
+  bSel.disabled = true;
+  document.getElementById('hedefProgramPreview').style.display='none';
+  checkHedefValid();
+  // Eğer üniversite seçiliyse bölümleri yenile
+  var uSel = document.getElementById('hedefUniSel');
+  if(uSel.value) loadHedefBolumler();
+}
+
+// ── Üniversite yükleme ──
+function loadHedefUnis() {
+  var il = document.getElementById('hedefIlSel').value;
+  var uSel = document.getElementById('hedefUniSel');
+  var bSel = document.getElementById('hedefBolumSel');
+  uSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  uSel.disabled = true;
+  bSel.innerHTML = '<option value="">Önce üniversite seç...</option>';
+  bSel.disabled = true;
+  _obProgram = null;
+  document.getElementById('hedefProgramPreview').style.display='none';
+  checkHedefValid();
+  if(!il) return;
+
+  // Puan türünü dal'dan belirle
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_obDal] || 'SAY';
+
+  _fbDb.collection('yks_programlar')
+    .where('il','==',il)
+    .where('puan_turu','==',pt)
+    .get().then(function(snap){
+      // Benzersiz üniversiteler
+      var unis = {};
+      snap.forEach(function(doc){
+        var d=doc.data();
+        if(!unis[d.uni]) unis[d.uni]=d.uni;
+      });
+      uSel.innerHTML = '<option value="">Üniversite seç...</option>';
+      Object.keys(unis).sort().forEach(function(u){
+        var o=document.createElement('option');
+        o.value=u; o.textContent=u;
+        uSel.appendChild(o);
+      });
+      uSel.disabled=false;
+    }).catch(function(){ uSel.innerHTML='<option value="">Hata oluştu</option>'; });
+}
+
+// ── Bölüm yükleme ──
+function loadHedefBolumler() {
+  var il  = document.getElementById('hedefIlSel').value;
+  var uni = document.getElementById('hedefUniSel').value;
+  var bSel = document.getElementById('hedefBolumSel');
+  bSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  bSel.disabled = true;
+  _obProgram = null;
+  document.getElementById('hedefProgramPreview').style.display='none';
+  checkHedefValid();
+  if(!uni) return;
+
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_obDal] || 'SAY';
+
+  _fbDb.collection('yks_programlar')
+    .where('il','==',il)
+    .where('uni','==',uni)
+    .get().then(function(snap){
+      var bolumler = [];
+      snap.forEach(function(doc){
+        var d=doc.data();
+        var ogr = parseInt(d.ogr_suresi||d.kontenjan||0);
+        // Süre filtresi — 2 veya 4 yıllık
+        // ogr_suresi alanı yoksa puan_turu ile filtrele
+        if(d.puan_turu === pt) bolumler.push({kod:doc.id, data:d});
+      });
+      bolumler.sort(function(a,b){ return (a.data.program||'').localeCompare(b.data.program||'','tr'); });
+      bSel.innerHTML = '<option value="">Bölüm seç...</option>';
+      bolumler.forEach(function(b){
+        var o=document.createElement('option');
+        o.value=b.kod;
+        var puan = b.data.min_puan_2024 ? ' ('+parseFloat(b.data.min_puan_2024).toFixed(1)+')' : '';
+        o.textContent = b.data.program + puan;
+        bSel.appendChild(o);
+      });
+      bSel.disabled = bolumler.length===0;
+      if(bolumler.length===0) bSel.innerHTML='<option value="">Bu üniversitede program bulunamadı</option>';
+    });
+}
+
+// ── Bölüm seçimi ──
+function selectHedefBolum() {
+  var kod = document.getElementById('hedefBolumSel').value;
+  if(!kod){ _obProgram=null; document.getElementById('hedefProgramPreview').style.display='none'; checkHedefValid(); return; }
+  _fbDb.collection('yks_programlar').doc(kod).get().then(function(doc){
+    if(!doc.exists){ _obProgram=null; checkHedefValid(); return; }
+    var d = doc.data();
+    _obProgram = {
+      kod:kod, uni:d.uni, bolum:d.program, puan_turu:d.puan_turu,
+      min_puan_2024:d.min_puan_2024||null, siralama_2024:d.siralama_2024||null
+    };
+    // Önizleme
+    var preview = document.getElementById('hedefProgramPreview');
+    document.getElementById('hedefPreviewUni').textContent = d.uni;
+    document.getElementById('hedefPreviewBolum').textContent = d.program;
+    var detay = [];
+    if(d.siralama_2024) detay.push('2024 Sıra: '+parseInt(d.siralama_2024).toLocaleString('tr-TR'));
+    if(d.min_puan_2024) detay.push('Taban: '+parseFloat(d.min_puan_2024).toFixed(2));
+    if(d.kontenjan)     detay.push('Kontenjan: '+d.kontenjan);
+    document.getElementById('hedefPreviewDetay').textContent = detay.join('  |  ');
+    preview.style.display='block';
+    checkHedefValid();
+  });
+}
+
+// ── Sınıf seçimi ──
+function selectSinif(sinif, el) {
+  _obSinif = sinif;
+  document.querySelectorAll('.ob-sinif-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('obStep3Btn').disabled = false;
+}
+
+// ── Onboarding tamamla ──
+function finishOnboarding() {
+  if(!_obUid || !_fbDb) return;
+  var profil = {
+    dal: _obDal,
+    sinif: _obSinif,
+    onboardingDone: true,
+    onboardingDate: new Date().toISOString()
+  };
+  if(_obHedefTur==='siralama' && _obSiralama){
+    profil.hedefTur = 'siralama';
+    profil.hedefSiralama = _obSiralama;
+  } else if(_obHedefTur==='okul' && _obProgram){
+    profil.hedefTur = 'okul';
+    profil.hedefProgram = _obProgram;
+  }
+  showLoading();
+  _fbDb.collection('users').doc(_obUid).set(profil,{merge:true}).then(function(){
+    hideLoading();
+    window.location.href = 'student.html';
+  }).catch(function(){ hideLoading(); window.location.href='student.html'; });
+}
+
+// ── Onboarding atla ──
+function skipOnboarding() {
+  if(_obUid && _fbDb){
+    _fbDb.collection('users').doc(_obUid).set({onboardingDone:true},{merge:true});
+  }
+  window.location.href = 'student.html';
+}
+
 function getErrorMsg(code){var msgs={'auth/user-not-found':'Bu email ile kayıtlı hesap yok.','auth/wrong-password':'Şifre hatalı.','auth/email-already-in-use':'Bu email zaten kullanımda.','auth/invalid-email':'Geçersiz email adresi.','auth/weak-password':'Şifre çok zayıf.','auth/too-many-requests':'Çok fazla deneme. Biraz bekle.','auth/invalid-credential':'Email veya şifre hatalı.'};return msgs[code]||'Bir hata oluştu.';}
 
 document.addEventListener('DOMContentLoaded',function(){
