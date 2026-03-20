@@ -1,492 +1,359 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-3LHMZF6983"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-3LHMZF6983');
-</script>
-  <link rel="manifest" href="/manifest.json">
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3LHMZF6983');</script>
+<link rel="manifest" href="/manifest.json">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>Pugi — YKS Çalışma Takip Uygulaması | TYT AYT Hazırlık</title>
-<meta name="description" content="Pugi — YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik, hedef takibi ve koç paneli ile sınava hazırlan.">
-<meta name="keywords" content="YKS çalışma takip, TYT hazırlık, AYT hazırlık, YKS uygulaması, sınav hazırlık, çalışma zamanlayıcı, öğrenci takip, Pugi">
+<meta name="description" content="Pugi — YKS hazırlığının akıllı yardımcısı. Zamanlayıcı, AI koç, hedef takibi. Tamamen ücretsiz.">
+<meta name="keywords" content="YKS çalışma takip,TYT hazırlık,AYT hazırlık,YKS uygulaması,Pugi">
 <meta name="author" content="Pugi">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pugiapp.com/">
-
-<!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pugiapp.com/">
 <meta property="og:title" content="Pugi — YKS Çalışma Takip Uygulaması">
-<meta property="og:description" content="YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik ve hedef takibi.">
+<meta property="og:description" content="YKS hazırlığının akıllı yardımcısı. Ücretsiz, hesap gerektirmez.">
 <meta property="og:image" content="https://pugiapp.com/icon-512.png">
 <meta property="og:locale" content="tr_TR">
-
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Pugi — YKS Çalışma Takip">
-<meta name="twitter:description" content="YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması.">
 <meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #080d18;
-  --bg2: #0e1628;
-  --card: #111827;
-  --border: #1c2d47;
-  --accent: #38bdf8;
-  --accent2: #818cf8;
-  --accent3: #34d399;
-  --warn: #f472b6;
-  --text: #e2e8f0;
-  --muted: #4b6280;
-}
+:root{--bg:#080d18;--bg2:#0e1628;--bg3:#131e33;--card:#111827;--border:#1c2d47;--accent:#38bdf8;--accent2:#818cf8;--accent3:#34d399;--warn:#f472b6;--orange:#fb923c;--yellow:#fbbf24;--text:#e2e8f0;--muted:#4b6280;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{overflow-x:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100dvh;overflow-x:hidden;}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* Orb arka plan */
+.bg-orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(90px);opacity:0.13;animation:orbFloat 10s ease-in-out infinite;}
+.bg-orb-1{width:360px;height:360px;background:#38bdf8;top:-110px;left:-80px;}
+.bg-orb-2{width:260px;height:260px;background:#818cf8;bottom:-60px;right:-60px;animation-delay:4s;}
+.bg-orb-3{width:150px;height:150px;background:#34d399;top:45%;left:58%;animation-delay:7s;}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(16px,-16px) scale(1.05);}}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.022) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  position: relative;
-}
+/* Loading */
+.loading-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.4s;}
+.loading-overlay.hidden{opacity:0;pointer-events:none;}
+.loading-spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+.loading-text{font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;}
+@keyframes spin{to{transform:rotate(360deg);}}
 
-/* Arka plan efektleri */
-.bg-orb {
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  filter: blur(80px);
-  opacity: 0.18;
-  animation: orbFloat 8s ease-in-out infinite;
-}
-.bg-orb-1 { width: 400px; height: 400px; background: #38bdf8; top: -100px; left: -100px; animation-delay: 0s; }
-.bg-orb-2 { width: 300px; height: 300px; background: #818cf8; bottom: -80px; right: -80px; animation-delay: 3s; }
-.bg-orb-3 { width: 200px; height: 200px; background: #34d399; top: 50%; left: 60%; animation-delay: 5s; }
-@keyframes orbFloat {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(20px, -20px) scale(1.05); }
-}
+/* Ekranlar */
+.screen{display:none;min-height:100dvh;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;}
 
-/* Grid pattern */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(rgba(56,189,248,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(56,189,248,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
+/* ══ LANDING ══ */
+#screenLanding{overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.landing-inner{max-width:430px;margin:0 auto;padding:52px 24px 44px;display:flex;flex-direction:column;min-height:100dvh;}
 
-/* Ana container */
-.container {
-  width: 100%;
-  max-width: 420px;
-  padding: 24px 20px;
-  position: relative;
-  z-index: 1;
-}
+.hero{text-align:center;margin-bottom:34px;animation:fadeDown 0.7s cubic-bezier(.4,0,.2,1) both;}
+.hero-logo-icon{width:80px;height:80px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2.1rem;box-shadow:0 8px 36px rgba(56,189,248,0.26),inset 0 1px 0 rgba(255,255,255,0.1);}
+.hero-logo-name{font-family:'Space Mono',monospace;font-size:2.6rem;font-weight:700;background:linear-gradient(135deg,#e2e8f0,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1.5px;margin-bottom:12px;}
+.hero-tagline{font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.45;margin-bottom:8px;}
+.hero-sub{font-size:0.79rem;font-weight:600;color:var(--muted);line-height:1.65;}
 
-/* Logo */
-.logo-wrap {
-  text-align: center;
-  margin-bottom: 36px;
-  animation: fadeDown 0.6s cubic-bezier(.4,0,.2,1) both;
-}
-.logo-icon {
-  width: 72px; height: 72px;
-  background: linear-gradient(135deg, #38bdf8, #818cf8);
-  border-radius: 24px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 14px;
-  box-shadow: 0 8px 32px rgba(56,189,248,0.3);
-  font-size: 2rem;
-}
-.logo-name {
-  font-family: 'Space Mono', monospace;
-  font-size: 2rem; font-weight: 700;
-  color: var(--text);
-  letter-spacing: -1px;
-}
-.logo-sub {
-  font-size: 0.78rem; font-weight: 700;
-  color: var(--muted); margin-top: 4px;
-  letter-spacing: 1px;
-}
+.feature-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:30px;animation:fadeUp 0.7s 0.1s cubic-bezier(.4,0,.2,1) both;}
+.feature-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:0.71rem;font-weight:800;color:var(--text);white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
+.pill-icon{font-size:0.85rem;}
 
-/* Hesap türü seçimi */
-.step { animation: fadeUp 0.5s cubic-bezier(.4,0,.2,1) both; }
-.step-title {
-  font-size: 1rem; font-weight: 900;
-  text-align: center; margin-bottom: 16px;
-  color: var(--text);
-}
-.step-sub {
-  font-size: 0.78rem; color: var(--muted);
-  text-align: center; margin-top: -10px;
-  margin-bottom: 20px; font-weight: 600;
-}
+.exam-section{animation:fadeUp 0.7s 0.2s cubic-bezier(.4,0,.2,1) both;margin-bottom:14px;}
+.exam-section-label{font-size:0.67rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:12px;}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
-/* Hesap tipi kartları */
-.type-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 12px; margin-bottom: 24px;
-}
-.type-card {
-  background: var(--card);
-  border: 2px solid var(--border);
-  border-radius: 20px;
-  padding: 20px 14px;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(.4,0,.2,1);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.type-card::before {
-  content: '';
-  position: absolute; inset: 0;
-  opacity: 0;
-  transition: opacity 0.25s;
-  border-radius: 18px;
-}
-.type-card.student::before { background: linear-gradient(135deg, rgba(56,189,248,0.08), rgba(129,140,248,0.08)); }
-.type-card.coach::before { background: linear-gradient(135deg, rgba(52,211,153,0.08), rgba(251,191,36,0.08)); }
-.type-card:hover::before, .type-card.selected::before { opacity: 1; }
-.type-card.selected.student { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
-.type-card.selected.coach { border-color: var(--accent3); box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
-.type-card:hover { transform: translateY(-2px); }
+.exam-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:17px 13px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
+.exam-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.22s;}
+.exam-card.yks::before{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.1));}
+.exam-card.kpss::before{background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(251,191,36,0.1));}
+.exam-card.lgs::before{background:linear-gradient(135deg,rgba(244,114,182,0.1),rgba(251,146,60,0.1));}
+.exam-card.other::before{background:linear-gradient(135deg,rgba(148,163,184,0.07),rgba(100,116,139,0.07));}
+.exam-card:active{transform:scale(0.95);}
+.exam-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(56,189,248,0.14);}
+.exam-card.selected::before{opacity:1;}
+.exam-card.coming-soon{cursor:default;opacity:0.62;}
+.exam-card.coming-soon:active{transform:none;}
 
-.type-emoji { font-size: 2.2rem; display: block; margin-bottom: 10px; }
-.type-label {
-  font-size: 0.92rem; font-weight: 900;
-  display: block; margin-bottom: 4px;
-}
-.type-card.student .type-label { color: var(--accent); }
-.type-card.coach .type-label { color: var(--accent3); }
-.type-desc {
-  font-size: 0.65rem; font-weight: 700;
-  color: var(--muted); line-height: 1.4;
-  display: block;
-}
-.type-check {
-  position: absolute; top: 10px; right: 10px;
-  width: 20px; height: 20px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.7rem; opacity: 0;
-  transition: opacity 0.2s;
-}
-.type-card.selected.student .type-check { background: var(--accent); opacity: 1; }
-.type-card.selected.coach .type-check { background: var(--accent3); opacity: 1; }
+.coming-badge{position:absolute;top:8px;right:8px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-size:0.46rem;font-weight:900;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;padding:2px 5px;}
+.exam-emoji{font-size:1.75rem;display:block;margin-bottom:7px;}
+.exam-label{font-size:0.88rem;font-weight:900;display:block;margin-bottom:3px;color:var(--text);}
+.exam-desc{font-size:0.59rem;font-weight:700;color:var(--muted);line-height:1.5;}
 
-/* Form */
-.form-card {
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 20px;
-  margin-bottom: 16px;
-  overflow: visible;
-}
-.form-title {
-  font-size: 0.78rem; font-weight: 800;
-  color: var(--muted); letter-spacing: 1px;
-  text-transform: uppercase; margin-bottom: 16px;
-}
-.input-wrap {
-  position: relative; margin-bottom: 12px;
-}
-.input-icon {
-  position: absolute; left: 14px; top: 50%;
-  transform: translateY(-50%);
-  color: var(--muted); pointer-events: none;
-}
-.form-input {
-  width: 100%; padding: 13px 14px 13px 40px;
-  background: var(--bg2); border: 1.5px solid var(--border);
-  border-radius: 12px; color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.88rem; font-weight: 700;
-  outline: none; transition: border-color 0.2s;
-  -webkit-appearance: none;
-}
-.form-input::placeholder { color: var(--muted); }
-.form-input:focus { border-color: var(--accent); }
-.pw-wrap { position: relative; }
-.pw-toggle {
-  position: absolute; right: 12px; top: 50%;
-  transform: translateY(-50%);
-  background: none; border: none; color: var(--muted);
-  cursor: pointer; padding: 4px;
-}
+.btn-start{width:100%;padding:15px;border:none;border-radius:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:900;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 22px rgba(56,189,248,0.28);animation:fadeUp 0.7s 0.3s cubic-bezier(.4,0,.2,1) both;-webkit-tap-highlight-color:transparent;}
+.btn-start:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none;}
+.btn-start:not(:disabled):active{transform:scale(0.97);}
 
-/* Auth mode tabs */
-.auth-tabs {
-  display: flex; gap: 6px;
-  background: var(--bg2);
-  border-radius: 12px; padding: 4px;
-  margin-bottom: 20px;
-}
-.auth-tab {
-  flex: 1; padding: 9px;
-  border: none; border-radius: 9px;
-  background: transparent; color: var(--muted);
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.82rem; font-weight: 800;
-  cursor: pointer; transition: all 0.2s;
-}
-.auth-tab.active {
-  background: var(--card);
-  color: var(--text);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
+.login-link{text-align:center;margin-top:14px;font-size:0.77rem;font-weight:700;color:var(--muted);animation:fadeUp 0.7s 0.35s cubic-bezier(.4,0,.2,1) both;}
+.login-link span{color:var(--accent);cursor:pointer;font-weight:800;text-decoration:underline;text-underline-offset:2px;}
 
-/* Butonlar */
-.btn-main {
-  width: 100%; padding: 15px;
-  border: none; border-radius: 14px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #fff; font-family: 'Nunito', sans-serif;
-  font-size: 0.95rem; font-weight: 900;
-  cursor: pointer; transition: all 0.2s;
-  box-shadow: 0 4px 20px rgba(56,189,248,0.35);
-  position: relative; overflow: hidden;
-}
-.btn-main.coach-mode {
-  background: linear-gradient(135deg, var(--accent3), #fbbf24);
-  box-shadow: 0 4px 20px rgba(52,211,153,0.35);
-}
-.btn-main:active { transform: scale(0.98); }
-.btn-main:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.landing-footer{margin-top:auto;padding-top:26px;text-align:center;font-size:0.63rem;font-weight:700;color:var(--muted);line-height:1.8;animation:fadeUp 0.7s 0.4s cubic-bezier(.4,0,.2,1) both;}
+.landing-footer strong{color:var(--accent3);}
 
-.btn-google {
-  width: 100%;
-  padding: 12px 8px;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  background: var(--bg2); color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.82rem; font-weight: 800;
-  cursor: pointer; transition: all 0.2s;
-  display: flex; align-items: center; justify-content: center;
-  gap: 8px; margin-top: 10px;
-  box-sizing: border-box;
-}
-.btn-google:hover { border-color: #4285F4; background: rgba(66,133,244,0.06); }
+/* ══ AUTH EKRANI ══ */
+#screenAuth{align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.auth-inner{width:100%;max-width:420px;padding:24px 20px;}
 
-/* Hata */
-.error-msg {
-  background: rgba(244,114,182,0.1);
-  border: 1px solid rgba(244,114,182,0.3);
-  border-radius: 10px; padding: 10px 14px;
-  font-size: 0.78rem; font-weight: 700;
-  color: var(--warn); margin-top: 12px;
-  display: none;
-}
-.error-msg.show { display: block; }
+.auth-logo{text-align:center;margin-bottom:24px;animation:fadeDown 0.6s cubic-bezier(.4,0,.2,1) both;}
+.auth-logo-icon{width:54px;height:54px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:17px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.5rem;box-shadow:0 6px 22px rgba(56,189,248,0.22);}
+.auth-logo-name{font-family:'Space Mono',monospace;font-size:1.45rem;font-weight:700;color:var(--text);letter-spacing:-0.5px;}
 
-/* Divider */
-.divider {
-  display: flex; align-items: center; gap: 10px;
-  margin: 14px 0;
-}
-.divider-line { flex: 1; height: 1px; background: var(--border); }
-.divider-text { font-size: 0.68rem; font-weight: 800; color: var(--muted); }
+.btn-back{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--card);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-bottom:16px;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.btn-back:hover{border-color:var(--accent);color:var(--text);}
 
-/* Loading overlay */
-.loading-overlay {
-  position: fixed; inset: 0; z-index: 100;
-  background: var(--bg);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 16px;
-  transition: opacity 0.4s;
-}
-.loading-overlay.hidden { opacity: 0; pointer-events: none; }
-.loading-spinner {
-  width: 48px; height: 48px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-.loading-text {
-  font-size: 0.8rem; font-weight: 800;
-  color: var(--muted); letter-spacing: 1px;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+.step{animation:fadeUp 0.5s cubic-bezier(.4,0,.2,1) both;}
+.step-title{font-size:1rem;font-weight:900;text-align:center;margin-bottom:6px;}
+.step-sub{font-size:0.77rem;color:var(--muted);text-align:center;margin-bottom:20px;font-weight:600;}
 
-/* Step transitions */
-#step1 { display: block; }
-#step2 { display: none; }
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
+.type-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:20px 14px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
+.type-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.22s;border-radius:18px;}
+.type-card.student::before{background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));}
+.type-card.coach::before{background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(251,191,36,0.08));}
+.type-card:hover::before,.type-card.selected::before{opacity:1;}
+.type-card.selected.student{border-color:var(--accent);box-shadow:0 0 0 3px rgba(56,189,248,0.14);}
+.type-card.selected.coach{border-color:var(--accent3);box-shadow:0 0 0 3px rgba(52,211,153,0.14);}
+.type-card:active{transform:scale(0.96);}
+.type-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;opacity:0;transition:opacity 0.2s;}
+.type-card.selected.student .type-check{background:var(--accent);opacity:1;}
+.type-card.selected.coach .type-check{background:var(--accent3);opacity:1;}
+.type-emoji{font-size:2.2rem;display:block;margin-bottom:10px;}
+.type-label{font-size:0.92rem;font-weight:900;display:block;margin-bottom:4px;}
+.type-card.student .type-label{color:var(--accent);}
+.type-card.coach .type-label{color:var(--accent3);}
+.type-desc{font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.4;display:block;}
 
-/* Animasyonlar */
-@keyframes fadeDown {
-  from { opacity: 0; transform: translateY(-20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.fadeIn { animation: fadeUp 0.35s cubic-bezier(.4,0,.2,1) both; }
+.form-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
+.form-title{font-size:0.78rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;}
+.input-wrap{position:relative;margin-bottom:12px;}
+.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:0.85rem;font-weight:800;}
+.form-input{width:100%;padding:13px 14px 13px 40px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
+.form-input::placeholder{color:var(--muted);}
+.form-input:focus{border-color:var(--accent);}
+.pw-wrap{position:relative;}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;}
 
-/* Küçük ekranlar */
-@media (max-height: 700px) {
-  .logo-wrap { margin-bottom: 20px; }
-  .logo-icon { width: 56px; height: 56px; font-size: 1.6rem; }
-  .logo-name { font-size: 1.6rem; }
-  .type-card { padding: 14px 10px; }
-  .type-emoji { font-size: 1.8rem; }
+.auth-tabs{display:flex;gap:6px;background:var(--bg2);border-radius:12px;padding:4px;margin-bottom:20px;}
+.auth-tab{flex:1;padding:9px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
+.auth-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+
+.btn-main{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:900;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(56,189,248,0.28);-webkit-tap-highlight-color:transparent;}
+.btn-main.coach-mode{background:linear-gradient(135deg,var(--accent3),#fbbf24);box-shadow:0 4px 20px rgba(52,211,153,0.28);}
+.btn-main:active{transform:scale(0.98);}
+.btn-main:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+.btn-google{width:100%;padding:12px 8px;border:1.5px solid var(--border);border-radius:14px;background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;}
+.btn-google:hover{border-color:#4285F4;background:rgba(66,133,244,0.06);}
+
+.divider{display:flex;align-items:center;gap:10px;margin:14px 0;}
+.divider-line{flex:1;height:1px;background:var(--border);}
+.divider-text{font-size:0.68rem;font-weight:800;color:var(--muted);}
+
+.error-msg{background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.3);border-radius:10px;padding:10px 14px;font-size:0.78rem;font-weight:700;color:var(--warn);margin-top:12px;display:none;}
+.error-msg.show{display:block;}
+#forgotWrap{text-align:right;margin-top:-4px;margin-bottom:12px;}
+#forgotWrap span{font-size:0.72rem;color:var(--accent);cursor:pointer;font-weight:700;}
+
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.fadeIn{animation:fadeUp 0.35s cubic-bezier(.4,0,.2,1) both;}
+#step1{display:block;}
+#step2{display:none;}
+
+@media(max-height:680px){
+  .landing-inner{padding:32px 20px 28px;}
+  .hero-logo-icon{width:62px;height:62px;font-size:1.7rem;}
+  .hero-logo-name{font-size:2.1rem;}
+  .feature-pills{margin-bottom:22px;}
+  .exam-card{padding:13px 10px;}
+  .exam-emoji{font-size:1.5rem;margin-bottom:5px;}
 }
 </style>
 </head>
 <body>
 
-<!-- Arka plan -->
 <div class="bg-orb bg-orb-1"></div>
 <div class="bg-orb bg-orb-2"></div>
 <div class="bg-orb bg-orb-3"></div>
 
-<!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
-  <div class="loading-text">YÜKLENİYOR...</div>
+  <div class="loading-text">YÜKLENIYOR...</div>
 </div>
 
-<div class="container">
+<!-- EKRAN 1: LANDING -->
+<div class="screen active" id="screenLanding">
+  <div class="landing-inner">
 
-  <!-- Logo -->
-  <div class="logo-wrap">
-    <div class="logo-icon">🦊</div>
-    <div class="logo-name">Pugi</div>
-    <div class="logo-sub">YKS ÇALIŞMA TAKİP</div>
-  </div>
+    <div class="hero">
+      <div class="hero-logo-icon">&#x1F98A;</div>
+      <div class="hero-logo-name">Pugi</div>
+      <div class="hero-tagline">YKS hazırlığının<br>akıllı yardımcısı</div>
+      <div class="hero-sub">Zamanlayıcı, hedef takibi, AI koç ve daha fazlası.<br>Tamamen ücretsiz.</div>
+    </div>
 
-  <!-- ADIM 1: Hesap türü seç -->
-  <div id="step1" class="step">
-    <div class="step-title">Hesabın nasıl olsun?</div>
-    <div class="step-sub">Devam etmek için bir hesap türü seç</div>
+    <div class="feature-pills">
+      <div class="feature-pill"><span class="pill-icon">&#x23F1;</span>Zamanlayıcı</div>
+      <div class="feature-pill"><span class="pill-icon">&#x1F3AF;</span>Hedef Takibi</div>
+      <div class="feature-pill"><span class="pill-icon">&#x1F4CA;</span>İstatistikler</div>
+      <div class="feature-pill"><span class="pill-icon">&#x1F916;</span>AI Koç</div>
+      <div class="feature-pill"><span class="pill-icon">&#x1F525;</span>Günlük Seri</div>
+      <div class="feature-pill"><span class="pill-icon">&#x1F3C6;</span>Rozetler</div>
+    </div>
 
-    <div class="type-grid">
-      <div class="type-card student" onclick="selectType('student', this)">
-        <span class="type-check">✓</span>
-        <span class="type-emoji">📚</span>
-        <span class="type-label">Öğrenci</span>
-        <span class="type-desc">Çalışmalarını takip et, koçunla bağlan</span>
-      </div>
-      <div class="type-card coach" onclick="selectType('coach', this)">
-        <span class="type-check">✓</span>
-        <span class="type-emoji">🎯</span>
-        <span class="type-label">Koç</span>
-        <span class="type-desc">Öğrencilerini yönet, istatistikleri gör</span>
+    <div class="exam-section">
+      <div class="exam-section-label">Hangi sınava çalışıyorsun?</div>
+      <div class="exam-grid">
+
+        <div class="exam-card yks" id="examYks" onclick="selectExam('yks',this)">
+          <span class="exam-emoji">&#x1F4DA;</span>
+          <span class="exam-label">YKS</span>
+          <span class="exam-desc">TYT &middot; AYT<br>SAY / SÖZ / EA / DİL</span>
+        </div>
+
+        <div class="exam-card kpss coming-soon" onclick="showComingSoon()">
+          <span class="coming-badge">Yakında</span>
+          <span class="exam-emoji">&#x1F3DB;</span>
+          <span class="exam-label">KPSS</span>
+          <span class="exam-desc">Kamu personeli<br>seçme sınavı</span>
+        </div>
+
+        <div class="exam-card lgs coming-soon" onclick="showComingSoon()">
+          <span class="coming-badge">Yakında</span>
+          <span class="exam-emoji">&#x1F392;</span>
+          <span class="exam-label">LGS</span>
+          <span class="exam-desc">Liseye geçiş<br>sınavı</span>
+        </div>
+
+        <div class="exam-card other coming-soon" onclick="showComingSoon()">
+          <span class="coming-badge">Yakında</span>
+          <span class="exam-emoji">&#x1F4DD;</span>
+          <span class="exam-label">Diğer</span>
+          <span class="exam-desc">ALES &middot; DGS<br>ve daha fazlası</span>
+        </div>
+
       </div>
     </div>
 
-    <button class="btn-main" id="continueBtn" onclick="goToStep2()" disabled>
-      Devam Et →
+    <button class="btn-start" id="btnStart" onclick="goToExamAction()" disabled>
+      Hemen Başla &#x2192;
     </button>
-  </div>
 
-  <!-- ADIM 2: Giriş / Kayıt -->
-  <div id="step2" class="step">
-    <!-- Geri butonu -->
-    <button onclick="goBackToStep1()" title="Geri" style="display:flex;align-items:center;justify-content:center;background:var(--card);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;padding:0;margin-bottom:16px;transition:all 0.2s;width:38px;height:38px;border-radius:10px;flex-shrink:0" onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tabLogin" onclick="setAuthMode('login')">Giriş Yap</button>
-      <button class="auth-tab" id="tabRegister" onclick="setAuthMode('register')">Kayıt Ol</button>
+    <div class="login-link">
+      Zaten hesabın var mı? <span onclick="goToAuthScreen()">Giriş Yap</span>
     </div>
 
-    <div class="form-card">
-      <div class="form-title" id="formTitle">GİRİŞ YAP</div>
+    <div class="landing-footer">
+      <strong>Kayıt gerektirmez.</strong> Hemen dene, beğenirsen kayıt ol.<br>
+      Tüm özellikler <strong>tamamen ücretsiz</strong>.
+    </div>
 
-      <!-- Kayıt: İsim -->
-      <div class="input-wrap" id="nameWrap" style="display:none">
-        <span class="input-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </span>
-        <input class="form-input" type="text" id="nameInput" placeholder="Adın ve soyadın">
+  </div>
+</div>
+
+<!-- EKRAN 2: HESAP TÜRÜ + GİRİŞ/KAYIT -->
+<div class="screen" id="screenAuth">
+  <div class="auth-inner">
+
+    <div class="auth-logo">
+      <div class="auth-logo-icon">&#x1F98A;</div>
+      <div class="auth-logo-name">Pugi</div>
+    </div>
+
+    <div id="step1" class="step">
+      <div class="step-title">Hesabın nasıl olsun?</div>
+      <div class="step-sub">Devam etmek için bir hesap türü seç</div>
+      <div class="type-grid">
+        <div class="type-card student" onclick="selectType('student',this)">
+          <span class="type-check">&#x2713;</span>
+          <span class="type-emoji">&#x1F4DA;</span>
+          <span class="type-label">Öğrenci</span>
+          <span class="type-desc">Çalışmalarını takip et, koçunla bağlan</span>
+        </div>
+        <div class="type-card coach" onclick="selectType('coach',this)">
+          <span class="type-check">&#x2713;</span>
+          <span class="type-emoji">&#x1F3AF;</span>
+          <span class="type-label">Koç</span>
+          <span class="type-desc">Öğrencilerini yönet, istatistikleri gör</span>
+        </div>
+      </div>
+      <button class="btn-main" id="continueBtn" onclick="goToStep2()" disabled>Devam Et &#x2192;</button>
+      <div class="login-link" style="margin-top:14px">
+        <span onclick="goToLanding()">&#x2190; Geri dön</span>
+      </div>
+    </div>
+
+    <div id="step2" class="step">
+      <button class="btn-back" onclick="goBackToStep1()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" onclick="setAuthMode('login')">Giriş Yap</button>
+        <button class="auth-tab" id="tabRegister" onclick="setAuthMode('register')">Kayıt Ol</button>
       </div>
 
-      <!-- Kayıt: Kullanıcı adı -->
-      <div class="input-wrap" id="unameWrap" style="display:none">
-        <span class="input-icon">@</span>
-        <input class="form-input" type="text" id="unameInput" placeholder="kullanici_adi" style="padding-left:36px">
-      </div>
+      <div class="form-card">
+        <div class="form-title" id="formTitle">GİRİŞ YAP</div>
 
-      <!-- Email -->
-      <div class="input-wrap">
-        <span class="input-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
-        </span>
-        <input class="form-input" type="email" id="emailInput" placeholder="email@adresin.com">
-      </div>
+        <div class="input-wrap" id="nameWrap" style="display:none">
+          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <input class="form-input" type="text" id="nameInput" placeholder="Adın ve soyadın" autocomplete="name">
+        </div>
 
-      <!-- Şifre -->
-      <div class="input-wrap pw-wrap">
-        <span class="input-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        </span>
-        <input class="form-input" type="password" id="pwInput" placeholder="••••••••" id="pwInput">
-        <button class="pw-toggle" type="button" onclick="togglePw()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <div class="input-wrap" id="unameWrap" style="display:none">
+          <span class="input-icon">@</span>
+          <input class="form-input" type="text" id="unameInput" placeholder="kullanici_adi" style="padding-left:36px" autocomplete="username">
+        </div>
+
+        <div class="input-wrap">
+          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg></span>
+          <input class="form-input" type="email" id="emailInput" placeholder="email@adresin.com" autocomplete="email">
+        </div>
+
+        <div class="input-wrap pw-wrap">
+          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <input class="form-input" type="password" id="pwInput" placeholder="&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;" autocomplete="current-password">
+          <button class="pw-toggle" type="button" onclick="togglePw()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+
+        <div id="forgotWrap">
+          <span onclick="sendReset()">Şifremi unuttum</span>
+        </div>
+
+        <button class="btn-main" id="submitBtn" onclick="submitAuth()">Giriş Yap</button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-text">VEYA</div>
+          <div class="divider-line"></div>
+        </div>
+
+        <button class="btn-google" onclick="signInWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span>Google ile Devam Et</span>
         </button>
       </div>
 
-      <!-- Şifremi unuttum -->
-      <div id="forgotWrap" style="text-align:right;margin-top:-4px;margin-bottom:12px">
-        <span onclick="sendReset()" style="font-size:0.72rem;color:var(--accent);cursor:pointer;font-weight:700">Şifremi unuttum</span>
-      </div>
-
-      <button class="btn-main" id="submitBtn" onclick="submitAuth()">Giriş Yap</button>
-
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-text">VEYA</div>
-        <div class="divider-line"></div>
-      </div>
-
-      <button class="btn-google" onclick="signInWithGoogle()">
-        <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-        </svg>
-        <span>Google ile Devam Et</span>
-      </button>
+      <div class="error-msg" id="errorMsg"></div>
     </div>
 
-    <div class="error-msg" id="errorMsg"></div>
-
-
   </div>
-
 </div>
 
 <script>
-// ════════════════════════════════════
-// STATE
-// ════════════════════════════════════
-var selectedAccountType = null;
-var authMode = 'login'; // 'login' | 'register'
-
+'use strict';
+var selectedAccountType=null,selectedExam=null,authMode='login';
 var firebaseConfig = {
   apiKey: "AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
   authDomain: "pugi-app-deeaa.firebaseapp.com",
@@ -495,268 +362,141 @@ var firebaseConfig = {
   messagingSenderId: "219082394848",
   appId: "1:219082394848:web:8780f59490374d6566d485"
 };
+var _fbApp=null,_fbDb=null,_fbAuth=null;
 
-var _fbApp = null, _fbDb = null, _fbAuth = null;
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function goToLanding(){showScreen('screenLanding');}
+function goToAuthScreen(){showScreen('screenAuth');document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';}
 
-// ════════════════════════════════════
-// FIREBASE INIT
-// ════════════════════════════════════
-function loadScript(src, cb) {
-  var s = document.createElement('script');
-  s.src = src; s.onload = cb;
-  s.onerror = function() { console.error('Script yüklenemedi:', src); };
-  document.head.appendChild(s);
+function selectExam(exam,el){
+  document.querySelectorAll('.exam-card:not(.coming-soon)').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');selectedExam=exam;
+  var btn=document.getElementById('btnStart');btn.disabled=false;btn.textContent='Hemen Başla \u2192';
+}
+function showComingSoon(){
+  var btn=document.getElementById('btnStart'),orig=btn.textContent;
+  btn.style.background='linear-gradient(135deg,var(--muted),#374151)';btn.style.boxShadow='none';btn.textContent='\u23F3 Yakında geliyor!';
+  setTimeout(function(){btn.style.background='';btn.style.boxShadow='';btn.textContent=orig;},1800);
+}
+function goToExamAction(){
+  if(!selectedExam)return;
+  sessionStorage.setItem('pugi_sinav',selectedExam);
+  sessionStorage.setItem('pugi_guest','true');
+  window.location.href='student.html';
 }
 
-function initFirebase() {
-  loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js', function() {
-    loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js', function() {
-      loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js', function() {
-        _fbApp = firebase.initializeApp(firebaseConfig);
-        _fbDb = firebase.firestore();
-        _fbAuth = firebase.auth();
-
-        _fbAuth.onAuthStateChanged(function(user) {
-          if (user) {
-            checkAccountTypeAndRedirect(user);
-          } else {
-            hideLoading();
-          }
-        });
-      });
-    });
-  });
-}
-
-function checkAccountTypeAndRedirect(user) {
-  _fbDb.collection('users').doc(user.uid).get().then(function(doc) {
-    hideLoading();
-    if (!doc.exists) {
-      // Yeni kullanıcı, step2'ye git (Google ile kayıt oldu ama profil yok)
-      showStep2ForNewGoogleUser(user);
-      return;
-    }
-    var accountType = doc.data().accountType;
-    if (accountType === 'coach') {
-      window.location.href = 'coach.html';
-    } else {
-      window.location.href = 'student.html';
-    }
-  }).catch(function() {
-    hideLoading();
-  });
-}
-
-// ════════════════════════════════════
-// ADIM YÖNETİMİ
-// ════════════════════════════════════
-function selectType(type, el) {
-  selectedAccountType = type;
-  document.querySelectorAll('.type-card').forEach(function(c) { c.classList.remove('selected'); });
+function selectType(type,el){
+  selectedAccountType=type;
+  document.querySelectorAll('.type-card').forEach(function(c){c.classList.remove('selected');});
   el.classList.add('selected');
-  var btn = document.getElementById('continueBtn');
-  btn.disabled = false;
-  btn.className = 'btn-main' + (type === 'coach' ? ' coach-mode' : '');
-  btn.textContent = (type === 'coach' ? '🎯' : '📚') + ' Devam Et →';
+  var btn=document.getElementById('continueBtn');btn.disabled=false;
+  btn.className='btn-main'+(type==='coach'?' coach-mode':'');
+  btn.textContent=(type==='coach'?'\u1F3AF':'\u1F4DA')+' Devam Et \u2192';
 }
+function goToStep2(){if(!selectedAccountType)return;document.getElementById('step1').style.display='none';var s2=document.getElementById('step2');s2.style.display='block';s2.classList.add('fadeIn');updateFormForType();}
+function goBackToStep1(){document.getElementById('step2').style.display='none';document.getElementById('step1').style.display='block';document.getElementById('step1').classList.add('fadeIn');hideError();}
+function updateFormForType(){document.getElementById('submitBtn').className=selectedAccountType==='coach'?'btn-main coach-mode':'btn-main';}
 
-function goToStep2() {
-  if (!selectedAccountType) return;
-  document.getElementById('step1').style.display = 'none';
-  var s2 = document.getElementById('step2');
-  s2.style.display = 'block';
-  s2.classList.add('fadeIn');
-  updateFormForType();
-}
-
-function goBackToStep1() {
-  document.getElementById('step2').style.display = 'none';
-  document.getElementById('step1').style.display = 'block';
-  document.getElementById('step1').classList.add('fadeIn');
+function setAuthMode(mode){
+  authMode=mode;
+  document.getElementById('tabLogin').classList.toggle('active',mode==='login');
+  document.getElementById('tabRegister').classList.toggle('active',mode==='register');
+  document.getElementById('nameWrap').style.display=mode==='register'?'block':'none';
+  document.getElementById('unameWrap').style.display=mode==='register'?'block':'none';
+  document.getElementById('forgotWrap').style.display=mode==='login'?'block':'none';
+  document.getElementById('formTitle').textContent=mode==='login'?'GİRİŞ YAP':'KAYIT OL';
+  document.getElementById('submitBtn').textContent=mode==='login'?'Giriş Yap':'Hesap Oluştur';
   hideError();
 }
 
-function updateFormForType() {
-  var btn = document.getElementById('submitBtn');
-  if (selectedAccountType === 'coach') {
-    btn.className = 'btn-main coach-mode';
-  } else {
-    btn.className = 'btn-main';
-  }
-}
-
-// ════════════════════════════════════
-// AUTH MODE
-// ════════════════════════════════════
-function setAuthMode(mode) {
-  authMode = mode;
-  document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
-  document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
-  document.getElementById('nameWrap').style.display = mode === 'register' ? 'block' : 'none';
-  document.getElementById('unameWrap').style.display = mode === 'register' ? 'block' : 'none';
-  document.getElementById('forgotWrap').style.display = mode === 'login' ? 'block' : 'none';
-  document.getElementById('formTitle').textContent = mode === 'login' ? 'GİRİŞ YAP' : 'KAYIT OL';
-  document.getElementById('submitBtn').textContent = mode === 'login' ? 'Giriş Yap' : 'Hesap Oluştur';
-  hideError();
-}
-
-// ════════════════════════════════════
-// AUTH İŞLEMLERİ
-// ════════════════════════════════════
-function submitAuth() {
-  var email = document.getElementById('emailInput').value.trim();
-  var pw = document.getElementById('pwInput').value;
-
-  if (!email || !pw) { showError('Email ve şifreyi gir.'); return; }
-
-  showLoading();
-
-  if (authMode === 'login') {
-    _fbAuth.signInWithEmailAndPassword(email, pw).catch(function(e) {
-      hideLoading();
-      showError(getErrorMsg(e.code));
-    });
-  } else {
-    var name = document.getElementById('nameInput').value.trim();
-    var uname = document.getElementById('unameInput').value.trim().toLowerCase();
-    if (!name || !uname) { hideLoading(); showError('İsim ve kullanıcı adını gir.'); return; }
-    if (pw.length < 6) { hideLoading(); showError('Şifre en az 6 karakter olmalı.'); return; }
-
-    // Kullanıcı adı kontrol
-    _fbDb.collection('usernames').doc(uname).get().then(function(doc) {
-      if (doc.exists) { hideLoading(); showError('Bu kullanıcı adı alınmış.'); return null; }
-      return _fbAuth.createUserWithEmailAndPassword(email, pw);
-    }).then(function(cred) {
-      if (!cred) return null;
-      return createUserProfile(cred.user, name, uname, selectedAccountType).then(function() {
-        // Profil yazıldıktan sonra yönlendir
-        if (selectedAccountType === 'coach') {
-          window.location.href = 'coach.html';
-        } else {
-          window.location.href = 'student.html';
-        }
+function loadScript(src,cb){var s=document.createElement('script');s.src=src;s.onload=cb;s.onerror=function(){};document.head.appendChild(s);}
+function initFirebase(){
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js',function(){
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js',function(){
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js',function(){
+        _fbApp=firebase.initializeApp(firebaseConfig);_fbDb=firebase.firestore();_fbAuth=firebase.auth();
+        _fbAuth.onAuthStateChanged(function(user){if(user){checkAccountTypeAndRedirect(user);}else{hideLoading();}});
       });
-    }).catch(function(e) {
-      hideLoading();
-      if (e.code) showError(getErrorMsg(e.code));
-      else showError('Bir hata oluştu.');
     });
-  }
+  });
+}
+function checkAccountTypeAndRedirect(user){
+  _fbDb.collection('users').doc(user.uid).get().then(function(doc){
+    hideLoading();
+    if(!doc.exists){showScreen('screenAuth');showStep2ForNewGoogleUser(user);return;}
+    window.location.href=doc.data().accountType==='coach'?'coach.html':'student.html';
+  }).catch(function(){hideLoading();});
 }
 
-function signInWithGoogle() {
-  if (!_fbAuth) return;
-  var provider = new firebase.auth.GoogleAuthProvider();
-  provider.setCustomParameters({ prompt: 'select_account' });
+function submitAuth(){
+  var email=document.getElementById('emailInput').value.trim();
+  var pw=document.getElementById('pwInput').value;
+  if(!email||!pw){showError('Email ve şifreyi gir.');return;}
   showLoading();
-  _fbAuth.signInWithPopup(provider).then(function(result) {
-    var user = result.user;
-    var isNew = result.additionalUserInfo && result.additionalUserInfo.isNewUser;
-    if (isNew) {
-      var autoUname = user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
-      var displayName = user.displayName || autoUname;
-      var type = selectedAccountType || 'student';
-      return createUserProfile(result.user, displayName, autoUname, type).then(function() {
-        window.location.href = type === 'coach' ? 'coach.html' : 'student.html';
+  if(authMode==='login'){
+    _fbAuth.signInWithEmailAndPassword(email,pw).catch(function(e){hideLoading();showError(getErrorMsg(e.code));});
+  }else{
+    var name=document.getElementById('nameInput').value.trim();
+    var uname=document.getElementById('unameInput').value.trim().toLowerCase();
+    if(!name||!uname){hideLoading();showError('İsim ve kullanıcı adını gir.');return;}
+    if(pw.length<6){hideLoading();showError('Şifre en az 6 karakter olmalı.');return;}
+    _fbDb.collection('usernames').doc(uname).get().then(function(doc){
+      if(doc.exists){hideLoading();showError('Bu kullanıcı adı alınmış.');return null;}
+      return _fbAuth.createUserWithEmailAndPassword(email,pw);
+    }).then(function(cred){
+      if(!cred)return null;
+      return createUserProfile(cred.user,name,uname,selectedAccountType).then(function(){
+        window.location.href=selectedAccountType==='coach'?'coach.html':'student.html';
+      });
+    }).catch(function(e){hideLoading();showError(e.code?getErrorMsg(e.code):'Bir hata oluştu.');});
+  }
+}
+function signInWithGoogle(){
+  if(!_fbAuth)return;
+  var provider=new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});showLoading();
+  _fbAuth.signInWithPopup(provider).then(function(result){
+    var user=result.user,isNew=result.additionalUserInfo&&result.additionalUserInfo.isNewUser;
+    if(isNew){
+      var autoUname=user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
+      var type=selectedAccountType||'student';
+      return createUserProfile(user,user.displayName||autoUname,autoUname,type).then(function(){
+        window.location.href=type==='coach'?'coach.html':'student.html';
       });
     }
-    // Mevcut Google kullanıcısı — onAuthStateChanged halleder
-  }).catch(function(e) {
-    hideLoading();
-    if (e.code !== 'auth/popup-closed-by-user') showError('Google ile giriş başarısız.');
-  });
+  }).catch(function(e){hideLoading();if(e.code!=='auth/popup-closed-by-user')showError('Google ile giriş başarısız.');});
 }
-
-function createUserProfile(user, displayName, username, accountType) {
-  var batch = _fbDb.batch();
-  batch.set(_fbDb.collection('users').doc(user.uid), {
-    username: username,
-    displayName: displayName,
-    accountType: accountType || 'student',
-    createdAt: new Date().toISOString()
-  });
-  batch.set(_fbDb.collection('usernames').doc(username), { uid: user.uid });
+function createUserProfile(user,displayName,username,accountType){
+  var batch=_fbDb.batch();
+  batch.set(_fbDb.collection('users').doc(user.uid),{username:username,displayName:displayName,accountType:accountType||'student',createdAt:new Date().toISOString()});
+  batch.set(_fbDb.collection('usernames').doc(username),{uid:user.uid});
   return batch.commit();
 }
-
-function showStep2ForNewGoogleUser(user) {
-  // Google ile giriş yaptı ama profil yok
-  // selectedAccountType seçilmediyse step1'e gönder
-  if (!selectedAccountType) {
-    document.getElementById('step1').style.display = 'block';
-    document.getElementById('step2').style.display = 'none';
-    return;
-  }
-  // Profil oluştur
-  var autoUname = user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
-  createUserProfile(user, user.displayName || autoUname, autoUname, selectedAccountType);
+function showStep2ForNewGoogleUser(user){
+  if(!selectedAccountType){document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';return;}
+  var autoUname=user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
+  createUserProfile(user,user.displayName||autoUname,autoUname,selectedAccountType);
 }
-
-function sendReset() {
-  var email = document.getElementById('emailInput').value.trim();
-  if (!email) { showError('Önce email adresini gir.'); return; }
-  _fbAuth.sendPasswordResetEmail(email).then(function() {
-    showError('✅ Sıfırlama maili gönderildi!');
-    document.getElementById('errorMsg').style.background = 'rgba(52,211,153,0.1)';
-    document.getElementById('errorMsg').style.borderColor = 'rgba(52,211,153,0.3)';
-    document.getElementById('errorMsg').style.color = 'var(--accent3)';
-  }).catch(function() { showError('Mail gönderilemedi.'); });
+function sendReset(){
+  var email=document.getElementById('emailInput').value.trim();
+  if(!email){showError('Önce email adresini gir.');return;}
+  _fbAuth.sendPasswordResetEmail(email).then(function(){
+    var el=document.getElementById('errorMsg');
+    el.textContent='\u2705 Sıfırlama maili gönderildi!';
+    el.style.background='rgba(52,211,153,0.1)';el.style.borderColor='rgba(52,211,153,0.3)';el.style.color='var(--accent3)';
+    el.classList.add('show');
+  }).catch(function(){showError('Mail gönderilemedi.');});
 }
+function togglePw(){var inp=document.getElementById('pwInput');inp.type=inp.type==='password'?'text':'password';}
+function showError(msg){var el=document.getElementById('errorMsg');el.textContent=msg;el.style.background='rgba(244,114,182,0.1)';el.style.borderColor='rgba(244,114,182,0.3)';el.style.color='var(--warn)';el.classList.add('show');}
+function hideError(){document.getElementById('errorMsg').classList.remove('show');}
+function showLoading(){document.getElementById('loadingOverlay').classList.remove('hidden');}
+function hideLoading(){document.getElementById('loadingOverlay').classList.add('hidden');}
+function getErrorMsg(code){var msgs={'auth/user-not-found':'Bu email ile kayıtlı hesap yok.','auth/wrong-password':'Şifre hatalı.','auth/email-already-in-use':'Bu email zaten kullanımda.','auth/invalid-email':'Geçersiz email adresi.','auth/weak-password':'Şifre çok zayıf.','auth/too-many-requests':'Çok fazla deneme. Biraz bekle.','auth/invalid-credential':'Email veya şifre hatalı.'};return msgs[code]||'Bir hata oluştu.';}
 
-// ════════════════════════════════════
-// YARDIMCI
-// ════════════════════════════════════
-function togglePw() {
-  var inp = document.getElementById('pwInput');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
-
-function showError(msg) {
-  var el = document.getElementById('errorMsg');
-  el.textContent = msg;
-  el.style.background = 'rgba(244,114,182,0.1)';
-  el.style.borderColor = 'rgba(244,114,182,0.3)';
-  el.style.color = 'var(--warn)';
-  el.classList.add('show');
-}
-
-function hideError() {
-  document.getElementById('errorMsg').classList.remove('show');
-}
-
-function showLoading() {
-  document.getElementById('loadingOverlay').classList.remove('hidden');
-}
-
-function hideLoading() {
-  document.getElementById('loadingOverlay').classList.add('hidden');
-}
-
-function getErrorMsg(code) {
-  var msgs = {
-    'auth/user-not-found': 'Bu email ile kayıtlı hesap yok.',
-    'auth/wrong-password': 'Şifre hatalı.',
-    'auth/email-already-in-use': 'Bu email zaten kullanımda.',
-    'auth/invalid-email': 'Geçersiz email adresi.',
-    'auth/weak-password': 'Şifre çok zayıf.',
-    'auth/too-many-requests': 'Çok fazla deneme. Biraz bekle.',
-    'auth/invalid-credential': 'Email veya şifre hatalı.'
-  };
-  return msgs[code] || 'Bir hata oluştu.';
-}
-
-// ════════════════════════════════════
-// BAŞLAT
-// ════════════════════════════════════
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded',function(){
   initFirebase();
-
-  // Enter tuşu
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      if (document.getElementById('step2').style.display !== 'none') submitAuth();
-    }
-  });
+  document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('step2').style.display!=='none')submitAuth();});
 });
 </script>
 </body>
