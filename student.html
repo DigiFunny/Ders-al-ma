@@ -1987,25 +1987,41 @@ function _applyGuestStatLocks() {
     }
   });
 
-  // Grafik bölümlerini gizle / kilitle
-  var lockedSections = ['weeklyChartWrap','monthlyChartWrap','goalCard','topicMapWrap','analysisRow'];
+  // Kilitli grafik bölümlerini misafirde gizle (overlay yerine gizleme)
+  var lockedSections = ['weeklyChartWrap','monthlyChartWrap','topicMapWrap','analysisRow'];
   lockedSections.forEach(function(id) {
     var el = document.getElementById(id);
-    if (el && !el.querySelector('.guest-lock-overlay')) {
-      el.style.position = 'relative';
-      var overlay = document.createElement('div');
-      overlay.className = 'guest-lock-overlay';
-      overlay.onclick = function() {
-        _showGuestLockModal('Detaylı İstatistikler', 'Haftalık grafik, konu haritası ve daha fazlası için kayıt ol.');
-      };
-      overlay.innerHTML =
-        '<div style="position:absolute;inset:0;background:rgba(8,13,24,0.85);border-radius:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:10;cursor:pointer">' +
-          '<span style="font-size:1.5rem">&#x1F512;</span>' +
-          '<span style="font-size:0.72rem;font-weight:800;color:var(--muted)">Kayıt ol, kilidi a&#xE7;</span>' +
-        '</div>';
-      el.appendChild(overlay);
+    // Bölümün başlığını da gizle (önceki .sec elemanı)
+    if (el) {
+      el.style.display = 'none';
+      var prev = el.previousElementSibling;
+      if (prev && prev.classList.contains('sec')) prev.style.display = 'none';
     }
   });
+
+  // goalCard'ı gizle (haftalık hedef kayıt gerektiriyor)
+  var goalCardEl = document.getElementById('goalCard');
+  if (goalCardEl) {
+    goalCardEl.style.display = 'none';
+    var goalPrev = goalCardEl.previousElementSibling;
+    if (goalPrev && goalPrev.classList.contains('sec')) goalPrev.style.display = 'none';
+  }
+
+  // goalPieSection'ı gizle
+  var gps = document.getElementById('goalPieSection');
+  if (gps) gps.style.display = 'none';
+
+  // Deneme net grafiğini gizle
+  var dng = document.getElementById('denemeNetChartWrap');
+  if (dng) {
+    dng.style.display = 'none';
+    var dngPrev = dng.previousElementSibling;
+    if (dngPrev && dngPrev.classList.contains('sec')) dngPrev.style.display = 'none';
+  }
+
+  // Pie chart bölümünü gizle
+  var pieGrid = dng ? dng.nextElementSibling : null;
+  // Sadece bugünkü özet ve ders barları kalsın
 }
 
 // ════════════════════════════════════════════
@@ -3782,20 +3798,105 @@ function onGuestMode() {
  * _applyGuestProfilLayout — Misafir modunda Profilim sekmesini düzenler.
  * Login banner görünür, diğer bölümler kilitli overlay ile örtülür.
  */
+/**
+ * _applyGuestProfilLayout — Profilim sekmesini misafir moduna göre düzenler.
+ * Arkadaşlar, Koç ve Başarımlar bölümleri başlıklarıyla görünür ama
+ * üzerlerine kilit overlay eklenir. Login banner en üstte gösterilir.
+ */
 function _applyGuestProfilLayout() {
   // Login banner'ı göster
   var banner = document.getElementById('loginPromptBanner');
   if (banner) banner.style.display = 'flex';
 
-  // Profil panelinin geri kalanını gizle
+  // Profil kartını ve stats'ı gizle (giriş gerektiriyor)
+  var heroCard = document.getElementById('profileHeroCard');
+  if (heroCard) heroCard.style.display = 'none';
+  var rozetStats = document.getElementById('rozetStats');
+  if (rozetStats) rozetStats.style.display = 'none';
+  var coachWrap = document.getElementById('coachRequestsWrap');
+  if (coachWrap) coachWrap.style.display = 'none';
+
+  // Arkadaşlar, Başarımlar bölümlerine kilit overlay ekle
+  _addGuestSectionLock('friendsBody', 'friendsArrow',
+    'Arkadaşlarım',
+    'Arkadaşlarını ekle, birlikte çalış ve sıralamanda nasıl ilerlediğini gör.');
+
+  _addGuestSectionLock('badgesBody', 'badgesArrow',
+    'Başarımlarım',
+    'Çalıştıkça rozetler kazan, seviye atla ve başarılarını takip et.');
+
+  // Koç ekle bölümü — ayrı bir kilitli kart ekle
+  _addGuestCoachCard();
+}
+
+/**
+ * _addGuestSectionLock — Belirtilen bölümü açık gösterir ama
+ * üstüne kilit overlay ekler.
+ */
+function _addGuestSectionLock(bodyId, arrowId, title, desc) {
+  var body = document.getElementById(bodyId);
+  if (!body) return;
+
+  // Bölümü aç (collapse'ı kaldır)
+  body.style.display = 'block';
+  var arrow = document.getElementById(arrowId);
+  if (arrow) arrow.style.transform = 'rotate(0deg)';
+
+  // İçeriği kilit kartıyla değiştir
+  body.innerHTML = '';
+  var lockCard = document.createElement('div');
+  lockCard.style.cssText = 'background:var(--card);border:1.5px dashed var(--border);border-radius:14px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;transition:border-color 0.2s';
+  lockCard.onmouseenter = function(){ this.style.borderColor='var(--accent)'; };
+  lockCard.onmouseleave = function(){ this.style.borderColor='var(--border)'; };
+  (function(t,d){ lockCard.onclick = function(){ _showGuestLockModal(t,d); }; })(title,desc);
+  lockCard.innerHTML =
+    '<div style="font-size:1.6rem;margin-bottom:8px">&#x1F512;</div>' +
+    '<div style="font-size:0.78rem;font-weight:800;color:var(--muted);margin-bottom:10px">'+desc+'</div>' +
+    '<div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:8px 16px;color:#fff;font-size:0.78rem;font-weight:900">&#x1F680; Ücretsiz Kayıt Ol</div>';
+  body.appendChild(lockCard);
+}
+
+/**
+ * _addGuestCoachCard — Profilim'e koç ekleme kilitli kartını ekler.
+ */
+function _addGuestCoachCard() {
   var profilPanel = document.getElementById('profilPanel');
-  if (profilPanel) {
-    // Her child'ı gizle (banner hariç)
-    Array.from(profilPanel.children).forEach(function(child) {
-      if (child.id !== 'loginPromptBanner') child.style.display = 'none';
-    });
+  if (!profilPanel) return;
+  // Zaten eklenmiş mi?
+  if (document.getElementById('guestCoachCard')) return;
+
+  var wrap = document.createElement('div');
+  wrap.id = 'guestCoachCard';
+  wrap.style.cssText = 'margin-bottom:8px';
+
+  // Başlık
+  var coachHeader = document.createElement('div');
+  coachHeader.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:8px';
+  coachHeader.innerHTML = '<div class="sec" style="margin-bottom:0">Koç Ekle</div>';
+  wrap.appendChild(coachHeader);
+
+  // Kilit kartı
+  var coachCard = document.createElement('div');
+  coachCard.style.cssText = 'background:var(--card);border:1.5px dashed var(--border);border-radius:14px;padding:20px;text-align:center;cursor:pointer;margin-bottom:10px;transition:border-color 0.2s';
+  coachCard.onmouseenter = function(){ this.style.borderColor='var(--accent3)'; };
+  coachCard.onmouseleave = function(){ this.style.borderColor='var(--border)'; };
+  coachCard.onclick = function(){ _showGuestLockModal('Koç Ekle','Bir koç ile bağlan, önerilerini al ve gelişimini takip ettir.'); };
+  coachCard.innerHTML =
+    '<div style="font-size:1.6rem;margin-bottom:8px">&#x1F512;</div>' +
+    '<div style="font-size:0.78rem;font-weight:800;color:var(--muted);margin-bottom:10px">Bir koç ile bağlan, önerilerini al ve gelişimini takip ettir.</div>' +
+    '<div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent3),#fbbf24);border:none;border-radius:10px;padding:8px 16px;color:#000;font-size:0.78rem;font-weight:900">&#x1F680; Ücretsiz Kayıt Ol</div>';
+  wrap.appendChild(coachCard);
+
+
+  // Arkadaşlar başlığından önce ekle
+  var friendsHeader = document.querySelector('#profilPanel [onclick*="friendsBody"]');
+  if (friendsHeader) {
+    profilPanel.insertBefore(wrap, friendsHeader);
+  } else {
+    profilPanel.appendChild(wrap);
   }
 }
+
 
 function _applyGuestCalisLayout() {
   if (!_isGuest) return;
@@ -6723,20 +6824,7 @@ function renderGsItems() {
     (function(id){ subjSel.onchange = function(){ setGsItemSubject(id, this.value); }; })(item.id);
     card.appendChild(subjSel);
 
-    // Topic select
-    if (item.subject && examData[item.subject]) {
-      var topicSel = document.createElement('select');
-      topicSel.style.cssText = "width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 10px;outline:none;margin-bottom:8px";
-      var topt0 = document.createElement('option'); topt0.value=''; topt0.textContent='Tüm Konular'; topicSel.appendChild(topt0);
-      (examData[item.subject].topics||[]).forEach(function(t) {
-        var o = document.createElement('option');
-        o.value = t; o.textContent = t;
-        if (item.topic === t) o.selected = true;
-        topicSel.appendChild(o);
-      });
-      (function(id){ topicSel.onchange = function(){ setGsItemTopic(id, this.value); }; })(item.id);
-      card.appendChild(topicSel);
-    }
+    // Konu seçimi kaldırıldı — sadece ders bazlı hedef destekleniyor
 
     // Target input
     var targetRow = document.createElement('div');
