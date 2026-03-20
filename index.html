@@ -243,7 +243,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </button>
 
     <div class="login-link">
-      Zaten hesabın var mı? <span onclick="goToAuthScreen()">Giriş Yap</span>
+      <span onclick="goToAuthScreen()">Giriş Yap / Kayıt Ol</span>
     </div>
 
     <div class="landing-footer">
@@ -264,7 +264,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     </div>
 
     <div id="step1" class="step">
-      <div class="step-title">Hesabın nasıl olsun?</div>
+      <div class="step-title">Hesap Türünü Seç</div>
       <div class="step-sub">Devam etmek için bir hesap türü seç</div>
       <div class="type-grid">
         <div class="type-card student" onclick="selectType('student',this)">
@@ -282,7 +282,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
       <button class="btn-main" id="continueBtn" onclick="goToStep2()" disabled>Devam Et &#x2192;</button>
       <div class="login-link" style="margin-top:14px">
-        <span onclick="goToLanding()">&#x2190; Geri dön</span>
+        <span onclick="goToLanding()">← Anasayfaya Dön</span>
       </div>
     </div>
 
@@ -391,7 +391,7 @@ function selectType(type,el){
   el.classList.add('selected');
   var btn=document.getElementById('continueBtn');btn.disabled=false;
   btn.className='btn-main'+(type==='coach'?' coach-mode':'');
-  btn.textContent=(type==='coach'?'\u1F3AF':'\u1F4DA')+' Devam Et \u2192';
+  btn.textContent=(type==='coach'?'🎯':'📚')+' Devam Et →';
 }
 function goToStep2(){if(!selectedAccountType)return;document.getElementById('step1').style.display='none';var s2=document.getElementById('step2');s2.style.display='block';s2.classList.add('fadeIn');updateFormForType();}
 function goBackToStep1(){document.getElementById('step2').style.display='none';document.getElementById('step1').style.display='block';document.getElementById('step1').classList.add('fadeIn');hideError();}
