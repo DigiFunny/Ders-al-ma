@@ -143,6 +143,7 @@ body {
 .page { display: none; padding: 0 14px; animation: fadeUp 0.25s ease; }
 .page.active { display: block; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.3); } }
 
 /* SECTION TITLE */
 .sec { font-size: 0.7rem; font-weight: 800; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; margin-top: 16px; }
@@ -1077,6 +1078,49 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <div class="motiv-quote" id="motivQuote">Yükleniyor...</div>
     <div class="motiv-author" id="motivAuthor"></div>
 
+  </div>
+
+  <!-- AI KOÇ KARTI -->
+  <div id="aiCoachCard" style="background:linear-gradient(135deg,rgba(129,140,248,0.08),rgba(56,189,248,0.08));border:1.5px solid rgba(129,140,248,0.25);border-radius:18px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden">
+
+    <!-- Başlık -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:30px;height:30px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
+        <div>
+          <div style="font-size:0.8rem;font-weight:900;color:var(--text)">AI Koçun</div>
+          <div id="aiCoachDate" style="font-size:0.6rem;font-weight:700;color:var(--muted)">Bugünün önerisi</div>
+        </div>
+      </div>
+      <!-- Detaylı analiz butonu — haftada 1 hak -->
+      <button id="aiDeepBtn" onclick="requestDeepAnalysis()" style="background:rgba(129,140,248,0.12);border:1.5px solid rgba(129,140,248,0.3);border-radius:9px;padding:5px 10px;font-size:0.62rem;font-weight:800;color:var(--accent2);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;display:none">
+        🔍 Derin Analiz
+      </button>
+    </div>
+
+    <!-- Öneri metni -->
+    <div id="aiCoachText" style="font-size:0.82rem;font-weight:700;color:var(--text);line-height:1.6;min-height:40px">
+      <div style="display:flex;align-items:center;gap:8px;color:var(--muted)">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s infinite"></div>
+        Yükleniyor...
+      </div>
+    </div>
+
+    <!-- Alt bilgi -->
+    <div id="aiCoachFooter" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(129,140,248,0.15)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span id="aiDeepHakLabel" style="font-size:0.62rem;font-weight:700;color:var(--muted)">Bu hafta 1 derin analiz hakkın var</span>
+        <span id="aiCoachTime" style="font-size:0.6rem;color:var(--muted);font-weight:600"></span>
+      </div>
+    </div>
+
+    <!-- Misafir kilidi -->
+    <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(8,13,24,0.88);border-radius:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel çalışma verilerine göre günlük öneri almak için kayıt ol.')">
+      <span style="font-size:1.8rem">🤖</span>
+      <span style="font-size:0.75rem;font-weight:800;color:var(--text)">AI Koçun seni bekliyor</span>
+      <span style="font-size:0.68rem;color:var(--muted);font-weight:700;text-align:center;max-width:200px">Günlük kişisel öneri almak için kayıt ol</span>
+      <div style="background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:10px;padding:8px 18px;color:#fff;font-size:0.78rem;font-weight:900;margin-top:4px">🚀 Ücretsiz Kayıt Ol</div>
+    </div>
   </div>
 
   <div class="sec">Bugün</div>
@@ -2998,6 +3042,9 @@ function renderGreeting() {
 
 function renderAna() {
   // Misafirde bazı ana sayfa bölümleri gizlenir
+  // AI koç kartını yenile
+  loadAiDailyCoach();
+
   if (_isGuest) {
     var coachSuggestWrap = document.getElementById('coachSuggestWrap');
     if (coachSuggestWrap) coachSuggestWrap.style.display = 'none';
@@ -3635,6 +3682,16 @@ var firebaseConfig = {
 var _fbApp = null, _fbDb = null, _fbAuth = null;
 var _currentUser = null;
 
+// ── AI Koç Sabitleri ──────────────────────────────────
+var GEMINI_API_KEY = 'AIzaSyAsAJGpLcubY0Lie_7WVyWDA4YwBmW6lvc';
+var GEMINI_MODEL   = 'gemini-2.0-flash';
+var GEMINI_URL     = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + GEMINI_API_KEY;
+
+// ── AI Koç State ─────────────────────────────────────
+var _aiDailyCache    = null;  // { text, date } — günlük öneri cache'i
+var _aiDeepHakSayisi = 1;     // Haftada 1 derin analiz hakkı
+var _aiDeepLastWeek  = '';    // Son derin analiz haftası (YYYY-Www)
+
 // ── Misafir Modu ──────────────────────────────────────
 // sessionStorage'dan okunur, sayfa kapanınca silinir.
 var _isGuest = sessionStorage.getItem('pugi_guest') === 'true';
@@ -3756,6 +3813,258 @@ function onUserLoggedIn(user) {
  * Veriler sessionStorage'da tutulur, sayfa kapanınca silinir.
  * Kısıtlı özellikler kilitli gösterilir.
  */
+// ════════════════════════════════════════════
+// AI KOÇ SİSTEMİ
+// ════════════════════════════════════════════
+
+/**
+ * _getWeekKey — Haftayı YYYY-Www formatında döndürür.
+ * Derin analiz hakkının haftalık sıfırlanması için kullanılır.
+ */
+function _getWeekKey() {
+  var d = new Date();
+  var jan1 = new Date(d.getFullYear(), 0, 1);
+  var week = Math.ceil(((d - jan1) / 86400000 + jan1.getDay() + 1) / 7);
+  return d.getFullYear() + '-W' + week;
+}
+
+/**
+ * _buildAiPrompt — Kullanıcının verilerinden Gemini için prompt oluşturur.
+ * Çalışma süresi, deneme netleri, hedefler ve streak bilgilerini içerir.
+ * @returns {string} Türkçe prompt metni
+ */
+function _buildAiPrompt(isDeep) {
+  var todayKey  = new Date().toLocaleDateString('tr-TR');
+  var streak    = calcStreak();
+  var todayMins = entries.filter(function(e){ return e.date === todayKey; })
+                         .reduce(function(s,e){ return s+(e.sure||0); }, 0);
+
+  // Bu haftaki ders bazlı süre
+  var now = new Date();
+  var weekStart = new Date(now); weekStart.setDate(weekStart.getDate()-((weekStart.getDay()+6)%7)); weekStart.setHours(0,0,0,0);
+  var weekEntries = entries.filter(function(e){
+    var p=e.date.split('.');
+    if(p.length===3){var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));return d>=weekStart;}
+    return false;
+  });
+
+  // Ders bazlı süre özeti
+  var dersOzet = {};
+  weekEntries.forEach(function(e){
+    if(!e.subject) return;
+    dersOzet[e.subject] = (dersOzet[e.subject]||0) + (e.sure||0);
+  });
+  var dersStr = Object.keys(dersOzet).map(function(d){ return d+': '+dersOzet[d]+'dk'; }).join(', ') || 'Henüz çalışma yok';
+
+  // Son 3 deneme neti
+  var sonDeneme = denemeler.slice(0,3).map(function(d){
+    return (d.type||'TYT')+' (TYT:'+((d.tyt_net||d.net||0)).toFixed(1)+')';
+  }).join(', ') || 'Deneme kaydı yok';
+
+  // Haftalık hedef durumu
+  var weeklyDone = getThisWeekMins();
+  var hedefStr = weeklyGoal > 0 ? (weeklyDone+'/'+weeklyGoal+' dk (%'+Math.round(weeklyDone/weeklyGoal*100)+')') : 'Hedef ayarlanmamış';
+
+  var base =
+    'Sen Pugi uygulamasının YKS koçusun. Öğrencinin verilerine göre kısa, motive edici ve spesifik bir öneri ver.\n\n' +
+    '=== ÖĞRENCİ VERİLERİ ===\n' +
+    'Günlük seri: ' + streak + ' gün\n' +
+    'Bugün çalışılan: ' + todayMins + ' dakika\n' +
+    'Bu hafta dersler: ' + dersStr + '\n' +
+    'Haftalık hedef: ' + hedefStr + '\n' +
+    'Son denemeler: ' + sonDeneme + '\n';
+
+  if (isDeep) {
+    // Derin analiz için daha fazla bağlam
+    var topicMap = {};
+    entries.slice(0,50).forEach(function(e){
+      if(e.subject&&e.topic){ var key=e.subject+'/'+e.topic; topicMap[key]=(topicMap[key]||0)+1; }
+    });
+    var topTopics = Object.keys(topicMap).sort(function(a,b){return topicMap[b]-topicMap[a];}).slice(0,5);
+    base += 'En çok çalışılan konular: ' + topTopics.join(', ') + '\n\n';
+    base += '=== GÖREV ===\nDetaylı haftalık analiz yap. Güçlü yönleri, eksikleri ve önümüzdeki hafta için somut plan öner. Maksimum 5 madde.';
+  } else {
+    base += '\n=== GÖREV ===\nBugün için 2-3 cümlelik kısa, kişisel ve motive edici öneri ver. Spesifik ders/konu adı kullan. Abartmadan samimi ol.';
+  }
+
+  return base;
+}
+
+/**
+ * loadAiDailyCoach — Günlük AI önerisini yükler.
+ * Bugün zaten üretildiyse cache'ten gösterir, yoksa Gemini'ye istek atar.
+ * Misafir modunda kilit gösterir.
+ */
+function loadAiDailyCoach() {
+  var card = document.getElementById('aiCoachCard');
+  if (!card) return;
+
+  // Misafir modunda kilidi göster
+  if (_isGuest) {
+    var lockEl = document.getElementById('aiCoachLock');
+    if (lockEl) lockEl.style.display = 'flex';
+    return;
+  }
+
+  // Derin analiz butonunu göster
+  var deepBtn = document.getElementById('aiDeepBtn');
+  if (deepBtn) deepBtn.style.display = 'block';
+
+  // Footer'ı göster
+  var footer = document.getElementById('aiCoachFooter');
+  if (footer) footer.style.display = 'block';
+
+  // Haftada 1 hak kontrolü
+  var weekKey = _getWeekKey();
+  var savedWeek = localStorage.getItem('pugi_ai_deep_week');
+  var savedHak  = parseInt(localStorage.getItem('pugi_ai_deep_hak') || '1');
+  if (savedWeek !== weekKey) {
+    // Yeni hafta — hakkı sıfırla
+    _aiDeepHakSayisi = 1;
+    localStorage.setItem('pugi_ai_deep_week', weekKey);
+    localStorage.setItem('pugi_ai_deep_hak', '1');
+  } else {
+    _aiDeepHakSayisi = savedHak;
+  }
+  _updateDeepBtn();
+
+  // Bugün zaten öneri var mı?
+  var todayKey  = new Date().toISOString().slice(0,10);
+  var cachedDate = localStorage.getItem('pugi_ai_date');
+  var cachedText = localStorage.getItem('pugi_ai_text');
+
+  if (cachedDate === todayKey && cachedText) {
+    _showAiText(cachedText, false);
+    return;
+  }
+
+  // Yeni öneri üret
+  _fetchAiSuggestion(false);
+}
+
+/**
+ * _fetchAiSuggestion — Gemini Flash'a istek atıp öneriyi gösterir.
+ * @param {boolean} isDeep - true: derin analiz, false: günlük kısa öneri
+ */
+function _fetchAiSuggestion(isDeep) {
+  var textEl = document.getElementById('aiCoachText');
+  if (!textEl) return;
+
+  // Yükleniyor göster
+  textEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:var(--muted)"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s infinite"></div>' + (isDeep ? 'Analiz yapılıyor...' : 'Önerin hazırlanıyor...') + '</div>';
+
+  var prompt = _buildAiPrompt(isDeep);
+
+  fetch(GEMINI_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: isDeep ? 600 : 200, temperature: 0.7 }
+    })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    var text = '';
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      text = data.candidates[0].content.parts[0].text || '';
+    }
+    if (!text) text = 'Bugün en az 1 saat çalışmayı hedefle. Her adım seni hedefe yaklaştırır! 💪';
+
+    if (!isDeep) {
+      // Günlük öneriyi cache'e kaydet
+      var todayKey = new Date().toISOString().slice(0,10);
+      localStorage.setItem('pugi_ai_date', todayKey);
+      localStorage.setItem('pugi_ai_text', text);
+    }
+    _showAiText(text, isDeep);
+  })
+  .catch(function() {
+    // Hata durumunda kural motoru fallback
+    _showAiText(_buildRuleBasedSuggestion(), false);
+  });
+}
+
+/**
+ * _showAiText — AI metnini kartda gösterir.
+ */
+function _showAiText(text, isDeep) {
+  var textEl = document.getElementById('aiCoachText');
+  var dateEl = document.getElementById('aiCoachDate');
+  var timeEl = document.getElementById('aiCoachTime');
+  if (!textEl) return;
+
+  // Markdown bold (**text**) → <strong>
+  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Satır başındaki madde işaretleri
+  text = text.replace(/^[-•]\s*/gm, '• ');
+
+  textEl.innerHTML = '<div style="font-size:0.82rem;line-height:1.7;color:var(--text)">' + text + '</div>';
+  if (dateEl) dateEl.textContent = isDeep ? 'Derin analiz' : 'Bugünün önerisi';
+  if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'});
+}
+
+/**
+ * _buildRuleBasedSuggestion — Gemini'ye erişilemediğinde
+ * kural tabanlı kısa öneri üretir. (Katman 1 fallback)
+ */
+function _buildRuleBasedSuggestion() {
+  var todayKey = new Date().toLocaleDateString('tr-TR');
+  var todayMins = entries.filter(function(e){ return e.date===todayKey; })
+                         .reduce(function(s,e){ return s+(e.sure||0); },0);
+  var streak = calcStreak();
+
+  // Ders bazlı son 3 gün analizi
+  var son3Gun = new Date(); son3Gun.setDate(son3Gun.getDate()-3);
+  var sonDersler = {};
+  entries.forEach(function(e){
+    var p=(e.date||'').split('.');
+    if(p.length===3){var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));if(d>=son3Gun&&e.subject)sonDersler[e.subject]=(sonDersler[e.subject]||0)+1;}
+  });
+  var eksikDersler = ['Matematik','Fizik','Kimya','Biyoloji','Türkçe'].filter(function(d){ return !sonDersler[d]; });
+
+  if (todayMins === 0) return '🌅 Bugün henüz çalışmaya başlamadın. Şimdi harika bir zaman! ' + (eksikDersler.length ? eksikDersler[0] + ' ile başlayabilirsin.' : 'Hadi başla!');
+  if (streak >= 7) return '🔥 ' + streak + ' günlük muhteşem seri! Bu hafta ' + (eksikDersler[0]||'zayıf konularına') + ' odaklan.';
+  if (eksikDersler.length > 0) return '📚 ' + eksikDersler[0] + ' son 3 gündür çalışılmadı. Bugün ' + eksikDersler[0] + ' için 45 dakika ayır.';
+  return '✅ Güzel gidiyorsun! Bugün ' + todayMins + ' dakika çalıştın. Hedefine odaklanmaya devam et.';
+}
+
+/**
+ * _updateDeepBtn — Derin analiz butonunun durumunu günceller.
+ */
+function _updateDeepBtn() {
+  var btn = document.getElementById('aiDeepBtn');
+  var lbl = document.getElementById('aiDeepHakLabel');
+  if (!btn) return;
+  if (_aiDeepHakSayisi <= 0) {
+    btn.disabled = true;
+    btn.style.opacity = '0.4';
+    btn.style.cursor = 'not-allowed';
+    if (lbl) lbl.textContent = 'Bu haftaki derin analiz hakkını kullandın';
+  } else {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    if (lbl) lbl.textContent = 'Bu hafta ' + _aiDeepHakSayisi + ' derin analiz hakkın var';
+  }
+}
+
+/**
+ * requestDeepAnalysis — Kullanıcı derin analiz butonuna basınca çağrılır.
+ * Hak kontrolü yapar, Gemini'ye uzun analiz isteği gönderir.
+ */
+function requestDeepAnalysis() {
+  if (_aiDeepHakSayisi <= 0) {
+    showToast('Bu haftaki derin analiz hakkını kullandın. Pazartesi yenilenir.');
+    return;
+  }
+  _aiDeepHakSayisi--;
+  localStorage.setItem('pugi_ai_deep_hak', _aiDeepHakSayisi.toString());
+  _updateDeepBtn();
+  _fetchAiSuggestion(true);
+  showToast('🔍 Derin analiz başlatıldı...');
+}
+
 function onGuestMode() {
   // User bar: misafir göster
   var loggedInBar = document.getElementById('userBarLoggedIn');
@@ -3769,6 +4078,8 @@ function onGuestMode() {
 
   // Kilitli tab'ları işaretle
   _applyGuestTabLocks();
+  // AI koç kartını yükle (misafirde kilit gösterir)
+  loadAiDailyCoach();
   // Çalış sekmesi düzenini uygula
   _applyGuestCalisLayout();
 
@@ -7161,6 +7472,7 @@ function markSuggestionDone(docId) {
     loadInviteStats();
     processPendingAccepted();
     processPendingRemoved();
+    loadAiDailyCoach();
     }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
