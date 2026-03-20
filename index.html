@@ -503,18 +503,35 @@ var _obSinif    = null;   // 1|2|3|mezun
 var _obUid      = null;   // kayıt sonrası uid
 var _fbDbOb     = null;   // Firestore ref (initFirebase'den alınır)
 
-// İl listesi — Türkiye'nin 81 ili alfabetik
+// İl listesi — Firestore'daki il değerleriyle eşleşir
+// {value: Firestore değeri, label: görünen ad}
 var IL_LISTESI = [
-  'Adana','Adıyaman','Afyonkarahisar','Ağrı','Aksaray','Amasya','Ankara','Antalya',
-  'Ardahan','Artvin','Aydın','Balıkesir','Bartın','Batman','Bayburt','Bilecik',
-  'Bingöl','Bitlis','Bolu','Burdur','Bursa','Çanakkale','Çankırı','Çorum',
-  'Denizli','Diyarbakır','Düzce','Edirne','Elazığ','Erzincan','Erzurum','Eskişehir',
-  'Gaziantep','Giresun','Gümüşhane','Hakkari','Hatay','Iğdır','Isparta','İstanbul',
-  'İzmir','Kahramanmaraş','Karabük','Karaman','Kars','Kastamonu','Kayseri','Kilis',
-  'Kırıkkale','Kırklareli','Kırşehir','Kocaeli','Konya','Kütahya','Malatya','Manisa',
-  'Mardin','Mersin','Muğla','Muş','Nevşehir','Niğde','Ordu','Osmaniye','Rize',
-  'Sakarya','Samsun','Siirt','Sinop','Sivas','Şanlıurfa','Şırnak','Tekirdağ',
-  'Tokat','Trabzon','Tunceli','Uşak','Van','Yalova','Yozgat','Zonguldak'
+  {v:'adana',l:'Adana'},{v:'ankara',l:'Ankara'},{v:'antalya',l:'Antalya'},
+  {v:'ardahan',l:'Ardahan'},{v:'artvin',l:'Artvin'},{v:'aydın',l:'Aydın'},
+  {v:'balıkesir',l:'Balıkesir'},{v:'bartın',l:'Bartın'},{v:'batman',l:'Batman'},
+  {v:'bayburt',l:'Bayburt'},{v:'bilecik',l:'Bilecik'},{v:'bingöl',l:'Bingöl'},
+  {v:'bitlis',l:'Bitlis'},{v:'bolu',l:'Bolu'},{v:'burdur',l:'Burdur'},
+  {v:'bursa',l:'Bursa'},{v:'çanakkale',l:'Çanakkale'},{v:'çankırı',l:'Çankırı'},
+  {v:'çorum',l:'Çorum'},{v:'denizli',l:'Denizli'},{v:'düzce',l:'Düzce'},
+  {v:'edirne',l:'Edirne'},{v:'elazığ',l:'Elazığ'},{v:'erzincan',l:'Erzincan'},
+  {v:'erzurum',l:'Erzurum'},{v:'eskişehir',l:'Eskişehir'},{v:'gaziantep',l:'Gaziantep'},
+  {v:'giresun',l:'Giresun'},{v:'gümüşhane',l:'Gümüşhane'},{v:'hakkari',l:'Hakkari'},
+  {v:'hatay',l:'Hatay'},{v:'ığdır',l:'Iğdır'},{v:'ısparta',l:'Isparta'},
+  {v:'istanbul',l:'İstanbul'},{v:'izmir',l:'İzmir'},{v:'kahramanmaraş',l:'Kahramanmaraş'},
+  {v:'karabük',l:'Karabük'},{v:'karaman',l:'Karaman'},{v:'kars',l:'Kars'},
+  {v:'kastamonu',l:'Kastamonu'},{v:'kayseri',l:'Kayseri'},{v:'kilis',l:'Kilis'},
+  {v:'kırıkkale',l:'Kırıkkale'},{v:'kırklareli',l:'Kırklareli'},{v:'kırşehir',l:'Kırşehir'},
+  {v:'kocaeli',l:'Kocaeli'},{v:'konya',l:'Konya'},{v:'kütahya',l:'Kütahya'},
+  {v:'malatya',l:'Malatya'},{v:'manisa',l:'Manisa'},{v:'mardin',l:'Mardin'},
+  {v:'mersin',l:'Mersin'},{v:'muğla',l:'Muğla'},{v:'muş',l:'Muş'},
+  {v:'nevşehir',l:'Nevşehir'},{v:'niğde',l:'Niğde'},{v:'ordu',l:'Ordu'},
+  {v:'osmaniye',l:'Osmaniye'},{v:'rize',l:'Rize'},{v:'sakarya',l:'Sakarya'},
+  {v:'samsun',l:'Samsun'},{v:'siirt',l:'Siirt'},{v:'sinop',l:'Sinop'},
+  {v:'sivas',l:'Sivas'},{v:'şanlıurfa',l:'Şanlıurfa'},{v:'şırnak',l:'Şırnak'},
+  {v:'tekirdağ',l:'Tekirdağ'},{v:'tokat',l:'Tokat'},{v:'trabzon',l:'Trabzon'},
+  {v:'tunceli',l:'Tunceli'},{v:'uşak',l:'Uşak'},{v:'van',l:'Van'},
+  {v:'yalova',l:'Yalova'},{v:'yozgat',l:'Yozgat'},{v:'zonguldak',l:'Zonguldak'},
+  {v:'amasya',l:'Amasya'},{v:'kktc',l:'KKTC'}
 ];
 var firebaseConfig = {
   apiKey: "AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
@@ -670,14 +687,17 @@ function showOnboarding(uid) {
   _obUid = uid;
   _fbDbOb = _fbDb;
   showScreen('screenOnboarding');
-  // İl listesini doldur
+  // İl listesini doldur (Firestore değerleriyle eşleşen)
   var sel = document.getElementById('hedefIlSel');
-  IL_LISTESI.forEach(function(il) {
-    var o = document.createElement('option');
-    o.value = il.toLowerCase().replace(/\s/g,'_');
-    o.textContent = il;
-    sel.appendChild(o);
-  });
+  // Tekrar eklenmesin
+  if (sel.options.length <= 1) {
+    IL_LISTESI.forEach(function(il) {
+      var o = document.createElement('option');
+      o.value = il.v;
+      o.textContent = il.l;
+      sel.appendChild(o);
+    });
+  }
   _updateObProgress(1);
 }
 
@@ -784,24 +804,32 @@ function loadHedefUnis() {
   var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
   var pt = ptMap[_obDal] || 'SAY';
 
+  // Sadece il filtresi — index gerektirmez, puan_turu client-side filtrele
   _fbDb.collection('yks_programlar')
     .where('il','==',il)
-    .where('puan_turu','==',pt)
     .get().then(function(snap){
-      // Benzersiz üniversiteler
       var unis = {};
       snap.forEach(function(doc){
         var d=doc.data();
+        // Puan türü filtresi — dal seçilmişse filtrele, seçilmemişse hepsini göster
+        if (pt && d.puan_turu !== pt) return;
         if(!unis[d.uni]) unis[d.uni]=d.uni;
       });
       uSel.innerHTML = '<option value="">Üniversite seç...</option>';
+      if (Object.keys(unis).length === 0) {
+        uSel.innerHTML = '<option value="">Bu şehirde program bulunamadı</option>';
+        return;
+      }
       Object.keys(unis).sort().forEach(function(u){
         var o=document.createElement('option');
         o.value=u; o.textContent=u;
         uSel.appendChild(o);
       });
       uSel.disabled=false;
-    }).catch(function(){ uSel.innerHTML='<option value="">Hata oluştu</option>'; });
+    }).catch(function(e){
+      console.error('Üniversite yükleme hatası:', e);
+      uSel.innerHTML='<option value="">Hata: ' + (e.message||'Bilinmeyen') + '</option>';
+    });
 }
 
 // ── Bölüm yükleme ──
@@ -819,17 +847,16 @@ function loadHedefBolumler() {
   var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
   var pt = ptMap[_obDal] || 'SAY';
 
+  // uni tek başına sorgula — compound index gerektirmez
   _fbDb.collection('yks_programlar')
-    .where('il','==',il)
     .where('uni','==',uni)
     .get().then(function(snap){
       var bolumler = [];
       snap.forEach(function(doc){
         var d=doc.data();
-        var ogr = parseInt(d.ogr_suresi||d.kontenjan||0);
-        // Süre filtresi — 2 veya 4 yıllık
-        // ogr_suresi alanı yoksa puan_turu ile filtrele
-        if(d.puan_turu === pt) bolumler.push({kod:doc.id, data:d});
+        // Puan türü filtresi client-side
+        if(pt && d.puan_turu !== pt) return;
+        bolumler.push({kod:doc.id, data:d});
       });
       bolumler.sort(function(a,b){ return (a.data.program||'').localeCompare(b.data.program||'','tr'); });
       bSel.innerHTML = '<option value="">Bölüm seç...</option>';

@@ -1115,7 +1115,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
 
     <!-- Misafir kilidi -->
-    <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(8,13,24,0.88);border-radius:17px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel çalışma verilerine göre günlük öneri almak için kayıt ol.')">
+    <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(8,13,24,0.88);border-radius:17px;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel çalışma verilerine göre günlük öneri almak için kayıt ol.')">
       <span style="font-size:1.8rem">🤖</span>
       <span style="font-size:0.75rem;font-weight:800;color:var(--text)">AI Koçun seni bekliyor</span>
       <span style="font-size:0.68rem;color:var(--muted);font-weight:700;text-align:center;max-width:200px">Günlük kişisel öneri almak için kayıt ol</span>
@@ -3995,9 +3995,20 @@ function loadAiDailyCoach() {
   // Misafir modunda kilidi göster
   if (_isGuest) {
     var lockEl = document.getElementById('aiCoachLock');
-    if (lockEl) lockEl.style.display = 'flex';
+    if (lockEl) { lockEl.style.display = 'flex'; lockEl.style.flexDirection = 'column'; }
     return;
   }
+
+  // Giriş yapılmamışsa (Firebase henüz hazır değil) kilidi göster
+  if (!_currentUser) {
+    var lockEl2 = document.getElementById('aiCoachLock');
+    if (lockEl2) { lockEl2.style.display = 'flex'; lockEl2.style.flexDirection = 'column'; }
+    return;
+  }
+
+  // Kilidi gizle (giriş yapılmış)
+  var lockEl3 = document.getElementById('aiCoachLock');
+  if (lockEl3) lockEl3.style.display = 'none';
 
   // Derin analiz butonunu göster
   var deepBtn = document.getElementById('aiDeepBtn');
