@@ -1560,12 +1560,89 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 
 <!-- AYARLAR SAYFASI (tam ekran modal) -->
+
+<!-- ONBOARDİNG MODAL (tek seferlik) -->
+<div id="onboardingModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.7);align-items:flex-end;justify-content:center">
+  <div style="background:var(--card);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:480px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:2rem;margin-bottom:8px">🎯</div>
+      <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Sınav Bilgilerini Ayarla</div>
+      <div style="font-size:0.78rem;color:var(--muted);font-weight:600;line-height:1.5">Hangi sınavı hedefliyorsun? Pugi sana özel içerik sunsun.</div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Hedef Sınavım</div>
+      <select id="obDal" style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none">
+        <option value="">Seçiniz...</option>
+        <option value="TYT">TYT (Temel Yeterlilik)</option>
+        <option value="SAY">AYT Sayısal</option>
+        <option value="SOZ">AYT Sözel</option>
+        <option value="EA">AYT Eşit Ağırlık</option>
+        <option value="DIL">Dil (YDT)</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Sınıfım</div>
+      <select id="obSinif" style="width:100%;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none">
+        <option value="">Seçiniz...</option>
+        <option value="9">9. Sınıf</option>
+        <option value="10">10. Sınıf</option>
+        <option value="11">11. Sınıf</option>
+        <option value="12">12. Sınıf / Mezun</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Puan Hedefim (isteğe bağlı)</div>
+      <input id="obHedef" type="number" placeholder="Örn: 480" min="200" max="600"
+        style="width:100%;box-sizing:border-box;padding:12px 14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none">
+    </div>
+
+    <button onclick="closeOnboardingModal(true)" style="width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:900;cursor:pointer;margin-bottom:10px">Kaydet ve Başla 🚀</button>
+    <button onclick="closeOnboardingModal(false)" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:14px;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer">Şimdi Değil</button>
+  </div>
+</div>
+
 <div id="settingsPage" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto">
   <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
     <!-- Header -->
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:8px">
       <button onclick="closeSettingsModal()" style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div style="font-size:1.1rem;font-weight:900">Ayarlar</div>
+    </div>
+
+
+    <!-- Sınav Bilgilerim -->
+    <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:18px 0 10px">Sınav Bilgilerim</div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px;margin-bottom:8px">
+      <div style="margin-bottom:10px">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Hedef Sınavım</div>
+        <select id="settingsDal" style="width:100%;padding:11px 12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none">
+          <option value="">Seçiniz...</option>
+          <option value="TYT">TYT</option>
+          <option value="SAY">AYT Sayısal</option>
+          <option value="SOZ">AYT Sözel</option>
+          <option value="EA">AYT Eşit Ağırlık</option>
+          <option value="DIL">Dil (YDT)</option>
+        </select>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Sınıfım</div>
+        <select id="settingsSinif" style="width:100%;padding:11px 12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none">
+          <option value="">Seçiniz...</option>
+          <option value="9">9. Sınıf</option>
+          <option value="10">10. Sınıf</option>
+          <option value="11">11. Sınıf</option>
+          <option value="12">12. Sınıf / Mezun</option>
+        </select>
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Puan Hedefim</div>
+        <input id="settingsHedef" type="number" placeholder="Örn: 480" min="200" max="600"
+          style="width:100%;box-sizing:border-box;padding:11px 12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none">
+      </div>
+      <button onclick="saveProfilFromSettings()" style="width:100%;padding:11px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:900;cursor:pointer">Kaydet</button>
     </div>
 
     <!-- Tema -->
@@ -3681,6 +3758,7 @@ var firebaseConfig = {
 
 var _fbApp = null, _fbDb = null, _fbAuth = null;
 var _currentUser = null;
+var _userProfil = { dal: null, hedef: null, sinif: null }; // TYT/AYT/vb, puan hedefi, sınıf
 
 // ── AI Koç Sabitleri ──────────────────────────────────
 var GEMINI_API_KEY = 'AIzaSyAsAJGpLcubY0Lie_7WVyWDA4YwBmW6lvc';
@@ -3764,6 +3842,71 @@ function _initFirebaseCore() {
   }
 }
 
+
+// ════════════════════════════════════════════
+// DAL FİLTRESİ & ONBOARDİNG
+// ════════════════════════════════════════════
+function _applyDalFilter() {
+  // Dal seçimine göre ilgisiz sekmeleri/kartları gizle/göster
+  // Şimdilik sadece state'i set ediyor; gelecekte UI filtresi buradan tetiklenir
+  var dal = _userProfil.dal;
+  // Örnek: TYT seçildiyse AYT branş kartlarını gizle
+  // Bu fonksiyon genişletilebilir
+}
+
+function _checkOnboarding(uid) {
+  var key = 'pugi_onboarding_' + uid;
+  if (localStorage.getItem(key)) return; // Daha önce gösterildi
+  // İlk kez giriş yapan mevcut kullanıcı — dal henüz seçilmemişse modalı göster
+  if (!_userProfil.dal) {
+    setTimeout(function() { openOnboardingModal(); }, 800);
+  }
+}
+
+function openOnboardingModal() {
+  var m = document.getElementById('onboardingModal');
+  if (m) m.style.display = 'flex';
+}
+
+function closeOnboardingModal(save) {
+  var m = document.getElementById('onboardingModal');
+  if (m) m.style.display = 'none';
+  if (!_currentUser) return;
+  var key = 'pugi_onboarding_' + _currentUser.uid;
+  localStorage.setItem(key, '1');
+  if (save) {
+    var dal   = document.getElementById('obDal')   ? document.getElementById('obDal').value   : '';
+    var hedef = document.getElementById('obHedef') ? document.getElementById('obHedef').value : '';
+    var sinif = document.getElementById('obSinif') ? document.getElementById('obSinif').value : '';
+    _userProfil.dal   = dal   || null;
+    _userProfil.hedef = hedef || null;
+    _userProfil.sinif = sinif || null;
+    _saveProfilToFirebase();
+    _applyDalFilter();
+  }
+}
+
+function _saveProfilToFirebase() {
+  if (!_currentUser || !_fbDb) return;
+  _fbDb.collection('users').doc(_currentUser.uid).update({
+    dal:   _userProfil.dal   || null,
+    hedef: _userProfil.hedef || null,
+    sinif: _userProfil.sinif || null
+  }).catch(function(e){ console.warn('profil kayıt err:', e); });
+}
+
+function saveProfilFromSettings() {
+  var dal   = document.getElementById('settingsDal')   ? document.getElementById('settingsDal').value   : '';
+  var hedef = document.getElementById('settingsHedef') ? document.getElementById('settingsHedef').value : '';
+  var sinif = document.getElementById('settingsSinif') ? document.getElementById('settingsSinif').value : '';
+  _userProfil.dal   = dal   || null;
+  _userProfil.hedef = hedef || null;
+  _userProfil.sinif = sinif || null;
+  _saveProfilToFirebase();
+  _applyDalFilter();
+  showToast('✅ Sınav bilgilerin kaydedildi');
+}
+
 function onUserLoggedIn(user) {
   // Eski localStorage cache'ini temizle — tüm veri artık sadece cloud'dan gelir
   try {
@@ -3779,6 +3922,14 @@ function onUserLoggedIn(user) {
     var displayName = doc.exists ? doc.data().displayName : username;
     var accountType = doc.exists ? (doc.data().accountType || 'student') : 'student';
     if (_currentUser) { _currentUser._username = username; _currentUser._accountType = accountType; }
+    // Profil bilgilerini yükle
+    if (doc.exists) {
+      _userProfil.dal   = doc.data().dal   || null;
+      _userProfil.hedef = doc.data().hedef || null;
+      _userProfil.sinif = doc.data().sinif || null;
+    }
+    _applyDalFilter();
+    _checkOnboarding(user.uid);
 
     // User bar güncelle
     // userBar her zaman görünür — sadece içeriği değiştir
@@ -6798,6 +6949,11 @@ function applyCustomTimer() {
 var _notifEnabled = true; // default açık
 
 function openSettingsModal() {
+  // Mevcut değerleri doldur
+  if (_userProfil.dal   && document.getElementById('settingsDal'))   document.getElementById('settingsDal').value   = _userProfil.dal;
+  if (_userProfil.sinif && document.getElementById('settingsSinif')) document.getElementById('settingsSinif').value = _userProfil.sinif;
+  if (_userProfil.hedef && document.getElementById('settingsHedef')) document.getElementById('settingsHedef').value = _userProfil.hedef;
+
   var page = document.getElementById('settingsPage');
   if (!page) return;
   page.style.display = 'block';
