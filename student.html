@@ -1920,15 +1920,92 @@ function toggleCollapse(bodyId, arrowId) {
   if (arrow) arrow.style.transform = isOpen ? 'rotate(-90deg)' : 'rotate(0deg)';
 }
 function switchTab(name, btn) {
+  // Misafir modunda kilitli sekmeler
+  if (_isGuest) {
+    if (name === 'deneme') {
+      _showGuestLockModal('Deneme Kaydı', 'Deneme sonuçlarını kaydetmek ve geçmiş denemelerini görmek için kayıt ol.');
+      return;
+    }
+    if (name === 'rozet') {
+      // Profilim sekmesi misafirde açılır ama içerik kısıtlı
+    }
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   btn.classList.add('active');
-  if (name === 'ana') { renderAna(); renderAnaGoals(); }
-  if (name === 'stat') { renderStat(); renderCharts(); renderGoalCard(); renderAnalysis(); renderTopicMap(); renderGoalPieChart(); }
+  if (name === 'ana')  { renderAna(); renderAnaGoals(); }
+  if (name === 'calis') { _applyGuestCalisLayout(); }
+  if (name === 'stat') {
+    if (_isGuest) {
+      // Misafirde sadece "Bugün" periyodu çalışır
+      renderStat();
+      _applyGuestStatLocks();
+    } else {
+      renderStat(); renderCharts(); renderGoalCard(); renderAnalysis(); renderTopicMap(); renderGoalPieChart();
+    }
+  }
   if (name === 'deneme') { renderDenemeFields(); renderDenemeLog(); }
-  if (name === 'yedek') renderBackupSummary();
-  if (name === 'rozet') { renderBadges(); renderFriends(); renderPersonalGoals(); loadInviteStats(); }
+  if (name === 'yedek')  { renderBackupSummary(); }
+  if (name === 'rozet')  {
+    if (!_isGuest) {
+      renderBadges(); renderFriends(); renderPersonalGoals(); loadInviteStats();
+    } else {
+      // Misafirde profilim sayfası: sadece login banner göster, geri kalan içeriği gizle
+      _applyGuestProfilLayout();
+    }
+  }
+}
+
+/**
+ * _applyGuestStatLocks — İstatistik sayfasında misafir kısıtlamalarını uygular.
+ * "Bu Hafta", "Bu Ay", "Toplam" sekmelerini kilitler.
+ */
+function _applyGuestStatLocks() {
+  var periodTabs = document.querySelectorAll('.period-tab');
+  periodTabs.forEach(function(tab) {
+    var text = tab.textContent.trim();
+    if (text !== 'Bugün') {
+      tab.style.opacity = '0.4';
+      tab.style.pointerEvents = 'none';
+      tab.style.position = 'relative';
+      // Kilit ikonu ekle (zaten yoksa)
+      if (!tab.querySelector('.period-lock')) {
+        var lock = document.createElement('span');
+        lock.className = 'period-lock';
+        lock.textContent = ' 🔒';
+        lock.style.fontSize = '0.6rem';
+        tab.appendChild(lock);
+        // Tıklanınca modal aç
+        tab.style.pointerEvents = 'auto';
+        tab.style.cursor = 'pointer';
+        tab.onclick = function() {
+          _showGuestLockModal('Haftalık & Aylık İstatistikler', 'Detaylı istatistikleri ve gelişim grafiklerini görmek için kayıt ol.');
+        };
+      }
+    }
+  });
+
+  // Grafik bölümlerini gizle / kilitle
+  var lockedSections = ['weeklyChartWrap','monthlyChartWrap','goalCard','topicMapWrap','analysisRow'];
+  lockedSections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && !el.querySelector('.guest-lock-overlay')) {
+      el.style.position = 'relative';
+      var overlay = document.createElement('div');
+      overlay.className = 'guest-lock-overlay';
+      overlay.onclick = function() {
+        _showGuestLockModal('Detaylı İstatistikler', 'Haftalık grafik, konu haritası ve daha fazlası için kayıt ol.');
+      };
+      overlay.innerHTML =
+        '<div style="position:absolute;inset:0;background:rgba(8,13,24,0.85);border-radius:inherit;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:10;cursor:pointer">' +
+          '<span style="font-size:1.5rem">&#x1F512;</span>' +
+          '<span style="font-size:0.72rem;font-weight:800;color:var(--muted)">Kayıt ol, kilidi a&#xE7;</span>' +
+        '</div>';
+      el.appendChild(overlay);
+    }
+  });
 }
 
 // ════════════════════════════════════════════
@@ -2400,6 +2477,12 @@ function selectSubject(name) {
 }
 
 function renderTopics() {
+  // Misafir modunda konu seçimi yok — sadece ders seçimi
+  if (_isGuest) {
+    var topicWrap = document.getElementById('topicWrap');
+    if (topicWrap) topicWrap.style.display = 'none';
+    return;
+  }
   const data = EXAM_DATA[getExamKey()];
   const subj = data[currentSubject];
   if (!subj) return;
@@ -2898,6 +2981,13 @@ function renderGreeting() {
 }
 
 function renderAna() {
+  // Misafirde bazı ana sayfa bölümleri gizlenir
+  if (_isGuest) {
+    var coachSuggestWrap = document.getElementById('coachSuggestWrap');
+    if (coachSuggestWrap) coachSuggestWrap.style.display = 'none';
+    var anaFriendsWrap = document.getElementById('anaFriendsWrap');
+    if (anaFriendsWrap) anaFriendsWrap.style.display = 'none';
+  }
   renderGreeting();
   const today = todayStr();
   const todayEntries = entries.filter(e => e.date === today);
@@ -3395,6 +3485,14 @@ function updateStreak() {
 // ════════════════════════════════════════════
 function todayStr() { return new Date().toLocaleDateString('tr-TR'); }
 function save() {
+  if (_isGuest) {
+    // Misafir: veriler sessionStorage'da tutulur
+    try {
+      sessionStorage.setItem('pugi_entries', JSON.stringify(entries.slice(0, 50)));
+    } catch(e) {}
+    // UI güncelle (cloud'a gitmez)
+    return;
+  }
   saveToCloud();
 }
 
@@ -3429,6 +3527,7 @@ function saveToCloud() {
 }
 
 function loadFromCloud(uid) {
+  if (_isGuest) return; // Misafir modu — cloud okuma yok
   if (!_fbDb) return;
 
   // Farklı kullanıcı girişi — önce yerel veriyi temizle
@@ -3519,6 +3618,11 @@ var firebaseConfig = {
 
 var _fbApp = null, _fbDb = null, _fbAuth = null;
 var _currentUser = null;
+
+// ── Misafir Modu ──────────────────────────────────────
+// sessionStorage'dan okunur, sayfa kapanınca silinir.
+var _isGuest = sessionStorage.getItem('pugi_guest') === 'true';
+var _guestSinav = sessionStorage.getItem('pugi_sinav') || 'yks';
 var _authMode = 'login'; // 'login' | 'register'
 
 function initFirebase() {
@@ -3570,7 +3674,14 @@ function _initFirebaseCore() {
     _fbAuth.onAuthStateChanged(function(user) {
       _currentUser = user;
       if (user) {
+        // Giriş yapılmış kullanıcı — misafir sessionStorage'ı temizle
+        sessionStorage.removeItem('pugi_guest');
+        sessionStorage.removeItem('pugi_sinav');
+        _isGuest = false;
         onUserLoggedIn(user);
+      } else if (_isGuest) {
+        // Misafir modu — Firebase verisi yok, local çalışır
+        onGuestMode();
       } else {
         onUserLoggedOut();
       }
@@ -3618,6 +3729,127 @@ function onUserLoggedIn(user) {
     loadCoachRequests();
   loadCoachSuggestionsForStudent();
   });
+}
+
+// ════════════════════════════════════════════
+// MİSAFİR MODU
+// ════════════════════════════════════════════
+
+/**
+ * onGuestMode — Firebase giriş gerektirmeden uygulamayı başlatır.
+ * Veriler sessionStorage'da tutulur, sayfa kapanınca silinir.
+ * Kısıtlı özellikler kilitli gösterilir.
+ */
+function onGuestMode() {
+  // User bar: misafir göster
+  var loggedInBar = document.getElementById('userBarLoggedIn');
+  var guestBar    = document.getElementById('userBarGuest');
+  if (loggedInBar) loggedInBar.style.display = 'none';
+  if (guestBar)    guestBar.style.display    = 'flex';
+
+  // Profilim sekmesindeki login banner'ı göster
+  var banner = document.getElementById('loginPromptBanner');
+  if (banner) banner.style.display = 'flex';
+
+  // Kilitli tab'ları işaretle
+  _applyGuestTabLocks();
+  // Çalış sekmesi düzenini uygula
+  _applyGuestCalisLayout();
+
+  // Ana sayfayı render et
+  updateStreak();
+  updateXPUI();
+  renderAna();
+  renderAnaGoals();
+  updateGreeting();
+  newMotiv();
+
+  // YKS geri sayım zaten çalışıyor
+  hideLoading();
+}
+
+/**
+ * _applyGuestTabLocks — Misafirde kilitli olan tab'lara
+ * kilit ikonu ve görsel uyarı ekler.
+ */
+/**
+ * _applyGuestCalisLayout — Misafir modunda Çalış sekmesini düzenler.
+ * Konu çalışması / soru çözümü seçimi ve konu listesi gizlenir.
+ * Sınav türü seçimi gizlenir.
+ * Sadece ders seçimi + zamanlayıcı görünür kalır.
+ */
+/**
+ * _applyGuestProfilLayout — Misafir modunda Profilim sekmesini düzenler.
+ * Login banner görünür, diğer bölümler kilitli overlay ile örtülür.
+ */
+function _applyGuestProfilLayout() {
+  // Login banner'ı göster
+  var banner = document.getElementById('loginPromptBanner');
+  if (banner) banner.style.display = 'flex';
+
+  // Profil panelinin geri kalanını gizle
+  var profilPanel = document.getElementById('profilPanel');
+  if (profilPanel) {
+    // Her child'ı gizle (banner hariç)
+    Array.from(profilPanel.children).forEach(function(child) {
+      if (child.id !== 'loginPromptBanner') child.style.display = 'none';
+    });
+  }
+}
+
+function _applyGuestCalisLayout() {
+  if (!_isGuest) return;
+
+  // "Ne Kaydedelim?" bölümünü gizle (konu/soru/genel seçimi)
+  var typeRow = document.querySelector('.type-row');
+  var typeLabel = typeRow ? typeRow.previousElementSibling : null;
+  if (typeRow) typeRow.style.display = 'none';
+  if (typeLabel && typeLabel.classList.contains('sec')) typeLabel.style.display = 'none';
+
+  // "Sınav Türü" bölümünü gizle
+  var examTabs = document.querySelector('.exam-tabs');
+  var examLabel = examTabs ? examTabs.previousElementSibling : null;
+  if (examTabs) examTabs.style.display = 'none';
+  if (examLabel && examLabel.classList.contains('sec')) examLabel.style.display = 'none';
+
+  // Konu seçim bölümünü gizle
+  var topicSection = document.getElementById('topicSection');
+  if (topicSection) topicSection.style.display = 'none';
+
+  // Ders başlığını güncelle
+  var subjLabel = document.querySelector('#page-calis .sec');
+  if (subjLabel) subjLabel.textContent = 'Hangi dersi çalışıyorsun?';
+}
+
+function _applyGuestTabLocks() {
+  // Deneme tab'ı — tamamen kilitli
+  var denemeBtn = document.querySelector('.tab-btn[onclick*="deneme"]');
+  if (denemeBtn) {
+    denemeBtn.style.opacity = '0.45';
+    denemeBtn.onclick = function(e) {
+      e.stopPropagation();
+      _showGuestLockModal('Deneme Kaydı', 'Deneme sonuçlarını kaydetmek ve geçmiş denemelerini görmek için kayıt ol.');
+    };
+  }
+}
+
+/**
+ * _showGuestLockModal — Kilitli özelliğe tıklanınca
+ * nazik bir kayıt daveti gösterir.
+ * @param {string} title - Özellik adı
+ * @param {string} desc  - Kısa açıklama
+ */
+function _showGuestLockModal(title, desc) {
+  var modal = document.getElementById('guestLockModal');
+  if (!modal) return;
+  document.getElementById('guestLockTitle').textContent = title;
+  document.getElementById('guestLockDesc').textContent  = desc;
+  modal.classList.add('open');
+}
+
+function closeGuestLockModal() {
+  var modal = document.getElementById('guestLockModal');
+  if (modal) modal.classList.remove('open');
 }
 
 function onUserLoggedOut() {
@@ -3800,6 +4032,7 @@ function getWeekKey() {
 }
 
 function syncWeeklyStats() {
+  if (_isGuest || !_currentUser || !_fbDb) return; // Misafir veya giriş yok
   if (!_currentUser || !_fbDb) return;
   var weekKey = getWeekKey();
   var weekStart = new Date(weekKey);
@@ -4527,6 +4760,7 @@ function acceptFriendRequest(reqObj) {
 }
 
 function processPendingRemoved() {
+  if (_isGuest) return;
   // Karşı taraf bizi arkadaş listesinden çıkarmışsa kendi listemizden de sil
   if (!_currentUser || !_fbDb) return;
   _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
@@ -4549,6 +4783,7 @@ function processPendingRemoved() {
 }
 
 function processPendingAccepted() {
+  if (_isGuest) return;
   // Karşı taraf bizi kabul etmişse, kendi friends listemize ekle
   if (!_currentUser || !_fbDb) return;
   _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
@@ -5066,6 +5301,14 @@ document.addEventListener('DOMContentLoaded', function() {
   renderBackupSummary();
   newMotiv();
   applyTheme();
+  // Misafir ise sessionStorage'dan önceki entries'leri yükle
+  if (_isGuest) {
+    try {
+      var stored = sessionStorage.getItem('pugi_entries');
+      if (stored) entries = JSON.parse(stored);
+    } catch(e) {}
+  }
+
   initFirebase();
   updateNotifBtn();
 });
@@ -6920,5 +7163,36 @@ function confirmModalOk() {
 }
 
 </script>
+
+<!-- MİSAFİR KİLİT MODALI -->
+<div class="day-modal" id="guestLockModal">
+  <div class="day-modal-overlay" onclick="closeGuestLockModal()"></div>
+  <div class="day-modal-sheet" style="max-height:60vh">
+    <div class="day-modal-handle"></div>
+    <div class="day-modal-body" style="text-align:center;padding:28px 22px 24px">
+
+      <!-- İkon -->
+      <div style="width:64px;height:64px;background:linear-gradient(135deg,rgba(56,189,248,0.12),rgba(129,140,248,0.12));border:1.5px solid rgba(56,189,248,0.2);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.8rem">🔒</div>
+
+      <!-- Başlık -->
+      <div id="guestLockTitle" style="font-size:1rem;font-weight:900;margin-bottom:8px">Kilitli Özellik</div>
+
+      <!-- Açıklama -->
+      <div id="guestLockDesc" style="font-size:0.8rem;color:var(--muted);font-weight:700;line-height:1.6;margin-bottom:22px">Bu özelliği kullanmak için kayıt ol.</div>
+
+      <!-- Kayıt ol butonu -->
+      <button onclick="window.location.href='index.html'" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#fff;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 20px rgba(56,189,248,0.25);margin-bottom:10px">
+        🚀 Ücretsiz Kayıt Ol
+      </button>
+
+      <!-- Devam et linki -->
+      <button onclick="closeGuestLockModal()" style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">
+        Misafir Olarak Devam Et
+      </button>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
