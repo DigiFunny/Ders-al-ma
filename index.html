@@ -424,7 +424,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
         <input type="number" id="hedefSiralamaInput" placeholder="örn: 10000" min="1" max="3000000"
           style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px"
-          oninput="checkHedefValid()">
+          oninput="checkHedefValid(); _obOnSiralamaInput();">
         <div style="font-size:0.68rem;color:var(--muted);font-weight:600">İlk kaçıncı olmak istiyorsun?</div>
       </div>
 
@@ -873,9 +873,22 @@ function loadHedefBolumler() {
 }
 
 // ── Bölüm seçimi ──
+function _obOnSiralamaInput() {
+  if (!_obProgram) return;
+  _obProgram = null;
+  // Bölüm dropdown'u görsel sıfırla
+  var bSel = document.getElementById('hedefBolumSel');
+  if (bSel) bSel.value = '';
+  document.getElementById('hedefProgramPreview').style.display = 'none';
+}
+
 function selectHedefBolum() {
   var kod = document.getElementById('hedefBolumSel').value;
   if(!kod){ _obProgram=null; document.getElementById('hedefProgramPreview').style.display='none'; checkHedefValid(); return; }
+  // Bölüm seçilince sıralama inputunu sıfırla
+  var sirEl = document.getElementById('hedefSiralamaInput');
+  if (sirEl) { sirEl.value = ''; }
+  _obSiralama = null;
   _fbDb.collection('yks_programlar').doc(kod).get().then(function(doc){
     if(!doc.exists){ _obProgram=null; checkHedefValid(); return; }
     var d = doc.data();
@@ -914,12 +927,16 @@ function finishOnboarding() {
     onboardingDone: true,
     onboardingDate: new Date().toISOString()
   };
-  if(_obHedefTur==='siralama' && _obSiralama){
-    profil.hedefTur = 'siralama';
+  // Son değiştirilen kazanır
+  // (selectHedefBolum sıralamayı, _obOnSiralamaInput programı sıfırlar)
+  if (_obProgram) {
+    profil.hedefTur      = 'okul';
+    profil.hedefProgram  = _obProgram;
+    profil.hedefSiralama = null;
+  } else if (_obSiralama) {
+    profil.hedefTur      = 'siralama';
     profil.hedefSiralama = _obSiralama;
-  } else if(_obHedefTur==='okul' && _obProgram){
-    profil.hedefTur = 'okul';
-    profil.hedefProgram = _obProgram;
+    profil.hedefProgram  = null;
   }
   showLoading();
   _fbDb.collection('users').doc(_obUid).set(profil,{merge:true}).then(function(){

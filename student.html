@@ -1568,24 +1568,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <div style="font-size:1.1rem;font-weight:900">Ayarlar</div>
     </div>
 
-    <!-- Tema -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
-      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
-      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Tema</div><div id="themeModeLabel" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Karanlık mod</div></div>
-      <div onclick="toggleThemeSettings()" id="themeToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
-        <div id="themeToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
-      </div>
-    </div>
-
-    <!-- Bildirim toggle -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
-      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
-      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Bildirimler</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Zamanlayıcı bitince uyar</div></div>
-      <div onclick="toggleNotifSetting()" id="notifToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
-        <div id="notifToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
-      </div>
-    </div>
-
     <!-- Sınav Bilgilerim -->
     <div class="u-settings-row" style="flex-direction:column;align-items:flex-start;gap:12px">
       <div style="font-size:0.85rem;font-weight:900;width:100%">🎯 Sınav Bilgilerim</div>
@@ -1615,7 +1597,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
         <input type="number" id="settHedefSiralama" placeholder="örn: 10000" min="1"
           style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
-          oninput="this.style.borderColor='var(--accent)'">
+          oninput="this.style.borderColor='var(--accent)'; _settOnSiralamaInput();">
       </div>
 
       <!-- Okul hedefi -->
@@ -1636,6 +1618,25 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       </div>
 
       <button onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px">Kaydet</button>
+    </div>
+
+
+        <!-- Tema -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Tema</div><div id="themeModeLabel" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Karanlık mod</div></div>
+      <div onclick="toggleThemeSettings()" id="themeToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="themeToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+      </div>
+    </div>
+
+    <!-- Bildirim toggle -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Bildirimler</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Zamanlayıcı bitince uyar</div></div>
+      <div onclick="toggleNotifSetting()" id="notifToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="notifToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+      </div>
     </div>
 
     <!-- Kullanıcı adı -->
@@ -7250,7 +7251,14 @@ function settLoadUnis() {
       var o = document.createElement('option'); o.value = u; o.textContent = u; uSel.appendChild(o);
     });
     uSel.disabled = false;
-  }).catch(function(e){ uSel.innerHTML = '<option value="">Hata oluştu</option>'; console.error(e); });
+  }).catch(function(e) {
+    console.error('settLoadUnis hata:', e.code, e.message);
+    var msg = 'Hata oluştu';
+    if (e.code === 'permission-denied') msg = 'Erişim izni yok — Firestore kurallarını kontrol et';
+    else if (e.code === 'failed-precondition') msg = 'Index eksik — Firebase Console kontrol et';
+    else if (e.message) msg = e.message.slice(0,50);
+    uSel.innerHTML = '<option value="">' + msg + '</option>';
+  });
 }
 
 function settLoadBolumler() {
@@ -7283,9 +7291,27 @@ function settLoadBolumler() {
   });
 }
 
+/**
+ * Sıralama girilince okul seçimini görsel olarak sıfırla
+ * (program objesini temizle, preview'ı gizle)
+ */
+function _settOnSiralamaInput() {
+  if (!_settProgram) return; // zaten seçili program yok, bir şey yapma
+  _settProgram = null;
+  // Bölüm dropdown'unu sıfırla
+  var bSel = document.getElementById('settBolumSel');
+  if (bSel) { bSel.value = ''; }
+  // Önizlemeyi gizle
+  var prev = document.getElementById('settProgramPreview');
+  if (prev) prev.style.display = 'none';
+}
+
 function settSelectBolum() {
   var kod = document.getElementById('settBolumSel').value;
   if (!kod) { _settProgram = null; return; }
+  // Okul seçilince sıralama inputunu sıfırla
+  var sirEl = document.getElementById('settHedefSiralama');
+  if (sirEl) { sirEl.value = ''; sirEl.style.borderColor = 'var(--border)'; }
   _fbDb.collection('yks_programlar').doc(kod).get().then(function(doc){
     if (!doc.exists) return;
     var d = doc.data();
@@ -7320,13 +7346,26 @@ function saveSettingsProfil() {
   if (!_currentUser || !_fbDb) return;
   var update = { onboardingDone: true };
   if (_settDal) update.dal = _settDal;
-  if (_settHedefTur === 'siralama') {
-    var siralama = parseInt(document.getElementById('settHedefSiralama').value) || null;
-    if (siralama) { update.hedefTur = 'siralama'; update.hedefSiralama = siralama; }
-  } else if (_settHedefTur === 'okul' && _settProgram) {
-    update.hedefTur = 'okul';
-    update.hedefProgram = _settProgram;
+
+  var siralama = parseInt(document.getElementById('settHedefSiralama').value) || null;
+  var program  = _settProgram;
+
+  if (program && siralama) {
+    // İkisi de var — hangisi son değiştirildiyse o geçerli
+    // _settProgram null değilse okul seçimi daha yeni demektir
+    // (sıralama girilince _settProgram sıfırlanıyor zaten)
+    // Bu noktaya ikisi de doluysa okul öncelikli
+    update.hedefTur      = 'okul';
+    update.hedefProgram  = program;
     update.hedefSiralama = null;
+  } else if (program) {
+    update.hedefTur      = 'okul';
+    update.hedefProgram  = program;
+    update.hedefSiralama = null;
+  } else if (siralama) {
+    update.hedefTur      = 'siralama';
+    update.hedefSiralama = siralama;
+    update.hedefProgram  = null;
   }
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
     _userProfil = Object.assign(_userProfil || {}, update);
