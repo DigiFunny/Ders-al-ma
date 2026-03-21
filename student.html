@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="config.js"></script>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#080d18">
@@ -3768,7 +3769,7 @@ var _currentUser = null;
 var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif, onboardingDone }
 
 // ── AI Koç Sabitleri ──────────────────────────────────
-var GEMINI_API_KEY = 'AIzaSyB2l5KD3BO9iIjIZV8oApLwnVv6r1jVp6A';
+var GEMINI_API_KEY = window.GEMINI_API_KEY || '';
 var GEMINI_MODEL   = 'gemini-2.0-flash';
 var GEMINI_URL     = 'https://generativelanguage.googleapis.com/v1/models/' + GEMINI_MODEL + ':generateContent?key=' + GEMINI_API_KEY;
 
