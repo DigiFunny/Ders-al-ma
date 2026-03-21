@@ -7168,7 +7168,7 @@ var SETT_IL_LISTESI = [
 function _populateSettingsProfil() {
   if (!_userProfil) return;
 
-  // İl dropdown'ı doldur (bir kez)
+  // ── İl dropdown doldu mu kontrol ──
   var ilSel = document.getElementById('settIlSel');
   if (ilSel && ilSel.options.length <= 1) {
     SETT_IL_LISTESI.forEach(function(il){
@@ -7178,25 +7178,27 @@ function _populateSettingsProfil() {
     });
   }
 
-  // Hedef türü
-  _settHedefTur = _userProfil.hedefTur || 'siralama';
-  settSelectHedefTur(_settHedefTur, true);
-
-  // Dal butonlarını güncelle
+  // ── Dal butonları — doğru ID map ──
   _settDal = _userProfil.dal || null;
-  ['sayisal','sozel','ea','dil'].forEach(function(dal){
-    var btn = document.getElementById('settDal'+dal.charAt(0).toUpperCase()+dal.slice(1));
+  var dalIdMap = {sayisal:'settDalSay', sozel:'settDalSoz', ea:'settDalEa', dil:'settDalDil'};
+  Object.keys(dalIdMap).forEach(function(dal){
+    var btn = document.getElementById(dalIdMap[dal]);
     if (!btn) return;
     var active = dal === _settDal;
     btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
     btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
     btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
   });
-  // Hedef sıralama değerini doldur
+
+  // ── Hedef türü ──
+  _settHedefTur = _userProfil.hedefTur || 'siralama';
+  settSelectHedefTur(_settHedefTur, true);
+
+  // ── Sıralama değeri ──
   var sirEl = document.getElementById('settHedefSiralama');
   if (sirEl) sirEl.value = _userProfil.hedefSiralama || '';
 
-  // Okul hedefi varsa _settProgram'ı geri yükle ve preview göster
+  // ── Okul hedefi: program geri yükle + preview ──
   if (_userProfil.hedefTur === 'okul' && _userProfil.hedefProgram) {
     _settProgram = _userProfil.hedefProgram;
     var prev = document.getElementById('settProgramPreview');
@@ -7206,15 +7208,17 @@ function _populateSettingsProfil() {
       if (hp.siralama_2024) detay.push('2024 Sıra: ' + parseInt(hp.siralama_2024).toLocaleString('tr-TR'));
       if (hp.min_puan_2024) detay.push('Taban: ' + parseFloat(hp.min_puan_2024).toFixed(2));
       prev.innerHTML =
-        '<strong>' + (hp.uni||'') + '</strong> — ' + (hp.bolum||'') +
+        '<strong>' + (hp.uni || '') + '</strong> — ' + (hp.bolum || '') +
         (detay.length ? '<br><span style="color:var(--muted);font-size:0.68rem">' + detay.join(' | ') + '</span>' : '');
       prev.style.display = 'block';
     }
   } else {
     _settProgram = null;
+    var prev2 = document.getElementById('settProgramPreview');
+    if (prev2) prev2.style.display = 'none';
   }
 
-  // Kayıtlı hedef varsa kaydet butonu başlangıçta gizli
+  // ── Kaydet butonu: bilgi varsa gizle ──
   var saveBtn = document.getElementById('settProfilSaveBtn');
   if (saveBtn) {
     var hedefVar = _userProfil.hedefTur || _userProfil.dal;
@@ -7364,10 +7368,9 @@ function settSelectBolum() {
 function settingSelectDal(dal) {
   _settDal = dal;
   _settMarkChanged();
-  // Buton ID'leri: settDalSay, settDalSoz, settDalEa, settDalDil
-  var idMap = {sayisal:'Say',sozel:'Soz',ea:'Ea',dil:'Dil'};
+  var idMap = {sayisal:'settDalSay', sozel:'settDalSoz', ea:'settDalEa', dil:'settDalDil'};
   Object.keys(idMap).forEach(function(d){
-    var btn = document.getElementById('settDal'+idMap[d]);
+    var btn = document.getElementById(idMap[d]);
     if(!btn) return;
     var active = d === dal;
     btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
@@ -7433,10 +7436,15 @@ function openSettingsModal() {
         };
       }
       _populateSettingsProfil();
-    }).catch(function() { _populateSettingsProfil(); });
+      _openSettingsPage();
+    }).catch(function() { _populateSettingsProfil(); _openSettingsPage(); });
   } else {
     _populateSettingsProfil();
+    _openSettingsPage();
   }
+}
+
+function _openSettingsPage() {
   var page = document.getElementById('settingsPage');
   if (!page) return;
   page.style.display = 'block';
