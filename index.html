@@ -6,15 +6,13 @@
 <link rel="manifest" href="/manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Pugi — YKS Çalışma Takip Uygulaması | TYT AYT Hazırlık</title>
+<title>Pugi — YKS Çalışma Takip</title>
 <meta name="description" content="Pugi — YKS hazırlığının akıllı yardımcısı. Zamanlayıcı, AI koç, hedef takibi. Tamamen ücretsiz.">
-<meta name="keywords" content="YKS çalışma takip,TYT hazırlık,AYT hazırlık,YKS uygulaması,Pugi">
-<meta name="author" content="Pugi">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pugiapp.com/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pugiapp.com/">
-<meta property="og:title" content="Pugi — YKS Çalışma Takip Uygulaması">
+<meta property="og:title" content="Pugi — YKS Çalışma Takip">
 <meta property="og:description" content="YKS hazırlığının akıllı yardımcısı. Ücretsiz, hesap gerektirmez.">
 <meta property="og:image" content="https://pugiapp.com/icon-512.png">
 <meta property="og:locale" content="tr_TR">
@@ -22,237 +20,766 @@
 <meta name="twitter:title" content="Pugi — YKS Çalışma Takip">
 <meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080d18;--bg2:#0e1628;--bg3:#131e33;--card:#111827;--border:#1c2d47;--accent:#38bdf8;--accent2:#818cf8;--accent3:#34d399;--warn:#f472b6;--orange:#fb923c;--yellow:#fbbf24;--text:#e2e8f0;--muted:#4b6280;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{overflow-x:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100dvh;overflow-x:hidden;}
+/* ═══════════════════════════════════════════════
+   TOKENS — student.html ile birebir eşleşir
+═══════════════════════════════════════════════ */
+:root {
+  --bg:       #080d18;
+  --bg2:      #0e1628;
+  --bg3:      #131e33;
+  --card:     #111827;
+  --border:   #1c2d47;
+  --accent:   #38bdf8;
+  --accent2:  #818cf8;
+  --accent3:  #34d399;
+  --warn:     #f472b6;
+  --orange:   #fb923c;
+  --yellow:   #fbbf24;
+  --text:     #e2e8f0;
+  --muted:    #4b6280;
+  --muted2:   #2a3f5f;
+  /* Font — Outfit (body) + Space Mono (mono) */
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  /* Radii */
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+}
 
-/* Orb arka plan */
-.bg-orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(90px);opacity:0.13;animation:orbFloat 10s ease-in-out infinite;}
-.bg-orb-1{width:360px;height:360px;background:#38bdf8;top:-110px;left:-80px;}
-.bg-orb-2{width:260px;height:260px;background:#818cf8;bottom:-60px;right:-60px;animation-delay:4s;}
-.bg-orb-3{width:150px;height:150px;background:#34d399;top:45%;left:58%;animation-delay:7s;}
-@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(16px,-16px) scale(1.05);}}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.022) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html { overflow-x:hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* Loading */
-.loading-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.4s;}
-.loading-overlay.hidden{opacity:0;pointer-events:none;}
-.loading-spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
-.loading-text{font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;}
-@keyframes spin{to{transform:rotate(360deg);}}
+/* ═══════════════════════════════════════════════
+   ARKA PLAN — noise + grid + orbs
+═══════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.018) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+.orb {
+  position: fixed; border-radius: 50%;
+  pointer-events: none; filter: blur(100px);
+  animation: orbDrift 12s ease-in-out infinite;
+}
+.orb-1 { width:420px; height:420px; background:#38bdf8; opacity:0.07; top:-140px; left:-100px; }
+.orb-2 { width:320px; height:320px; background:#818cf8; opacity:0.07; bottom:-80px; right:-80px; animation-delay:5s; }
+.orb-3 { width:180px; height:180px; background:#34d399; opacity:0.06; top:40%; left:60%; animation-delay:8s; }
+@keyframes orbDrift {
+  0%,100% { transform:translate(0,0) scale(1); }
+  50%      { transform:translate(20px,-20px) scale(1.08); }
+}
 
-/* Ekranlar */
-.screen{display:none;min-height:100dvh;position:relative;z-index:1;}
-.screen.active{display:flex;flex-direction:column;}
+/* ═══════════════════════════════════════════════
+   LOADING
+═══════════════════════════════════════════════ */
+.loading-overlay {
+  position:fixed; inset:0; z-index:999;
+  background:var(--bg);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:18px;
+  transition:opacity 0.5s;
+}
+.loading-overlay.hidden { opacity:0; pointer-events:none; }
+.loading-ring {
+  width:40px; height:40px;
+  border:2px solid var(--border);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin 0.75s linear infinite;
+}
+.loading-label {
+  font-size:0.7rem; font-weight:700;
+  color:var(--muted); letter-spacing:2px;
+  text-transform:uppercase;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
 
-/* ══ LANDING ══ */
-#screenLanding{overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.landing-inner{max-width:430px;margin:0 auto;padding:52px 24px 44px;display:flex;flex-direction:column;min-height:100dvh;}
+/* ═══════════════════════════════════════════════
+   EKRANLAR
+═══════════════════════════════════════════════ */
+.screen {
+  display:none; min-height:100dvh;
+  position:relative; z-index:1;
+  flex-direction:column;
+}
+.screen.active { display:flex; }
 
-.hero{text-align:center;margin-bottom:34px;animation:fadeDown 0.7s cubic-bezier(.4,0,.2,1) both;}
-.hero-logo-icon{width:80px;height:80px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2.1rem;box-shadow:0 8px 36px rgba(56,189,248,0.26),inset 0 1px 0 rgba(255,255,255,0.1);}
-.hero-logo-name{font-family:'Space Mono',monospace;font-size:2.6rem;font-weight:700;background:linear-gradient(135deg,#e2e8f0,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1.5px;margin-bottom:12px;}
-.hero-tagline{font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.45;margin-bottom:8px;}
-.hero-sub{font-size:0.79rem;font-weight:600;color:var(--muted);line-height:1.65;}
+/* ═══════════════════════════════════════════════
+   EKRAN 1 — LANDING
+═══════════════════════════════════════════════ */
+#screenLanding {
+  align-items:center; justify-content:flex-start;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+}
+.landing-wrap {
+  width:100%; max-width:440px;
+  padding:52px 22px 48px;
+  display:flex; flex-direction:column;
+  min-height:100dvh;
+}
 
-.feature-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:30px;animation:fadeUp 0.7s 0.1s cubic-bezier(.4,0,.2,1) both;}
-.feature-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:0.71rem;font-weight:800;color:var(--text);white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
-.pill-icon{font-size:0.85rem;}
+/* Üst: Logo + tagline */
+.l-hero {
+  text-align:center;
+  margin-bottom:32px;
+  animation:riseUp 0.7s cubic-bezier(.22,1,.36,1) both;
+}
+.l-logo-wrap {
+  display:inline-flex;
+  align-items:center; gap:10px;
+  margin-bottom:20px;
+}
+.l-logo-icon {
+  width:48px; height:48px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem;
+  box-shadow:0 4px 20px rgba(56,189,248,0.22);
+}
+.l-logo-name {
+  font-family: var(--font-mono);
+  font-size:1.8rem; font-weight:700;
+  background:linear-gradient(135deg,#e2e8f0,#94a3b8);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:-1px;
+}
 
-.exam-section{animation:fadeUp 0.7s 0.2s cubic-bezier(.4,0,.2,1) both;margin-bottom:14px;}
-.exam-section-label{font-size:0.67rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:12px;}
-.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+/* YKS geri sayım banner */
+.yks-banner {
+  display:inline-flex;
+  align-items:center; gap:10px;
+  background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));
+  border:1px solid rgba(56,189,248,0.18);
+  border-radius:var(--r-lg);
+  padding:10px 18px;
+  margin-bottom:18px;
+}
+.yks-banner-days {
+  font-family:var(--font-mono);
+  font-size:1.6rem; font-weight:700;
+  color:var(--accent);
+  line-height:1;
+}
+.yks-banner-right {
+  text-align:left;
+}
+.yks-banner-label {
+  font-size:0.62rem; font-weight:700;
+  color:var(--muted); letter-spacing:1.5px;
+  text-transform:uppercase; display:block;
+}
+.yks-banner-date {
+  font-size:0.72rem; font-weight:600;
+  color:var(--text);
+}
 
-.exam-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:17px 13px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
-.exam-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.22s;}
-.exam-card.yks::before{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.1));}
-.exam-card.kpss::before{background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(251,191,36,0.1));}
-.exam-card.lgs::before{background:linear-gradient(135deg,rgba(244,114,182,0.1),rgba(251,146,60,0.1));}
-.exam-card.other::before{background:linear-gradient(135deg,rgba(148,163,184,0.07),rgba(100,116,139,0.07));}
-.exam-card:active{transform:scale(0.95);}
-.exam-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(56,189,248,0.14);}
-.exam-card.selected::before{opacity:1;}
-.exam-card.coming-soon{cursor:default;opacity:0.62;}
-.exam-card.coming-soon:active{transform:none;}
+.l-tagline {
+  font-size:1.15rem; font-weight:700;
+  color:var(--text); line-height:1.5;
+  margin-bottom:6px;
+}
+.l-sub {
+  font-size:0.78rem; font-weight:400;
+  color:var(--muted); line-height:1.7;
+}
 
-.coming-badge{position:absolute;top:8px;right:8px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-size:0.46rem;font-weight:900;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;padding:2px 5px;}
-.exam-emoji{font-size:1.75rem;display:block;margin-bottom:7px;}
-.exam-label{font-size:0.88rem;font-weight:900;display:block;margin-bottom:3px;color:var(--text);}
-.exam-desc{font-size:0.59rem;font-weight:700;color:var(--muted);line-height:1.5;}
+/* Özellik grid */
+.feat-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:8px; margin-bottom:28px;
+  animation:riseUp 0.7s 0.08s cubic-bezier(.22,1,.36,1) both;
+}
+.feat-item {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  padding:12px 14px;
+  display:flex; align-items:center; gap:10px;
+}
+.feat-icon {
+  width:32px; height:32px;
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.95rem; flex-shrink:0;
+}
+.feat-text { font-size:0.75rem; font-weight:600; color:var(--text); line-height:1.3; }
+.feat-text strong { display:block; font-weight:800; font-size:0.78rem; }
 
-.btn-start{width:100%;padding:15px;border:none;border-radius:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:900;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 22px rgba(56,189,248,0.28);animation:fadeUp 0.7s 0.3s cubic-bezier(.4,0,.2,1) both;-webkit-tap-highlight-color:transparent;}
-.btn-start:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none;}
-.btn-start:not(:disabled):active{transform:scale(0.97);}
+/* Sınav seçimi */
+.exam-sec-label {
+  font-size:0.62rem; font-weight:700;
+  color:var(--muted); letter-spacing:2px;
+  text-transform:uppercase; text-align:center;
+  margin-bottom:12px;
+  animation:riseUp 0.7s 0.14s cubic-bezier(.22,1,.36,1) both;
+}
+.exam-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:8px; margin-bottom:16px;
+  animation:riseUp 0.7s 0.16s cubic-bezier(.22,1,.36,1) both;
+}
+.exam-card {
+  background:var(--card);
+  border:1.5px solid var(--border);
+  border-radius:var(--r-md);
+  padding:16px 12px; cursor:pointer;
+  text-align:center; position:relative; overflow:hidden;
+  transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.exam-card::after {
+  content:''; position:absolute; inset:0;
+  opacity:0; transition:opacity 0.2s;
+  pointer-events:none;
+}
+.exam-card.yks::after    { background:linear-gradient(135deg,rgba(56,189,248,0.07),rgba(129,140,248,0.07)); }
+.exam-card.kpss::after   { background:linear-gradient(135deg,rgba(52,211,153,0.07),rgba(251,191,36,0.07)); }
+.exam-card.lgs::after    { background:linear-gradient(135deg,rgba(244,114,182,0.07),rgba(251,146,60,0.07)); }
+.exam-card.other::after  { background:linear-gradient(135deg,rgba(148,163,184,0.05),rgba(100,116,139,0.05)); }
+.exam-card:active { transform:scale(0.95); }
+.exam-card.selected { border-color:var(--accent); box-shadow:0 0 0 3px rgba(56,189,248,0.12); }
+.exam-card.selected::after { opacity:1; }
+.exam-card.locked { opacity:0.55; cursor:default; }
+.exam-card.locked:active { transform:none; }
+.exam-badge {
+  position:absolute; top:7px; right:7px;
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:5px; padding:2px 5px;
+  font-size:0.42rem; font-weight:900;
+  color:var(--muted); letter-spacing:1px; text-transform:uppercase;
+}
+.exam-emoji { font-size:1.6rem; display:block; margin-bottom:6px; }
+.exam-name { font-size:0.84rem; font-weight:800; color:var(--text); display:block; margin-bottom:2px; }
+.exam-desc { font-size:0.57rem; font-weight:500; color:var(--muted); line-height:1.5; }
 
-.login-link{text-align:center;margin-top:14px;font-size:0.77rem;font-weight:700;color:var(--muted);animation:fadeUp 0.7s 0.35s cubic-bezier(.4,0,.2,1) both;}
-.login-link span{color:var(--accent);cursor:pointer;font-weight:800;text-decoration:underline;text-underline-offset:2px;}
+/* CTA */
+.btn-cta {
+  width:100%; padding:15px;
+  border:none; border-radius:var(--r-md);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff; font-family:var(--font-body);
+  font-size:0.92rem; font-weight:700;
+  cursor:pointer; transition:transform 0.15s, box-shadow 0.2s;
+  box-shadow:0 4px 24px rgba(56,189,248,0.25);
+  animation:riseUp 0.7s 0.22s cubic-bezier(.22,1,.36,1) both;
+  letter-spacing:0.3px;
+}
+.btn-cta:disabled { opacity:0.28; cursor:not-allowed; box-shadow:none; }
+.btn-cta:not(:disabled):active { transform:scale(0.97); }
 
-.landing-footer{margin-top:auto;padding-top:26px;text-align:center;font-size:0.63rem;font-weight:700;color:var(--muted);line-height:1.8;animation:fadeUp 0.7s 0.4s cubic-bezier(.4,0,.2,1) both;}
-.landing-footer strong{color:var(--accent3);}
+/* Alt link */
+.l-footer-links {
+  display:flex; flex-direction:column;
+  align-items:center; gap:10px;
+  margin-top:14px;
+  animation:riseUp 0.7s 0.26s cubic-bezier(.22,1,.36,1) both;
+}
+.link-btn {
+  font-size:0.77rem; font-weight:600;
+  color:var(--muted); cursor:pointer; text-align:center;
+  transition:color 0.2s;
+}
+.link-btn span { color:var(--accent); font-weight:700; text-decoration:underline; text-underline-offset:2px; }
+.link-btn:hover { color:var(--text); }
+.l-disclaimer {
+  font-size:0.6rem; font-weight:500;
+  color:var(--muted2); text-align:center; line-height:1.7;
+  margin-top:auto; padding-top:24px;
+  animation:riseUp 0.7s 0.3s cubic-bezier(.22,1,.36,1) both;
+}
+.l-disclaimer strong { color:var(--accent3); font-weight:700; }
 
-/* ══ AUTH EKRANI ══ */
-#screenAuth{align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.auth-inner{width:100%;max-width:420px;padding:24px 20px;}
+/* ═══════════════════════════════════════════════
+   EKRAN 2 — AUTH (Hesap türü + Giriş/Kayıt)
+═══════════════════════════════════════════════ */
+#screenAuth {
+  align-items:center; justify-content:center;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+}
+.auth-wrap {
+  width:100%; max-width:420px;
+  padding:28px 22px 40px;
+}
 
-.auth-logo{text-align:center;margin-bottom:24px;animation:fadeDown 0.6s cubic-bezier(.4,0,.2,1) both;}
-.auth-logo-icon{width:54px;height:54px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:17px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.5rem;box-shadow:0 6px 22px rgba(56,189,248,0.22);}
-.auth-logo-name{font-family:'Space Mono',monospace;font-size:1.45rem;font-weight:700;color:var(--text);letter-spacing:-0.5px;}
+/* Küçük header bar */
+.auth-header {
+  display:flex; align-items:center;
+  justify-content:space-between;
+  margin-bottom:28px;
+  animation:riseUp 0.55s cubic-bezier(.22,1,.36,1) both;
+}
+.auth-back {
+  width:36px; height:36px; border-radius:var(--r-sm);
+  background:var(--card); border:1px solid var(--border);
+  color:var(--muted); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all 0.2s;
+}
+.auth-back:hover { border-color:var(--accent); color:var(--text); }
+.auth-logo-mini {
+  display:flex; align-items:center; gap:8px;
+}
+.auth-logo-mini-icon {
+  width:30px; height:30px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.9rem;
+}
+.auth-logo-mini-name {
+  font-family:var(--font-mono);
+  font-size:1rem; font-weight:700;
+  color:var(--text); letter-spacing:-0.5px;
+}
+.auth-header-spacer { width:36px; }
 
-.btn-back{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--card);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-bottom:16px;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
-.btn-back:hover{border-color:var(--accent);color:var(--text);}
+/* Step indicator dots */
+.step-dots {
+  display:flex; justify-content:center; gap:6px;
+  margin-bottom:24px;
+  animation:riseUp 0.55s 0.05s cubic-bezier(.22,1,.36,1) both;
+}
+.step-dot {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--border);
+  transition:all 0.3s;
+}
+.step-dot.active { background:var(--accent); width:20px; border-radius:3px; }
+.step-dot.done   { background:var(--accent3); }
 
-.step{animation:fadeUp 0.5s cubic-bezier(.4,0,.2,1) both;}
-.step-title{font-size:1rem;font-weight:900;text-align:center;margin-bottom:6px;}
-.step-sub{font-size:0.77rem;color:var(--muted);text-align:center;margin-bottom:20px;font-weight:600;}
+/* Step titler */
+.step-title {
+  font-size:1.1rem; font-weight:800;
+  text-align:center; margin-bottom:4px;
+  animation:riseUp 0.5s cubic-bezier(.22,1,.36,1) both;
+}
+.step-sub {
+  font-size:0.75rem; color:var(--muted); font-weight:500;
+  text-align:center; margin-bottom:22px;
+  animation:riseUp 0.5s 0.04s cubic-bezier(.22,1,.36,1) both;
+}
 
-.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
-.type-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:20px 14px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
-.type-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.22s;border-radius:18px;}
-.type-card.student::before{background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));}
-.type-card.coach::before{background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(251,191,36,0.08));}
-.type-card:hover::before,.type-card.selected::before{opacity:1;}
-.type-card.selected.student{border-color:var(--accent);box-shadow:0 0 0 3px rgba(56,189,248,0.14);}
-.type-card.selected.coach{border-color:var(--accent3);box-shadow:0 0 0 3px rgba(52,211,153,0.14);}
-.type-card:active{transform:scale(0.96);}
-.type-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;opacity:0;transition:opacity 0.2s;}
-.type-card.selected.student .type-check{background:var(--accent);opacity:1;}
-.type-card.selected.coach .type-check{background:var(--accent3);opacity:1;}
-.type-emoji{font-size:2.2rem;display:block;margin-bottom:10px;}
-.type-label{font-size:0.92rem;font-weight:900;display:block;margin-bottom:4px;}
-.type-card.student .type-label{color:var(--accent);}
-.type-card.coach .type-label{color:var(--accent3);}
-.type-desc{font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.4;display:block;}
+/* Tip kartları (öğrenci/koç) */
+.type-row {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px; margin-bottom:22px;
+  animation:riseUp 0.5s 0.08s cubic-bezier(.22,1,.36,1) both;
+}
+.type-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--r-md); padding:18px 14px;
+  cursor:pointer; text-align:center;
+  position:relative; overflow:hidden;
+  transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.type-card::after {
+  content:''; position:absolute; inset:0;
+  opacity:0; transition:opacity 0.2s; pointer-events:none;
+}
+.type-card.s::after { background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08)); }
+.type-card.c::after { background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(251,191,36,0.08)); }
+.type-card:active { transform:scale(0.96); }
+.type-card.sel.s { border-color:var(--accent); box-shadow:0 0 0 3px rgba(56,189,248,0.12); }
+.type-card.sel.c { border-color:var(--accent3); box-shadow:0 0 0 3px rgba(52,211,153,0.12); }
+.type-card.sel::after { opacity:1; }
+.type-check {
+  position:absolute; top:9px; right:9px;
+  width:18px; height:18px; border-radius:50%;
+  font-size:0.6rem; color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; transition:opacity 0.2s;
+}
+.type-card.sel.s .type-check { background:var(--accent); opacity:1; }
+.type-card.sel.c .type-check { background:var(--accent3); opacity:1; }
+.type-emoji { font-size:2rem; display:block; margin-bottom:9px; }
+.type-label { font-size:0.85rem; font-weight:800; display:block; margin-bottom:3px; }
+.type-card.s .type-label { color:var(--accent); }
+.type-card.c .type-label { color:var(--accent3); }
+.type-hint  { font-size:0.6rem; font-weight:500; color:var(--muted); line-height:1.4; }
 
-.form-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
-.form-title{font-size:0.78rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;}
-.input-wrap{position:relative;margin-bottom:12px;}
-.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:0.85rem;font-weight:800;}
-.form-input{width:100%;padding:13px 14px 13px 40px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
-.form-input::placeholder{color:var(--muted);}
-.form-input:focus{border-color:var(--accent);}
-.pw-wrap{position:relative;}
-.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;}
+/* Auth tabs */
+.auth-tabs {
+  display:flex; gap:4px;
+  background:var(--bg2); border-radius:var(--r-sm);
+  padding:4px; margin-bottom:18px;
+  animation:riseUp 0.5s 0.06s cubic-bezier(.22,1,.36,1) both;
+}
+.auth-tab {
+  flex:1; padding:9px;
+  border:none; border-radius:7px;
+  background:transparent; color:var(--muted);
+  font-family:var(--font-body); font-size:0.8rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.auth-tab.active {
+  background:var(--card); color:var(--text);
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
+}
 
-.auth-tabs{display:flex;gap:6px;background:var(--bg2);border-radius:12px;padding:4px;margin-bottom:20px;}
-.auth-tab{flex:1;padding:9px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
-.auth-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+/* Form kartı */
+.form-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r-lg); padding:20px;
+  margin-bottom:14px;
+  animation:riseUp 0.5s 0.1s cubic-bezier(.22,1,.36,1) both;
+}
+.form-section-label {
+  font-size:0.62rem; font-weight:800;
+  color:var(--muted); letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:14px;
+}
+.input-group { position:relative; margin-bottom:10px; }
+.input-ico {
+  position:absolute; left:13px; top:50%;
+  transform:translateY(-50%);
+  color:var(--muted); pointer-events:none;
+  display:flex; align-items:center;
+}
+.inp {
+  width:100%; padding:13px 13px 13px 40px;
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:var(--font-body); font-size:0.87rem; font-weight:500;
+  outline:none; transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.inp::placeholder { color:var(--muted); }
+.inp:focus { border-color:var(--accent); }
+.pw-wrap { position:relative; }
+.pw-eye {
+  position:absolute; right:12px; top:50%;
+  transform:translateY(-50%);
+  background:none; border:none; color:var(--muted);
+  cursor:pointer; padding:4px; display:flex; align-items:center;
+}
+.forgot-link {
+  text-align:right; margin-top:-4px; margin-bottom:12px;
+}
+.forgot-link span {
+  font-size:0.7rem; color:var(--accent);
+  cursor:pointer; font-weight:600;
+}
 
-.btn-main{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:900;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(56,189,248,0.28);-webkit-tap-highlight-color:transparent;}
-.btn-main.coach-mode{background:linear-gradient(135deg,var(--accent3),#fbbf24);box-shadow:0 4px 20px rgba(52,211,153,0.28);}
-.btn-main:active{transform:scale(0.98);}
-.btn-main:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Butonlar */
+.btn-primary {
+  width:100%; padding:14px;
+  border:none; border-radius:var(--r-sm);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff; font-family:var(--font-body);
+  font-size:0.9rem; font-weight:700;
+  cursor:pointer; transition:transform 0.15s, box-shadow 0.2s;
+  box-shadow:0 4px 18px rgba(56,189,248,0.25);
+  letter-spacing:0.2px;
+}
+.btn-primary.coach { background:linear-gradient(135deg,var(--accent3),#fbbf24); box-shadow:0 4px 18px rgba(52,211,153,0.25); }
+.btn-primary:active { transform:scale(0.97); }
+.btn-primary:disabled { opacity:0.35; cursor:not-allowed; transform:none; box-shadow:none; }
 
-.btn-google{width:100%;padding:12px 8px;border:1.5px solid var(--border);border-radius:14px;background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;}
-.btn-google:hover{border-color:#4285F4;background:rgba(66,133,244,0.06);}
+.btn-outline {
+  width:100%; padding:13px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  background:transparent; color:var(--text);
+  font-family:var(--font-body); font-size:0.85rem; font-weight:600;
+  cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  margin-top:8px;
+}
+.btn-outline:hover { border-color:#4285F4; background:rgba(66,133,244,0.05); }
 
-.divider{display:flex;align-items:center;gap:10px;margin:14px 0;}
-.divider-line{flex:1;height:1px;background:var(--border);}
-.divider-text{font-size:0.68rem;font-weight:800;color:var(--muted);}
+.divider {
+  display:flex; align-items:center; gap:10px; margin:12px 0;
+}
+.div-line { flex:1; height:1px; background:var(--border); }
+.div-text  { font-size:0.64rem; font-weight:700; color:var(--muted); }
 
-.error-msg{background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.3);border-radius:10px;padding:10px 14px;font-size:0.78rem;font-weight:700;color:var(--warn);margin-top:12px;display:none;}
-.error-msg.show{display:block;}
-#forgotWrap{text-align:right;margin-top:-4px;margin-bottom:12px;}
-#forgotWrap span{font-size:0.72rem;color:var(--accent);cursor:pointer;font-weight:700;}
+.error-box {
+  background:rgba(244,114,182,0.08);
+  border:1px solid rgba(244,114,182,0.25);
+  border-radius:var(--r-sm); padding:10px 14px;
+  font-size:0.75rem; font-weight:600; color:var(--warn);
+  margin-top:10px; display:none;
+}
+.error-box.show { display:block; }
 
-@keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-.fadeIn{animation:fadeUp 0.35s cubic-bezier(.4,0,.2,1) both;}
-#step1{display:block;}
-#step2{display:none;}
-.ob-dal-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px 14px;cursor:pointer;text-align:center;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
-.ob-dal-card:active{transform:scale(0.95);}
-.ob-dal-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);box-shadow:0 0 0 3px rgba(56,189,248,0.12);}
-.ob-sinif-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:0.9rem;transition:all 0.22s;-webkit-tap-highlight-color:transparent;}
-.ob-sinif-card:active{transform:scale(0.97);}
-.ob-sinif-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);color:var(--accent);}
+/* ═══════════════════════════════════════════════
+   EKRAN 3 — ONBOARDİNG
+═══════════════════════════════════════════════ */
+#screenOnboarding {
+  align-items:center; justify-content:center;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+}
+.ob-wrap {
+  width:100%; max-width:440px;
+  padding:28px 22px 44px;
+  min-height:100dvh;
+  display:flex; flex-direction:column;
+}
+.ob-header {
+  display:flex; align-items:center;
+  justify-content:space-between;
+  margin-bottom:24px;
+}
+.ob-step-info {
+  font-size:0.62rem; font-weight:700;
+  color:var(--muted); letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+.ob-skip {
+  font-size:0.7rem; font-weight:600;
+  color:var(--muted); cursor:pointer;
+  transition:color 0.2s;
+}
+.ob-skip:hover { color:var(--text); }
 
-@media(max-height:680px){
-  .landing-inner{padding:32px 20px 28px;}
-  .hero-logo-icon{width:62px;height:62px;font-size:1.7rem;}
-  .hero-logo-name{font-size:2.1rem;}
-  .feature-pills{margin-bottom:22px;}
-  .exam-card{padding:13px 10px;}
-  .exam-emoji{font-size:1.5rem;margin-bottom:5px;}
+/* Progress bar */
+.ob-progress {
+  display:flex; gap:5px; margin-bottom:28px;
+}
+.ob-bar {
+  flex:1; height:3px; border-radius:99px;
+  background:var(--border); transition:background 0.35s;
+}
+.ob-bar.active { background:var(--accent); }
+.ob-bar.done   { background:var(--accent3); }
+
+/* Büyük başlık */
+.ob-title {
+  font-size:1.25rem; font-weight:800;
+  margin-bottom:5px; line-height:1.3;
+  animation:riseUp 0.5s cubic-bezier(.22,1,.36,1) both;
+}
+.ob-sub {
+  font-size:0.77rem; font-weight:400;
+  color:var(--muted); margin-bottom:24px; line-height:1.6;
+  animation:riseUp 0.5s 0.04s cubic-bezier(.22,1,.36,1) both;
+}
+
+/* Dal kartları */
+.ob-dal-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:9px; margin-bottom:22px;
+  animation:riseUp 0.5s 0.08s cubic-bezier(.22,1,.36,1) both;
+}
+.ob-dal-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--r-md); padding:16px 12px;
+  cursor:pointer; text-align:center;
+  transition:border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.ob-dal-card:active { transform:scale(0.95); }
+.ob-dal-card.sel { border-color:var(--accent); box-shadow:0 0 0 3px rgba(56,189,248,0.12); background:rgba(56,189,248,0.04); }
+.ob-dal-card .dc-icon { font-size:1.7rem; display:block; margin-bottom:7px; }
+.ob-dal-card .dc-name { font-size:0.85rem; font-weight:800; display:block; margin-bottom:2px; }
+.ob-dal-card .dc-sub  { font-size:0.57rem; font-weight:500; color:var(--muted); }
+
+/* Hedef seçimi */
+.ob-hedef-tabs {
+  display:flex; gap:6px; margin-bottom:14px;
+  animation:riseUp 0.5s 0.06s cubic-bezier(.22,1,.36,1) both;
+}
+.ob-hedef-tab {
+  flex:1; padding:10px;
+  border:1.5px solid var(--border);
+  border-radius:var(--r-sm);
+  background:transparent; color:var(--muted);
+  font-family:var(--font-body); font-size:0.78rem; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.ob-hedef-tab.active {
+  border-color:var(--accent);
+  background:rgba(56,189,248,0.08);
+  color:var(--accent);
+}
+
+/* Cascade dropdown grubu */
+.ob-field-group {
+  margin-bottom:12px;
+  animation:riseUp 0.5s 0.08s cubic-bezier(.22,1,.36,1) both;
+}
+.ob-field-label {
+  font-size:0.62rem; font-weight:700;
+  color:var(--muted); letter-spacing:1.5px;
+  text-transform:uppercase; margin-bottom:7px;
+  display:block;
+}
+.ob-select, .ob-number-inp {
+  width:100%; padding:12px 14px;
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text);
+  font-family:var(--font-body); font-size:0.85rem; font-weight:500;
+  outline:none; transition:border-color 0.2s;
+  -webkit-appearance:none;
+}
+.ob-select:focus, .ob-number-inp:focus { border-color:var(--accent); }
+.ob-number-inp::placeholder { color:var(--muted); }
+
+/* Program önizleme */
+.ob-program-preview {
+  background:linear-gradient(135deg,rgba(56,189,248,0.06),rgba(129,140,248,0.06));
+  border:1px solid rgba(56,189,248,0.18);
+  border-radius:var(--r-sm); padding:12px 14px;
+  margin-bottom:12px; display:none;
+}
+.ob-prev-uni { font-size:0.8rem; font-weight:800; margin-bottom:3px; }
+.ob-prev-bolum { font-size:0.72rem; font-weight:700; color:var(--accent); margin-bottom:4px; }
+.ob-prev-detay { font-size:0.62rem; color:var(--muted); font-weight:500; }
+
+/* Sınıf kartları */
+.ob-sinif-list {
+  display:flex; flex-direction:column; gap:8px;
+  margin-bottom:22px;
+  animation:riseUp 0.5s 0.08s cubic-bezier(.22,1,.36,1) both;
+}
+.ob-sinif-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--r-sm); padding:14px 16px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between;
+  font-weight:700; font-size:0.87rem;
+  transition:border-color 0.2s, transform 0.15s;
+}
+.ob-sinif-card:active { transform:scale(0.98); }
+.ob-sinif-card.sel { border-color:var(--accent); background:rgba(56,189,248,0.04); color:var(--accent); }
+.ob-sinif-card .sc-right { font-size:0.65rem; font-weight:500; color:var(--muted); }
+.ob-sinif-card.sel .sc-right { color:var(--accent); opacity:0.7; }
+
+/* ═══════════════════════════════════════════════
+   ANİMASYONLAR
+═══════════════════════════════════════════════ */
+@keyframes riseUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.fade-in { animation:riseUp 0.4s cubic-bezier(.22,1,.36,1) both; }
+
+/* step1/step2 */
+#step1 { display:block; }
+#step2 { display:none; }
+
+/* Responsive */
+@media (max-height:700px) {
+  .landing-wrap { padding:36px 20px 32px; }
+  .l-hero       { margin-bottom:22px; }
+  .feat-grid    { margin-bottom:20px; }
+  .exam-card    { padding:12px 10px; }
+  .exam-emoji   { font-size:1.4rem; margin-bottom:4px; }
 }
 </style>
 </head>
 <body>
 
-<div class="bg-orb bg-orb-1"></div>
-<div class="bg-orb bg-orb-2"></div>
-<div class="bg-orb bg-orb-3"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
 
+<!-- Loading -->
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text">YÜKLENIYOR...</div>
+  <div class="loading-ring"></div>
+  <div class="loading-label">Yükleniyor</div>
 </div>
 
-<!-- EKRAN 1: LANDING -->
+<!-- ════════════════════════════════════
+     EKRAN 1 — LANDING
+════════════════════════════════════ -->
 <div class="screen active" id="screenLanding">
-  <div class="landing-inner">
+  <div class="landing-wrap">
 
-    <div class="hero">
-      <div class="hero-logo-icon">&#x1F98A;</div>
-      <div class="hero-logo-name">Pugi</div>
-      <div class="hero-tagline">YKS hazırlığının<br>akıllı yardımcısı</div>
-      <div class="hero-sub">Zamanlayıcı, hedef takibi, AI koç ve daha fazlası.<br>Tamamen ücretsiz.</div>
+    <!-- Hero -->
+    <div class="l-hero">
+      <div class="l-logo-wrap">
+        <div class="l-logo-icon">&#x1F98A;</div>
+        <span class="l-logo-name">Pugi</span>
+      </div>
+
+      <!-- YKS geri sayım -->
+      <div class="yks-banner">
+        <div class="yks-banner-days" id="ldCountdown">—</div>
+        <div class="yks-banner-right">
+          <span class="yks-banner-label">YKS&#39;ye kalan</span>
+          <span class="yks-banner-date">TYT: 14 Haziran 2026</span>
+        </div>
+      </div>
+
+      <div class="l-tagline">YKS hazırlığının<br>akıllı yardımcısı</div>
+      <div class="l-sub">Zamanlayıcı, hedef takibi, AI koç ve daha fazlası.<br>Tamamen ücretsiz — kayıt gerektirmez.</div>
     </div>
 
-    <div class="feature-pills">
-      <div class="feature-pill"><span class="pill-icon">&#x23F1;</span>Zamanlayıcı</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F3AF;</span>Hedef Takibi</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F4CA;</span>İstatistikler</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F916;</span>AI Koç</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F525;</span>Günlük Seri</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F3C6;</span>Rozetler</div>
-    </div>
-
-    <div class="exam-section">
-      <div class="exam-section-label">Hangi sınava çalışıyorsun?</div>
-      <div class="exam-grid">
-
-        <div class="exam-card yks" id="examYks" onclick="selectExam('yks',this)">
-          <span class="exam-emoji">&#x1F4DA;</span>
-          <span class="exam-label">YKS</span>
-          <span class="exam-desc">TYT &middot; AYT<br>SAY / SÖZ / EA / DİL</span>
-        </div>
-
-        <div class="exam-card kpss coming-soon" onclick="showComingSoon()">
-          <span class="coming-badge">Yakında</span>
-          <span class="exam-emoji">&#x1F3DB;</span>
-          <span class="exam-label">KPSS</span>
-          <span class="exam-desc">Kamu personeli<br>seçme sınavı</span>
-        </div>
-
-        <div class="exam-card lgs coming-soon" onclick="showComingSoon()">
-          <span class="coming-badge">Yakında</span>
-          <span class="exam-emoji">&#x1F392;</span>
-          <span class="exam-label">LGS</span>
-          <span class="exam-desc">Liseye geçiş<br>sınavı</span>
-        </div>
-
-        <div class="exam-card other coming-soon" onclick="showComingSoon()">
-          <span class="coming-badge">Yakında</span>
-          <span class="exam-emoji">&#x1F4DD;</span>
-          <span class="exam-label">Diğer</span>
-          <span class="exam-desc">ALES &middot; DGS<br>ve daha fazlası</span>
-        </div>
-
+    <!-- Özellikler -->
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(56,189,248,0.12)">&#x23F1;</div>
+        <div class="feat-text"><strong>Zamanlayıcı</strong>Pomodoro & özel süreler</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(129,140,248,0.12)">&#x1F916;</div>
+        <div class="feat-text"><strong>AI Koç</strong>Günlük kişisel öneri</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(52,211,153,0.12)">&#x1F4CA;</div>
+        <div class="feat-text"><strong>İstatistikler</strong>Detaylı analiz & grafik</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon" style="background:rgba(251,191,36,0.12)">&#x1F3AF;</div>
+        <div class="feat-text"><strong>Hedef Takibi</strong>Günlük & haftalık plan</div>
       </div>
     </div>
 
-    <button class="btn-start" id="btnStart" onclick="goToExamAction()" disabled>
+    <!-- Sınav seç -->
+    <div class="exam-sec-label">Hangi sınava çalışıyorsun?</div>
+    <div class="exam-grid">
+      <div class="exam-card yks" id="examYks" onclick="selectExam('yks',this)">
+        <span class="exam-emoji">&#x1F4DA;</span>
+        <span class="exam-name">YKS</span>
+        <span class="exam-desc">TYT &middot; AYT<br>SAY / SÖZ / EA / DİL</span>
+      </div>
+      <div class="exam-card kpss locked" onclick="showComingSoon()">
+        <span class="exam-badge">Yakında</span>
+        <span class="exam-emoji">&#x1F3DB;</span>
+        <span class="exam-name">KPSS</span>
+        <span class="exam-desc">Kamu personeli<br>seçme sınavı</span>
+      </div>
+      <div class="exam-card lgs locked" onclick="showComingSoon()">
+        <span class="exam-badge">Yakında</span>
+        <span class="exam-emoji">&#x1F392;</span>
+        <span class="exam-name">LGS</span>
+        <span class="exam-desc">Liseye geçiş<br>sınavı</span>
+      </div>
+      <div class="exam-card other locked" onclick="showComingSoon()">
+        <span class="exam-badge">Yakında</span>
+        <span class="exam-emoji">&#x1F4DD;</span>
+        <span class="exam-name">Diğer</span>
+        <span class="exam-desc">ALES &middot; DGS<br>ve daha fazlası</span>
+      </div>
+    </div>
+
+    <button class="btn-cta" id="btnStart" onclick="goToExamAction()" disabled>
       Hemen Başla &#x2192;
     </button>
 
-    <div class="login-link">
-      <span onclick="goToAuthScreen()">Giriş Yap / Kayıt Ol</span>
+    <div class="l-footer-links">
+      <div class="link-btn">Zaten hesabın var mı? <span onclick="goToAuthScreen()">Giriş Yap / Kayıt Ol</span></div>
     </div>
 
-    <div class="landing-footer">
+    <div class="l-disclaimer">
       <strong>Kayıt gerektirmez.</strong> Hemen dene, beğenirsen kayıt ol.<br>
       Tüm özellikler <strong>tamamen ücretsiz</strong>.
     </div>
@@ -260,41 +787,59 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
-<!-- EKRAN 2: HESAP TÜRÜ + GİRİŞ/KAYIT -->
+<!-- ════════════════════════════════════
+     EKRAN 2 — HESAP TÜRÜ + GİRİŞ/KAYIT
+════════════════════════════════════ -->
 <div class="screen" id="screenAuth">
-  <div class="auth-inner">
+  <div class="auth-wrap">
 
-    <div class="auth-logo">
-      <div class="auth-logo-icon">&#x1F98A;</div>
-      <div class="auth-logo-name">Pugi</div>
+    <!-- Üst bar -->
+    <div class="auth-header">
+      <button class="auth-back" onclick="goToLanding()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="auth-logo-mini">
+        <div class="auth-logo-mini-icon">&#x1F98A;</div>
+        <span class="auth-logo-mini-name">Pugi</span>
+      </div>
+      <div class="auth-header-spacer"></div>
     </div>
 
-    <div id="step1" class="step">
-      <div class="step-title">Hesap Türünü Seç</div>
-      <div class="step-sub">Devam etmek için bir hesap türü seç</div>
-      <div class="type-grid">
-        <div class="type-card student" onclick="selectType('student',this)">
+    <!-- Step dots -->
+    <div class="step-dots">
+      <div class="step-dot active" id="dot1"></div>
+      <div class="step-dot" id="dot2"></div>
+    </div>
+
+    <!-- ADIM 1 — Hesap Türü -->
+    <div id="step1">
+      <div class="step-title">Hesabın nasıl olsun?</div>
+      <div class="step-sub">İlk kez mi katılıyorsun? Hesap türünü seç.</div>
+
+      <div class="type-row">
+        <div class="type-card s" onclick="selectType('student',this)">
           <span class="type-check">&#x2713;</span>
           <span class="type-emoji">&#x1F4DA;</span>
           <span class="type-label">Öğrenci</span>
-          <span class="type-desc">Çalışmalarını takip et, koçunla bağlan</span>
+          <span class="type-hint">Çalışmalarını takip et, koçunla bağlan</span>
         </div>
-        <div class="type-card coach" onclick="selectType('coach',this)">
+        <div class="type-card c" onclick="selectType('coach',this)">
           <span class="type-check">&#x2713;</span>
           <span class="type-emoji">&#x1F3AF;</span>
           <span class="type-label">Koç</span>
-          <span class="type-desc">Öğrencilerini yönet, istatistikleri gör</span>
+          <span class="type-hint">Öğrencilerini yönet, istatistikleri gör</span>
         </div>
       </div>
-      <button class="btn-main" id="continueBtn" onclick="goToStep2()" disabled>Devam Et &#x2192;</button>
-      <div class="login-link" style="margin-top:14px">
-        <span onclick="goToLanding()">← Anasayfaya Dön</span>
-      </div>
+
+      <button class="btn-primary" id="continueBtn" onclick="goToStep2()" disabled>
+        Devam Et &#x2192;
+      </button>
     </div>
 
-    <div id="step2" class="step">
-      <button class="btn-back" onclick="goBackToStep1()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    <!-- ADIM 2 — Giriş / Kayıt -->
+    <div id="step2">
+      <button class="auth-back" onclick="goBackToStep1()" style="margin-bottom:18px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
 
       <div class="auth-tabs">
@@ -303,193 +848,214 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       </div>
 
       <div class="form-card">
-        <div class="form-title" id="formTitle">GİRİŞ YAP</div>
+        <div class="form-section-label" id="formTitle">Giriş Yap</div>
 
-        <div class="input-wrap" id="nameWrap" style="display:none">
-          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-          <input class="form-input" type="text" id="nameInput" placeholder="Adın ve soyadın" autocomplete="name">
+        <div class="input-group" id="nameWrap" style="display:none">
+          <span class="input-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <input class="inp" type="text" id="nameInput" placeholder="Adın ve soyadın" autocomplete="name">
         </div>
 
-        <div class="input-wrap" id="unameWrap" style="display:none">
-          <span class="input-icon">@</span>
-          <input class="form-input" type="text" id="unameInput" placeholder="kullanici_adi" style="padding-left:36px" autocomplete="username">
+        <div class="input-group" id="unameWrap" style="display:none">
+          <span class="input-ico" style="font-size:0.82rem;font-weight:700">@</span>
+          <input class="inp" type="text" id="unameInput" placeholder="kullanici_adi" autocomplete="username">
         </div>
 
-        <div class="input-wrap">
-          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg></span>
-          <input class="form-input" type="email" id="emailInput" placeholder="email@adresin.com" autocomplete="email">
+        <div class="input-group">
+          <span class="input-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg></span>
+          <input class="inp" type="email" id="emailInput" placeholder="email@adresin.com" autocomplete="email">
         </div>
 
-        <div class="input-wrap pw-wrap">
-          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-          <input class="form-input" type="password" id="pwInput" placeholder="&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;" autocomplete="current-password">
-          <button class="pw-toggle" type="button" onclick="togglePw()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <div class="input-group pw-wrap">
+          <span class="input-ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <input class="inp" type="password" id="pwInput" placeholder="••••••••" autocomplete="current-password">
+          <button class="pw-eye" type="button" onclick="togglePw()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
 
-        <div id="forgotWrap">
+        <div id="forgotWrap" class="forgot-link">
           <span onclick="sendReset()">Şifremi unuttum</span>
         </div>
 
-        <button class="btn-main" id="submitBtn" onclick="submitAuth()">Giriş Yap</button>
+        <button class="btn-primary" id="submitBtn" onclick="submitAuth()">Giriş Yap</button>
 
         <div class="divider">
-          <div class="divider-line"></div>
-          <div class="divider-text">VEYA</div>
-          <div class="divider-line"></div>
+          <div class="div-line"></div>
+          <span class="div-text">veya</span>
+          <div class="div-line"></div>
         </div>
 
-        <button class="btn-google" onclick="signInWithGoogle()">
-          <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0">
+        <button class="btn-outline" onclick="signInWithGoogle()">
+          <svg width="17" height="17" viewBox="0 0 24 24" style="flex-shrink:0">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
-          <span>Google ile Devam Et</span>
+          Google ile Devam Et
         </button>
       </div>
 
-      <div class="error-msg" id="errorMsg"></div>
+      <div class="error-box" id="errorMsg"></div>
     </div>
 
   </div>
 </div>
 
-<!-- ══════════════════════════════════
+<!-- ════════════════════════════════════
      EKRAN 3 — ONBOARDİNG
-     Kayıt sonrası dal / hedef / sınıf
-══════════════════════════════════ -->
+════════════════════════════════════ -->
 <div class="screen" id="screenOnboarding">
-  <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
+  <div class="ob-wrap">
 
-    <!-- Progress bar -->
-    <div style="display:flex;gap:6px;margin-bottom:24px">
-      <div id="obStep1Bar" style="flex:1;height:4px;border-radius:99px;background:var(--accent);transition:background 0.3s"></div>
-      <div id="obStep2Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
-      <div id="obStep3Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
+    <div class="ob-header">
+      <span class="ob-step-info" id="obStepInfo">Adım 1 / 3</span>
+      <span class="ob-skip" onclick="skipOnboarding()">Atla</span>
     </div>
 
-    <!-- ADIM 1: Dal seçimi -->
+    <div class="ob-progress">
+      <div class="ob-bar active" id="obBar1"></div>
+      <div class="ob-bar" id="obBar2"></div>
+      <div class="ob-bar" id="obBar3"></div>
+    </div>
+
+    <!-- ADIM 1: Dal -->
     <div id="obStep1">
-      <div style="margin-bottom:20px">
-        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hangi alanda çalışıyorsun?</div>
-        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">Bu seçim sana özel ders listesi ve AI önerileri için kullanılır</div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">
+      <div class="ob-title">Hangi alanda<br>çalışıyorsun?</div>
+      <div class="ob-sub">Sana özel ders listesi ve AI önerileri için kullanılır.</div>
+
+      <div class="ob-dal-grid">
         <div class="ob-dal-card" id="dalSay" onclick="selectDal('sayisal',this)">
-          <div style="font-size:1.8rem;margin-bottom:8px">📐</div>
-          <div style="font-size:0.92rem;font-weight:900;color:var(--accent)">Sayısal</div>
-          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Mat · Fiz · Kim · Bio</div>
+          <span class="dc-icon">&#x1F4D0;</span>
+          <span class="dc-name" style="color:var(--accent)">Sayısal</span>
+          <span class="dc-sub">Mat · Fiz · Kim · Bio</span>
         </div>
         <div class="ob-dal-card" id="dalSoz" onclick="selectDal('sozel',this)">
-          <div style="font-size:1.8rem;margin-bottom:8px">📖</div>
-          <div style="font-size:0.92rem;font-weight:900;color:var(--warn)">Sözel</div>
-          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Ede · Tar · Coğ · Fel</div>
+          <span class="dc-icon">&#x1F4D6;</span>
+          <span class="dc-name" style="color:var(--warn)">Sözel</span>
+          <span class="dc-sub">Ede · Tar · Coğ · Fel</span>
         </div>
         <div class="ob-dal-card" id="dalEa" onclick="selectDal('ea',this)">
-          <div style="font-size:1.8rem;margin-bottom:8px">⚖️</div>
-          <div style="font-size:0.92rem;font-weight:900;color:var(--accent3)">Eşit Ağırlık</div>
-          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Mat · Ede · Tar · Coğ</div>
+          <span class="dc-icon">&#x2696;&#xFE0F;</span>
+          <span class="dc-name" style="color:var(--accent3)">Eşit Ağırlık</span>
+          <span class="dc-sub">Mat · Ede · Tar · Coğ</span>
         </div>
         <div class="ob-dal-card" id="dalDil" onclick="selectDal('dil',this)">
-          <div style="font-size:1.8rem;margin-bottom:8px">🌍</div>
-          <div style="font-size:0.92rem;font-weight:900;color:var(--accent2)">Dil</div>
-          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">İng · Alm · Fra · Ara</div>
+          <span class="dc-icon">&#x1F30D;</span>
+          <span class="dc-name" style="color:var(--accent2)">Dil</span>
+          <span class="dc-sub">İng · Alm · Fra · Ara</span>
         </div>
       </div>
-      <button class="btn-main" id="obStep1Btn" onclick="obGoStep2()" disabled>Devam Et →</button>
-      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+
+      <button class="btn-primary" id="obStep1Btn" onclick="obGoStep2()" disabled>Devam Et &#x2192;</button>
     </div>
 
     <!-- ADIM 2: Hedef -->
     <div id="obStep2" style="display:none">
-      <button class="btn-back" onclick="obGoStep1()" style="margin-bottom:16px">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div style="margin-bottom:20px">
-        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedefin ne?</div>
-        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">AI koçun seni hedefe göre yönlendirir</div>
+      <div class="ob-title">Hedefin ne?</div>
+      <div class="ob-sub">AI koçun seni hedefe göre yönlendirir.</div>
+
+      <div class="ob-hedef-tabs">
+        <button id="hedefSiralamaBtn" class="ob-hedef-tab active" onclick="selectHedefTur('siralama')">&#x1F3C6; Sıralama Hedefi</button>
+        <button id="hedefOkulBtn" class="ob-hedef-tab" onclick="selectHedefTur('okul')">&#x1F393; Okul Hedefi</button>
       </div>
 
-      <!-- Hedef türü seçimi -->
-      <div style="display:flex;gap:8px;margin-bottom:16px">
-        <button id="hedefSiralamaBtn" onclick="selectHedefTur('siralama')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
-        <button id="hedefOkulBtn" onclick="selectHedefTur('okul')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
-      </div>
-
-      <!-- Sıralama hedefi -->
+      <!-- Sıralama -->
       <div id="hedefSiralamaWrap">
-        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
-        <input type="number" id="hedefSiralamaInput" placeholder="örn: 10000" min="1" max="3000000"
-          style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px"
-          oninput="checkHedefValid(); _obOnSiralamaInput();">
-        <div style="font-size:0.68rem;color:var(--muted);font-weight:600">İlk kaçıncı olmak istiyorsun?</div>
+        <div class="ob-field-group">
+          <span class="ob-field-label">Hedef Sıralama</span>
+          <input type="number" id="hedefSiralamaInput" class="ob-number-inp" placeholder="örn: 10000" min="1" max="3000000"
+            oninput="checkHedefValid(); _obOnSiralamaInput();">
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:500;margin-top:5px">İlk kaçıncı olmak istiyorsun?</div>
+        </div>
       </div>
 
-      <!-- Okul hedefi -->
+      <!-- Okul -->
       <div id="hedefOkulWrap" style="display:none">
-        <!-- Öğrenim süresi -->
-        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Öğrenim Süresi</div>
-        <div style="display:flex;gap:8px;margin-bottom:14px">
-          <button id="sure2Btn" onclick="selectSure(2)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">2 Yıllık</button>
-          <button id="sure4Btn" onclick="selectSure(4)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">4 Yıllık</button>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button id="sure2Btn" onclick="selectSure(2)" class="ob-hedef-tab">2 Yıllık</button>
+          <button id="sure4Btn" onclick="selectSure(4)" class="ob-hedef-tab active">4 Yıllık</button>
         </div>
 
-        <!-- İl seçimi -->
-        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Şehir</div>
-        <select id="hedefIlSel" onchange="loadHedefUnis()" style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
-          <option value="">Şehir seç...</option>
-        </select>
-
-        <!-- Üniversite seçimi -->
-        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Üniversite</div>
-        <select id="hedefUniSel" onchange="loadHedefBolumler()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
-          <option value="">Önce şehir seç...</option>
-        </select>
-
-        <!-- Bölüm seçimi -->
-        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Bölüm</div>
-        <select id="hedefBolumSel" onchange="selectHedefBolum()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
-          <option value="">Önce üniversite seç...</option>
-        </select>
-
-        <!-- Seçilen program önizleme -->
-        <div id="hedefProgramPreview" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1.5px solid rgba(56,189,248,0.2);border-radius:12px;padding:12px 14px;margin-bottom:12px">
-          <div id="hedefPreviewUni" style="font-size:0.82rem;font-weight:900;margin-bottom:4px"></div>
-          <div id="hedefPreviewBolum" style="font-size:0.75rem;font-weight:800;color:var(--accent);margin-bottom:4px"></div>
-          <div id="hedefPreviewDetay" style="font-size:0.68rem;color:var(--muted);font-weight:700"></div>
+        <div class="ob-field-group">
+          <span class="ob-field-label">Şehir</span>
+          <select id="hedefIlSel" class="ob-select" onchange="loadHedefUnis()">
+            <option value="">Şehir seç...</option>
+          </select>
+        </div>
+        <div class="ob-field-group">
+          <span class="ob-field-label">Üniversite</span>
+          <select id="hedefUniSel" class="ob-select" onchange="loadHedefBolumler()" disabled>
+            <option value="">Önce şehir seç...</option>
+          </select>
+        </div>
+        <div class="ob-field-group">
+          <span class="ob-field-label">Bölüm</span>
+          <select id="hedefBolumSel" class="ob-select" onchange="selectHedefBolum()" disabled>
+            <option value="">Önce üniversite seç...</option>
+          </select>
+        </div>
+        <div class="ob-program-preview" id="hedefProgramPreview">
+          <div class="ob-prev-uni" id="hedefPreviewUni"></div>
+          <div class="ob-prev-bolum" id="hedefPreviewBolum"></div>
+          <div class="ob-prev-detay" id="hedefPreviewDetay"></div>
         </div>
       </div>
 
-      <button class="btn-main" id="obStep2Btn" onclick="obGoStep3()" disabled style="margin-top:8px">Devam Et →</button>
-      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+      <button class="btn-primary" id="obStep2Btn" onclick="obGoStep3()" disabled style="margin-top:4px">Devam Et &#x2192;</button>
     </div>
 
     <!-- ADIM 3: Sınıf -->
     <div id="obStep3" style="display:none">
-      <button class="btn-back" onclick="obGoStep2()" style="margin-bottom:16px">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <div style="margin-bottom:20px">
-        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Şu an kaçıncı sınıfsın?</div>
-        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">AI koçun sana uygun strateji önerir</div>
+      <div class="ob-title">Şu an kaçıncı<br>sınıfsın?</div>
+      <div class="ob-sub">AI koçun sana uygun strateji önerir.</div>
+
+      <div class="ob-sinif-list">
+        <div class="ob-sinif-card" onclick="selectSinif('1',this)">
+          <span>1. Sınıf</span>
+          <span class="sc-right">YKS&#39;ye 2+ yıl var</span>
+        </div>
+        <div class="ob-sinif-card" onclick="selectSinif('2',this)">
+          <span>2. Sınıf</span>
+          <span class="sc-right">YKS&#39;ye ~1.5 yıl var</span>
+        </div>
+        <div class="ob-sinif-card" onclick="selectSinif('3',this)">
+          <span>3. Sınıf</span>
+          <span class="sc-right">YKS bu yıl</span>
+        </div>
+        <div class="ob-sinif-card" onclick="selectSinif('mezun',this)">
+          <span>Mezun</span>
+          <span class="sc-right">Tekrar çalışıyorum</span>
+        </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
-        <div class="ob-sinif-card" onclick="selectSinif('1',this)"><span>1. Sınıf</span><span style="font-size:0.7rem;color:var(--muted)">YKS'ye 2+ yıl var</span></div>
-        <div class="ob-sinif-card" onclick="selectSinif('2',this)"><span>2. Sınıf</span><span style="font-size:0.7rem;color:var(--muted)">YKS'ye ~1.5 yıl var</span></div>
-        <div class="ob-sinif-card" onclick="selectSinif('3',this)"><span>3. Sınıf (Bu yıl)</span><span style="font-size:0.7rem;color:var(--muted)">YKS bu yıl</span></div>
-        <div class="ob-sinif-card" onclick="selectSinif('mezun',this)"><span>Mezun</span><span style="font-size:0.7rem;color:var(--muted)">Tekrar çalışıyorum</span></div>
-      </div>
-      <button class="btn-main" id="obStep3Btn" onclick="finishOnboarding()" disabled>🚀 Başla!</button>
-      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+
+      <button class="btn-primary" id="obStep3Btn" onclick="finishOnboarding()" disabled>&#x1F680; Başla!</button>
     </div>
 
   </div>
 </div>
 
 <script>
+'use strict';
+
+// ── YKS Geri Sayım ───────────────────────────
+(function() {
+  var tyt = new Date('2026-06-14T09:00:00');
+  function update() {
+    var diff = tyt - new Date();
+    var el = document.getElementById('ldCountdown');
+    if (!el) return;
+    if (diff <= 0) { el.textContent = '0'; return; }
+    el.textContent = Math.floor(diff / 86400000);
+  }
+  update();
+  setInterval(update, 60000);
+})();
+
+</script>
+
+<script>
+
 'use strict';
 var selectedAccountType=null,selectedExam=null,authMode='login';
 
@@ -566,15 +1132,26 @@ function goToExamAction(){
 
 function selectType(type,el){
   selectedAccountType=type;
-  document.querySelectorAll('.type-card').forEach(function(c){c.classList.remove('selected');});
-  el.classList.add('selected');
+  document.querySelectorAll('.type-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
   var btn=document.getElementById('continueBtn');btn.disabled=false;
-  btn.className='btn-main'+(type==='coach'?' coach-mode':'');
+  btn.className='btn-primary'+(type==='coach'?' coach':'');
   btn.textContent=(type==='coach'?'🎯':'📚')+' Devam Et →';
 }
-function goToStep2(){if(!selectedAccountType)return;document.getElementById('step1').style.display='none';var s2=document.getElementById('step2');s2.style.display='block';s2.classList.add('fadeIn');updateFormForType();}
-function goBackToStep1(){document.getElementById('step2').style.display='none';document.getElementById('step1').style.display='block';document.getElementById('step1').classList.add('fadeIn');hideError();}
-function updateFormForType(){document.getElementById('submitBtn').className=selectedAccountType==='coach'?'btn-main coach-mode':'btn-main';}
+function goToStep2(){if(!selectedAccountType)return;document.getElementById('step1').style.display='none';
+  var s2=document.getElementById('step2');s2.style.display='block';s2.classList.add('fade-in');
+  var d1=document.getElementById('dot1'),d2=document.getElementById('dot2');
+  if(d1) d1.className='step-dot done';
+  if(d2) d2.className='step-dot active';
+  updateFormForType();}
+function goBackToStep1(){document.getElementById('step2').style.display='none';
+  document.getElementById('step1').style.display='block';
+  document.getElementById('step1').classList.add('fade-in');
+  var d1=document.getElementById('dot1'),d2=document.getElementById('dot2');
+  if(d1) d1.className='step-dot active';
+  if(d2) d2.className='step-dot';
+  hideError();}
+function updateFormForType(){document.getElementById('submitBtn').className=selectedAccountType==='coach'?'btn-primary coach':'btn-primary';}
 
 function setAuthMode(mode){
   authMode=mode;
@@ -583,7 +1160,7 @@ function setAuthMode(mode){
   document.getElementById('nameWrap').style.display=mode==='register'?'block':'none';
   document.getElementById('unameWrap').style.display=mode==='register'?'block':'none';
   document.getElementById('forgotWrap').style.display=mode==='login'?'block':'none';
-  document.getElementById('formTitle').textContent=mode==='login'?'GİRİŞ YAP':'KAYIT OL';
+  document.getElementById('formTitle').textContent=mode==='login'?'Giriş Yap':'Kayıt Ol';
   document.getElementById('submitBtn').textContent=mode==='login'?'Giriş Yap':'Hesap Oluştur';
   hideError();
 }
@@ -703,16 +1280,21 @@ function showOnboarding(uid) {
 
 function _updateObProgress(step) {
   for(var i=1;i<=3;i++){
-    var bar=document.getElementById('obStep'+i+'Bar');
-    if(bar) bar.style.background = i<=step ? 'var(--accent)' : 'var(--border)';
+    var bar=document.getElementById('obBar'+i);
+    var si=document.getElementById('obStepInfo');
+    if(bar){
+      bar.className='ob-bar'+(i<step?' done':i===step?' active':'');
+    }
   }
+  var si=document.getElementById('obStepInfo');
+  if(si) si.textContent='Adım '+step+' / 3';
 }
 
 // ── Dal seçimi ──
 function selectDal(dal, el) {
   _obDal = dal;
-  document.querySelectorAll('.ob-dal-card').forEach(function(c){c.classList.remove('selected');});
-  el.classList.add('selected');
+  document.querySelectorAll('.ob-dal-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
   document.getElementById('obStep1Btn').disabled = false;
 }
 
@@ -743,13 +1325,11 @@ function selectHedefTur(tur) {
   var sirWrap = document.getElementById('hedefSiralamaWrap');
   var okulWrap = document.getElementById('hedefOkulWrap');
   if(tur==='siralama'){
-    sirBtn.style.borderColor='var(--accent)';sirBtn.style.background='rgba(56,189,248,0.1)';sirBtn.style.color='var(--accent)';
-    okulBtn.style.borderColor='var(--border)';okulBtn.style.background='transparent';okulBtn.style.color='var(--muted)';
-    sirWrap.style.display='block';okulWrap.style.display='none';
+    sirBtn.classList.add('active'); okulBtn.classList.remove('active');
+    sirWrap.style.display='block'; okulWrap.style.display='none';
   } else {
-    okulBtn.style.borderColor='var(--accent)';okulBtn.style.background='rgba(56,189,248,0.1)';okulBtn.style.color='var(--accent)';
-    sirBtn.style.borderColor='var(--border)';sirBtn.style.background='transparent';sirBtn.style.color='var(--muted)';
-    okulWrap.style.display='block';sirWrap.style.display='none';
+    okulBtn.classList.add('active'); sirBtn.classList.remove('active');
+    okulWrap.style.display='block'; sirWrap.style.display='none';
   }
   checkHedefValid();
 }
@@ -768,12 +1348,9 @@ function checkHedefValid() {
 
 function selectSure(sure) {
   _obSure = sure;
-  document.getElementById('sure2Btn').style.borderColor = sure===2?'var(--accent)':'var(--border)';
-  document.getElementById('sure2Btn').style.background  = sure===2?'rgba(56,189,248,0.1)':'transparent';
-  document.getElementById('sure2Btn').style.color       = sure===2?'var(--accent)':'var(--muted)';
-  document.getElementById('sure4Btn').style.borderColor = sure===4?'var(--accent)':'var(--border)';
-  document.getElementById('sure4Btn').style.background  = sure===4?'rgba(56,189,248,0.1)':'transparent';
-  document.getElementById('sure4Btn').style.color       = sure===4?'var(--accent)':'var(--muted)';
+  var s2=document.getElementById('sure2Btn'),s4=document.getElementById('sure4Btn');
+  if(sure===2){s2.classList.add('active');s4.classList.remove('active');}
+  else{s4.classList.add('active');s2.classList.remove('active');}
   // Bölüm listesini sıfırla
   _obProgram = null;
   var bSel = document.getElementById('hedefBolumSel');
@@ -913,8 +1490,8 @@ function selectHedefBolum() {
 // ── Sınıf seçimi ──
 function selectSinif(sinif, el) {
   _obSinif = sinif;
-  document.querySelectorAll('.ob-sinif-card').forEach(function(c){c.classList.remove('selected');});
-  el.classList.add('selected');
+  document.querySelectorAll('.ob-sinif-card').forEach(function(c){c.classList.remove('sel');});
+  el.classList.add('sel');
   document.getElementById('obStep3Btn').disabled = false;
 }
 
@@ -959,6 +1536,8 @@ document.addEventListener('DOMContentLoaded',function(){
   initFirebase();
   document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('step2').style.display!=='none')submitAuth();});
 });
+
 </script>
+
 </body>
 </html>
