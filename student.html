@@ -1617,7 +1617,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <div id="settProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:4px"></div>
       </div>
 
-      <button onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px">Kaydet</button>
+      <button id="settProfilSaveBtn" onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px;display:none">Kaydet</button>
     </div>
 
 
@@ -7192,13 +7192,39 @@ function _populateSettingsProfil() {
     btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
     btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
   });
-  // Hedef sıralama
+  // Hedef sıralama değerini doldur
   var sirEl = document.getElementById('settHedefSiralama');
-  if (sirEl && _userProfil.hedefSiralama) sirEl.value = _userProfil.hedefSiralama;
+  if (sirEl) sirEl.value = _userProfil.hedefSiralama || '';
+
+  // Okul hedefi varsa _settProgram'ı geri yükle ve preview göster
+  if (_userProfil.hedefTur === 'okul' && _userProfil.hedefProgram) {
+    _settProgram = _userProfil.hedefProgram;
+    var prev = document.getElementById('settProgramPreview');
+    if (prev) {
+      var hp = _userProfil.hedefProgram;
+      var detay = [];
+      if (hp.siralama_2024) detay.push('2024 Sıra: ' + parseInt(hp.siralama_2024).toLocaleString('tr-TR'));
+      if (hp.min_puan_2024) detay.push('Taban: ' + parseFloat(hp.min_puan_2024).toFixed(2));
+      prev.innerHTML =
+        '<strong>' + (hp.uni||'') + '</strong> — ' + (hp.bolum||'') +
+        (detay.length ? '<br><span style="color:var(--muted);font-size:0.68rem">' + detay.join(' | ') + '</span>' : '');
+      prev.style.display = 'block';
+    }
+  } else {
+    _settProgram = null;
+  }
+
+  // Kayıtlı hedef varsa kaydet butonu başlangıçta gizli
+  var saveBtn = document.getElementById('settProfilSaveBtn');
+  if (saveBtn) {
+    var hedefVar = _userProfil.hedefTur || _userProfil.dal;
+    saveBtn.style.display = hedefVar ? 'none' : 'block';
+  }
 }
 
 function settSelectHedefTur(tur, silent) {
   _settHedefTur = tur;
+  if (!silent) _settMarkChanged();
   var sirBtn  = document.getElementById('settHedefSirBtn');
   var okulBtn = document.getElementById('settHedefOkulBtn');
   var sirWrap  = document.getElementById('settSiralamaWrap');
@@ -7295,7 +7321,13 @@ function settLoadBolumler() {
  * Sıralama girilince okul seçimini görsel olarak sıfırla
  * (program objesini temizle, preview'ı gizle)
  */
+function _settMarkChanged() {
+  var btn = document.getElementById('settProfilSaveBtn');
+  if (btn) btn.style.display = 'block';
+}
+
 function _settOnSiralamaInput() {
+  _settMarkChanged();
   if (!_settProgram) return; // zaten seçili program yok, bir şey yapma
   _settProgram = null;
   // Bölüm dropdown'unu sıfırla
@@ -7312,6 +7344,7 @@ function settSelectBolum() {
   // Okul seçilince sıralama inputunu sıfırla
   var sirEl = document.getElementById('settHedefSiralama');
   if (sirEl) { sirEl.value = ''; sirEl.style.borderColor = 'var(--border)'; }
+  _settMarkChanged();
   _fbDb.collection('yks_programlar').doc(kod).get().then(function(doc){
     if (!doc.exists) return;
     var d = doc.data();
@@ -7330,6 +7363,7 @@ function settSelectBolum() {
 
 function settingSelectDal(dal) {
   _settDal = dal;
+  _settMarkChanged();
   // Buton ID'leri: settDalSay, settDalSoz, settDalEa, settDalDil
   var idMap = {sayisal:'Say',sozel:'Soz',ea:'Ea',dil:'Dil'};
   Object.keys(idMap).forEach(function(d){
@@ -7368,9 +7402,14 @@ function saveSettingsProfil() {
     update.hedefProgram  = null;
   }
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
-    _userProfil = Object.assign(_userProfil || {}, update);
+    // _userProfil'i tam güncelle
+    if (!_userProfil) _userProfil = {};
+    Object.keys(update).forEach(function(k){ _userProfil[k] = update[k]; });
     _applyDalFilter();
     showToast('✅ Profil güncellendi!');
+    // Kaydet butonunu gizle
+    var btn = document.getElementById('settProfilSaveBtn');
+    if (btn) btn.style.display = 'none';
     // AI öneriyi yenile
     localStorage.removeItem('pugi_ai_date');
     loadAiDailyCoach();
@@ -7378,7 +7417,26 @@ function saveSettingsProfil() {
 }
 
 function openSettingsModal() {
-  _populateSettingsProfil();
+  // Her açılışta Firebase'den taze profil çek
+  if (_currentUser && _fbDb) {
+    _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+      if (doc.exists) {
+        var data = doc.data();
+        _userProfil = {
+          dal:                data.dal                || null,
+          hedefTur:           data.hedefTur           || null,
+          hedefSiralama:      data.hedefSiralama       || null,
+          hedefProgram:       data.hedefProgram        || null,
+          sinif:              data.sinif               || null,
+          onboardingDone:     data.onboardingDone      || false,
+          _hiddenSuggestions: data.hiddenSuggestions   || []
+        };
+      }
+      _populateSettingsProfil();
+    }).catch(function() { _populateSettingsProfil(); });
+  } else {
+    _populateSettingsProfil();
+  }
   var page = document.getElementById('settingsPage');
   if (!page) return;
   page.style.display = 'block';
