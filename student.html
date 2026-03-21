@@ -3841,12 +3841,13 @@ function onUserLoggedIn(user) {
 
     // Kullanıcı profilini global state'e yükle
     _userProfil = {
-      dal:            data.dal            || null,
-      hedefTur:       data.hedefTur       || null,
-      hedefSiralama:  data.hedefSiralama  || null,
-      hedefProgram:   data.hedefProgram   || null,
-      sinif:          data.sinif          || null,
-      onboardingDone: data.onboardingDone || false
+      dal:                data.dal                || null,
+      hedefTur:           data.hedefTur           || null,
+      hedefSiralama:      data.hedefSiralama       || null,
+      hedefProgram:       data.hedefProgram        || null,
+      sinif:              data.sinif               || null,
+      onboardingDone:     data.onboardingDone      || false,
+      _hiddenSuggestions: data.hiddenSuggestions   || []
     };
 
     // User bar güncelle
@@ -3967,6 +3968,32 @@ function _buildAiPrompt(isDeep) {
     'Haftalık hedef: ' + hedefStr + '\n' +
     'Son denemeler: ' + sonDeneme + '\n';
 
+  // Son 7 günde hiç çalışılmamış dersler
+  var son7Gun = new Date(); son7Gun.setDate(son7Gun.getDate()-7);
+  var son7Entries = entries.filter(function(e){
+    var p=(e.date||'').split('.');
+    if(p.length===3){var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));return d>=son7Gun;}
+    return false;
+  });
+  var son7Dersler = {};
+  son7Entries.forEach(function(e){ if(e.subject) son7Dersler[e.subject]=(son7Dersler[e.subject]||0)+1; });
+  var eksikDersler = Object.keys(EXAM_DATA.TYT||{}).filter(function(d){ return !son7Dersler[d]; });
+  var eksikStr = eksikDersler.length > 0 ? eksikDersler.slice(0,3).join(', ') : 'Yok';
+
+  // En az çalışılan konular (son 30 gün)
+  var konuSay = {};
+  entries.slice(0,100).forEach(function(e){
+    if(e.subject&&e.topic) { var k=e.subject+'/'+e.topic; konuSay[k]=(konuSay[k]||0)+1; }
+  });
+  var azKonular = Object.keys(konuSay).sort(function(a,b){return konuSay[a]-konuSay[b];}).slice(0,3);
+
+  base += 'Son 7 günde hiç çalışılmamış dersler: ' + eksikStr + '\n';
+  base += 'Az çalışılan konular: ' + (azKonular.join(', ')||'Veri yok') + '\n';
+  base += 'Bugün çalışılmış dersler: ' + (Object.keys(dersOzet).filter(function(d){
+    var p=new Date().toLocaleDateString("tr-TR");
+    return entries.some(function(e){return e.date===p&&e.subject===d;});
+  }).join(', ')||'Henüz yok') + '\n';
+
   if (isDeep) {
     // Derin analiz için daha fazla bağlam
     var topicMap = {};
@@ -3975,9 +4002,9 @@ function _buildAiPrompt(isDeep) {
     });
     var topTopics = Object.keys(topicMap).sort(function(a,b){return topicMap[b]-topicMap[a];}).slice(0,5);
     base += 'En çok çalışılan konular: ' + topTopics.join(', ') + '\n\n';
-    base += '=== GÖREV ===\nDetaylı haftalık analiz yap. Güçlü yönleri, eksikleri ve önümüzdeki hafta için somut plan öner. Maksimum 5 madde.';
+    base += '=== GÖREV ===\nDetaylı analiz yap:\n1. Çalışma düzeni nasıl (streak, haftalık süre)?\n2. Hangi dersler güçlü, hangileri eksik?\n3. Deneme netleri artıyor mu düşüyor mu?\n4. Önümüzdeki hafta öncelikli odaklanılacak 3 konu (spesifik konu adı ile)\n5. Genel strateji önerisi\nMadde madde, net ve somut yaz.';
   } else {
-    base += '\n=== GÖREV ===\nBugün için 2-3 cümlelik kısa, kişisel ve motive edici öneri ver. Spesifik ders/konu adı kullan. Abartmadan samimi ol.';
+    base += '\n=== GÖREV ===\nBugün için SOMUT bir öneri ver. Hangi derse ve konuya kaç dakika çalışması gerektiğini söyle. Eksik derslerden birini mutlaka belirt. 2-3 cümle, fazla motive edici kelime kullanma, doğrudan ve pratik ol.';
   }
 
   return base;
@@ -4093,19 +4120,42 @@ function _fetchAiSuggestion(isDeep) {
  * _showAiText — AI metnini kartda gösterir.
  */
 function _showAiText(text, isDeep) {
+  // Markdown formatla
+  var formatted = text
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/^[-•]\s*/gm, '• ')
+    .replace(/^\d+\.\s+/gm, function(m){ return '<strong>' + m + '</strong>'; })
+    .replace(/\n/g, '<br>');
+
+  if (isDeep) {
+    // Derin analizi ayrı modalda göster
+    _showDeepAnalysisModal(formatted);
+    // Kart başlığını güncelle
+    var dateEl = document.getElementById('aiCoachDate');
+    if (dateEl) dateEl.textContent = 'Derin analiz tamamlandı ✓';
+    return;
+  }
+
   var textEl = document.getElementById('aiCoachText');
   var dateEl = document.getElementById('aiCoachDate');
   var timeEl = document.getElementById('aiCoachTime');
   if (!textEl) return;
-
-  // Markdown bold (**text**) → <strong>
-  text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  // Satır başındaki madde işaretleri
-  text = text.replace(/^[-•]\s*/gm, '• ');
-
-  textEl.innerHTML = '<div style="font-size:0.82rem;line-height:1.7;color:var(--text)">' + text + '</div>';
-  if (dateEl) dateEl.textContent = isDeep ? 'Derin analiz' : 'Bugünün önerisi';
+  textEl.innerHTML = '<div style="font-size:0.82rem;line-height:1.7;color:var(--text)">' + formatted + '</div>';
+  if (dateEl) dateEl.textContent = 'Bugünün önerisi';
   if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'});
+}
+
+function _showDeepAnalysisModal(html) {
+  var modal = document.getElementById('deepAnalysisModal');
+  var body  = document.getElementById('deepAnalysisBody');
+  if (!modal || !body) return;
+  body.innerHTML = html;
+  modal.classList.add('open');
+}
+
+function closeDeepAnalysisModal() {
+  var modal = document.getElementById('deepAnalysisModal');
+  if (modal) modal.classList.remove('open');
 }
 
 /**
@@ -4118,19 +4168,40 @@ function _buildRuleBasedSuggestion() {
                          .reduce(function(s,e){ return s+(e.sure||0); },0);
   var streak = calcStreak();
 
-  // Ders bazlı son 3 gün analizi
-  var son3Gun = new Date(); son3Gun.setDate(son3Gun.getDate()-3);
+  // Son 5 günde çalışılmayan dersler
+  var son5Gun = new Date(); son5Gun.setDate(son5Gun.getDate()-5);
   var sonDersler = {};
   entries.forEach(function(e){
     var p=(e.date||'').split('.');
-    if(p.length===3){var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));if(d>=son3Gun&&e.subject)sonDersler[e.subject]=(sonDersler[e.subject]||0)+1;}
+    if(p.length===3){
+      var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+      if(d>=son5Gun&&e.subject) sonDersler[e.subject]=(sonDersler[e.subject]||0)+1;
+    }
   });
-  var eksikDersler = ['Matematik','Fizik','Kimya','Biyoloji','Türkçe'].filter(function(d){ return !sonDersler[d]; });
 
-  if (todayMins === 0) return '🌅 Bugün henüz çalışmaya başlamadın. Şimdi harika bir zaman! ' + (eksikDersler.length ? eksikDersler[0] + ' ile başlayabilirsin.' : 'Hadi başla!');
-  if (streak >= 7) return '🔥 ' + streak + ' günlük muhteşem seri! Bu hafta ' + (eksikDersler[0]||'zayıf konularına') + ' odaklan.';
-  if (eksikDersler.length > 0) return '📚 ' + eksikDersler[0] + ' son 3 gündür çalışılmadı. Bugün ' + eksikDersler[0] + ' için 45 dakika ayır.';
-  return '✅ Güzel gidiyorsun! Bugün ' + todayMins + ' dakika çalıştın. Hedefine odaklanmaya devam et.';
+  // Dal bazlı ders listesi
+  var dalDersler = {
+    sayisal:['Matematik','Fizik','Kimya','Biyoloji'],
+    sozel:['Türk Dili ve Edebiyatı','Tarih','Coğrafya','Felsefe'],
+    ea:['Matematik','Türk Dili ve Edebiyatı','Tarih','Coğrafya'],
+    dil:['İngilizce']
+  };
+  var dal = _userProfil && _userProfil.dal;
+  var dersListesi = dalDersler[dal] || ['Matematik','Fizik','Türkçe','Kimya'];
+  var eksikDersler = dersListesi.filter(function(d){ return !sonDersler[d]; });
+  var hedefStr = '';
+  if (_userProfil && _userProfil.hedefTur==='siralama' && _userProfil.hedefSiralama)
+    hedefStr = ' (Hedef: ilk ' + _userProfil.hedefSiralama.toLocaleString('tr-TR') + ')';
+
+  if (todayMins === 0 && eksikDersler.length > 0)
+    return '📚 Bugün ' + eksikDersler[0] + ' ile başla' + hedefStr + '. 45 dakika odaklanmak iyi bir başlangıç olur.';
+  if (todayMins === 0)
+    return '⏱ Bugün henüz çalışmaya başlamadın. ' + dersListesi[0] + ' veya ' + (dersListesi[1]||'matematik') + ' için otur.';
+  if (eksikDersler.length > 0)
+    return '📖 ' + todayMins + ' dk çalıştın, iyi! ' + eksikDersler[0] + ' son 5 gündür yok — bugün bunu da ekle.';
+  if (streak >= 7)
+    return '🔥 ' + streak + ' günlük seri devam ediyor. Bugün ' + dersListesi[Math.floor(Math.random()*dersListesi.length)] + ' için 45 dakika hedefle.';
+  return '✅ Bugün ' + todayMins + ' dk çalıştın. ' + (dersListesi[1]||'bir diğer dersi') + ' de programına ekle.';
 }
 
 /**
@@ -4370,9 +4441,11 @@ function _showGuestLockModal(title, desc) {
 var _modalDal = null;
 
 function showOnboardingModal() {
-  // Eğer dal zaten seçilmişse modal'ı gösterme
+  // Profil tamamsa gösterme
   if (_userProfil && _userProfil.dal) return;
-  document.getElementById('onboardingModal').classList.add('open');
+  var modal = document.getElementById('onboardingModal');
+  if (!modal) return;
+  modal.classList.add('open');
 }
 
 function closeOnboardingModal(markShown) {
@@ -7629,9 +7702,13 @@ function loadCoachSuggestionsForStudent() {
             list.innerHTML = '<div style="text-align:center;padding:16px;font-size:0.78rem;color:var(--muted);font-weight:700">Henüz öneri gönderilmedi.</div>';
             return;
           }
+          // Kullanıcının gizlediği önerileri filtrele
+          var hiddenIds = (_userProfil && _userProfil._hiddenSuggestions) || [];
           var docs = [];
           sSnap.forEach(function(doc) {
-            if (!doc.data().deletedByStudent) docs.push(doc);
+            if (!doc.data().deletedByStudent && hiddenIds.indexOf(doc.id) === -1) {
+              docs.push(doc);
+            }
           });
           docs.sort(function(a, b) {
             return (b.data().createdAt || '').localeCompare(a.data().createdAt || '');
@@ -7698,11 +7775,14 @@ function deleteSuggestion(docId) {
     btnLabel: 'Evet, Kaldır',
     btnColor: 'linear-gradient(135deg,#ef4444,#b91c1c)',
     onOk: function() {
-      _fbDb.collection('suggestions').doc(docId).update({ deletedByStudent: true })
-        .then(function() {
-          showToast('🗑 Öneri kaldırıldı');
-          loadCoachSuggestionsForStudent();
-        }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
+      // suggestions koleksiyonuna yazma yetkisi yok
+      // Kendi users/{uid} dokümanına hiddenSuggestions listesi ekle
+      _fbDb.collection('users').doc(_currentUser.uid).update({
+        hiddenSuggestions: firebase.firestore.FieldValue.arrayUnion(docId)
+      }).then(function() {
+        showToast('🗑 Öneri kaldırıldı');
+        loadCoachSuggestionsForStudent();
+      }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
     }
   });
 }
@@ -7831,6 +7911,25 @@ function confirmModalOk() {
         style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">
         Eklemeden Devam Et
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- DERİN ANALİZ SONUÇ MODALI -->
+<div class="day-modal" id="deepAnalysisModal">
+  <div class="day-modal-overlay" onclick="closeDeepAnalysisModal()"></div>
+  <div class="day-modal-sheet" style="max-height:85vh">
+    <div class="day-modal-handle"></div>
+    <div class="day-modal-header">
+      <div>
+        <div class="day-modal-title">🔍 Derin Analiz</div>
+        <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:2px">AI Koçunun haftalık değerlendirmesi</div>
+      </div>
+      <button class="day-modal-close" onclick="closeDeepAnalysisModal()">✕</button>
+    </div>
+    <div class="day-modal-body">
+      <div id="deepAnalysisBody" style="font-size:0.84rem;font-weight:600;color:var(--text);line-height:1.75"></div>
+      <div style="height:20px"></div>
     </div>
   </div>
 </div>
