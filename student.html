@@ -3769,7 +3769,7 @@ var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif,
 
 // ── AI Koç Sabitleri ──────────────────────────────────
 var GEMINI_API_KEY = 'AIzaSyAsAJGpLcubY0Lie_7WVyWDA4YwBmW6lvc';
-var GEMINI_MODEL   = 'gemini-2.0-flash';
+var GEMINI_MODEL   = 'gemini-1.5-flash';
 var GEMINI_URL     = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODEL + ':generateContent?key=' + GEMINI_API_KEY;
 
 // ── AI Koç State ─────────────────────────────────────
@@ -3942,162 +3942,238 @@ function _getWeekKey() {
  * @returns {string} Türkçe prompt metni
  */
 function _buildAiPrompt(isDeep) {
+  // ── Yardımcılar ──
   var pad = function(n){ return n<10?'0'+n:''+n; };
   var now = new Date();
-  var todayKey = now.getDate()+'.'+pad(now.getMonth()+1)+'.'+now.getFullYear();
-  var streak   = calcStreak();
+  var todayKey = pad(now.getDate())+'.'+pad(now.getMonth()+1)+'.'+now.getFullYear();
 
-  // ── Yardımcı: tarih parse ──
-  function parseEntryDate(dateStr) {
-    var p = (dateStr||'').split('.');
-    if (p.length===3) return new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
-    return null;
+  function parseD(s) {
+    var p=(s||'').split('.');
+    return p.length===3 ? new Date(+p[2],+p[1]-1,+p[0]) : null;
+  }
+  function daysAgo(n) {
+    var d=new Date(now); d.setDate(d.getDate()-n); d.setHours(0,0,0,0); return d;
+  }
+  function dateKey(d) {
+    return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
+  }
+  function haftaGun(d) {
+    return ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'][d.getDay()];
   }
 
-  // ── Son 14 günün günlük dökümü ──
-  var gun14 = new Date(now); gun14.setDate(gun14.getDate()-13); gun14.setHours(0,0,0,0);
-  var gunlukDokum = {};
-  entries.forEach(function(e){
-    var d = parseEntryDate(e.date);
-    if(!d || d<gun14) return;
-    if(!gunlukDokum[e.date]) gunlukDokum[e.date] = {toplam:0, dersler:{}};
-    gunlukDokum[e.date].toplam += (e.sure||0);
-    if(e.subject) gunlukDokum[e.date].dersler[e.subject] = (gunlukDokum[e.date].dersler[e.subject]||0)+(e.sure||0);
-  });
-  // Son 14 günü string'e dök
-  var gunSatirlari = [];
-  for(var i=13;i>=0;i--){
-    var d=new Date(now); d.setDate(d.getDate()-i);
-    var dk=d.getDate()+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
-    var haftaGun=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'][d.getDay()];
-    var gun = gunlukDokum[dk];
-    if(!gun || gun.toplam===0){
-      gunSatirlari.push(haftaGun+' '+dk+': Çalışılmadı');
-    } else {
-      var dersDetay = Object.keys(gun.dersler).map(function(s){return s+'('+gun.dersler[s]+'dk)';}).join(', ');
-      gunSatirlari.push(haftaGun+' '+dk+': '+gun.toplam+'dk — '+dersDetay);
+  // ── Profil ──
+  var dalMap={sayisal:'Sayısal (SAY)',sozel:'Sözel (SÖZ)',ea:'Eşit Ağırlık (EA)',dil:'Dil'};
+  var sinifMap={'1':'1.Sınıf','2':'2.Sınıf','3':'3.Sınıf (bu yıl)','mezun':'Mezun'};
+  var profil='';
+  if(_userProfil){
+    if(_userProfil.dal) profil+='Alan: '+(dalMap[_userProfil.dal]||_userProfil.dal)+'\n';
+    if(_userProfil.sinif) profil+='Sınıf: '+(sinifMap[_userProfil.sinif]||_userProfil.sinif)+'\n';
+    if(_userProfil.hedefTur==='okul'&&_userProfil.hedefProgram){
+      var hp=_userProfil.hedefProgram;
+      profil+='Hedef: '+hp.uni+' — '+hp.bolum+'\n';
+      if(hp.siralama_2024) profil+='2024 başarı sırası: '+parseInt(hp.siralama_2024).toLocaleString('tr-TR')+'\n';
+      if(hp.min_puan_2024) profil+='2024 taban puanı: '+parseFloat(hp.min_puan_2024).toFixed(2)+'\n';
+    } else if(_userProfil.hedefTur==='siralama'&&_userProfil.hedefSiralama){
+      profil+='Hedef sıralama: ilk '+_userProfil.hedefSiralama.toLocaleString('tr-TR')+'\n';
     }
   }
 
-  // ── Bu hafta ders bazlı toplam ──
-  var weekStart = new Date(now); weekStart.setDate(weekStart.getDate()-((weekStart.getDay()+6)%7)); weekStart.setHours(0,0,0,0);
-  var haftaDers = {};
-  entries.forEach(function(e){
-    var d=parseEntryDate(e.date); if(!d||d<weekStart||!e.subject) return;
-    haftaDers[e.subject]=(haftaDers[e.subject]||0)+(e.sure||0);
+  // ── Dün ──
+  var dun = daysAgo(1);
+  var dunKey = dateKey(dun);
+  var dunEntries = entries.filter(function(e){ return e.date===dunKey; });
+  var dunMins = dunEntries.reduce(function(s,e){return s+(e.sure||0);},0);
+  var dunDersler={};
+  dunEntries.forEach(function(e){ if(e.subject) dunDersler[e.subject]=(dunDersler[e.subject]||0)+(e.sure||0); });
+  var dunStr = dunMins===0 ? 'Çalışma yapılmadı' :
+    dunMins+'dk — '+Object.keys(dunDersler).map(function(d){return d+'('+dunDersler[d]+'dk)';}).join(', ');
+
+  // ── Bu hafta (Pazartesi'den bugüne) ──
+  var haftaBaslangic = new Date(now);
+  haftaBaslangic.setDate(haftaBaslangic.getDate()-((haftaBaslangic.getDay()+6)%7));
+  haftaBaslangic.setHours(0,0,0,0);
+
+  var haftaEntries = entries.filter(function(e){
+    var d=parseD(e.date); return d&&d>=haftaBaslangic;
   });
-  var haftaDersStr = Object.keys(haftaDers).length
+
+  // Günlük döküm
+  var gunlukDokum={};
+  haftaEntries.forEach(function(e){
+    if(!gunlukDokum[e.date]) gunlukDokum[e.date]={toplam:0,dersler:{}};
+    gunlukDokum[e.date].toplam+=(e.sure||0);
+    if(e.subject) gunlukDokum[e.date].dersler[e.subject]=(gunlukDokum[e.date].dersler[e.subject]||0)+(e.sure||0);
+  });
+
+  var haftaSatirlari=[];
+  for(var i=0;i<7;i++){
+    var gd=new Date(haftaBaslangic); gd.setDate(gd.getDate()+i);
+    if(gd>now) break;
+    var gk=dateKey(gd);
+    var g=gunlukDokum[gk];
+    if(!g||g.toplam===0){
+      haftaSatirlari.push(haftaGun(gd)+' '+gk+': Çalışılmadı');
+    } else {
+      var dd=Object.keys(g.dersler).map(function(s){return s+'('+g.dersler[s]+'dk)';}).join(', ');
+      haftaSatirlari.push(haftaGun(gd)+' '+gk+': '+g.toplam+'dk → '+dd);
+    }
+  }
+
+  // Haftalık ders toplamları
+  var haftaDers={};
+  haftaEntries.forEach(function(e){ if(e.subject) haftaDers[e.subject]=(haftaDers[e.subject]||0)+(e.sure||0); });
+  var haftaDersStr=Object.keys(haftaDers).length
     ? Object.keys(haftaDers).sort(function(a,b){return haftaDers[b]-haftaDers[a];}).map(function(s){return s+': '+haftaDers[s]+'dk';}).join(', ')
     : 'Henüz yok';
 
-  // ── Son 5 denemeden net trendi ──
-  var denemeStr = 'Deneme kaydı yok';
-  if (denemeler.length > 0) {
-    var sonDen = denemeler.slice(0, Math.min(5, denemeler.length));
-    denemeStr = sonDen.map(function(d,i){
-      var tip = d.type||'TYT';
-      var tytNet = parseFloat(d.tyt_net||d.net||0).toFixed(1);
-      var aytNet = d.ayt_net ? ' | AYT:'+parseFloat(d.ayt_net).toFixed(1) : '';
-      return (i+1)+'. '+tip+' → TYT:'+tytNet+aytNet+(d.date?' ('+d.date+')':'');
+  // Haftalık konu toplamları
+  var haftaKonu={};
+  haftaEntries.forEach(function(e){ if(e.subject&&e.topic){ var k=e.subject+'/'+e.topic; haftaKonu[k]=(haftaKonu[k]||0)+(e.sure||0); } });
+  var haftaKonuStr=Object.keys(haftaKonu).length
+    ? Object.keys(haftaKonu).sort(function(a,b){return haftaKonu[b]-haftaKonu[a];}).slice(0,5).map(function(k){return k+'('+haftaKonu[k]+'dk)';}).join(', ')
+    : 'Konu kaydı yok';
+
+  // Haftalık toplam
+  var haftaToplam=haftaEntries.reduce(function(s,e){return s+(e.sure||0);},0);
+  var weeklyGoalStr=weeklyGoal>0
+    ? haftaToplam+'/'+ weeklyGoal+'dk (%'+Math.round(haftaToplam/weeklyGoal*100)+')'
+    : haftaToplam+'dk (hedef ayarlanmamış)';
+
+  // ── Bu haftanın deneme sonuçları ──
+  var haftaDeneme=denemeler.filter(function(d){
+    var dp=parseD(d.date); return dp&&dp>=haftaBaslangic;
+  });
+  var tumDeneme=denemeler.slice(0,5);
+  var denemeStr='Deneme yok';
+  if(tumDeneme.length>0){
+    denemeStr=tumDeneme.map(function(d,i){
+      var tip=d.type||'TYT';
+      var tyt=parseFloat(d.tyt_net||d.net||0).toFixed(1);
+      var ayt=d.ayt_net?' AYT:'+parseFloat(d.ayt_net).toFixed(1):'';
+      return (i+1)+'. '+tip+' → TYT:'+tyt+ayt+(d.date?' ('+d.date+')':'');
     }).join('\n');
-    // Trend hesapla
-    if (sonDen.length >= 2) {
-      var ilkNet = parseFloat(sonDen[sonDen.length-1].tyt_net||sonDen[sonDen.length-1].net||0);
-      var sonNet = parseFloat(sonDen[0].tyt_net||sonDen[0].net||0);
-      var fark = sonNet - ilkNet;
-      denemeStr += '\nTrend: ' + (fark>0.5?'📈 +'+fark.toFixed(1)+' net artış':fark<-0.5?'📉 '+fark.toFixed(1)+' net düşüş':'→ Stabil');
+    if(tumDeneme.length>=2){
+      var ilk=parseFloat(tumDeneme[tumDeneme.length-1].tyt_net||tumDeneme[tumDeneme.length-1].net||0);
+      var son=parseFloat(tumDeneme[0].tyt_net||tumDeneme[0].net||0);
+      var fark=son-ilk;
+      denemeStr+='\nNet trendi: '+(fark>0.5?'📈 +'+fark.toFixed(1):fark<-0.5?'📉 '+fark.toFixed(1):'→ Stabil');
     }
   }
 
-  // ── Hedef programa yakınlık ──
-  var hedefYakinlikStr = '';
-  if (_userProfil && _userProfil.hedefTur==='okul' && _userProfil.hedefProgram && _userProfil.hedefProgram.siralama_2024) {
-    var hedefSira = parseInt(_userProfil.hedefProgram.siralama_2024);
-    var hedefPuan = _userProfil.hedefProgram.min_puan_2024 ? parseFloat(_userProfil.hedefProgram.min_puan_2024).toFixed(2) : '?';
-    hedefYakinlikStr = '\nHedef '+ _userProfil.hedefProgram.uni+' — '+_userProfil.hedefProgram.bolum+
-      '\n2024 taban: '+hedefPuan+' puan | 2024 sıra: '+hedefSira.toLocaleString('tr-TR')+
-      '\n(2025 tahmini puan: yaklasik '+hedefPuan+' ve uzeri gerekmektedir)';
-  } else if (_userProfil && _userProfil.hedefTur==='siralama' && _userProfil.hedefSiralama) {
-    hedefYakinlikStr = '\nHedef sıralama: ilk '+_userProfil.hedefSiralama.toLocaleString('tr-TR');
+  // ── Haftalık hedefte eksik dersler ──
+  var dalDersMap={sayisal:['Matematik','Fizik','Kimya','Biyoloji'],sozel:['Türk Dili ve Edebiyatı','Tarih','Coğrafya','Felsefe'],ea:['Matematik','Türk Dili ve Edebiyatı','Tarih','Coğrafya'],dil:['İngilizce']};
+  var dalDersler=(_userProfil&&dalDersMap[_userProfil.dal])||[];
+  var eksikDersler=dalDersler.filter(function(d){return !haftaDers[d];});
+
+  if (!isDeep) {
+    // ══════════════════════════════════════════
+    // GÜNLÜK ANALİZ — dün + bu hafta + son derin analiz
+    // ══════════════════════════════════════════
+    var sonDerinAnaliz='';
+    try {
+      var uidSl=_currentUser?_currentUser.uid.slice(0,8):'anon';
+      var stored=localStorage.getItem('pugi_deep_'+uidSl);
+      if(stored) sonDerinAnaliz=stored.slice(0,400)+'...';
+    } catch(e){}
+
+    var prompt=
+      'Sen Pugi YKS hazırlık uygulamasının kişisel AI koçusun.\n\n'+
+      '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+      '=== HAFTALIK ÖZET ===\n'+
+      haftaSatirlari.join('\n')+'\n\n'+
+      'Hafta toplamı: '+weeklyGoalStr+'\n'+
+      'Bu hafta dersler: '+haftaDersStr+'\n'+
+      'Bu hafta konular: '+haftaKonuStr+'\n\n'+
+      '=== DÜN ===\n'+dunStr+'\n\n'+
+      '=== SON DENEMELER ===\n'+denemeStr+'\n\n'+
+      (eksikDersler.length?'=== BU HAFTA EKSİK DERSLER ===\n'+eksikDersler.join(', ')+'\n\n':'')+
+      (sonDerinAnaliz?'=== SON DERİN ANALİZDEN ÖZET ===\n'+sonDerinAnaliz+'\n\n':'')+
+      '=== GÜNLÜK ÖNERİ GÖREVİ ===\n'+
+      'Yukarıdaki verilere dayanarak BUGÜN için 3-4 cümlelik somut öneri yaz:\n'+
+      '- Bugün hangi derse/konuya kaç dakika odaklanmalı? (Spesifik konu adı ver)\n'+
+      '- Haftalık hedef durumuna göre ne yapmalı?\n'+
+      '- Deneme trendi veya hedefe yakınlık hakkında 1 cümle\n'+
+      (sonDerinAnaliz?'- Derin analizden bu yana nasıl ilerledi, doğru yolda mı? 1 cümle\n':'')+
+      'YASAK: Genel motivasyon cümleleri. Sadece verilerle konuş.';
+    return prompt;
   }
 
-  // ── Son 14 gün konu bazlı süre ──
-  var konuSure = {};
-  entries.forEach(function(e){
-    var d=parseEntryDate(e.date); if(!d||d<gun14) return;
-    if(e.subject&&e.topic){
-      var k=e.subject+'/'+e.topic;
-      konuSure[k]=(konuSure[k]||0)+(e.sure||0);
-    }
-  });
-  var topKonular = Object.keys(konuSure).sort(function(a,b){return konuSure[b]-konuSure[a];}).slice(0,5);
-  var azKonular  = Object.keys(konuSure).sort(function(a,b){return konuSure[a]-konuSure[b];}).slice(0,3);
+  // ══════════════════════════════════════════
+  // DERİN ANALİZ — son 30 gün tam veri
+  // ══════════════════════════════════════════
+  var ay30 = daysAgo(30);
+  var ayEntries=entries.filter(function(e){ var d=parseD(e.date); return d&&d>=ay30; });
 
-  // ── Son 14 günde hiç çalışılmamış dersler ──
-  var calisDers = {};
-  entries.forEach(function(e){
-    var d=parseEntryDate(e.date); if(!d||d<gun14||!e.subject) return;
-    calisDers[e.subject]=true;
-  });
-  var dalDersMap = {
-    sayisal:['Matematik','Fizik','Kimya','Biyoloji'],
-    sozel:['Türk Dili ve Edebiyatı','Tarih','Coğrafya','Felsefe'],
-    ea:['Matematik','Türk Dili ve Edebiyatı','Tarih','Coğrafya'],
-    dil:['İngilizce','Türkçe']
-  };
-  var dalDersler = (_userProfil&&dalDersMap[_userProfil.dal]) || Object.keys(EXAM_DATA.TYT||{});
-  var eksikDersler = dalDersler.filter(function(d){return !calisDers[d];});
+  // Aylık ders toplamları
+  var ayDers={};
+  ayEntries.forEach(function(e){ if(e.subject) ayDers[e.subject]=(ayDers[e.subject]||0)+(e.sure||0); });
+  var ayDersStr=Object.keys(ayDers).length
+    ? Object.keys(ayDers).sort(function(a,b){return ayDers[b]-ayDers[a];}).map(function(s){return s+': '+ayDers[s]+'dk';}).join(', ')
+    : 'Veri yok';
 
-  // ── Haftalık hedef ──
-  var weeklyDone = getThisWeekMins();
-  var hedefDurStr = weeklyGoal>0
-    ? weeklyDone+'/'+ weeklyGoal+'dk (%'+Math.round(weeklyDone/weeklyGoal*100)+') — '+(weeklyDone>=weeklyGoal?'✅ Tamamlandı':'⚠️ '+( weeklyGoal-weeklyDone)+' dk kaldı')
-    : 'Hedef ayarlanmamış';
+  // Aylık konu toplamları
+  var ayKonu={};
+  ayEntries.forEach(function(e){ if(e.subject&&e.topic){ var k=e.subject+'/'+e.topic; ayKonu[k]=(ayKonu[k]||0)+(e.sure||0); } });
+  var enCokKonu=Object.keys(ayKonu).sort(function(a,b){return ayKonu[b]-ayKonu[a];}).slice(0,8).map(function(k){return k+'('+ayKonu[k]+'dk)';}).join(', ');
+  var enAzKonu=Object.keys(ayKonu).sort(function(a,b){return ayKonu[a]-ayKonu[b];}).slice(0,5).map(function(k){return k+'('+ayKonu[k]+'dk)';}).join(', ');
 
-  // ── Profil ──
-  var dalLabel={sayisal:'Sayısal (SAY)',sozel:'Sözel (SÖZ)',ea:'Eşit Ağırlık (EA)',dil:'Dil'};
-  var sinifLabel={'1':'1. Sınıf','2':'2. Sınıf','3':'3. Sınıf (Bu yıl giriyor)','mezun':'Mezun (tekrar)'};
-  var profilStr = '';
-  if(_userProfil){
-    if(_userProfil.dal) profilStr += 'Alan: '+(dalLabel[_userProfil.dal]||_userProfil.dal)+'\n';
-    if(_userProfil.sinif) profilStr += 'Sınıf: '+(sinifLabel[_userProfil.sinif]||_userProfil.sinif)+'\n';
-    profilStr += hedefYakinlikStr ? hedefYakinlikStr+'\n' : '';
-  }
+  // Çalışılmayan dersler (30 günde)
+  var ayCalisilanDers={};
+  ayEntries.forEach(function(e){ if(e.subject) ayCalisilanDers[e.subject]=true; });
+  var ayEksikDers=dalDersler.filter(function(d){return !ayCalisilanDers[d];});
 
-  // ── Prompt oluştur ──
-  var base =
-    'Sen Pugi YKS hazırlık uygulamasının kişisel koçusun. Öğrencinin gerçek verilerine dayanarak SOMUT ve KİŞİSEL analiz yap. Genel motivasyon cümleleri YAZMA.\n\n' +
-    '=== ÖĞRENCİ PROFİLİ ===\n' + profilStr + '\n' +
-    '=== SON 14 GÜN ÇALIŞMA KAYDI ===\n' + gunSatirlari.join('\n') + '\n\n' +
-    '=== BU HAFTA DERS DAĞILIMI ===\n' + haftaDersStr + '\n\n' +
-    '=== HAFTALIK HEDEF ===\n' + hedefDurStr + '\n\n' +
-    '=== DENEME GEÇMİŞİ (en yeni → eski) ===\n' + denemeStr + '\n\n' +
-    '=== SON 14 GÜNDE HİÇ ÇALIŞILMAYAN DERSLER ===\n' + (eksikDersler.join(', ')||'Yok') + '\n\n' +
-    '=== EN ÇOK ÇALIŞILAN KONULAR ===\n' + (topKonular.join(', ')||'Veri yok') + '\n\n' +
-    '=== EN AZ ÇALIŞILAN KONULAR ===\n' + (azKonular.join(', ')||'Veri yok') + '\n';
+  // Streak
+  var streak=calcStreak();
 
-  if (isDeep) {
-    base +=
-      '\n=== DERİN ANALİZ GÖREVİ ===\n' +
-      'Bu verilere bakarak aşağıdaki maddeleri sırayla yaz:\n' +
-      '1. GENEL DURUM: Çalışma temposu ve seri değerlendirmesi. Hangi günler aksatılmış, neden önemli?\n' +
-      '2. DENEME PERFORMANSI: Net trendi artıyor mu düşüyor mu? Hedef puana ne kadar yakın/uzak?\n' +
-      '3. GÜÇLÜ DERSLER: Hangi derslere çok zaman ayrılmış, bu iyi mi?\n' +
-      '4. KRİTİK EKSİKLER: Hangi dersler/konular ihmal edilmiş? Bunu somut veriyle açıkla.\n' +
-      '5. ÖNÜMÜZDEKI 7 GÜN PLANI: Her gün için değil, haftalık toplam olarak hangi derslere kaç dakika ayrılmalı? (Spesifik konu adlarıyla)\n' +
-      '6. ÖNCELİKLİ TAVSİYE: Tek cümleyle en kritik eylem önerisi.\n' +
-      'Samimi ve doğrudan yaz. Veriyle konuş.';
-  } else {
-    base +=
-      '\n=== GÜNLÜK ÖNERİ GÖREVİ ===\n' +
-      'Bu verilere bakarak BUGÜN için 3-4 cümlelik somut plan yaz:\n' +
-      '- Bugün hangi derse/konuya odaklanmalı? (Spesifik konu adı ver)\n' +
-      '- Kaç dakika çalışmalı?\n' +
-      '- Varsa deneme trendine veya hedefe değin (1 cümle)\n' +
-      'YASAK: "Hedefine odaklan", "Her adım önemli", "Başarılar" gibi genel cümleler. Sadece veriyle konuş.';
-  }
+  // Tüm denemeler (max 10)
+  var tumDeneme10=denemeler.slice(0,10);
+  var tumDenemeStr=tumDeneme10.length>0
+    ? tumDeneme10.map(function(d,i){
+        var tyt=parseFloat(d.tyt_net||d.net||0).toFixed(1);
+        var ayt=d.ayt_net?' AYT:'+parseFloat(d.ayt_net).toFixed(1):'';
+        return (i+1)+'. '+(d.type||'TYT')+' → TYT:'+tyt+ayt+(d.date?' ('+d.date+')':'');
+      }).join('\n')
+    : 'Deneme kaydı yok';
 
-  return base;
+  var deepPrompt=
+    'Sen Pugi YKS hazırlık uygulamasının kişisel AI koçusun. Aşağıdaki verilere dayanarak kapsamlı DERİN ANALİZ yap.\n\n'+
+    '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+    '=== BU HAFTA (GÜN GÜN) ===\n'+haftaSatirlari.join('\n')+'\n'+
+    'Hafta toplamı: '+weeklyGoalStr+'\n\n'+
+    '=== SON 30 GÜN DERS DAĞILIMI ===\n'+ayDersStr+'\n\n'+
+    '=== EN ÇOK ÇALIŞILAN KONULAR (30 gün) ===\n'+(enCokKonu||'Konu kaydı yok')+'\n\n'+
+    '=== EN AZ ÇALIŞILAN KONULAR (30 gün) ===\n'+(enAzKonu||'Veri yok')+'\n\n'+
+    (ayEksikDers.length?'=== 30 GÜNDE HİÇ ÇALIŞILMAYAN DERSLER ===\n'+ayEksikDers.join(', ')+'\n\n':'')+
+    '=== TÜM DENEME SONUÇLARI ===\n'+tumDenemeStr+'\n\n'+
+    'Günlük seri: '+streak+' gün\n\n'+
+    '=== DERİN ANALİZ GÖREVİ ===\n'+
+    'Aşağıdaki her başlığı MUTLAKA ele al:\n\n'+
+    '**1. GENEL GİDİŞAT**\n'+
+    'Çalışma temposu nasıl? Seri değerlendirmesi. Haftalık hedefe ulaşılıyor mu?\n\n'+
+    '**2. DERS ANALİZİ**\n'+
+    'Hangi dersler güçlü, hangilerine yetersiz zaman ayrılmış? '+
+    (dalDersler.length?'Seçilen alanda ('+(_userProfil&&dalDersMap[_userProfil.dal]||[]).join('/')+') denge nasıl?':'')+
+    '\n\n'+
+    '**3. DENEME PERFORMANSI**\n'+
+    'Net trendi nasıl? '+
+    (_userProfil&&_userProfil.hedefProgram?'Hedef '+_userProfil.hedefProgram.uni+' için gereken puana ne kadar yakın?':'')+
+    (_userProfil&&_userProfil.hedefSiralama?'Hedef sıralama '+_userProfil.hedefSiralama.toLocaleString('tr-TR')+' için mevcut gidiş yeterli mi?':'')+
+    '\n\n'+
+    '**4. KRİTİK EKSİKLER**\n'+
+    'Hangi konular/dersler ihmal edilmiş? Neden önemli? Somut veriyle açıkla.\n\n'+
+    '**5. BU HAFTA YAPILACAKLAR LİSTESİ**\n'+
+    'Her ders için kaç dakika, hangi konular. Net ve uygulanabilir plan.\n\n'+
+    '**6. GENEL TAVSİYE**\n'+
+    'En kritik 1 eylem önerisi.\n\n'+
+    'ÖNEMLI: Her başlığı bold olarak yaz. Veriyle konuş, genel motivasyon yazma.';
+
+  // Derin analizi localStorage'a kaydet (günlük öneri bunu referans alsın)
+  try {
+    var uidSl2=_currentUser?_currentUser.uid.slice(0,8):'anon';
+    localStorage.setItem('pugi_deep_'+uidSl2, deepPrompt.slice(500,900)); // özet kaydet
+  } catch(e){}
+
+  return deepPrompt;
 }
 
 /**
@@ -4197,14 +4273,38 @@ function _fetchAiSuggestion(isDeep) {
   })
   .then(function(res) { return res.json(); })
   .then(function(data) {
-    var text = '';
-    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-      text = data.candidates[0].content.parts[0].text || '';
+    // Hata kontrolü
+    if (data.error) {
+      console.error('Gemini API hatası:', data.error.code, data.error.message);
+      var errMsg = 'API Hatası: ' + (data.error.message || 'Bilinmeyen hata');
+      _showAiText(_buildRuleBasedSuggestion(), false);
+      var textEl2 = document.getElementById('aiCoachText');
+      if (textEl2) {
+        var errDiv = document.createElement('div');
+        errDiv.style.cssText = 'font-size:0.65rem;color:var(--muted);margin-top:6px';
+        errDiv.textContent = '⚠️ ' + errMsg;
+        textEl2.appendChild(errDiv);
+      }
+      return;
     }
-    if (!text) text = 'Bugün en az 1 saat çalışmayı hedefle. Her adım seni hedefe yaklaştırır! 💪';
+    var text = '';
+    if (data.candidates && data.candidates[0]) {
+      var cand = data.candidates[0];
+      if (cand.content && cand.content.parts && cand.content.parts[0]) {
+        text = cand.content.parts[0].text || '';
+      }
+      // Finish reason kontrolü
+      if (!text && cand.finishReason) {
+        console.warn('Gemini finishReason:', cand.finishReason);
+      }
+    }
+    if (!text) {
+      console.warn('Gemini boş yanıt döndü. Tam data:', JSON.stringify(data).slice(0,300));
+      _showAiText(_buildRuleBasedSuggestion(), false);
+      return;
+    }
 
     if (!isDeep) {
-      // Günlük öneriyi cache'e kaydet
       var todayKey = new Date().toISOString().slice(0,10);
       var uidSl = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
       localStorage.setItem('pugi_ai_date_' + uidSl, todayKey);
@@ -4213,8 +4313,8 @@ function _fetchAiSuggestion(isDeep) {
     }
     _showAiText(text, isDeep);
   })
-  .catch(function() {
-    // Hata durumunda kural motoru fallback
+  .catch(function(err) {
+    console.error('Gemini fetch hatası:', err);
     _showAiText(_buildRuleBasedSuggestion(), false);
   });
 }
