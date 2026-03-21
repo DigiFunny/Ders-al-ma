@@ -3903,6 +3903,7 @@ function onUserLoggedIn(user) {
     processPendingAccepted();
     processPendingRemoved();
     loadAiDailyCoach();
+    loadInviteStats(); // arkadaş streak verilerini yükle
 
     // Mevcut kullanıcılar için tek seferlik onboarding modalı
     if (!_userProfil.onboardingDone) {
@@ -4136,13 +4137,16 @@ function loadAiDailyCoach() {
 
   // Haftada 1 hak kontrolü
   var weekKey = _getWeekKey();
-  var savedWeek = localStorage.getItem('pugi_ai_deep_week');
-  var savedHak  = parseInt(localStorage.getItem('pugi_ai_deep_hak') || '1');
+  // Key kullanıcıya özel — farklı hesaplar karışmasın
+  var uid = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
+  var deepWeekKey = 'pugi_ai_dw_' + uid;
+  var deepHakKey  = 'pugi_ai_dh_' + uid;
+  var savedWeek = localStorage.getItem(deepWeekKey);
+  var savedHak  = parseInt(localStorage.getItem(deepHakKey) || '1');
   if (savedWeek !== weekKey) {
-    // Yeni hafta — hakkı sıfırla
     _aiDeepHakSayisi = 1;
-    localStorage.setItem('pugi_ai_deep_week', weekKey);
-    localStorage.setItem('pugi_ai_deep_hak', '1');
+    localStorage.setItem(deepWeekKey, weekKey);
+    localStorage.setItem(deepHakKey, '1');
   } else {
     _aiDeepHakSayisi = savedHak;
   }
@@ -4150,12 +4154,18 @@ function loadAiDailyCoach() {
 
   // Bugün zaten öneri var mı?
   var todayKey  = new Date().toISOString().slice(0,10);
-  var cachedDate = localStorage.getItem('pugi_ai_date');
-  var cachedText = localStorage.getItem('pugi_ai_text');
+  var cachedDate = null;
+  var cachedText = null;
 
   // Cache versiyonu — prompt değişince eski öneriyi geçersiz say
   var PROMPT_VERSION = 'v3';
-  if (cachedDate === todayKey && cachedText && localStorage.getItem('pugi_ai_pv') === PROMPT_VERSION) {
+  var uidSlice = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
+  var aiDateKey = 'pugi_ai_date_' + uidSlice;
+  var aiTextKey = 'pugi_ai_text_' + uidSlice;
+  var aiPvKey   = 'pugi_ai_pv_'   + uidSlice;
+  cachedDate = localStorage.getItem(aiDateKey);
+  cachedText = localStorage.getItem(aiTextKey);
+  if (cachedDate === todayKey && cachedText && localStorage.getItem(aiPvKey) === PROMPT_VERSION) {
     _showAiText(cachedText, false);
     return;
   }
@@ -4196,9 +4206,10 @@ function _fetchAiSuggestion(isDeep) {
     if (!isDeep) {
       // Günlük öneriyi cache'e kaydet
       var todayKey = new Date().toISOString().slice(0,10);
-      localStorage.setItem('pugi_ai_date', todayKey);
-      localStorage.setItem('pugi_ai_text', text);
-      localStorage.setItem('pugi_ai_pv', 'v3');
+      var uidSl = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
+      localStorage.setItem('pugi_ai_date_' + uidSl, todayKey);
+      localStorage.setItem('pugi_ai_text_' + uidSl, text);
+      localStorage.setItem('pugi_ai_pv_'   + uidSl, 'v3');
     }
     _showAiText(text, isDeep);
   })
@@ -4326,7 +4337,8 @@ function requestDeepAnalysis() {
     return;
   }
   _aiDeepHakSayisi--;
-  localStorage.setItem('pugi_ai_deep_hak', _aiDeepHakSayisi.toString());
+  var uid2 = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
+  localStorage.setItem('pugi_ai_dh_' + uid2, _aiDeepHakSayisi.toString());
   _updateDeepBtn();
   _fetchAiSuggestion(true);
   showToast('🔍 Derin analiz başlatıldı...');
@@ -4533,11 +4545,132 @@ function _showGuestLockModal(title, desc) {
 var _modalDal = null;
 
 function showOnboardingModal() {
-  // Profil tamamsa gösterme
   if (_userProfil && _userProfil.dal) return;
   var modal = document.getElementById('onboardingModal');
   if (!modal) return;
+
+  // İl listesini bir kez doldur
+  var ilSel = document.getElementById('modalIlSel');
+  if (ilSel && ilSel.options.length <= 1) {
+    SETT_IL_LISTESI.forEach(function(il) {
+      var o = document.createElement('option');
+      o.value = il.v; o.textContent = il.l;
+      ilSel.appendChild(o);
+    });
+  }
   modal.classList.add('open');
+}
+
+var _modalHedefTur = 'siralama';
+var _modalProgram = null;
+
+function modalSelectHedefTur(tur) {
+  _modalHedefTur = tur;
+  var sirBtn = document.getElementById('modalHedefSirBtn');
+  var okulBtn = document.getElementById('modalHedefOkulBtn');
+  var sirWrap = document.getElementById('modalSiralamaWrap');
+  var okulWrap = document.getElementById('modalOkulWrap');
+  if (tur === 'siralama') {
+    if(sirBtn){sirBtn.style.borderColor='var(--accent)';sirBtn.style.background='rgba(56,189,248,0.1)';sirBtn.style.color='var(--accent)';}
+    if(okulBtn){okulBtn.style.borderColor='var(--border)';okulBtn.style.background='transparent';okulBtn.style.color='var(--muted)';}
+    if(sirWrap) sirWrap.style.display='block';
+    if(okulWrap) okulWrap.style.display='none';
+  } else {
+    if(okulBtn){okulBtn.style.borderColor='var(--accent)';okulBtn.style.background='rgba(56,189,248,0.1)';okulBtn.style.color='var(--accent)';}
+    if(sirBtn){sirBtn.style.borderColor='var(--border)';sirBtn.style.background='transparent';sirBtn.style.color='var(--muted)';}
+    if(okulWrap) okulWrap.style.display='block';
+    if(sirWrap) sirWrap.style.display='none';
+  }
+}
+
+function _modalOnSiralamaInput() {
+  // Sıralama girilince okul seçimini sıfırla
+  _modalProgram = null;
+  var bSel = document.getElementById('modalBolumSel');
+  if (bSel) bSel.value = '';
+  var prev = document.getElementById('modalProgramPreview');
+  if (prev) prev.style.display = 'none';
+}
+
+function modalLoadUnis() {
+  var il = document.getElementById('modalIlSel').value;
+  var uSel = document.getElementById('modalUniSel');
+  var bSel = document.getElementById('modalBolumSel');
+  uSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  uSel.disabled = true;
+  bSel.innerHTML = '<option value="">Önce üniversite seç...</option>';
+  bSel.disabled = true;
+  _modalProgram = null;
+  if (!il || !_fbDb) return;
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_modalDal] || null;
+  _fbDb.collection('yks_programlar').where('il','==',il).get().then(function(snap){
+    var unis = {};
+    snap.forEach(function(doc){
+      var d = doc.data();
+      if (pt && d.puan_turu !== pt) return;
+      if (!unis[d.uni]) unis[d.uni] = true;
+    });
+    uSel.innerHTML = '<option value="">Üniversite seç...</option>';
+    Object.keys(unis).sort().forEach(function(u){
+      var o = document.createElement('option'); o.value = u; o.textContent = u; uSel.appendChild(o);
+    });
+    uSel.disabled = false;
+  }).catch(function() { uSel.innerHTML = '<option value="">Hata oluştu</option>'; });
+}
+
+function modalLoadBolumler() {
+  var uni = document.getElementById('modalUniSel').value;
+  var bSel = document.getElementById('modalBolumSel');
+  bSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  bSel.disabled = true;
+  _modalProgram = null;
+  if (!uni || !_fbDb) return;
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_modalDal] || null;
+  _fbDb.collection('yks_programlar').where('uni','==',uni).get().then(function(snap){
+    var bolumler = [];
+    snap.forEach(function(doc){
+      var d = doc.data();
+      if (pt && d.puan_turu !== pt) return;
+      bolumler.push({kod: doc.id, data: d});
+    });
+    bolumler.sort(function(a,b){return (a.data.program||'').localeCompare(b.data.program||'','tr');});
+    bSel.innerHTML = '<option value="">Bölüm seç...</option>';
+    bolumler.forEach(function(b){
+      var o = document.createElement('option');
+      o.value = b.kod;
+      var p = b.data.min_puan_2024 ? ' ('+parseFloat(b.data.min_puan_2024).toFixed(1)+')' : '';
+      o.textContent = b.data.program + p;
+      bSel.appendChild(o);
+    });
+    bSel.disabled = bolumler.length === 0;
+  });
+}
+
+function modalSelectBolum() {
+  var kod = document.getElementById('modalBolumSel').value;
+  if (!kod) { _modalProgram = null; return; }
+  // Okul seçilince sıralama sıfırla
+  var sirEl = document.getElementById('modalHedefSiralama');
+  if (sirEl) { sirEl.value = ''; sirEl.style.borderColor = 'var(--border)'; }
+  _fbDb.collection('yks_programlar').doc(kod).get().then(function(doc){
+    if (!doc.exists) return;
+    var d = doc.data();
+    _modalProgram = { kod:kod, uni:d.uni, bolum:d.program, puan_turu:d.puan_turu,
+      min_puan_2024:d.min_puan_2024||null, siralama_2024:d.siralama_2024||null };
+    var prev = document.getElementById('modalProgramPreview');
+    if (prev) {
+      var detay = [];
+      if (d.siralama_2024) detay.push('2024 Sıra: '+parseInt(d.siralama_2024).toLocaleString('tr-TR'));
+      if (d.min_puan_2024) detay.push('Taban: '+parseFloat(d.min_puan_2024).toFixed(2));
+      prev.innerHTML = '<strong>'+d.uni+'</strong> — '+d.program+(detay.length?'<br><span style="color:var(--muted);font-size:0.65rem">'+detay.join(' | ')+'</span>':'');
+      prev.style.display = 'block';
+    }
+    // Kaydet butonunu aktifleştir
+    var saveBtn = document.getElementById('modalSaveBtn');
+    if (saveBtn) saveBtn.disabled = false;
+  });
 }
 
 function closeOnboardingModal(markShown) {
@@ -4563,13 +4696,15 @@ function selectModalDal(dal, el) {
 function saveOnboardingModal() {
   if (!_modalDal || !_currentUser || !_fbDb) return;
   var siralama = parseInt(document.getElementById('modalHedefSiralama').value) || null;
-  var update = {
-    dal: _modalDal,
-    onboardingDone: true
-  };
-  if (siralama) {
+  var update = { dal: _modalDal, onboardingDone: true };
+  if (_modalProgram) {
+    update.hedefTur = 'okul';
+    update.hedefProgram = _modalProgram;
+    update.hedefSiralama = null;
+  } else if (siralama) {
     update.hedefTur = 'siralama';
     update.hedefSiralama = siralama;
+    update.hedefProgram = null;
   }
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
     _userProfil = Object.assign(_userProfil || {}, update);
@@ -4975,7 +5110,18 @@ function renderFriends() {
     return;
   }
 
-  // Header with toggle
+  // _perFriendStreak Firebase'den taze çek, sonra devam et
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (doc.exists) {
+      var d = doc.data();
+      _perFriendStreak  = d.perFriendStreak  || {};
+      _lastInviteTimes  = d.lastInviteTimes  || {};
+    }
+    _doRenderFriends(wrap);
+  }).catch(function() { _doRenderFriends(wrap); });
+}
+
+function _doRenderFriends(wrap) {
   wrap.innerHTML = '<div id="friendsHeader" style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;align-items:center;cursor:pointer;user-select:none" onclick="toggleFriendsList()">' +
     '<div style="flex:1;font-size:0.85rem;font-weight:900">Arkadaşlarım <span id="friendCount" style="background:var(--accent);color:#fff;border-radius:20px;padding:1px 8px;font-size:0.65rem;margin-left:6px">...</span></div>' +
     '<button onclick="event.stopPropagation();openAddFriendModal()" style="background:rgba(56,189,248,0.15);border:1px solid rgba(56,189,248,0.3);border-radius:8px;padding:5px 10px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer;margin-right:10px">+ Ekle</button>' +
@@ -8257,11 +8403,33 @@ function confirmModalOk() {
         </div>
       </div>
 
-      <!-- Hedef sıralama (opsiyonel) -->
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
-      <input type="number" id="modalHedefSiralama" placeholder="örn: 10000" min="1" max="3000000"
-        style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none;margin-bottom:16px"
-        oninput="this.style.borderColor='var(--accent)'">
+      <!-- Hedef türü -->
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <button id="modalHedefSirBtn" onclick="modalSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🏆 Sıralama</button>
+        <button id="modalHedefOkulBtn" onclick="modalSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🎓 Okul/Bölüm</button>
+      </div>
+
+      <!-- Sıralama -->
+      <div id="modalSiralamaWrap" style="margin-bottom:12px">
+        <input type="number" id="modalHedefSiralama" placeholder="örn: 10000" min="1" max="3000000"
+          style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
+          oninput="this.style.borderColor='var(--accent)'; _modalOnSiralamaInput();">
+      </div>
+
+      <!-- Okul -->
+      <div id="modalOkulWrap" style="display:none;margin-bottom:12px">
+        <select id="modalIlSel" onchange="modalLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
+          <option value="">Şehir seç...</option>
+        </select>
+        <select id="modalUniSel" onchange="modalLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
+          <option value="">Önce şehir seç...</option>
+        </select>
+        <select id="modalBolumSel" onchange="modalSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
+          <option value="">Önce üniversite seç...</option>
+        </select>
+        <div id="modalProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.74rem;font-weight:700;color:var(--text)"></div>
+      </div>
 
       <!-- Kaydet butonu -->
       <button id="modalSaveBtn" onclick="saveOnboardingModal()" disabled
