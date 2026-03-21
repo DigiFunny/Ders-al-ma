@@ -1601,15 +1601,41 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         </div>
       </div>
 
-      <!-- Hedef sıralama -->
+      <!-- Hedef türü -->
       <div style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Türü</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
+          <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
+        </div>
+      </div>
+
+      <!-- Sıralama hedefi -->
+      <div id="settSiralamaWrap" style="width:100%">
         <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
         <input type="number" id="settHedefSiralama" placeholder="örn: 10000" min="1"
           style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
           oninput="this.style.borderColor='var(--accent)'">
       </div>
 
-      <button onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif">Kaydet</button>
+      <!-- Okul hedefi -->
+      <div id="settOkulWrap" style="width:100%;display:none">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Şehir</div>
+        <select id="settIlSel" onchange="settLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
+          <option value="">Şehir seç...</option>
+        </select>
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Üniversite</div>
+        <select id="settUniSel" onchange="settLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
+          <option value="">Önce şehir seç...</option>
+        </select>
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Bölüm</div>
+        <select id="settBolumSel" onchange="settSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
+          <option value="">Önce üniversite seç...</option>
+        </select>
+        <div id="settProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:4px"></div>
+      </div>
+
+      <button onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px">Kaydet</button>
     </div>
 
     <!-- Kullanıcı adı -->
@@ -3914,97 +3940,159 @@ function _getWeekKey() {
  * @returns {string} Türkçe prompt metni
  */
 function _buildAiPrompt(isDeep) {
-  var todayKey  = new Date().toLocaleDateString('tr-TR');
-  var streak    = calcStreak();
-  var todayMins = entries.filter(function(e){ return e.date === todayKey; })
-                         .reduce(function(s,e){ return s+(e.sure||0); }, 0);
-
-  // Bu haftaki ders bazlı süre
+  var pad = function(n){ return n<10?'0'+n:''+n; };
   var now = new Date();
-  var weekStart = new Date(now); weekStart.setDate(weekStart.getDate()-((weekStart.getDay()+6)%7)); weekStart.setHours(0,0,0,0);
-  var weekEntries = entries.filter(function(e){
-    var p=e.date.split('.');
-    if(p.length===3){var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));return d>=weekStart;}
-    return false;
-  });
+  var todayKey = now.getDate()+'.'+pad(now.getMonth()+1)+'.'+now.getFullYear();
+  var streak   = calcStreak();
 
-  // Ders bazlı süre özeti
-  var dersOzet = {};
-  weekEntries.forEach(function(e){
-    if(!e.subject) return;
-    dersOzet[e.subject] = (dersOzet[e.subject]||0) + (e.sure||0);
-  });
-  var dersStr = Object.keys(dersOzet).map(function(d){ return d+': '+dersOzet[d]+'dk'; }).join(', ') || 'Henüz çalışma yok';
-
-  // Son 3 deneme neti
-  var sonDeneme = denemeler.slice(0,3).map(function(d){
-    return (d.type||'TYT')+' (TYT:'+((d.tyt_net||d.net||0)).toFixed(1)+')';
-  }).join(', ') || 'Deneme kaydı yok';
-
-  // Haftalık hedef durumu
-  var weeklyDone = getThisWeekMins();
-  var hedefStr = weeklyGoal > 0 ? (weeklyDone+'/'+weeklyGoal+' dk (%'+Math.round(weeklyDone/weeklyGoal*100)+')') : 'Hedef ayarlanmamış';
-
-  // Profil bilgileri
-  var dalLabel = {sayisal:'Sayısal',sozel:'Sözel',ea:'Eşit Ağırlık',dil:'Dil'};
-  var profilStr = '';
-  if (_userProfil) {
-    if (_userProfil.dal) profilStr += 'Alan: ' + (dalLabel[_userProfil.dal]||_userProfil.dal) + '\n';
-    if (_userProfil.sinif) profilStr += 'Sınıf: ' + _userProfil.sinif + '\n';
-    if (_userProfil.hedefTur==='siralama' && _userProfil.hedefSiralama)
-      profilStr += 'Hedef sıralama: ilk ' + _userProfil.hedefSiralama.toLocaleString('tr-TR') + '\n';
-    if (_userProfil.hedefTur==='okul' && _userProfil.hedefProgram)
-      profilStr += 'Hedef okul: ' + _userProfil.hedefProgram.uni + ' — ' + _userProfil.hedefProgram.bolum + '\n';
+  // ── Yardımcı: tarih parse ──
+  function parseEntryDate(dateStr) {
+    var p = (dateStr||'').split('.');
+    if (p.length===3) return new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+    return null;
   }
 
+  // ── Son 14 günün günlük dökümü ──
+  var gun14 = new Date(now); gun14.setDate(gun14.getDate()-13); gun14.setHours(0,0,0,0);
+  var gunlukDokum = {};
+  entries.forEach(function(e){
+    var d = parseEntryDate(e.date);
+    if(!d || d<gun14) return;
+    if(!gunlukDokum[e.date]) gunlukDokum[e.date] = {toplam:0, dersler:{}};
+    gunlukDokum[e.date].toplam += (e.sure||0);
+    if(e.subject) gunlukDokum[e.date].dersler[e.subject] = (gunlukDokum[e.date].dersler[e.subject]||0)+(e.sure||0);
+  });
+  // Son 14 günü string'e dök
+  var gunSatirlari = [];
+  for(var i=13;i>=0;i--){
+    var d=new Date(now); d.setDate(d.getDate()-i);
+    var dk=d.getDate()+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear();
+    var haftaGun=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'][d.getDay()];
+    var gun = gunlukDokum[dk];
+    if(!gun || gun.toplam===0){
+      gunSatirlari.push(haftaGun+' '+dk+': Çalışılmadı');
+    } else {
+      var dersDetay = Object.keys(gun.dersler).map(function(s){return s+'('+gun.dersler[s]+'dk)';}).join(', ');
+      gunSatirlari.push(haftaGun+' '+dk+': '+gun.toplam+'dk — '+dersDetay);
+    }
+  }
+
+  // ── Bu hafta ders bazlı toplam ──
+  var weekStart = new Date(now); weekStart.setDate(weekStart.getDate()-((weekStart.getDay()+6)%7)); weekStart.setHours(0,0,0,0);
+  var haftaDers = {};
+  entries.forEach(function(e){
+    var d=parseEntryDate(e.date); if(!d||d<weekStart||!e.subject) return;
+    haftaDers[e.subject]=(haftaDers[e.subject]||0)+(e.sure||0);
+  });
+  var haftaDersStr = Object.keys(haftaDers).length
+    ? Object.keys(haftaDers).sort(function(a,b){return haftaDers[b]-haftaDers[a];}).map(function(s){return s+': '+haftaDers[s]+'dk';}).join(', ')
+    : 'Henüz yok';
+
+  // ── Son 5 denemeden net trendi ──
+  var denemeStr = 'Deneme kaydı yok';
+  if (denemeler.length > 0) {
+    var sonDen = denemeler.slice(0, Math.min(5, denemeler.length));
+    denemeStr = sonDen.map(function(d,i){
+      var tip = d.type||'TYT';
+      var tytNet = parseFloat(d.tyt_net||d.net||0).toFixed(1);
+      var aytNet = d.ayt_net ? ' | AYT:'+parseFloat(d.ayt_net).toFixed(1) : '';
+      return (i+1)+'. '+tip+' → TYT:'+tytNet+aytNet+(d.date?' ('+d.date+')':'');
+    }).join('\n');
+    // Trend hesapla
+    if (sonDen.length >= 2) {
+      var ilkNet = parseFloat(sonDen[sonDen.length-1].tyt_net||sonDen[sonDen.length-1].net||0);
+      var sonNet = parseFloat(sonDen[0].tyt_net||sonDen[0].net||0);
+      var fark = sonNet - ilkNet;
+      denemeStr += '\nTrend: ' + (fark>0.5?'📈 +'+fark.toFixed(1)+' net artış':fark<-0.5?'📉 '+fark.toFixed(1)+' net düşüş':'→ Stabil');
+    }
+  }
+
+  // ── Hedef programa yakınlık ──
+  var hedefYakinlikStr = '';
+  if (_userProfil && _userProfil.hedefTur==='okul' && _userProfil.hedefProgram && _userProfil.hedefProgram.siralama_2024) {
+    var hedefSira = parseInt(_userProfil.hedefProgram.siralama_2024);
+    var hedefPuan = _userProfil.hedefProgram.min_puan_2024 ? parseFloat(_userProfil.hedefProgram.min_puan_2024).toFixed(2) : '?';
+    hedefYakinlikStr = '\nHedef '+ _userProfil.hedefProgram.uni+' — '+_userProfil.hedefProgram.bolum+
+      '\n2024 taban: '+hedefPuan+' puan | 2024 sıra: '+hedefSira.toLocaleString('tr-TR')+
+      '\n(2025 tahmini puan: yaklasik '+hedefPuan+' ve uzeri gerekmektedir)';
+  } else if (_userProfil && _userProfil.hedefTur==='siralama' && _userProfil.hedefSiralama) {
+    hedefYakinlikStr = '\nHedef sıralama: ilk '+_userProfil.hedefSiralama.toLocaleString('tr-TR');
+  }
+
+  // ── Son 14 gün konu bazlı süre ──
+  var konuSure = {};
+  entries.forEach(function(e){
+    var d=parseEntryDate(e.date); if(!d||d<gun14) return;
+    if(e.subject&&e.topic){
+      var k=e.subject+'/'+e.topic;
+      konuSure[k]=(konuSure[k]||0)+(e.sure||0);
+    }
+  });
+  var topKonular = Object.keys(konuSure).sort(function(a,b){return konuSure[b]-konuSure[a];}).slice(0,5);
+  var azKonular  = Object.keys(konuSure).sort(function(a,b){return konuSure[a]-konuSure[b];}).slice(0,3);
+
+  // ── Son 14 günde hiç çalışılmamış dersler ──
+  var calisDers = {};
+  entries.forEach(function(e){
+    var d=parseEntryDate(e.date); if(!d||d<gun14||!e.subject) return;
+    calisDers[e.subject]=true;
+  });
+  var dalDersMap = {
+    sayisal:['Matematik','Fizik','Kimya','Biyoloji'],
+    sozel:['Türk Dili ve Edebiyatı','Tarih','Coğrafya','Felsefe'],
+    ea:['Matematik','Türk Dili ve Edebiyatı','Tarih','Coğrafya'],
+    dil:['İngilizce','Türkçe']
+  };
+  var dalDersler = (_userProfil&&dalDersMap[_userProfil.dal]) || Object.keys(EXAM_DATA.TYT||{});
+  var eksikDersler = dalDersler.filter(function(d){return !calisDers[d];});
+
+  // ── Haftalık hedef ──
+  var weeklyDone = getThisWeekMins();
+  var hedefDurStr = weeklyGoal>0
+    ? weeklyDone+'/'+ weeklyGoal+'dk (%'+Math.round(weeklyDone/weeklyGoal*100)+') — '+(weeklyDone>=weeklyGoal?'✅ Tamamlandı':'⚠️ '+( weeklyGoal-weeklyDone)+' dk kaldı')
+    : 'Hedef ayarlanmamış';
+
+  // ── Profil ──
+  var dalLabel={sayisal:'Sayısal (SAY)',sozel:'Sözel (SÖZ)',ea:'Eşit Ağırlık (EA)',dil:'Dil'};
+  var sinifLabel={'1':'1. Sınıf','2':'2. Sınıf','3':'3. Sınıf (Bu yıl giriyor)','mezun':'Mezun (tekrar)'};
+  var profilStr = '';
+  if(_userProfil){
+    if(_userProfil.dal) profilStr += 'Alan: '+(dalLabel[_userProfil.dal]||_userProfil.dal)+'\n';
+    if(_userProfil.sinif) profilStr += 'Sınıf: '+(sinifLabel[_userProfil.sinif]||_userProfil.sinif)+'\n';
+    profilStr += hedefYakinlikStr ? hedefYakinlikStr+'\n' : '';
+  }
+
+  // ── Prompt oluştur ──
   var base =
-    'Sen Pugi uygulamasının YKS koçusun. Öğrencinin verilerine göre kısa, motive edici ve spesifik bir öneri ver.\n\n' +
-    '=== ÖĞRENCİ PROFİLİ ===\n' +
-    profilStr +
-    '\n=== ÇALIŞMA VERİLERİ ===\n' +
-    'Günlük seri: ' + streak + ' gün\n' +
-    'Bugün çalışılan: ' + todayMins + ' dakika\n' +
-    'Bu hafta dersler: ' + dersStr + '\n' +
-    'Haftalık hedef: ' + hedefStr + '\n' +
-    'Son denemeler: ' + sonDeneme + '\n';
-
-  // Son 7 günde hiç çalışılmamış dersler
-  var son7Gun = new Date(); son7Gun.setDate(son7Gun.getDate()-7);
-  var son7Entries = entries.filter(function(e){
-    var p=(e.date||'').split('.');
-    if(p.length===3){var d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));return d>=son7Gun;}
-    return false;
-  });
-  var son7Dersler = {};
-  son7Entries.forEach(function(e){ if(e.subject) son7Dersler[e.subject]=(son7Dersler[e.subject]||0)+1; });
-  var eksikDersler = Object.keys(EXAM_DATA.TYT||{}).filter(function(d){ return !son7Dersler[d]; });
-  var eksikStr = eksikDersler.length > 0 ? eksikDersler.slice(0,3).join(', ') : 'Yok';
-
-  // En az çalışılan konular (son 30 gün)
-  var konuSay = {};
-  entries.slice(0,100).forEach(function(e){
-    if(e.subject&&e.topic) { var k=e.subject+'/'+e.topic; konuSay[k]=(konuSay[k]||0)+1; }
-  });
-  var azKonular = Object.keys(konuSay).sort(function(a,b){return konuSay[a]-konuSay[b];}).slice(0,3);
-
-  base += 'Son 7 günde hiç çalışılmamış dersler: ' + eksikStr + '\n';
-  base += 'Az çalışılan konular: ' + (azKonular.join(', ')||'Veri yok') + '\n';
-  base += 'Bugün çalışılmış dersler: ' + (Object.keys(dersOzet).filter(function(d){
-    var p=new Date().toLocaleDateString("tr-TR");
-    return entries.some(function(e){return e.date===p&&e.subject===d;});
-  }).join(', ')||'Henüz yok') + '\n';
+    'Sen Pugi YKS hazırlık uygulamasının kişisel koçusun. Öğrencinin gerçek verilerine dayanarak SOMUT ve KİŞİSEL analiz yap. Genel motivasyon cümleleri YAZMA.\n\n' +
+    '=== ÖĞRENCİ PROFİLİ ===\n' + profilStr + '\n' +
+    '=== SON 14 GÜN ÇALIŞMA KAYDI ===\n' + gunSatirlari.join('\n') + '\n\n' +
+    '=== BU HAFTA DERS DAĞILIMI ===\n' + haftaDersStr + '\n\n' +
+    '=== HAFTALIK HEDEF ===\n' + hedefDurStr + '\n\n' +
+    '=== DENEME GEÇMİŞİ (en yeni → eski) ===\n' + denemeStr + '\n\n' +
+    '=== SON 14 GÜNDE HİÇ ÇALIŞILMAYAN DERSLER ===\n' + (eksikDersler.join(', ')||'Yok') + '\n\n' +
+    '=== EN ÇOK ÇALIŞILAN KONULAR ===\n' + (topKonular.join(', ')||'Veri yok') + '\n\n' +
+    '=== EN AZ ÇALIŞILAN KONULAR ===\n' + (azKonular.join(', ')||'Veri yok') + '\n';
 
   if (isDeep) {
-    // Derin analiz için daha fazla bağlam
-    var topicMap = {};
-    entries.slice(0,50).forEach(function(e){
-      if(e.subject&&e.topic){ var key=e.subject+'/'+e.topic; topicMap[key]=(topicMap[key]||0)+1; }
-    });
-    var topTopics = Object.keys(topicMap).sort(function(a,b){return topicMap[b]-topicMap[a];}).slice(0,5);
-    base += 'En çok çalışılan konular: ' + topTopics.join(', ') + '\n\n';
-    base += '=== GÖREV ===\nDetaylı analiz yap:\n1. Çalışma düzeni nasıl (streak, haftalık süre)?\n2. Hangi dersler güçlü, hangileri eksik?\n3. Deneme netleri artıyor mu düşüyor mu?\n4. Önümüzdeki hafta öncelikli odaklanılacak 3 konu (spesifik konu adı ile)\n5. Genel strateji önerisi\nMadde madde, net ve somut yaz.';
+    base +=
+      '\n=== DERİN ANALİZ GÖREVİ ===\n' +
+      'Bu verilere bakarak aşağıdaki maddeleri sırayla yaz:\n' +
+      '1. GENEL DURUM: Çalışma temposu ve seri değerlendirmesi. Hangi günler aksatılmış, neden önemli?\n' +
+      '2. DENEME PERFORMANSI: Net trendi artıyor mu düşüyor mu? Hedef puana ne kadar yakın/uzak?\n' +
+      '3. GÜÇLÜ DERSLER: Hangi derslere çok zaman ayrılmış, bu iyi mi?\n' +
+      '4. KRİTİK EKSİKLER: Hangi dersler/konular ihmal edilmiş? Bunu somut veriyle açıkla.\n' +
+      '5. ÖNÜMÜZDEKI 7 GÜN PLANI: Her gün için değil, haftalık toplam olarak hangi derslere kaç dakika ayrılmalı? (Spesifik konu adlarıyla)\n' +
+      '6. ÖNCELİKLİ TAVSİYE: Tek cümleyle en kritik eylem önerisi.\n' +
+      'Samimi ve doğrudan yaz. Veriyle konuş.';
   } else {
-    base += '\n=== GÖREV ===\nBugün için SOMUT bir öneri ver. Hangi derse ve konuya kaç dakika çalışması gerektiğini söyle. Eksik derslerden birini mutlaka belirt. 2-3 cümle, fazla motive edici kelime kullanma, doğrudan ve pratik ol.';
+    base +=
+      '\n=== GÜNLÜK ÖNERİ GÖREVİ ===\n' +
+      'Bu verilere bakarak BUGÜN için 3-4 cümlelik somut plan yaz:\n' +
+      '- Bugün hangi derse/konuya odaklanmalı? (Spesifik konu adı ver)\n' +
+      '- Kaç dakika çalışmalı?\n' +
+      '- Varsa deneme trendine veya hedefe değin (1 cümle)\n' +
+      'YASAK: "Hedefine odaklan", "Her adım önemli", "Başarılar" gibi genel cümleler. Sadece veriyle konuş.';
   }
 
   return base;
@@ -4064,7 +4152,9 @@ function loadAiDailyCoach() {
   var cachedDate = localStorage.getItem('pugi_ai_date');
   var cachedText = localStorage.getItem('pugi_ai_text');
 
-  if (cachedDate === todayKey && cachedText) {
+  // Cache versiyonu — prompt değişince eski öneriyi geçersiz say
+  var PROMPT_VERSION = 'v3';
+  if (cachedDate === todayKey && cachedText && localStorage.getItem('pugi_ai_pv') === PROMPT_VERSION) {
     _showAiText(cachedText, false);
     return;
   }
@@ -4091,7 +4181,7 @@ function _fetchAiSuggestion(isDeep) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { maxOutputTokens: isDeep ? 600 : 200, temperature: 0.7 }
+      generationConfig: { maxOutputTokens: isDeep ? 1200 : 350, temperature: 0.75 }
     })
   })
   .then(function(res) { return res.json(); })
@@ -4107,6 +4197,7 @@ function _fetchAiSuggestion(isDeep) {
       var todayKey = new Date().toISOString().slice(0,10);
       localStorage.setItem('pugi_ai_date', todayKey);
       localStorage.setItem('pugi_ai_text', text);
+      localStorage.setItem('pugi_ai_pv', 'v3');
     }
     _showAiText(text, isDeep);
   })
@@ -5507,10 +5598,16 @@ function _updatePerFriendStreak(friendUid, todayKey) {
     var pfsd = data.perFriendStreakDate || {};
     var lastDate = pfsd[friendUid] || '';
     var streak = pfs[friendUid] || 0;
-    var yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
-    var yKey = yesterday.toISOString().slice(0,10);
-    if (lastDate === todayKey) return; // bugün zaten sayıldı
+    // Tarih karşılaştırması — yerel tarih kullan (UTC sorununu önler)
+    var now = new Date();
+    var pad = function(n){ return n < 10 ? '0'+n : ''+n; };
+    var localToday = now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate());
+    var yest = new Date(now); yest.setDate(yest.getDate()-1);
+    var yKey = yest.getFullYear()+'-'+pad(yest.getMonth()+1)+'-'+pad(yest.getDate());
+    if (lastDate === localToday) return; // bugün zaten sayıldı
     streak = (lastDate === yKey) ? streak + 1 : 1;
+    // todayKey'i localToday ile eşleştir
+    todayKey = localToday;
     _perFriendStreak[friendUid] = streak;
     var upd = {};
     upd[key] = streak;
@@ -7033,10 +7130,57 @@ var _notifEnabled = true; // default açık
 // ════════════════════════════════════════════
 
 var _settDal = null;
+var _settHedefTur = 'siralama';
+var _settProgram = null;
+
+// İl listesi (Firestore ile eşleşen)
+var SETT_IL_LISTESI = [
+  {v:'adana',l:'Adana'},{v:'ankara',l:'Ankara'},{v:'antalya',l:'Antalya'},
+  {v:'ardahan',l:'Ardahan'},{v:'artvin',l:'Artvin'},{v:'aydın',l:'Aydın'},
+  {v:'balıkesir',l:'Balıkesir'},{v:'bartın',l:'Bartın'},{v:'batman',l:'Batman'},
+  {v:'bayburt',l:'Bayburt'},{v:'bilecik',l:'Bilecik'},{v:'bingöl',l:'Bingöl'},
+  {v:'bitlis',l:'Bitlis'},{v:'bolu',l:'Bolu'},{v:'burdur',l:'Burdur'},
+  {v:'bursa',l:'Bursa'},{v:'çanakkale',l:'Çanakkale'},{v:'çankırı',l:'Çankırı'},
+  {v:'çorum',l:'Çorum'},{v:'denizli',l:'Denizli'},{v:'düzce',l:'Düzce'},
+  {v:'edirne',l:'Edirne'},{v:'elazığ',l:'Elazığ'},{v:'erzincan',l:'Erzincan'},
+  {v:'erzurum',l:'Erzurum'},{v:'eskişehir',l:'Eskişehir'},{v:'gaziantep',l:'Gaziantep'},
+  {v:'giresun',l:'Giresun'},{v:'gümüşhane',l:'Gümüşhane'},{v:'hakkari',l:'Hakkari'},
+  {v:'hatay',l:'Hatay'},{v:'ığdır',l:'Iğdır'},{v:'ısparta',l:'Isparta'},
+  {v:'istanbul',l:'İstanbul'},{v:'izmir',l:'İzmir'},{v:'kahramanmaraş',l:'Kahramanmaraş'},
+  {v:'karabük',l:'Karabük'},{v:'karaman',l:'Karaman'},{v:'kars',l:'Kars'},
+  {v:'kastamonu',l:'Kastamonu'},{v:'kayseri',l:'Kayseri'},{v:'kilis',l:'Kilis'},
+  {v:'kırıkkale',l:'Kırıkkale'},{v:'kırklareli',l:'Kırklareli'},{v:'kırşehir',l:'Kırşehir'},
+  {v:'kocaeli',l:'Kocaeli'},{v:'konya',l:'Konya'},{v:'kütahya',l:'Kütahya'},
+  {v:'malatya',l:'Malatya'},{v:'manisa',l:'Manisa'},{v:'mardin',l:'Mardin'},
+  {v:'mersin',l:'Mersin'},{v:'muğla',l:'Muğla'},{v:'muş',l:'Muş'},
+  {v:'nevşehir',l:'Nevşehir'},{v:'niğde',l:'Niğde'},{v:'ordu',l:'Ordu'},
+  {v:'osmaniye',l:'Osmaniye'},{v:'rize',l:'Rize'},{v:'sakarya',l:'Sakarya'},
+  {v:'samsun',l:'Samsun'},{v:'siirt',l:'Siirt'},{v:'sinop',l:'Sinop'},
+  {v:'sivas',l:'Sivas'},{v:'şanlıurfa',l:'Şanlıurfa'},{v:'şırnak',l:'Şırnak'},
+  {v:'tekirdağ',l:'Tekirdağ'},{v:'tokat',l:'Tokat'},{v:'trabzon',l:'Trabzon'},
+  {v:'tunceli',l:'Tunceli'},{v:'uşak',l:'Uşak'},{v:'van',l:'Van'},
+  {v:'yalova',l:'Yalova'},{v:'yozgat',l:'Yozgat'},{v:'zonguldak',l:'Zonguldak'},
+  {v:'amasya',l:'Amasya'},{v:'kktc',l:'KKTC'}
+];
 
 /** Ayarlar sayfası açılınca mevcut profil değerlerini doldur */
 function _populateSettingsProfil() {
   if (!_userProfil) return;
+
+  // İl dropdown'ı doldur (bir kez)
+  var ilSel = document.getElementById('settIlSel');
+  if (ilSel && ilSel.options.length <= 1) {
+    SETT_IL_LISTESI.forEach(function(il){
+      var o = document.createElement('option');
+      o.value = il.v; o.textContent = il.l;
+      ilSel.appendChild(o);
+    });
+  }
+
+  // Hedef türü
+  _settHedefTur = _userProfil.hedefTur || 'siralama';
+  settSelectHedefTur(_settHedefTur, true);
+
   // Dal butonlarını güncelle
   _settDal = _userProfil.dal || null;
   ['sayisal','sozel','ea','dil'].forEach(function(dal){
@@ -7050,6 +7194,112 @@ function _populateSettingsProfil() {
   // Hedef sıralama
   var sirEl = document.getElementById('settHedefSiralama');
   if (sirEl && _userProfil.hedefSiralama) sirEl.value = _userProfil.hedefSiralama;
+}
+
+function settSelectHedefTur(tur, silent) {
+  _settHedefTur = tur;
+  var sirBtn  = document.getElementById('settHedefSirBtn');
+  var okulBtn = document.getElementById('settHedefOkulBtn');
+  var sirWrap  = document.getElementById('settSiralamaWrap');
+  var okulWrap = document.getElementById('settOkulWrap');
+  if (!sirBtn) return;
+  if (tur === 'siralama') {
+    sirBtn.style.borderColor  = 'var(--accent)'; sirBtn.style.background  = 'rgba(56,189,248,0.1)'; sirBtn.style.color  = 'var(--accent)';
+    okulBtn.style.borderColor = 'var(--border)'; okulBtn.style.background = 'transparent';           okulBtn.style.color = 'var(--muted)';
+    sirWrap.style.display  = 'block';
+    okulWrap.style.display = 'none';
+  } else {
+    okulBtn.style.borderColor = 'var(--accent)'; okulBtn.style.background = 'rgba(56,189,248,0.1)'; okulBtn.style.color = 'var(--accent)';
+    sirBtn.style.borderColor  = 'var(--border)'; sirBtn.style.background  = 'transparent';           sirBtn.style.color  = 'var(--muted)';
+    sirWrap.style.display  = 'none';
+    okulWrap.style.display = 'block';
+    // Mevcut okul hedefi varsa göster
+    if (!silent && _userProfil && _userProfil.hedefProgram) {
+      var prev = document.getElementById('settProgramPreview');
+      if (prev) {
+        prev.style.display = 'block';
+        prev.innerHTML = '<strong>' + _userProfil.hedefProgram.uni + '</strong><br>' +
+          _userProfil.hedefProgram.bolum;
+      }
+    }
+  }
+}
+
+function settLoadUnis() {
+  var il = document.getElementById('settIlSel').value;
+  var uSel = document.getElementById('settUniSel');
+  var bSel = document.getElementById('settBolumSel');
+  uSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  uSel.disabled = true;
+  bSel.innerHTML = '<option value="">Önce üniversite seç...</option>';
+  bSel.disabled = true;
+  _settProgram = null;
+  document.getElementById('settProgramPreview').style.display = 'none';
+  if (!il || !_fbDb) return;
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_settDal] || null;
+  _fbDb.collection('yks_programlar').where('il','==',il).get().then(function(snap){
+    var unis = {};
+    snap.forEach(function(doc){
+      var d = doc.data();
+      if (pt && d.puan_turu !== pt) return;
+      if (!unis[d.uni]) unis[d.uni] = true;
+    });
+    uSel.innerHTML = '<option value="">Üniversite seç...</option>';
+    Object.keys(unis).sort().forEach(function(u){
+      var o = document.createElement('option'); o.value = u; o.textContent = u; uSel.appendChild(o);
+    });
+    uSel.disabled = false;
+  }).catch(function(e){ uSel.innerHTML = '<option value="">Hata oluştu</option>'; console.error(e); });
+}
+
+function settLoadBolumler() {
+  var uni  = document.getElementById('settUniSel').value;
+  var bSel = document.getElementById('settBolumSel');
+  bSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  bSel.disabled = true;
+  _settProgram = null;
+  document.getElementById('settProgramPreview').style.display = 'none';
+  if (!uni || !_fbDb) return;
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_settDal] || null;
+  _fbDb.collection('yks_programlar').where('uni','==',uni).get().then(function(snap){
+    var bolumler = [];
+    snap.forEach(function(doc){
+      var d = doc.data();
+      if (pt && d.puan_turu !== pt) return;
+      bolumler.push({kod: doc.id, data: d});
+    });
+    bolumler.sort(function(a,b){ return (a.data.program||'').localeCompare(b.data.program||'','tr'); });
+    bSel.innerHTML = '<option value="">Bölüm seç...</option>';
+    bolumler.forEach(function(b){
+      var o = document.createElement('option');
+      o.value = b.kod;
+      var p = b.data.min_puan_2024 ? ' (' + parseFloat(b.data.min_puan_2024).toFixed(1) + ')' : '';
+      o.textContent = b.data.program + p;
+      bSel.appendChild(o);
+    });
+    bSel.disabled = bolumler.length === 0;
+  });
+}
+
+function settSelectBolum() {
+  var kod = document.getElementById('settBolumSel').value;
+  if (!kod) { _settProgram = null; return; }
+  _fbDb.collection('yks_programlar').doc(kod).get().then(function(doc){
+    if (!doc.exists) return;
+    var d = doc.data();
+    _settProgram = { kod: kod, uni: d.uni, bolum: d.program, puan_turu: d.puan_turu,
+      min_puan_2024: d.min_puan_2024||null, siralama_2024: d.siralama_2024||null };
+    var prev = document.getElementById('settProgramPreview');
+    if (prev) {
+      prev.style.display = 'block';
+      var detay = [];
+      if (d.siralama_2024) detay.push('2024 Sıra: ' + parseInt(d.siralama_2024).toLocaleString('tr-TR'));
+      if (d.min_puan_2024) detay.push('Taban: ' + parseFloat(d.min_puan_2024).toFixed(2));
+      prev.innerHTML = '<strong>' + d.uni + '</strong> — ' + d.program + '<br><span style="color:var(--muted)">' + detay.join(' | ') + '</span>';
+    }
+  });
 }
 
 function settingSelectDal(dal) {
@@ -7068,10 +7318,16 @@ function settingSelectDal(dal) {
 
 function saveSettingsProfil() {
   if (!_currentUser || !_fbDb) return;
-  var siralama = parseInt(document.getElementById('settHedefSiralama').value) || null;
   var update = { onboardingDone: true };
   if (_settDal) update.dal = _settDal;
-  if (siralama) { update.hedefTur = 'siralama'; update.hedefSiralama = siralama; }
+  if (_settHedefTur === 'siralama') {
+    var siralama = parseInt(document.getElementById('settHedefSiralama').value) || null;
+    if (siralama) { update.hedefTur = 'siralama'; update.hedefSiralama = siralama; }
+  } else if (_settHedefTur === 'okul' && _settProgram) {
+    update.hedefTur = 'okul';
+    update.hedefProgram = _settProgram;
+    update.hedefSiralama = null;
+  }
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
     _userProfil = Object.assign(_userProfil || {}, update);
     _applyDalFilter();
