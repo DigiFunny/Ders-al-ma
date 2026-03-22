@@ -5563,13 +5563,16 @@ var _foundUser = null; // {uid, username, displayName, accountType}
 
 function searchUser() {
   if (!_currentUser) return;
-  var username = (document.getElementById('friendUsernameInput').value || '').trim().toLowerCase().replace(/^@/, '');
+  var username = (document.getElementById('friendUsernameInput').value || '').trim().toLowerCase().replace(/^@/, '').replace(/\s+/g, '');
   var msgEl = document.getElementById('friendAddMsg');
   if (!username) { msgEl.style.color='var(--warn)'; msgEl.textContent = 'Kullanıcı adı gir.'; return; }
+  if (/\s/.test(document.getElementById('friendUsernameInput').value.replace(/^@/,''))) {
+    msgEl.style.color='var(--warn)'; msgEl.textContent = '⚠️ Kullanıcı adında boşluk olmaz. @kullaniciadi formatında gir.'; return;
+  }
 
   msgEl.style.color='var(--muted)'; msgEl.textContent = 'Aranıyor...';
   document.getElementById('userPreview').style.display = 'none';
-  document.getElementById('confirmAddBtn').style.display = 'none';
+  var cab = document.getElementById('confirmAddBtn'); if(cab) cab.style.display = 'none';
   _foundUser = null;
 
   _fbDb.collection('usernames').doc(username).get().then(function(uDoc) {
