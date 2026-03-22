@@ -5885,7 +5885,14 @@ function _updateInviteStreak(todayKey) {
       inviteStreak: streak,
       inviteStreakDate: todayKey,
       totalInvitesSent: firebase.firestore.FieldValue.increment(1)
-    }, { merge: true }).then(function() { checkBadges(); });
+    }, { merge: true }).then(function() {
+      checkBadges();
+      // UI güncelle
+      var banner = document.getElementById('inviteStreakBanner');
+      var numEl = document.getElementById('inviteStreakNum');
+      if (numEl) numEl.textContent = streak;
+      if (banner && streak > 0) banner.style.display = 'flex';
+    });
   });
 }
 
@@ -5894,16 +5901,41 @@ function loadInviteStats() {
   _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
     if (!doc.exists) return;
     var data = doc.data();
+    // Davet streak
     _inviteStreakCount = data.inviteStreak || 0;
     _totalInvitesSent = data.totalInvitesSent || 0;
-    // Davet serisi banner güncelle
-    var banner = document.getElementById('inviteStreakBanner');
-    var numEl = document.getElementById('inviteStreakNum');
-    if (banner && _inviteStreakCount > 0) { banner.style.display='flex'; }
-    if (numEl) numEl.textContent = _inviteStreakCount;
     _lastInviteTimes = data.lastInviteTimes || {};
     _perFriendStreak = data.perFriendStreak || {};
+    // Banner güncelle
+    var banner = document.getElementById('inviteStreakBanner');
+    var numEl = document.getElementById('inviteStreakNum');
+    if (banner) banner.style.display = _inviteStreakCount > 0 ? 'flex' : 'none';
+    if (numEl) numEl.textContent = _inviteStreakCount;
+    // localStorage'a yedekle (sayfa yenilemede geçici koruma)
+    try {
+      var uid = _currentUser.uid;
+      localStorage.setItem('pugi_inviteStreak_' + uid, _inviteStreakCount);
+      localStorage.setItem('pugi_lastInviteTimes_' + uid, JSON.stringify(_lastInviteTimes));
+      localStorage.setItem('pugi_perFriendStreak_' + uid, JSON.stringify(_perFriendStreak));
+    } catch(e) {}
   });
+}
+
+function _loadInviteStatsFromLocalStorage() {
+  if (!_currentUser) return;
+  var uid = _currentUser.uid;
+  try {
+    var s = localStorage.getItem('pugi_inviteStreak_' + uid);
+    if (s !== null) _inviteStreakCount = parseInt(s) || 0;
+    var lt = localStorage.getItem('pugi_lastInviteTimes_' + uid);
+    if (lt) _lastInviteTimes = JSON.parse(lt) || {};
+    var pfs = localStorage.getItem('pugi_perFriendStreak_' + uid);
+    if (pfs) _perFriendStreak = JSON.parse(pfs) || {};
+    var banner = document.getElementById('inviteStreakBanner');
+    var numEl = document.getElementById('inviteStreakNum');
+    if (banner) banner.style.display = _inviteStreakCount > 0 ? 'flex' : 'none';
+    if (numEl) numEl.textContent = _inviteStreakCount;
+  } catch(e) {}
 }
 
 function loadStudyInvites() {
