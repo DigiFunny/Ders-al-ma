@@ -802,6 +802,67 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .no-login-msg p { font-size:0.82rem;color:var(--muted);margin-bottom:14px; }
 .no-login-btn { background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:11px 24px;color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer; }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#a5c8ff",
+          "primary-container": "#479bff",
+          "secondary": "#c8bfff",
+          "tertiary": "#47dfa4"
+        },
+        fontFamily: {
+          "headline": ["Outfit"],
+          "body": ["Outfit"],
+          "label": ["JetBrains Mono"]
+        }
+      }
+    }
+  }
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .glass-card { background: rgba(18, 22, 32, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); }
+  .neon-glow-primary { box-shadow: 0 0 20px rgba(71, 155, 255, 0.15); }
+  .neon-glow-secondary { box-shadow: 0 0 20px rgba(142, 124, 255, 0.15); }
+  .liquid-gradient { background: linear-gradient(90deg, #479bff 0%, #8e7cff 100%); position: relative; }
+  .liquid-gradient::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(255,255,255,0.1) 0%, transparent 100%); }
+  .grid-pattern { background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 0); background-size: 24px 24px; }
+  
+  /* Arka plan uyumu */
+  body { background-color: #05070a; }
+  body::before {
+    content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 0%, rgba(71, 155, 255, 0.08) 0%, transparent 50%), radial-gradient(circle at 0% 100%, rgba(142, 124, 255, 0.05) 0%, transparent 40%);
+    pointer-events: none; z-index: -1;
+      /* ESK CSS �AKIMALARINI �NLEME */
+  .content { 
+    background: transparent !important; /* Eski d�z arka plan siler, yeni efekti g�sterir */
+  }
+  
+  #page-ana * {
+    font-family: inherit; /* Eski Nunito fontunun yeni elemanlar bozmasn engeller */
+  }
+  
+  #page-ana .font-headline, #page-ana .font-headline * { 
+    font-family: 'Outfit', sans-serif !important; 
+  }
+  
+  #page-ana .font-label, #page-ana .font-label * { 
+    font-family: 'JetBrains Mono', monospace !important; 
+  }
+  
+  #page-ana .font-body { 
+    font-family: 'Outfit', sans-serif !important; 
+  }
+
+  }
+</style>
 
 </head>
 <body>
@@ -1057,145 +1118,228 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 
 <!-- ════════════════════ PAGE: ANA ════════════════════ -->
-<div class="page active" id="page-ana" style="padding:0 0 120px;background:transparent">
-
-  <!-- XP (hidden, compat) -->
-  <div id="xpBarWrap" style="display:none">
-    <div class="xp-row"><div><span class="xp-level">Seviye <span id="xpLevel">1</span></span> <span class="xp-title" id="xpTitle">Başlangıç</span></div><div style="font-size:0.72rem;color:var(--yellow);font-weight:800"><span id="xpTotal">0</span> XP</div></div>
-    <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
-    <div class="xp-pts"><span id="xpCurrent">0</span> / <span id="xpNext">100</span> XP</div>
-  </div>
-
-  <!-- Motivasyon (hidden compat) -->
-  <div id="motivCard" style="display:none"><div id="motivQuote"></div><div id="motivAuthor"></div></div>
-
-  <div style="padding:8px 14px 0">
-
-    <!-- Selamlama -->
-    <div id="greetingWrap" style="display:none;margin-bottom:14px">
-      <div id="greetingTime" style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.15em;text-transform:uppercase;color:rgba(165,200,255,0.5);margin-bottom:3px"></div>
-      <div id="greetingText" style="font-size:1.5rem;font-weight:900;font-family:'Outfit',sans-serif;color:#e0e2ed;line-height:1.15"></div>
+<div class="page active" id="page-ana">
+  <div class="font-body selection:bg-primary-container/30 grid-pattern pt-4">
+    
+    <div class="xp-bar-wrap mb-6" id="xpBarWrap" style="display:none">
+      <div class="xp-row">
+        <div><span class="xp-level">Seviye <span id="xpLevel">1</span></span> <span class="xp-title" id="xpTitle">Balang�</span></div>
+        <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal">0</span> XP</div>
+      </div>
+      <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <div class="xp-pts"><span id="xpCurrent">0</span> / <span id="xpNext">100</span> XP</div>
     </div>
 
-    <!-- HERO: Geri Sayım -->
-    <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:24px;padding:24px 22px;margin-bottom:14px;position:relative;overflow:hidden">
-      <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:rgba(71,155,255,0.07);filter:blur(60px);border-radius:50%;pointer-events:none"></div>
-      <div style="position:relative;z-index:1">
-        <div style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.2em;text-transform:uppercase;color:rgba(165,200,255,0.5);margin-bottom:10px">Geri Sayım</div>
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+    <div class="greeting-wrap mb-4" id="greetingWrap" style="display:none">
+      <div class="greeting-time" id="greetingTime"></div>
+      <div class="greeting-text" id="greetingText"></div>
+    </div>
+
+    <section class="relative overflow-hidden rounded-[2rem] glass-card p-8 neon-glow-primary mb-6">
+      <div class="absolute -top-12 -right-12 w-48 h-48 bg-primary-container/20 blur-[60px] rounded-full"></div>
+      <div class="relative z-10 space-y-6">
+        <div class="flex justify-between items-end">
           <div>
-            <div style="font-size:4.5rem;font-weight:900;font-family:'Outfit',sans-serif;color:#fff;line-height:1;letter-spacing:-2px"><span id="yksGun">—</span> <span style="font-size:1.4rem;font-weight:400;color:#475569">Gün</span></div>
+            <p class="text-primary/70 text-[10px] font-label uppercase tracking-[0.2em] mb-2">YKS'ye Kalan</p>
+            <h1 class="text-6xl font-black text-white font-headline tracking-tighter drop-shadow-sm"><span id="yksGun">-</span> <span class="text-xl font-medium text-slate-400">G�n</span></h1>
           </div>
-          <div style="text-align:right">
-            <div style="font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;color:#a5c8ff;line-height:1">%<span id="yksYuzde">0</span></div>
-            <div style="font-size:0.58rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569;margin-top:2px">Hazırlık</div>
+          <div class="text-right">
+            <span class="font-label text-primary text-2xl font-bold">%<span id="yksYuzde">0</span></span>
+            <p class="text-[10px] text-slate-500 font-label uppercase tracking-widest">Tamamland</p>
           </div>
         </div>
-        <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;position:relative;margin-bottom:8px">
-          <div id="yksBar" style="height:100%;width:0%;background:linear-gradient(90deg,#479bff,#8e7cff);border-radius:99px;position:relative;box-shadow:0 0 12px rgba(71,155,255,0.5);transition:width 1s ease"></div>
+        <div class="space-y-3">
+          <div class="h-2.5 w-full bg-white/5 rounded-full overflow-hidden">
+            <div id="yksBar" class="h-full liquid-gradient shadow-[0_0_15px_rgba(71,155,255,0.4)] rounded-full transition-all duration-1000" style="width:0%"></div>
+          </div>
+          <div class="flex justify-between text-[10px] font-label text-slate-500 uppercase tracking-widest">
+            <span>Balang�</span>
+            <span class="text-primary/60 font-bold">20 Haziran 2026</span>
+          </div>
         </div>
-        <div style="display:flex;justify-content:space-between">
-          <span style="font-size:0.55rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.12em;color:#334155">Başlangıç</span>
-          <span style="font-size:0.55rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.12em;color:rgba(71,155,255,0.5)">YKS 2026 Hedefi</span>
+      </div>
+    </section>
+
+    <section id="aiCoachCard" class="glass-card rounded-2xl p-5 flex items-center gap-4 border-l-4 border-secondary/60 neon-glow-secondary group cursor-pointer hover:bg-white/10 transition-all mb-6 relative overflow-hidden">
+      <div class="w-12 h-12 rounded-xl bg-secondary/20 flex items-center justify-center text-secondary shadow-[0_0_15px_rgba(142,124,255,0.2)] shrink-0">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-bold text-secondary text-sm">AI Ko�un</span>
+          <span id="aiCoachDate" class="text-[10px] text-slate-400">Bug�n�n �nerisi</span>
         </div>
+        <div id="aiCoachText" class="text-sm leading-relaxed text-slate-200">Y�kleniyor...</div>
       </div>
-    </div>
+      <button id="aiDeepBtn" onclick="requestDeepAnalysis()" class="hidden absolute top-4 right-4 bg-secondary/20 text-secondary text-xs px-2 py-1 rounded-lg border border-secondary/30">Derin Analiz</button>
+      
+      <div id="aiCoachLock" style="display:none;" class="absolute inset-0 bg-[#05070a]/90 flex-col items-center justify-center gap-2 z-10" onclick="_showGuestLockModal('AI Ko�', 'G�nl�k �neri almak i�in kayt ol.')">
+        <span class="text-2xl"></span>
+        <span class="text-xs font-bold text-white">AI Ko�un seni bekliyor. Kayt Ol</span>
+      </div>
+    </section>
 
-    <!-- AI Koç -->
-    <div id="aiCoachCard" style="background:#0d111a;border:1px solid rgba(142,124,255,0.25);border-left:3px solid rgba(142,124,255,0.6);border-radius:20px;padding:16px 16px;margin-bottom:14px;position:relative;overflow:hidden;display:flex;align-items:flex-start;gap:14px">
-      <div style="width:44px;height:44px;border-radius:14px;background:rgba(142,124,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <span class="material-symbols-outlined" style="color:#8e7cff;font-size:22px;font-variation-settings:&apos;FILL&apos; 1">psychology</span>
+    <section class="grid grid-cols-3 gap-4 mb-6">
+      <div class="glass-card p-5 rounded-3xl text-center flex flex-col items-center justify-center space-y-1 hover:border-primary/30 transition-colors">
+        <span class="material-symbols-outlined text-primary mb-2 text-3xl">timer</span>
+        <span id="todayMin" class="font-label text-xl font-bold text-white leading-none">0</span>
+        <span class="text-[10px] text-slate-500 font-label uppercase tracking-tighter">Dakika</span>
       </div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-          <span style="font-size:0.68rem;font-weight:700;color:#8e7cff;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">AI Koç</span>
-          <button id="aiDeepBtn" onclick="requestDeepAnalysis()" style="display:none;background:rgba(142,124,255,0.1);border:1px solid rgba(142,124,255,0.3);border-radius:8px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:#8e7cff;cursor:pointer;font-family:'Outfit',sans-serif">🔍 Analiz</button>
-        </div>
-        <div id="aiCoachText" style="font-size:0.88rem;font-weight:500;color:#c1c7d5;line-height:1.55;font-family:'Outfit',sans-serif">
-          <span style="color:#475569">Yükleniyor...</span>
-        </div>
-        <div id="aiCoachFooter" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(142,124,255,0.1)">
-          <span id="aiDeepHakLabel" style="font-size:0.6rem;color:#475569;font-family:'JetBrains Mono',monospace"></span>
-          <span id="aiCoachTime" style="font-size:0.6rem;color:#334155;font-family:'JetBrains Mono',monospace"></span>
-        </div>
-        <div id="aiCoachDate" style="display:none"></div>
+      <div class="glass-card p-5 rounded-3xl text-center flex flex-col items-center justify-center space-y-1 hover:border-tertiary/30 transition-colors">
+        <span class="material-symbols-outlined text-tertiary mb-2 text-3xl">quiz</span>
+        <span id="todaySoru" class="font-label text-xl font-bold text-white leading-none">0</span>
+        <span class="text-[10px] text-slate-500 font-label uppercase tracking-tighter">Soru</span>
       </div>
-      <div style="color:#334155;flex-shrink:0;align-self:center"><span class="material-symbols-outlined" style="font-size:18px">chevron_right</span></div>
-      <!-- Misafir kilidi -->
-      <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(5,7,10,0.9);border-radius:20px;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel öneri almak için kayıt ol.')">
-        <span style="font-size:1.8rem">🤖</span>
-        <span style="font-size:0.75rem;font-weight:700;color:#e0e2ed">AI Koçun seni bekliyor</span>
-        <div style="background:linear-gradient(135deg,#479bff,#8e7cff);border:none;border-radius:10px;padding:8px 18px;color:#fff;font-size:0.78rem;font-weight:800;margin-top:4px">🚀 Ücretsiz Kayıt Ol</div>
+      <div class="glass-card p-5 rounded-3xl text-center flex flex-col items-center justify-center space-y-1 hover:border-secondary/30 transition-colors">
+        <span class="material-symbols-outlined text-secondary mb-2 text-3xl">menu_book</span>
+        <span id="todayKonu" class="font-label text-xl font-bold text-white leading-none">0</span>
+        <span class="text-[10px] text-slate-500 font-label uppercase tracking-tighter">Konu</span>
       </div>
-    </div>
+    </section>
 
-    <!-- Bugün: 3 stat -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
-      <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:18px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px">
-        <span class="material-symbols-outlined" style="color:#479bff;font-size:28px">timer</span>
-        <span id="todayMin" style="font-size:1.6rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1">0</span>
-        <span style="font-size:0.58rem;color:#475569;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Dakika</span>
+    <section class="glass-card rounded-[2rem] p-6 mb-6">
+      <div class="flex justify-between items-center mb-8">
+        <h3 class="font-headline font-bold text-xl tracking-tight text-white">Haftalk Aktivite</h3>
+        <span class="font-label text-[10px] uppercase tracking-widest text-primary bg-primary/10 px-3 py-1 rounded-full border border-primary/20">Son 7 G�n</span>
       </div>
-      <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:18px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px">
-        <span class="material-symbols-outlined" style="color:#47dfa4;font-size:28px">quiz</span>
-        <span id="todaySoru" style="font-size:1.6rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1">0</span>
-        <span style="font-size:0.58rem;color:#475569;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Soru</span>
-      </div>
-      <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:18px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px">
-        <span class="material-symbols-outlined" style="color:#8e7cff;font-size:28px">menu_book</span>
-        <span id="todayKonu" style="font-size:1.6rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1">0</span>
-        <span style="font-size:0.58rem;color:#475569;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Konu</span>
-      </div>
-    </div>
+      <div id="heatmap" class="flex items-end justify-between h-32 px-1 gap-2"></div>
+    </section>
 
-    <!-- Haftalık Aktivite -->
-    <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:24px;padding:22px 18px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
-        <h3 style="font-size:1.1rem;font-weight:800;font-family:'Outfit',sans-serif;color:#e0e2ed;letter-spacing:-0.3px">Haftalık Aktivite</h3>
-        <span style="font-size:0.58rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.12em;color:#a5c8ff;background:rgba(165,200,255,0.08);padding:5px 12px;border-radius:99px;border:1px solid rgba(165,200,255,0.15)">Son 7 Gün</span>
-      </div>
-      <div id="heatmap" style="display:flex;align-items:flex-end;height:130px;gap:6px;padding:0 2px"></div>
-    </div>
+    <div class="sec">Haftalk �zet</div>
+    <div id="weeklySummaryCard"></div>
 
-    <!-- Haftalık Özet -->
-    <div id="weeklySummaryCard" style="margin-bottom:14px"></div>
-
-    <!-- Hedeflerim -->
-    <div id="anaGoalsWrap" style="margin-bottom:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <span style="font-size:0.62rem;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569">Hedeflerim</span>
-        <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:rgba(71,155,255,0.08);border:1px solid rgba(71,155,255,0.25);border-radius:10px;padding:5px 12px;font-size:0.72rem;font-weight:700;color:#479bff;cursor:pointer;font-family:'Outfit',sans-serif">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    <div id="anaGoalsWrap" class="mb-6">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="sec" style="margin-bottom:0">Hedeflerim</div>
+        <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:rgba(71,155,255,0.1);border:1.5px solid var(--primary-container);border-radius:10px;padding:5px 11px;font-size:0.72rem;font-weight:800;color:var(--primary-container);cursor:pointer">
           Hedef Seti
         </button>
       </div>
       <div id="anaGoalsList"></div>
     </div>
 
-    <!-- Koç Önerileri -->
-    <div id="coachSuggestionsWrap" style="display:none;margin-bottom:14px">
-      <div onclick="toggleCollapse('coachSuggestionsBody','coachSuggestionsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:10px">
-        <span style="font-size:0.62rem;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569">Koçunun Önerileri</span>
-        <svg id="coachSuggestionsArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.25s;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div id="coachSuggestionsBody" style="display:none">
-        <div id="coachSuggestionsList"></div>
-      </div>
+    <div onclick="toggleCollapse('anaLogBody','anaLogArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+      <div class="sec" style="margin-bottom:0">Son �almalar</div>
+      <svg id="anaLogArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
+    <div id="anaLogBody" style="display:none">
+      <div class="log-list" id="anaLog"></div>
+    </div>
+    
+    <div style="height:100px"></div>
+  </div>
+</div>
 
-    <!-- Son Çalışmalar -->
-    <div style="margin-bottom:14px">
-      <div onclick="toggleCollapse('anaLogBody','anaLogArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:10px">
-        <span style="font-size:0.62rem;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569">Son Çalışmalar</span>
-        <svg id="anaLogArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.25s;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div id="anaLogBody" style="display:none">
-        <div class="log-list" id="anaLog"></div>
-      </div>
+  <!-- XP Bar -->
+  <div class="xp-bar-wrap" id="xpBarWrap" style="display:none">
+    <div class="xp-row">
+      <div><span class="xp-level">Seviye <span id="xpLevel">1</span></span> <span class="xp-title" id="xpTitle">Başlangıç</span></div>
+      <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal">0</span> XP</div>
     </div>
+    <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    <div class="xp-pts"><span id="xpCurrent">0</span> / <span id="xpNext">100</span> XP</div>
+  </div>
+
+  <!-- Selamlama -->
+  <div class="greeting-wrap" id="greetingWrap" style="display:none">
+    <div class="greeting-time" id="greetingTime"></div>
+    <div class="greeting-text" id="greetingText"></div>
+  </div>
+
+  <!-- Motivasyon -->
+  <div class="motiv-card" id="motivCard">
+    <div class="motiv-quote" id="motivQuote">Yükleniyor...</div>
+    <div class="motiv-author" id="motivAuthor"></div>
 
   </div>
-  <div style="height:80px"></div>
+
+  <!-- AI KOÇ KARTI -->
+  <div id="aiCoachCard" style="background:linear-gradient(135deg,rgba(129,140,248,0.08),rgba(56,189,248,0.08));border:1.5px solid rgba(129,140,248,0.25);border-radius:18px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden">
+
+    <!-- Başlık -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:30px;height:30px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
+        <div>
+          <div style="font-size:0.8rem;font-weight:900;color:var(--text)">AI Koçun</div>
+          <div id="aiCoachDate" style="font-size:0.6rem;font-weight:700;color:var(--muted)">Bugünün önerisi</div>
+        </div>
+      </div>
+      <!-- Detaylı analiz butonu — haftada 1 hak -->
+      <button id="aiDeepBtn" onclick="requestDeepAnalysis()" style="background:rgba(129,140,248,0.12);border:1.5px solid rgba(129,140,248,0.3);border-radius:9px;padding:5px 10px;font-size:0.62rem;font-weight:800;color:var(--accent2);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;display:none">
+        🔍 Derin Analiz
+      </button>
+    </div>
+
+    <!-- Öneri metni -->
+    <div id="aiCoachText" style="font-size:0.82rem;font-weight:700;color:var(--text);line-height:1.6;min-height:40px">
+      <div style="display:flex;align-items:center;gap:8px;color:var(--muted)">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s infinite"></div>
+        Yükleniyor...
+      </div>
+    </div>
+
+    <!-- Alt bilgi -->
+    <div id="aiCoachFooter" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(129,140,248,0.15)">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span id="aiDeepHakLabel" style="font-size:0.62rem;font-weight:700;color:var(--muted)">Bu hafta 1 derin analiz hakkın var</span>
+        <span id="aiCoachTime" style="font-size:0.6rem;color:var(--muted);font-weight:600"></span>
+      </div>
+    </div>
+
+    <!-- Misafir kilidi -->
+    <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(8,13,24,0.88);border-radius:17px;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel çalışma verilerine göre günlük öneri almak için kayıt ol.')">
+      <span style="font-size:1.8rem">🤖</span>
+      <span style="font-size:0.75rem;font-weight:800;color:var(--text)">AI Koçun seni bekliyor</span>
+      <span style="font-size:0.68rem;color:var(--muted);font-weight:700;text-align:center;max-width:200px">Günlük kişisel öneri almak için kayıt ol</span>
+      <div style="background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:10px;padding:8px 18px;color:#fff;font-size:0.78rem;font-weight:900;margin-top:4px">🚀 Ücretsiz Kayıt Ol</div>
+    </div>
+  </div>
+
+  <div class="sec">Bugün</div>
+  <div class="today-grid">
+    <div class="today-card"><span class="today-val" id="todayMin" style="color:var(--accent)">0</span><div class="today-lbl">Dakika</div></div>
+    <div class="today-card"><span class="today-val" id="todaySoru" style="color:var(--accent3)">0</span><div class="today-lbl">Soru</div></div>
+    <div class="today-card"><span class="today-val" id="todayKonu" style="color:var(--accent2)">0</span><div class="today-lbl">Konu</div></div>
+  </div>
+
+  <div class="sec">Bu Haftaki Aktivite</div>
+  <div class="heatmap" id="heatmap"></div>
+
+  <div class="sec">Haftalık Özet</div>
+  <div id="weeklySummaryCard"></div>
+
+  <!-- Kişisel Hedefler -->
+  <div id="anaGoalsWrap">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div class="sec" style="margin-bottom:0">Hedeflerim</div>
+      <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:var(--accent)18;border:1.5px solid var(--accent);border-radius:10px;padding:5px 11px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Hedef Seti
+      </button>
+    </div>
+    <div id="anaGoalsList"></div>
+  </div>
+
+  <!-- Koç Önerileri -->
+  <div id="coachSuggestionsWrap" style="display:none">
+    <div onclick="toggleCollapse('coachSuggestionsBody','coachSuggestionsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+      <div class="sec" style="margin-bottom:0">Koçunun Önerileri</div>
+      <svg id="coachSuggestionsArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div id="coachSuggestionsBody" style="display:none">
+      <div id="coachSuggestionsList"></div>
+    </div>
+  </div>
+
+  <div onclick="toggleCollapse('anaLogBody','anaLogArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+    <div class="sec" style="margin-bottom:0">Son Çalışmalar</div>
+    <svg id="anaLogArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div id="anaLogBody" style="display:none">
+    <div class="log-list" id="anaLog"></div>
+  </div>
+  <div style="height:100px"></div>
 </div>
 
 <!-- PAGE: CALIS -->
@@ -1901,25 +2045,13 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 </div><!-- /app-wrap -->
 <!-- BOTTOM TABS -->
-<nav style="position:fixed;bottom:0;left:0;right:0;z-index:100;padding:10px 16px 24px;pointer-events:none">
-  <div style="background:rgba(13,17,26,0.75);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.08);border-radius:36px;display:flex;justify-content:space-between;align-items:center;padding:8px 6px;max-width:430px;margin:0 auto;pointer-events:all;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
-  <button class="tab-btn" onclick="switchTab('calis',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px">timer</span><span>Focus</span>
-  </button>
-  <button class="tab-btn" onclick="switchTab('stat',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px">bar_chart</span><span>Stats</span>
-  </button>
-  <button class="tab-btn active" onclick="switchTab('ana',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.12);cursor:pointer;padding:12px 6px;border-radius:26px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0;position:relative;top:-6px;box-shadow:0 4px 20px rgba(0,0,0,0.4)">
-    <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">home</span><span>Home</span>
-  </button>
-  <button class="tab-btn" onclick="switchTab('deneme',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px">psychology</span><span>Coach</span>
-  </button>
-  <button class="tab-btn" onclick="switchTab('rozet',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px">person</span><span>Profile</span>
-  </button>
-  </div>
-</nav>
+<div class="tabs">
+  <button class="tab-btn" onclick="switchTab('calis',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Çalış</span></button>
+  <button class="tab-btn" onclick="switchTab('deneme',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span><span>Deneme</span></button>
+  <button class="tab-btn active" onclick="switchTab('ana',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Ana</span></button>
+  <button class="tab-btn" onclick="switchTab('stat',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>İstatistik</span></button>
+  <button class="tab-btn" onclick="switchTab('rozet',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Profilim</span></button>
+</div>
 
 <script>
 
@@ -2074,16 +2206,16 @@ var statPeriod = 'gun';
 // YKS COUNTDOWN
 // ════════════════════════════════════════════
 function updateYKS() {
-  const target = new Date('2026-06-20T09:00:00');
-  const now = new Date();
-  const start = new Date('2025-09-01'); // ~300 gün başlangıç
-  const total = (target - start) / 86400000;
-  const left = Math.max(0, Math.ceil((target - now) / 86400000));
-  const done = total - left;
-  const pct = Math.min(100, Math.round((done / total) * 100));
-  document.getElementById('yksGun').textContent = left;
-  document.getElementById('yksBar').style.width = pct + '%';
-  document.getElementById('yksYuzde').textContent = pct;
+    // ... (�stteki tarih hesaplama kodlarna dokunma) ...
+
+    // BU 3 SATIRI BUL VE U EKLDE G�NCELLE:
+    document.getElementById('yksGun').textContent = days; // Sadece say (�rn: 248)
+    document.getElementById('yksYuzde').textContent = pct.toFixed(1); // Sadece y�zde (�rn: 64.5)
+    
+    const bar = document.getElementById('yksBar');
+    if(bar) bar.style.width = pct + '%'; // Barn ilerlemesini salar
+}
+
 }
 // updateYKS DOMContentLoaded'da
 
@@ -2112,16 +2244,9 @@ function switchTab(name, btn) {
   }
 
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(function(b) {
-    b.classList.remove('active');
-    b.style.background = 'none'; b.style.border = 'none'; b.style.color = '#475569';
-    b.style.boxShadow = 'none'; b.style.top = '0'; b.style.fontWeight = '';
-  });
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   btn.classList.add('active');
-  btn.style.background = 'rgba(255,255,255,0.1)'; btn.style.border = '1px solid rgba(255,255,255,0.12)';
-  btn.style.color = '#fff'; btn.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4)';
-  btn.style.top = '-6px'; btn.style.fontWeight = '800';
   if (name === 'ana')  { renderAna(); renderAnaGoals(); }
   if (name === 'calis') { _applyGuestCalisLayout(); }
   if (name === 'stat') {
@@ -3236,7 +3361,52 @@ function renderAna() {
   document.getElementById('todaySoru').textContent = totalSoru;
   document.getElementById('todayKonu').textContent = uniqueTopics;
 
-  renderHeatmap();
+  function renderHeatmap() {
+  const wrap = document.getElementById('heatmap');
+  if(!wrap) return;
+  const days = ['Pzt','Sal','�ar','Per','Cum','Cmt','Paz'];
+  const now = new Date();
+  const weekStart = new Date(now);
+  const dow = now.getDay();
+  const offset = dow === 0 ? 6 : dow - 1;
+  weekStart.setDate(now.getDate() - offset);
+
+  let html = '';
+  let maxMins = 1;
+  
+  // �nce o haftann maksimum deerini buluyoruz (grafik orann hesaplamak i�in)
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    const ds = d.toLocaleDateString('tr-TR');
+    const mins = entries.filter(e => e.date === ds).reduce((a, e) => a + (e.sure||0), 0);
+    if (mins > maxMins) maxMins = mins;
+  }
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    const ds = d.toLocaleDateString('tr-TR');
+    const mins = entries.filter(e => e.date === ds).reduce((a, e) => a + (e.sure||0), 0);
+    
+    let pct = (mins / maxMins) * 100;
+    if (mins > 0 && pct < 15) pct = 15; // 0'dan b�y�k ama d��k deerler i�in barn g�r�nmesi adna
+    const isToday = ds === todayStr();
+    
+        html += `
+      <div class="flex-1 flex flex-col items-center gap-2 group cursor-pointer h-full" onclick="openDayModal('${ds}', '${days[i]}')" title="${mins} dk">
+        <div class="w-full ${isToday ? 'bg-primary/10' : 'bg-white/5'} rounded-t-xl relative flex-1 flex items-end group-hover:bg-white/10 transition-all duration-300">
+           <div class="w-full ${isToday ? 'bg-primary shadow-[0_0_15px_rgba(71,155,255,0.4)]' : 'bg-primary/20 group-hover:bg-primary/50'} rounded-t-xl transition-all duration-300" style="height: ${pct}%;"></div>
+        </div>
+        <span class="font-label text-[10px] ${isToday ? 'text-primary font-black scale-110' : 'text-slate-500 group-hover:text-slate-300'}">${days[i]}</span>
+      </div>
+    `;
+    
+      
+  }
+  wrap.innerHTML = html;
+}
+;
 
   const logEl = document.getElementById('anaLog');
   // entries içinde zaten fromDeneme olan kayıtlar var, denemeler ayrıca eklenmez
@@ -3300,21 +3470,18 @@ function renderHeatmap() {
     const ds = d.toLocaleDateString('tr-TR');
     const mins = entries.filter(e => e.date === ds).reduce((a, e) => a + (e.sure||0), 0);
     const dayDenCount = denemeler.filter(function(d){ return d.date === ds; }).length;
+    let intensity = 'var(--bg3)';
+    if (mins > 0 && mins < 30) intensity = 'rgba(56,189,248,0.25)';
+    else if (mins >= 30 && mins < 90) intensity = 'rgba(56,189,248,0.5)';
+    else if (mins >= 90 && mins < 180) intensity = 'rgba(56,189,248,0.75)';
+    else if (mins >= 180) intensity = 'var(--accent)';
+    if (mins === 0 && dayDenCount > 0) intensity = 'rgba(251,191,36,0.3)';
     const isToday = ds === todayStr();
-    // Compute all weekly mins for proportional height
-    const allMins2 = [];
-    for (let j=0;j<7;j++){const dj=new Date(weekStart);dj.setDate(weekStart.getDate()+j);const dsj=dj.toLocaleDateString('tr-TR');allMins2.push(entries.filter(e=>e.date===dsj).reduce((a,e)=>a+(e.sure||0),0));}
-    const maxM = Math.max(...allMins2, 1);
-    const barPct = Math.max(mins > 0 ? 6 : 2, Math.round((mins / maxM) * 100));
-    const isActive = mins >= 90;
-    const barBg = mins === 0 ? 'rgba(255,255,255,0.04)' : (isActive ? '#479bff' : 'rgba(71,155,255,0.35)');
-    const glow = isActive ? 'box-shadow:0 0 16px rgba(71,155,255,0.5);' : '';
-    const todayBorder = isToday ? 'outline:2px solid rgba(71,155,255,0.6);outline-offset:2px;' : '';
-    html += `<div onclick="openDayModal('${ds}', '${days[i]}')" title="${ds} - ${mins} dk" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer">
-      <div style="width:100%;height:90px;display:flex;align-items:flex-end">
-        <div style="width:100%;height:${barPct}%;background:${barBg};border-radius:6px 6px 2px 2px;${glow}${todayBorder}transition:all 0.3s;min-height:${mins>0?'4':'2'}px"></div>
-      </div>
-      <span style="font-size:9px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;color:${isToday ? '#a5c8ff' : '#475569'};font-weight:${isToday ? '800' : '400'}">${days[i]}</span>
+    const safeDs = ds.replace(/\./g, '_');
+    html += `<div class="heat-day" onclick="openDayModal('${ds}', '${days[i]}')" title="${ds} - ${mins} dk">
+      <div class="heat-box" style="background:${intensity};${isToday ? 'outline:1.5px solid var(--accent);outline-offset:1px;' : ''}"></div>
+      <div class="heat-lbl" style="${isToday ? 'color:var(--accent)' : ''}">${days[i]}</div>
+      ${mins > 0 ? `<div class="heat-lbl" style="color:var(--accent3)">${mins}dk</div>` : '<div class="heat-lbl">&nbsp;</div>'}
     </div>`;
   }
   wrap.innerHTML = html;
