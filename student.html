@@ -3896,6 +3896,9 @@ function onUserLoggedIn(user) {
     loadFromCloud(user.uid);
     loadNotifSetting();
 
+    // Davet istatistiklerini ÖNCE localStorage'dan yükle (anlık), sonra Firebase'den tazele
+    _loadInviteStatsFromLocalStorage();
+
     // Arkadaşları render et
     renderFriends();
     renderAnaFriends();
@@ -3904,7 +3907,7 @@ function onUserLoggedIn(user) {
     processPendingAccepted();
     processPendingRemoved();
     loadAiDailyCoach();
-    loadInviteStats(); // arkadaş streak verilerini yükle
+    loadInviteStats(); // arkadaş streak verilerini Firebase'den tazele
 
     // Mevcut kullanıcılar için tek seferlik onboarding modalı
     if (!_userProfil.onboardingDone) {
@@ -5828,6 +5831,11 @@ function sendStudyInvite(toUid, toName) {
   }, { merge: true }).then(function() {
     _lastInviteTimes[toUid] = now;
     _totalInvitesSent++;
+    // localStorage'a hemen yaz (sayfa yenileme koruması)
+    try {
+      var uid2 = _currentUser.uid;
+      localStorage.setItem('pugi_lastInviteTimes_' + uid2, JSON.stringify(_lastInviteTimes));
+    } catch(e) {}
     var timesUpdate = {};
     timesUpdate['lastInviteTimes.' + toUid] = now;
     _fbDb.collection('users').doc(_currentUser.uid).set(timesUpdate, { merge: true });
@@ -5880,6 +5888,9 @@ function _updateInviteStreak(todayKey) {
     if (lastDate === yKey) streak++; else streak = 1; // zincir kırıldıysa sıfırla
 
     _inviteStreakCount = streak;
+    try {
+      if (_currentUser) localStorage.setItem('pugi_inviteStreak_' + _currentUser.uid, streak);
+    } catch(e) {}
     // set+merge kullan: alan daha önce yoksa da çalışır
     _fbDb.collection('users').doc(_currentUser.uid).set({
       inviteStreak: streak,
