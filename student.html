@@ -1057,117 +1057,145 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 
 <!-- ════════════════════ PAGE: ANA ════════════════════ -->
-<div class="page active" id="page-ana" class="page active">
-  <!-- XP Bar -->
-  <div class="xp-bar-wrap" id="xpBarWrap" style="display:none">
-    <div class="xp-row">
-      <div><span class="xp-level">Seviye <span id="xpLevel">1</span></span> <span class="xp-title" id="xpTitle">Başlangıç</span></div>
-      <div style="font-size:0.72rem;color:var(--yellow);font-weight:800;"><span id="xpTotal">0</span> XP</div>
-    </div>
+<div class="page active" id="page-ana" style="padding:0 0 120px;background:transparent">
+
+  <!-- XP (hidden, compat) -->
+  <div id="xpBarWrap" style="display:none">
+    <div class="xp-row"><div><span class="xp-level">Seviye <span id="xpLevel">1</span></span> <span class="xp-title" id="xpTitle">Başlangıç</span></div><div style="font-size:0.72rem;color:var(--yellow);font-weight:800"><span id="xpTotal">0</span> XP</div></div>
     <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
     <div class="xp-pts"><span id="xpCurrent">0</span> / <span id="xpNext">100</span> XP</div>
   </div>
 
-  <!-- Selamlama -->
-  <div class="greeting-wrap" id="greetingWrap" style="display:none">
-    <div class="greeting-time" id="greetingTime"></div>
-    <div class="greeting-text" id="greetingText"></div>
-  </div>
+  <!-- Motivasyon (hidden compat) -->
+  <div id="motivCard" style="display:none"><div id="motivQuote"></div><div id="motivAuthor"></div></div>
 
-  <!-- Motivasyon -->
-  <div class="motiv-card" id="motivCard">
-    <div class="motiv-quote" id="motivQuote">Yükleniyor...</div>
-    <div class="motiv-author" id="motivAuthor"></div>
+  <div style="padding:8px 14px 0">
 
-  </div>
+    <!-- Selamlama -->
+    <div id="greetingWrap" style="display:none;margin-bottom:14px">
+      <div id="greetingTime" style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.15em;text-transform:uppercase;color:rgba(165,200,255,0.5);margin-bottom:3px"></div>
+      <div id="greetingText" style="font-size:1.5rem;font-weight:900;font-family:'Outfit',sans-serif;color:#e0e2ed;line-height:1.15"></div>
+    </div>
 
-  <!-- AI KOÇ KARTI -->
-  <div id="aiCoachCard" style="background:linear-gradient(135deg,rgba(129,140,248,0.08),rgba(56,189,248,0.08));border:1.5px solid rgba(129,140,248,0.25);border-radius:18px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden">
-
-    <!-- Başlık -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:30px;height:30px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
-        <div>
-          <div style="font-size:0.8rem;font-weight:900;color:var(--text)">AI Koçun</div>
-          <div id="aiCoachDate" style="font-size:0.6rem;font-weight:700;color:var(--muted)">Bugünün önerisi</div>
+    <!-- HERO: Geri Sayım -->
+    <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:24px;padding:24px 22px;margin-bottom:14px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-60px;right:-60px;width:200px;height:200px;background:rgba(71,155,255,0.07);filter:blur(60px);border-radius:50%;pointer-events:none"></div>
+      <div style="position:relative;z-index:1">
+        <div style="font-size:0.6rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.2em;text-transform:uppercase;color:rgba(165,200,255,0.5);margin-bottom:10px">Geri Sayım</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px">
+          <div>
+            <div style="font-size:4.5rem;font-weight:900;font-family:'Outfit',sans-serif;color:#fff;line-height:1;letter-spacing:-2px"><span id="yksGun">—</span> <span style="font-size:1.4rem;font-weight:400;color:#475569">Gün</span></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:2rem;font-weight:900;font-family:'JetBrains Mono',monospace;color:#a5c8ff;line-height:1">%<span id="yksYuzde">0</span></div>
+            <div style="font-size:0.58rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569;margin-top:2px">Hazırlık</div>
+          </div>
+        </div>
+        <div style="height:8px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;position:relative;margin-bottom:8px">
+          <div id="yksBar" style="height:100%;width:0%;background:linear-gradient(90deg,#479bff,#8e7cff);border-radius:99px;position:relative;box-shadow:0 0 12px rgba(71,155,255,0.5);transition:width 1s ease"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="font-size:0.55rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.12em;color:#334155">Başlangıç</span>
+          <span style="font-size:0.55rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.12em;color:rgba(71,155,255,0.5)">YKS 2026 Hedefi</span>
         </div>
       </div>
-      <!-- Detaylı analiz butonu — haftada 1 hak -->
-      <button id="aiDeepBtn" onclick="requestDeepAnalysis()" style="background:rgba(129,140,248,0.12);border:1.5px solid rgba(129,140,248,0.3);border-radius:9px;padding:5px 10px;font-size:0.62rem;font-weight:800;color:var(--accent2);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;display:none">
-        🔍 Derin Analiz
-      </button>
     </div>
 
-    <!-- Öneri metni -->
-    <div id="aiCoachText" style="font-size:0.82rem;font-weight:700;color:var(--text);line-height:1.6;min-height:40px">
-      <div style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s infinite"></div>
-        Yükleniyor...
+    <!-- AI Koç -->
+    <div id="aiCoachCard" style="background:#0d111a;border:1px solid rgba(142,124,255,0.25);border-left:3px solid rgba(142,124,255,0.6);border-radius:20px;padding:16px 16px;margin-bottom:14px;position:relative;overflow:hidden;display:flex;align-items:flex-start;gap:14px">
+      <div style="width:44px;height:44px;border-radius:14px;background:rgba(142,124,255,0.12);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <span class="material-symbols-outlined" style="color:#8e7cff;font-size:22px;font-variation-settings:&apos;FILL&apos; 1">psychology</span>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+          <span style="font-size:0.68rem;font-weight:700;color:#8e7cff;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">AI Koç</span>
+          <button id="aiDeepBtn" onclick="requestDeepAnalysis()" style="display:none;background:rgba(142,124,255,0.1);border:1px solid rgba(142,124,255,0.3);border-radius:8px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:#8e7cff;cursor:pointer;font-family:'Outfit',sans-serif">🔍 Analiz</button>
+        </div>
+        <div id="aiCoachText" style="font-size:0.88rem;font-weight:500;color:#c1c7d5;line-height:1.55;font-family:'Outfit',sans-serif">
+          <span style="color:#475569">Yükleniyor...</span>
+        </div>
+        <div id="aiCoachFooter" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(142,124,255,0.1)">
+          <span id="aiDeepHakLabel" style="font-size:0.6rem;color:#475569;font-family:'JetBrains Mono',monospace"></span>
+          <span id="aiCoachTime" style="font-size:0.6rem;color:#334155;font-family:'JetBrains Mono',monospace"></span>
+        </div>
+        <div id="aiCoachDate" style="display:none"></div>
+      </div>
+      <div style="color:#334155;flex-shrink:0;align-self:center"><span class="material-symbols-outlined" style="font-size:18px">chevron_right</span></div>
+      <!-- Misafir kilidi -->
+      <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(5,7,10,0.9);border-radius:20px;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel öneri almak için kayıt ol.')">
+        <span style="font-size:1.8rem">🤖</span>
+        <span style="font-size:0.75rem;font-weight:700;color:#e0e2ed">AI Koçun seni bekliyor</span>
+        <div style="background:linear-gradient(135deg,#479bff,#8e7cff);border:none;border-radius:10px;padding:8px 18px;color:#fff;font-size:0.78rem;font-weight:800;margin-top:4px">🚀 Ücretsiz Kayıt Ol</div>
       </div>
     </div>
 
-    <!-- Alt bilgi -->
-    <div id="aiCoachFooter" style="display:none;margin-top:10px;padding-top:10px;border-top:1px solid rgba(129,140,248,0.15)">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <span id="aiDeepHakLabel" style="font-size:0.62rem;font-weight:700;color:var(--muted)">Bu hafta 1 derin analiz hakkın var</span>
-        <span id="aiCoachTime" style="font-size:0.6rem;color:var(--muted);font-weight:600"></span>
+    <!-- Bugün: 3 stat -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:18px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px">
+        <span class="material-symbols-outlined" style="color:#479bff;font-size:28px">timer</span>
+        <span id="todayMin" style="font-size:1.6rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1">0</span>
+        <span style="font-size:0.58rem;color:#475569;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Dakika</span>
+      </div>
+      <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:18px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px">
+        <span class="material-symbols-outlined" style="color:#47dfa4;font-size:28px">quiz</span>
+        <span id="todaySoru" style="font-size:1.6rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1">0</span>
+        <span style="font-size:0.58rem;color:#475569;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Soru</span>
+      </div>
+      <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:20px;padding:18px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:7px">
+        <span class="material-symbols-outlined" style="color:#8e7cff;font-size:28px">menu_book</span>
+        <span id="todayKonu" style="font-size:1.6rem;font-weight:900;color:#fff;font-family:'JetBrains Mono',monospace;line-height:1">0</span>
+        <span style="font-size:0.58rem;color:#475569;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em">Konu</span>
       </div>
     </div>
 
-    <!-- Misafir kilidi -->
-    <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(8,13,24,0.88);border-radius:17px;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel çalışma verilerine göre günlük öneri almak için kayıt ol.')">
-      <span style="font-size:1.8rem">🤖</span>
-      <span style="font-size:0.75rem;font-weight:800;color:var(--text)">AI Koçun seni bekliyor</span>
-      <span style="font-size:0.68rem;color:var(--muted);font-weight:700;text-align:center;max-width:200px">Günlük kişisel öneri almak için kayıt ol</span>
-      <div style="background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:10px;padding:8px 18px;color:#fff;font-size:0.78rem;font-weight:900;margin-top:4px">🚀 Ücretsiz Kayıt Ol</div>
+    <!-- Haftalık Aktivite -->
+    <div style="background:#0d111a;border:1px solid rgba(255,255,255,0.07);border-radius:24px;padding:22px 18px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px">
+        <h3 style="font-size:1.1rem;font-weight:800;font-family:'Outfit',sans-serif;color:#e0e2ed;letter-spacing:-0.3px">Haftalık Aktivite</h3>
+        <span style="font-size:0.58rem;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.12em;color:#a5c8ff;background:rgba(165,200,255,0.08);padding:5px 12px;border-radius:99px;border:1px solid rgba(165,200,255,0.15)">Son 7 Gün</span>
+      </div>
+      <div id="heatmap" style="display:flex;align-items:flex-end;height:130px;gap:6px;padding:0 2px"></div>
     </div>
-  </div>
 
-  <div class="sec">Bugün</div>
-  <div class="today-grid">
-    <div class="today-card"><span class="today-val" id="todayMin" style="color:var(--accent)">0</span><div class="today-lbl">Dakika</div></div>
-    <div class="today-card"><span class="today-val" id="todaySoru" style="color:var(--accent3)">0</span><div class="today-lbl">Soru</div></div>
-    <div class="today-card"><span class="today-val" id="todayKonu" style="color:var(--accent2)">0</span><div class="today-lbl">Konu</div></div>
-  </div>
+    <!-- Haftalık Özet -->
+    <div id="weeklySummaryCard" style="margin-bottom:14px"></div>
 
-  <div class="sec">Bu Haftaki Aktivite</div>
-  <div class="heatmap" id="heatmap"></div>
-
-  <div class="sec">Haftalık Özet</div>
-  <div id="weeklySummaryCard"></div>
-
-  <!-- Kişisel Hedefler -->
-  <div id="anaGoalsWrap">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div class="sec" style="margin-bottom:0">Hedeflerim</div>
-      <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:var(--accent)18;border:1.5px solid var(--accent);border-radius:10px;padding:5px 11px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Hedef Seti
-      </button>
+    <!-- Hedeflerim -->
+    <div id="anaGoalsWrap" style="margin-bottom:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:0.62rem;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569">Hedeflerim</span>
+        <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:rgba(71,155,255,0.08);border:1px solid rgba(71,155,255,0.25);border-radius:10px;padding:5px 12px;font-size:0.72rem;font-weight:700;color:#479bff;cursor:pointer;font-family:'Outfit',sans-serif">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Hedef Seti
+        </button>
+      </div>
+      <div id="anaGoalsList"></div>
     </div>
-    <div id="anaGoalsList"></div>
-  </div>
 
-  <!-- Koç Önerileri -->
-  <div id="coachSuggestionsWrap" style="display:none">
-    <div onclick="toggleCollapse('coachSuggestionsBody','coachSuggestionsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-      <div class="sec" style="margin-bottom:0">Koçunun Önerileri</div>
-      <svg id="coachSuggestionsArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+    <!-- Koç Önerileri -->
+    <div id="coachSuggestionsWrap" style="display:none;margin-bottom:14px">
+      <div onclick="toggleCollapse('coachSuggestionsBody','coachSuggestionsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:10px">
+        <span style="font-size:0.62rem;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569">Koçunun Önerileri</span>
+        <svg id="coachSuggestionsArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.25s;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div id="coachSuggestionsBody" style="display:none">
+        <div id="coachSuggestionsList"></div>
+      </div>
     </div>
-    <div id="coachSuggestionsBody" style="display:none">
-      <div id="coachSuggestionsList"></div>
-    </div>
-  </div>
 
-  <div onclick="toggleCollapse('anaLogBody','anaLogArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-    <div class="sec" style="margin-bottom:0">Son Çalışmalar</div>
-    <svg id="anaLogArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+    <!-- Son Çalışmalar -->
+    <div style="margin-bottom:14px">
+      <div onclick="toggleCollapse('anaLogBody','anaLogArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:10px">
+        <span style="font-size:0.62rem;font-weight:700;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.15em;color:#475569">Son Çalışmalar</span>
+        <svg id="anaLogArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.25s;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div id="anaLogBody" style="display:none">
+        <div class="log-list" id="anaLog"></div>
+      </div>
+    </div>
+
   </div>
-  <div id="anaLogBody" style="display:none">
-    <div class="log-list" id="anaLog"></div>
-  </div>
-  <div style="height:100px"></div>
+  <div style="height:80px"></div>
 </div>
 
 <!-- PAGE: CALIS -->
@@ -1873,27 +1901,24 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 </div><!-- /app-wrap -->
 <!-- BOTTOM TABS -->
-<nav class="tabs" style="background:rgba(15,20,29,0.7);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.08);border-radius:36px;display:flex;justify-content:space-between;align-items:center;padding:6px;box-shadow:0 8px 32px rgba(0,0,0,0.4);position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:calc(100% - 24px);max-width:406px;z-index:100;gap:2px">
-  <button class="tab-btn" onclick="switchTab('calis',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:10px 6px;border-radius:28px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;display:flex;gap:3px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px;display:block">timer</span>
-    <span>Focus</span>
+<nav style="position:fixed;bottom:0;left:0;right:0;z-index:100;padding:10px 16px 24px;pointer-events:none">
+  <div style="background:rgba(13,17,26,0.75);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border:1px solid rgba(255,255,255,0.08);border-radius:36px;display:flex;justify-content:space-between;align-items:center;padding:8px 6px;max-width:430px;margin:0 auto;pointer-events:all;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+  <button class="tab-btn" onclick="switchTab('calis',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
+    <span class="material-symbols-outlined" style="font-size:22px">timer</span><span>Focus</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('deneme',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:10px 6px;border-radius:28px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;display:flex;gap:3px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px;display:block">edit_note</span>
-    <span>Deneme</span>
+  <button class="tab-btn" onclick="switchTab('stat',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
+    <span class="material-symbols-outlined" style="font-size:22px">bar_chart</span><span>Stats</span>
   </button>
-  <button class="tab-btn active" onclick="switchTab('ana',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:rgba(71,155,255,0.15);border:1px solid rgba(71,155,255,0.25);cursor:pointer;padding:12px 6px;border-radius:28px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;display:flex;gap:3px;transition:all 0.2s;min-width:0;box-shadow:0 0 20px rgba(71,155,255,0.15);position:relative;top:-3px">
-    <span class="material-symbols-outlined" style="font-size:22px;display:block;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">home</span>
-    <span>Home</span>
+  <button class="tab-btn active" onclick="switchTab('ana',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.12);cursor:pointer;padding:12px 6px;border-radius:26px;color:#fff;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0;position:relative;top:-6px;box-shadow:0 4px 20px rgba(0,0,0,0.4)">
+    <span class="material-symbols-outlined" style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">home</span><span>Home</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('stat',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:10px 6px;border-radius:28px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;display:flex;gap:3px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px;display:block">bar_chart</span>
-    <span>Stats</span>
+  <button class="tab-btn" onclick="switchTab('deneme',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
+    <span class="material-symbols-outlined" style="font-size:22px">psychology</span><span>Coach</span>
   </button>
-  <button class="tab-btn" onclick="switchTab('rozet',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:10px 6px;border-radius:28px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:0.1em;display:flex;gap:3px;transition:all 0.2s;min-width:0">
-    <span class="material-symbols-outlined" style="font-size:22px;display:block">person</span>
-    <span>Profile</span>
+  <button class="tab-btn" onclick="switchTab('rozet',this)" style="flex:1;flex-direction:column;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:8px 6px;border-radius:26px;color:#475569;font-family:'JetBrains Mono',monospace;font-size:8px;text-transform:uppercase;letter-spacing:0.08em;display:flex;gap:4px;transition:all 0.2s;min-width:0">
+    <span class="material-symbols-outlined" style="font-size:22px">person</span><span>Profile</span>
   </button>
+  </div>
 </nav>
 
 <script>
@@ -2090,13 +2115,13 @@ function switchTab(name, btn) {
   document.querySelectorAll('.tab-btn').forEach(function(b) {
     b.classList.remove('active');
     b.style.background = 'none'; b.style.border = 'none'; b.style.color = '#475569';
-    b.style.boxShadow = 'none'; b.style.position = 'relative'; b.style.top = '0'; b.style.fontWeight = '';
+    b.style.boxShadow = 'none'; b.style.top = '0'; b.style.fontWeight = '';
   });
   document.getElementById('page-' + name).classList.add('active');
   btn.classList.add('active');
-  btn.style.background = 'rgba(71,155,255,0.15)'; btn.style.border = '1px solid rgba(71,155,255,0.25)';
-  btn.style.color = '#fff'; btn.style.boxShadow = '0 0 20px rgba(71,155,255,0.15)';
-  btn.style.top = '-3px'; btn.style.fontWeight = '700';
+  btn.style.background = 'rgba(255,255,255,0.1)'; btn.style.border = '1px solid rgba(255,255,255,0.12)';
+  btn.style.color = '#fff'; btn.style.boxShadow = '0 4px 20px rgba(0,0,0,0.4)';
+  btn.style.top = '-6px'; btn.style.fontWeight = '800';
   if (name === 'ana')  { renderAna(); renderAnaGoals(); }
   if (name === 'calis') { _applyGuestCalisLayout(); }
   if (name === 'stat') {
@@ -3276,20 +3301,20 @@ function renderHeatmap() {
     const mins = entries.filter(e => e.date === ds).reduce((a, e) => a + (e.sure||0), 0);
     const dayDenCount = denemeler.filter(function(d){ return d.date === ds; }).length;
     const isToday = ds === todayStr();
-    const safeDs = ds.replace(/\./g, '_');
-    // Max 240 mins for full height
-    const allMins = [0];
-    for (let j=0;j<7;j++){const dj=new Date(weekStart);dj.setDate(weekStart.getDate()+j);const dsj=dj.toLocaleDateString('tr-TR');allMins.push(entries.filter(e=>e.date===dsj).reduce((a,e)=>a+(e.sure||0),0));}
-    const maxM = Math.max(...allMins) || 1;
-    const heightPct = mins > 0 ? Math.max(8, Math.round((mins/maxM)*100)) : 5;
-    const barColor = mins === 0 ? 'rgba(255,255,255,0.04)' : (mins >= 180 ? '#479bff' : 'rgba(71,155,255,0.4)');
-    const glowStyle = mins >= 90 ? 'box-shadow:0 0 15px rgba(71,155,255,0.4);' : '';
-    const todayStyle = isToday ? 'outline:2px solid rgba(71,155,255,0.5);outline-offset:1px;' : '';
-    html += `<div onclick="openDayModal('${ds}', '${days[i]}')" title="${ds} - ${mins} dk" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;group:true">
-      <div style="width:100%;display:flex;flex-direction:column;justify-content:flex-end;height:80px">
-        <div style="width:100%;height:${heightPct}%;background:${barColor};border-radius:6px 6px 0 0;${glowStyle}${todayStyle}transition:all 0.3s;min-height:3px"></div>
+    // Compute all weekly mins for proportional height
+    const allMins2 = [];
+    for (let j=0;j<7;j++){const dj=new Date(weekStart);dj.setDate(weekStart.getDate()+j);const dsj=dj.toLocaleDateString('tr-TR');allMins2.push(entries.filter(e=>e.date===dsj).reduce((a,e)=>a+(e.sure||0),0));}
+    const maxM = Math.max(...allMins2, 1);
+    const barPct = Math.max(mins > 0 ? 6 : 2, Math.round((mins / maxM) * 100));
+    const isActive = mins >= 90;
+    const barBg = mins === 0 ? 'rgba(255,255,255,0.04)' : (isActive ? '#479bff' : 'rgba(71,155,255,0.35)');
+    const glow = isActive ? 'box-shadow:0 0 16px rgba(71,155,255,0.5);' : '';
+    const todayBorder = isToday ? 'outline:2px solid rgba(71,155,255,0.6);outline-offset:2px;' : '';
+    html += `<div onclick="openDayModal('${ds}', '${days[i]}')" title="${ds} - ${mins} dk" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer">
+      <div style="width:100%;height:90px;display:flex;align-items:flex-end">
+        <div style="width:100%;height:${barPct}%;background:${barBg};border-radius:6px 6px 2px 2px;${glow}${todayBorder}transition:all 0.3s;min-height:${mins>0?'4':'2'}px"></div>
       </div>
-      <span style="font-size:8px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.1em;color:${isToday ? '#479bff' : '#475569'};font-weight:${isToday ? '900' : '400'}">${days[i]}</span>
+      <span style="font-size:9px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:0.08em;color:${isToday ? '#a5c8ff' : '#475569'};font-weight:${isToday ? '800' : '400'}">${days[i]}</span>
     </div>`;
   }
   wrap.innerHTML = html;
