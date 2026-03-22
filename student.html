@@ -1561,210 +1561,168 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 </div>
 
 <!-- AYARLAR SAYFASI (tam ekran modal) -->
-<div id="settingsPage" style="display:none;position:fixed;inset:0;z-index:200;overflow-y:auto;background:#05080F;font-family:'Plus Jakarta Sans',sans-serif">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-
-  <!-- Header -->
-  <header style="position:sticky;top:0;z-index:10;background:rgba(5,8,15,0.75);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.07);padding:0 20px;height:60px;display:flex;align-items:center;justify-content:space-between">
-    <button onclick="closeSettingsModal()" style="background:rgba(255,255,255,0.06);border:none;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#C1C7D5;transition:background 0.2s" onmouseenter="this.style.background='rgba(255,255,255,0.1)'" onmouseleave="this.style.background='rgba(255,255,255,0.06)'">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
-    <span style="font-size:1rem;font-weight:700;color:#E0E2ED">Ayarlar</span>
-    <div style="width:38px"></div>
-  </header>
-
-  <div style="max-width:600px;margin:0 auto;padding:24px 16px 100px">
-
-    <!-- Profil Bilgileri -->
-    <div style="margin-bottom:6px;font-size:0.62rem;font-weight:700;color:#8b919e;letter-spacing:2px;text-transform:uppercase;padding:0 4px">Profil</div>
-    <div style="background:rgba(24,28,35,0.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:20px;margin-bottom:20px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
-        <div id="settAvatarBig" style="width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#479BFF,#8E7CFF);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#fff;flex-shrink:0">?</div>
-        <div>
-          <div id="settDisplayNameBig" style="font-size:1rem;font-weight:700;color:#E0E2ED">—</div>
-          <div id="settUnameBig" style="font-size:0.75rem;color:#8b919e;margin-top:2px;font-family:'JetBrains Mono',monospace">@—</div>
-        </div>
-      </div>
-
-      <!-- Kullanıcı adı değiştir -->
-      <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;margin-bottom:12px">
-        <div style="font-size:0.65rem;font-weight:700;color:#8b919e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Kullanıcı Adını Değiştir</div>
-        <div style="display:flex;gap:8px">
-          <input id="newUsernameInput" type="text" placeholder="yeni_kullanici_adi" autocomplete="off"
-            style="flex:1;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 14px;font-size:0.88rem;color:#E0E2ED;outline:none;font-family:'Plus Jakarta Sans',sans-serif;transition:border-color 0.2s"
-            onfocus="this.style.borderColor='#479BFF'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
-          <button onclick="changeUsername()" style="background:linear-gradient(135deg,#479BFF,#8E7CFF);border:none;border-radius:12px;padding:0 18px;color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap">Değiştir</button>
-        </div>
-        <div id="usernameChangeMsg" style="font-size:0.7rem;color:#8b919e;margin-top:6px;min-height:16px"></div>
-      </div>
+<div id="settingsPage" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto">
+  <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:8px">
+      <button onclick="closeSettingsModal()" style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div style="font-size:1.1rem;font-weight:900">Ayarlar</div>
     </div>
 
-    <!-- Sınav Bilgileri -->
-    <div style="margin-bottom:6px;font-size:0.62rem;font-weight:700;color:#8b919e;letter-spacing:2px;text-transform:uppercase;padding:0 4px">Sınav Bilgileri</div>
-    <div style="background:rgba(24,28,35,0.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;padding:20px;margin-bottom:20px">
-      <!-- Alan seçimi -->
-      <div style="margin-bottom:16px">
-        <div style="font-size:0.65rem;font-weight:700;color:#8b919e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Seçili Alan</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <button id="settDalSay" onclick="settingSelectDal('sayisal')" style="padding:12px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:#8b919e;font-weight:600;font-size:0.82rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s">📐 Sayısal</button>
-          <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:12px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:#8b919e;font-weight:600;font-size:0.82rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s">📖 Sözel</button>
-          <button id="settDalEa" onclick="settingSelectDal('ea')" style="padding:12px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:#8b919e;font-weight:600;font-size:0.82rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s">⚖️ Eşit Ağırlık</button>
-          <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:12px;border-radius:14px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:#8b919e;font-weight:600;font-size:0.82rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s">🌍 Dil</button>
+    <!-- Sınav Bilgilerim -->
+    <div class="u-settings-row" style="flex-direction:column;align-items:flex-start;gap:12px">
+      <div style="font-size:0.85rem;font-weight:900;width:100%">🎯 Sınav Bilgilerim</div>
+
+      <!-- Dal seçimi -->
+      <div style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Alan</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <button id="settDalSay" onclick="settingSelectDal('sayisal')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📐 Sayısal</button>
+          <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📖 Sözel</button>
+          <button id="settDalEa" onclick="settingSelectDal('ea')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">⚖️ Eşit Ağırlık</button>
+          <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">🌍 Dil</button>
         </div>
       </div>
 
       <!-- Hedef türü -->
-      <div style="margin-bottom:16px">
-        <div style="font-size:0.65rem;font-weight:700;color:#8b919e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Hedef Türü</div>
-        <div style="display:flex;gap:8px">
-          <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid #479BFF;background:rgba(71,155,255,0.1);color:#479BFF;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s">🏆 Sıralama</button>
-          <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:#8b919e;font-weight:700;font-size:0.82rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.2s">🎓 Okul/Bölüm</button>
+      <div style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Türü</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
+          <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
         </div>
       </div>
 
       <!-- Sıralama hedefi -->
-      <div id="settSiralamaWrap">
-        <div style="font-size:0.65rem;font-weight:700;color:#8b919e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
+      <div id="settSiralamaWrap" style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
         <input type="number" id="settHedefSiralama" placeholder="örn: 10000" min="1"
-          style="width:100%;box-sizing:border-box;padding:12px 14px;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;color:#E0E2ED;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;outline:none;transition:border-color 0.2s"
-          onfocus="this.style.borderColor='#479BFF'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"
-          oninput="_settOnSiralamaInput()">
+          style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
+          oninput="this.style.borderColor='var(--accent)'; _settOnSiralamaInput();">
       </div>
 
       <!-- Okul hedefi -->
-      <div id="settOkulWrap" style="display:none">
-        <div style="font-size:0.65rem;font-weight:700;color:#8b919e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Şehir</div>
-        <select id="settIlSel" onchange="settLoadUnis()" style="width:100%;padding:12px 14px;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;color:#E0E2ED;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;outline:none;margin-bottom:10px">
+      <div id="settOkulWrap" style="width:100%;display:none">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Şehir</div>
+        <select id="settIlSel" onchange="settLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
           <option value="">Şehir seç...</option>
         </select>
-        <div style="font-size:0.65rem;font-weight:700;color:#8b919e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Üniversite</div>
-        <select id="settUniSel" onchange="settLoadBolumler()" disabled style="width:100%;padding:12px 14px;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;color:#E0E2ED;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;outline:none;margin-bottom:10px">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Üniversite</div>
+        <select id="settUniSel" onchange="settLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
           <option value="">Önce şehir seç...</option>
         </select>
-        <div style="font-size:0.65rem;font-weight:700;color:#8b919e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px">Bölüm</div>
-        <select id="settBolumSel" onchange="settSelectBolum()" disabled style="width:100%;padding:12px 14px;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;color:#E0E2ED;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:600;outline:none;margin-bottom:10px">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Bölüm</div>
+        <select id="settBolumSel" onchange="settSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
           <option value="">Önce üniversite seç...</option>
         </select>
-        <div id="settProgramPreview" style="display:none;background:rgba(71,155,255,0.08);border:1px solid rgba(71,155,255,0.2);border-radius:12px;padding:12px;font-size:0.78rem;font-weight:600;color:#E0E2ED;margin-bottom:4px"></div>
+        <div id="settProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:4px"></div>
       </div>
 
-      <button id="settProfilSaveBtn" onclick="saveSettingsProfil()" style="width:100%;padding:13px;background:linear-gradient(135deg,#479BFF,#8E7CFF);border:none;border-radius:14px;color:#fff;font-weight:700;font-size:0.88rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;margin-top:14px;display:none">Kaydet</button>
+      <button id="settProfilSaveBtn" onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px;display:none">Kaydet</button>
     </div>
 
-    <!-- Uygulama Tercihleri -->
-    <div style="margin-bottom:6px;font-size:0.62rem;font-weight:700;color:#8b919e;letter-spacing:2px;text-transform:uppercase;padding:0 4px">Uygulama Tercihleri</div>
-    <div style="background:rgba(24,28,35,0.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;overflow:hidden;margin-bottom:20px">
-      <!-- Tema -->
-      <div style="display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:0.9rem;font-weight:600;color:#E0E2ED">Tema</div>
-          <div id="themeModeLabel" style="font-size:0.72rem;color:#8b919e;margin-top:2px">Karanlık mod</div>
-        </div>
-        <div onclick="toggleThemeSettings()" id="themeToggleWrap" style="width:48px;height:28px;border-radius:14px;background:#262A32;cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
-          <div id="themeToggleThumb" style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 2px 4px rgba(0,0,0,0.4)"></div>
-        </div>
-      </div>
-      <!-- Bildirimler -->
-      <div style="display:flex;align-items:center;gap:14px;padding:16px 18px">
-        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-        </div>
-        <div style="flex:1">
-          <div style="font-size:0.9rem;font-weight:600;color:#E0E2ED">Bildirimler</div>
-          <div style="font-size:0.72rem;color:#8b919e;margin-top:2px">Zamanlayıcı ve hedef uyarıları</div>
-        </div>
-        <div onclick="toggleNotifSetting()" id="notifToggleWrap" style="width:48px;height:28px;border-radius:14px;background:#262A32;cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
-          <div id="notifToggleThumb" style="width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 2px 4px rgba(0,0,0,0.4)"></div>
-        </div>
+
+        <!-- Tema -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Tema</div><div id="themeModeLabel" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Karanlık mod</div></div>
+      <div onclick="toggleThemeSettings()" id="themeToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="themeToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
       </div>
     </div>
 
-    <!-- Hesap ve Güvenlik -->
-    <div style="margin-bottom:6px;font-size:0.62rem;font-weight:700;color:#8b919e;letter-spacing:2px;text-transform:uppercase;padding:0 4px">Hesap ve Güvenlik</div>
-    <div style="background:rgba(24,28,35,0.6);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.06);border-radius:20px;overflow:hidden;margin-bottom:20px">
-
-      <!-- Şifre değiştir -->
-      <div style="border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div onclick="toggleSettingExpand('passwordExpand','passwordExpandArrow')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer">
-          <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#374151,#111827);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          </div>
-          <div style="flex:1"><div style="font-size:0.9rem;font-weight:600;color:#E0E2ED">Şifre Değiştir</div></div>
-          <svg id="passwordExpandArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b919e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.25s"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div id="passwordExpand" style="display:none;padding:0 18px 16px">
-          <input id="currentPwInput" type="password" placeholder="Mevcut şifre" style="width:100%;box-sizing:border-box;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 14px;font-size:0.88rem;color:#E0E2ED;outline:none;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif" onfocus="this.style.borderColor='#479BFF'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
-          <input id="newPwInput" type="password" placeholder="Yeni şifre (en az 6 karakter)" style="width:100%;box-sizing:border-box;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 14px;font-size:0.88rem;color:#E0E2ED;outline:none;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif" onfocus="this.style.borderColor='#479BFF'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
-          <div id="passwordChangeMsg" style="font-size:0.7rem;color:#8b919e;margin-bottom:8px;min-height:16px"></div>
-          <button onclick="changePassword()" style="width:100%;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#479BFF,#8E7CFF);color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer;margin-bottom:10px">Değiştir</button>
-          <button onclick="sendPasswordResetFromSettings()" style="width:100%;padding:11px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.08);background:transparent;color:#C1C7D5;font-weight:600;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Mail ile sıfırlama bağlantısı gönder
-          </button>
-          <div id="pwResetMailMsg" style="font-size:0.7rem;color:#8b919e;margin-top:6px;min-height:16px;text-align:center"></div>
-        </div>
-      </div>
-
-      <!-- Mail düzenle -->
-      <div style="border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div onclick="toggleSettingExpand('emailExpand','emailExpandArrow')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer">
-          <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#0ea5e9,#0284c7);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div style="flex:1">
-            <div style="font-size:0.9rem;font-weight:600;color:#E0E2ED">Mail Adresimi Düzenle</div>
-            <div id="currentEmailDisplay" style="font-size:0.72rem;color:#8b919e;margin-top:2px">—</div>
-          </div>
-          <svg id="emailExpandArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b919e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.25s"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div id="emailExpand" style="display:none;padding:0 18px 16px">
-          <input id="newEmailInput" type="email" placeholder="yeni@email.com" style="width:100%;box-sizing:border-box;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 14px;font-size:0.88rem;color:#E0E2ED;outline:none;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif" onfocus="this.style.borderColor='#479BFF'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
-          <input id="emailPwInput" type="password" placeholder="Şifrenizi doğrulayın" style="width:100%;box-sizing:border-box;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 14px;font-size:0.88rem;color:#E0E2ED;outline:none;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif" onfocus="this.style.borderColor='#479BFF'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'">
-          <div id="emailChangeMsg" style="font-size:0.7rem;color:#8b919e;margin-bottom:8px;min-height:16px"></div>
-          <button onclick="changeEmail()" style="width:100%;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#479BFF,#8E7CFF);color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer">Değiştir</button>
-        </div>
-      </div>
-
-      <!-- Geri bildirim -->
-      <div>
-        <div onclick="toggleSettingExpand('feedbackExpand','feedbackExpandArrow')" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer">
-          <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <div style="flex:1"><div style="font-size:0.9rem;font-weight:600;color:#E0E2ED">Geri Bildirim Yolla</div></div>
-          <svg id="feedbackExpandArrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b919e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition:transform 0.25s"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div id="feedbackExpand" style="display:none;padding:0 18px 16px">
-          <textarea id="feedbackText" placeholder="Düşüncelerini yaz..." rows="4" style="width:100%;box-sizing:border-box;background:rgba(16,19,27,0.8);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 14px;font-size:0.85rem;color:#E0E2ED;outline:none;resize:none;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:8px" onfocus="this.style.borderColor='#479BFF'" onblur="this.style.borderColor='rgba(255,255,255,0.08)'"></textarea>
-          <div id="feedbackMsg" style="font-size:0.7rem;color:#8b919e;margin-bottom:8px;min-height:16px"></div>
-          <button onclick="sendFeedback()" style="width:100%;padding:11px;border-radius:12px;border:none;background:linear-gradient(135deg,#36D399,#fbbf24);color:#05080F;font-weight:700;font-size:0.85rem;cursor:pointer">Gönder</button>
-        </div>
+    <!-- Bildirim toggle -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Bildirimler</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Zamanlayıcı bitince uyar</div></div>
+      <div onclick="toggleNotifSetting()" id="notifToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="notifToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
       </div>
     </div>
 
-    <!-- Tehlikeli Alan -->
-    <div style="margin-bottom:6px;font-size:0.62rem;font-weight:700;color:#FFB4AB;letter-spacing:2px;text-transform:uppercase;padding:0 4px">Tehlikeli Alan</div>
-    <div style="background:rgba(24,28,35,0.6);backdrop-filter:blur(20px);border:1px solid rgba(255,180,171,0.12);border-radius:20px;overflow:hidden;margin-bottom:20px">
-      <div onclick="clearAllDataFromSettings()" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05)">
-        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </div>
-        <div style="flex:1"><div style="font-size:0.9rem;font-weight:600;color:#FFB4AB">Verilerimi Temizle</div><div style="font-size:0.72rem;color:#8b919e;margin-top:2px">Tüm çalışma kayıtlarını sil</div></div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b919e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    <!-- Kullanıcı adı -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('usernameExpand','usernameExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#6d28d9);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Kullanıcı Adını Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Ayda bir kez değiştirilebilir</div></div>
+        <span id="usernameExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
       </div>
-      <div onclick="logoutUser()" style="display:flex;align-items:center;gap:14px;padding:16px 18px;cursor:pointer">
-        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </div>
-        <div style="flex:1"><div style="font-size:0.9rem;font-weight:600;color:#FFB4AB">Çıkış Yap</div><div style="font-size:0.72rem;color:#8b919e;margin-top:2px">Hesabından güvenli çıkış yap</div></div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b919e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      <div id="usernameExpand" style="display:none;margin-top:12px">
+        <input id="newUsernameInput" type="text" placeholder="yeni_kullanici_adi" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="usernameChangeMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="changeUsername()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Değiştir</button>
       </div>
     </div>
 
+    <!-- Şifre -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('passwordExpand','passwordExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#374151,#111827);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Şifremi Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Yeni şifre belirle</div></div>
+        <span id="passwordExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="passwordExpand" style="display:none;margin-top:12px">
+        <input id="currentPwInput" type="password" placeholder="Mevcut şifre" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <input id="newPwInput" type="password" placeholder="Yeni şifre (en az 6 karakter)" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="passwordChangeMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="changePassword()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer;margin-bottom:10px">Değiştir</button>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <span style="font-size:0.68rem;color:var(--muted);font-weight:700">veya</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+        <button onclick="sendPasswordResetFromSettings()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Mail ile sıfırlama bağlantısı gönder
+        </button>
+        <div id="pwResetMailMsg" style="font-size:0.72rem;color:var(--muted);margin-top:8px;min-height:16px;text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- Mail -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('emailExpand','emailExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0ea5e9,#0284c7);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Mail Adresimi Düzenle</div><div id="currentEmailDisplay" style="font-size:0.7rem;color:var(--muted);margin-top:2px">—</div></div>
+        <span id="emailExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="emailExpand" style="display:none;margin-top:12px">
+        <input id="newEmailInput" type="email" placeholder="yeni@email.com" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <input id="emailPwInput" type="password" placeholder="Şifrenizi doğrulayın" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.88rem;color:var(--text);outline:none;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        <div id="emailChangeMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="changeEmail()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Değiştir</button>
+      </div>
+    </div>
+
+    <!-- Geri bildirim -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('feedbackExpand','feedbackExpandArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Geri Bildirim Yolla</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Öneri, hata veya görüş bildir</div></div>
+        <span id="feedbackExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="feedbackExpand" style="display:none;margin-top:12px">
+        <textarea id="feedbackText" placeholder="Uygulama hakkındaki düşüncelerini yaz..." rows="4" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.85rem;color:var(--text);outline:none;resize:none;font-family:'Nunito',sans-serif;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        <div id="feedbackMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
+        <button onclick="sendFeedback()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Gönder</button>
+      </div>
+    </div>
+
+    <div style="height:1px;background:var(--border);margin:16px 0"></div>
+
+    <!-- Veri temizle -->
+    <div onclick="clearAllDataFromSettings()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900;color:var(--warn)">Verilerimi Temizle</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Tüm çalışma kayıtlarını sil</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+
+    <!-- Çıkış yap -->
+    <div onclick="logoutUser()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer">
+      <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900;color:var(--warn)">Çıkış Yap</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Hesabından güvenli çıkış yap</div></div>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
   </div>
 </div>
 <!-- PAGE: YEDEK -->
