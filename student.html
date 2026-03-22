@@ -1807,7 +1807,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         </div>
       </div>
       <button onclick="searchUser()" id="searchUserBtn" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;margin-bottom:8px">🔍 Ara</button>
-      <div id="studentAddBtns" style="display:none;display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+      <div id="studentAddBtns" style="display:none;flex-direction:column;gap:8px;margin-bottom:8px">
         <button onclick="doAddFriend()" id="btnAddFriend" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">➕ Arkadaş Ekle</button>
         <button onclick="doSendCoachRequest()" id="btnSendCoachReq" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">🎯 Koçluk İsteği Gönder</button>
       </div>
@@ -5966,6 +5966,41 @@ function sendCoachRequest(coach) {
 }
 
 function addFriend() { searchUser(); } // legacy compat
+
+// ════════════════════════════════════════════
+// GERİ BİLDİRİM
+// ════════════════════════════════════════════
+function sendFeedback() {
+  var text = (document.getElementById('feedbackText') ? document.getElementById('feedbackText').value : '').trim();
+  var msgEl = document.getElementById('feedbackMsg');
+  if (!text) {
+    if (msgEl) { msgEl.style.color = 'var(--warn)'; msgEl.textContent = 'Lütfen bir şeyler yaz.'; }
+    return;
+  }
+  if (!_fbDb) {
+    if (msgEl) { msgEl.style.color = 'var(--warn)'; msgEl.textContent = 'Bağlantı hatası.'; }
+    return;
+  }
+  if (msgEl) { msgEl.style.color = 'var(--muted)'; msgEl.textContent = 'Gönderiliyor...'; }
+
+  var uid = _currentUser ? _currentUser.uid : 'guest';
+  var username = _currentUser && _currentUser._username ? _currentUser._username : 'anonim';
+
+  _fbDb.collection('feedback').add({
+    uid: uid,
+    username: username,
+    text: text,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  }).then(function() {
+    if (msgEl) { msgEl.style.color = 'var(--accent3)'; msgEl.textContent = '✅ Teşekkürler! Geri bildirimin iletildi.'; }
+    var el = document.getElementById('feedbackText');
+    if (el) el.value = '';
+  }).catch(function(e) {
+    if (msgEl) { msgEl.style.color = 'var(--warn)'; msgEl.textContent = '❌ Hata: ' + e.message; }
+  });
+}
+
+
 
 function removeCoachRequest(docId, coachName, status) {
   var msg = status === 'accepted'
