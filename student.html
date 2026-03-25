@@ -3770,7 +3770,7 @@ var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif,
 
 // ── AI Koç Sabitleri ──────────────────────────────────
 var GEMINI_API_KEY = ''; // Artık gizli - Cloudflare Worker'da
-var GEMINI_MODEL   = 'gemini-2.0-flash';
+var GEMINI_MODEL   = 'gemini-1.5-flash';
 var GEMINI_URL     = 'https://pugi-ai-proxy.arifsenel48.workers.dev';
 
 // ── AI Koç State ─────────────────────────────────────
@@ -4279,16 +4279,9 @@ function _fetchAiSuggestion(isDeep) {
   .then(function(data) {
     // Hata kontrolü
     if (data.error) {
-      console.error('Gemini API hatası:', data.error.code, data.error.message);
-      var errMsg = 'API Hatası: ' + (data.error.message || 'Bilinmeyen hata');
+      console.warn('Gemini API hatası (sessiz):', data.error.code, data.error.message);
+      // Kota veya hata durumunda sessizce kural bazlı öneri göster
       _showAiText(_buildRuleBasedSuggestion(), false);
-      var textEl2 = document.getElementById('aiCoachText');
-      if (textEl2) {
-        var errDiv = document.createElement('div');
-        errDiv.style.cssText = 'font-size:0.65rem;color:var(--muted);margin-top:6px';
-        errDiv.textContent = '⚠️ ' + errMsg;
-        textEl2.appendChild(errDiv);
-      }
       return;
     }
     var text = '';
