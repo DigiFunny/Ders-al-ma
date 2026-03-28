@@ -50,7 +50,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 /* ══ LANDING ══ */
 #screenLanding{overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.landing-inner{max-width:430px;margin:0 auto;padding:48px 22px 36px;display:flex;flex-direction:column;min-height:100dvh;}
+.landing-inner{max-width:430px;margin:0 auto;padding:48px 22px 48px;display:flex;flex-direction:column;min-height:100dvh;}
 
 .landing-panel{display:none;flex-direction:column;flex:1;min-height:0;}
 .landing-panel.is-active{display:flex;animation:fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;}
@@ -73,8 +73,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .btn-start:active{transform:translateY(3px);box-shadow:0 1px 0 #0369a1,0 4px 18px rgba(56,189,248,0.28);}
 
+.landing-cta-stack{display:flex;flex-direction:column;gap:26px;margin-top:6px;}
+
 .btn-secondary-landing{
-  width:100%;margin-top:12px;padding:14px 18px;border:2px solid var(--border);border-radius:16px;background:var(--card);
+  width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:16px;background:var(--card);
   color:var(--text);font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:800;cursor:pointer;
   transition:border-color 0.2s,background 0.2s;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
   animation:fadeUp 0.55s 0.18s cubic-bezier(.4,0,.2,1) both;-webkit-tap-highlight-color:transparent;
@@ -84,8 +86,67 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .login-link{text-align:center;margin-top:18px;font-size:0.8rem;font-weight:700;color:var(--muted);animation:fadeUp 0.55s 0.22s cubic-bezier(.4,0,.2,1) both;}
 .login-link span{color:var(--accent);cursor:pointer;font-weight:800;text-decoration:underline;text-underline-offset:3px;}
 
-.landing-footer{margin-top:auto;padding-top:28px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.75;animation:fadeUp 0.55s 0.26s cubic-bezier(.4,0,.2,1) both;}
+.landing-footer{margin-top:22px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.75;animation:fadeUp 0.55s 0.24s cubic-bezier(.4,0,.2,1) both;}
 .landing-footer strong{color:var(--accent3);}
+
+/* Kaydır ipucu */
+.scroll-reveal-hint{
+  display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:20px;padding:10px 8px 4px;
+  background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:800;
+  letter-spacing:0.4px;cursor:pointer;width:100%;transition:color 0.2s;-webkit-tap-highlight-color:transparent;
+}
+.scroll-reveal-hint:hover,.scroll-reveal-hint:focus-visible{color:var(--accent);}
+.scroll-reveal-hint .chev{font-size:0.85rem;animation:hintBounce 2s ease-in-out infinite;}
+@keyframes hintBounce{0%,100%{transform:translateY(0);opacity:0.7;}50%{transform:translateY(5px);opacity:1;}}
+@media(prefers-reduced-motion:reduce){.scroll-reveal-hint .chev{animation:none;}}
+
+/* Tanıtım — kaydırılabilir */
+.landing-intro{
+  margin-top:28px;padding-top:28px;padding-bottom:8px;
+  scroll-margin-top:16px;
+  border-top:1px solid rgba(56,189,248,0.12);
+  animation:fadeUp 0.6s 0.28s cubic-bezier(.4,0,.2,1) both;
+}
+.intro-kicker{font-size:0.65rem;font-weight:900;color:var(--accent);letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:10px;}
+.intro-title{font-size:1.05rem;font-weight:900;color:var(--text);text-align:center;line-height:1.3;margin-bottom:16px;letter-spacing:-0.2px;}
+.intro-lead{font-size:0.8rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.55;margin-bottom:18px;}
+
+.intro-feature-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px;}
+.intro-feat{
+  background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;
+  transition:border-color 0.2s,transform 0.15s;
+}
+.intro-feat:active{transform:scale(0.97);}
+.intro-feat .if-emoji{font-size:1.35rem;display:block;margin-bottom:6px;}
+.intro-feat .if-t{font-size:0.62rem;font-weight:900;color:var(--text);line-height:1.25;display:block;}
+.intro-feat .if-d{font-size:0.58rem;font-weight:700;color:var(--muted);margin-top:4px;line-height:1.3;}
+
+.intro-details{
+  background:var(--card);border:1.5px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;
+  transition:border-color 0.2s;
+}
+.intro-details[open]{border-color:rgba(56,189,248,0.25);}
+.intro-details summary{
+  list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 14px;cursor:pointer;font-weight:800;font-size:0.82rem;color:var(--text);
+  -webkit-tap-highlight-color:transparent;
+}
+.intro-details summary::-webkit-details-marker{display:none;}
+.intro-details summary .sum-chev{color:var(--muted);font-size:0.75rem;transition:transform 0.25s;}
+.intro-details[open] summary .sum-chev{transform:rotate(180deg);color:var(--accent);}
+.intro-details-body{padding:0 14px 14px;font-size:0.78rem;font-weight:600;color:var(--muted);line-height:1.55;}
+.intro-details-body a{color:var(--accent);font-weight:800;}
+
+.intro-foot{
+  margin-top:18px;padding:14px;border-radius:14px;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.12);
+  font-size:0.74rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.5;
+}
+.intro-foot button{
+  margin-top:10px;padding:10px 18px;border-radius:12px;border:1.5px solid var(--accent);background:transparent;
+  color:var(--accent);font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:900;cursor:pointer;width:100%;
+  transition:background 0.2s,color 0.2s;
+}
+.intro-foot button:active{background:rgba(56,189,248,0.12);}
 
 /* Sınav seçim paneli */
 .exam-picker-head{margin-bottom:20px;}
@@ -199,10 +260,13 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .ob-sinif-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);color:var(--accent);}
 
 @media(max-height:680px){
-  .landing-inner{padding:28px 18px 24px;}
+  .landing-inner{padding:28px 18px 32px;}
   .hero-logo-icon{width:72px;height:72px;font-size:2rem;}
   .hero-logo-name{font-size:2.1rem;}
   .welcome-title{font-size:1.05rem;}
+  .landing-cta-stack{gap:22px;}
+  .intro-feature-strip{gap:6px;}
+  .intro-feat{padding:10px 6px;}
   .exam-card{padding:14px 10px;}
   .exam-emoji{font-size:1.55rem;margin-bottom:5px;}
 }
@@ -232,13 +296,70 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <p class="welcome-sub">Sınav hazırlığını planla, çalışmanı takip et, hedefe odaklan &mdash; tek yerden.</p>
       </div>
 
-      <button type="button" class="btn-start" onclick="openExamPicker()">Hemen Başla</button>
-      <button type="button" class="btn-secondary-landing" onclick="goToAuthScreen()">Giriş yap / Kayıt ol</button>
+      <div class="landing-cta-stack">
+        <button type="button" class="btn-start" onclick="openExamPicker()">Hemen Başla</button>
+        <button type="button" class="btn-secondary-landing" onclick="goToAuthScreen()">Giriş yap / Kayıt ol</button>
+      </div>
 
       <div class="landing-footer">
         Misafir olarak <strong>YKS</strong> ile hemen başlayabilirsin.<br>
         Daha fazlası için kayıt ol &mdash; <strong>temel özellikler ücretsiz</strong>.
       </div>
+
+      <button type="button" class="scroll-reveal-hint" onclick="scrollToLandingIntro()" aria-controls="landingIntro">
+        <span>Aşağı kaydır · tanıtım</span>
+        <span class="chev" aria-hidden="true">▼</span>
+      </button>
+
+      <section id="landingIntro" class="landing-intro" aria-label="Pugi tanıtımı">
+        <p class="intro-kicker">Keşfet</p>
+        <h2 class="intro-title">İstediğin sınav için tek uygulama</h2>
+        <p class="intro-lead">Karmaşık menü yok: önce çalış, verilerin oturduğunda hedefe daha net bakarsın.</p>
+
+        <div class="intro-feature-strip">
+          <div class="intro-feat">
+            <span class="if-emoji">⏱</span>
+            <span class="if-t">Odak</span>
+            <span class="if-d">Zamanlayıcı ile seans</span>
+          </div>
+          <div class="intro-feat">
+            <span class="if-emoji">📊</span>
+            <span class="if-t">Netlik</span>
+            <span class="if-d">Gün ve hafta özeti</span>
+          </div>
+          <div class="intro-feat">
+            <span class="if-emoji">🎯</span>
+            <span class="if-t">Hedef</span>
+            <span class="if-d">Sıralama veya bölüm</span>
+          </div>
+        </div>
+
+        <details class="intro-details">
+          <summary>Misafir ile kayıtlı farkı nedir? <span class="sum-chev">▼</span></summary>
+          <div class="intro-details-body">
+            Misafir modunda <strong>YKS</strong> ile uygulamayı deneyebilirsin. Hesap açtığında verilerin bulutta saklanır; AI koç ve koç bağlantıları gibi özelliklere geçebilirsin.
+          </div>
+        </details>
+
+        <details class="intro-details">
+          <summary>Hangi sınavlar var? <span class="sum-chev">▼</span></summary>
+          <div class="intro-details-body">
+            Şu an <strong>YKS</strong> tam destekli. <strong>LGS, ALES, KPSS</strong> için çalışmalar sürüyor; açıldığında aynı uygulama içinden seçebileceksin.
+          </div>
+        </details>
+
+        <details class="intro-details">
+          <summary>Ücret ve gizlilik <span class="sum-chev">▼</span></summary>
+          <div class="intro-details-body">
+            Temel özellikler ücretsiz kullanıma uygun tasarlandı. Hesabını istediğin zaman silebilirsin; ayrıntılar için uygulama içi ayarlara göz at.
+          </div>
+        </details>
+
+        <div class="intro-foot">
+          Hazır mısın? Hesabın yoksa önce dene, sonra kayıt ol.
+          <button type="button" onclick="goToAuthScreen()">Hesap oluştur / Giriş yap</button>
+        </div>
+      </section>
     </div>
 
     <!-- Sınav seçimi (misafir) -->
@@ -590,6 +711,10 @@ function openExamPicker(){
 function closeExamPicker(){
   resetLandingToWelcome();
   window.scrollTo(0,0);
+}
+function scrollToLandingIntro(){
+  var el=document.getElementById('landingIntro');
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function guestEnterExam(exam){
