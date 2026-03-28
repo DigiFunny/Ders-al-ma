@@ -6,20 +6,20 @@
 <link rel="manifest" href="/manifest.json">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Pugi — YKS Çalışma Takip Uygulaması | TYT AYT Hazırlık</title>
-<meta name="description" content="Pugi — YKS hazırlığının akıllı yardımcısı. Zamanlayıcı, AI koç, hedef takibi. Tamamen ücretsiz.">
+<title>Pugi Ders Koçu — Sınav hazırlığı &amp; çalışma takibi</title>
+<meta name="description" content="Pugi Ders Koçu — YKS ve diğer sınavlara hazırlıkta akıllı çalışma arkadaşın. Zamanlayıcı, hedef takibi, AI koç. Ücretsiz başla.">
 <meta name="keywords" content="YKS çalışma takip,TYT hazırlık,AYT hazırlık,YKS uygulaması,Pugi">
 <meta name="author" content="Pugi">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://pugiapp.com/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://pugiapp.com/">
-<meta property="og:title" content="Pugi — YKS Çalışma Takip Uygulaması">
-<meta property="og:description" content="YKS hazırlığının akıllı yardımcısı. Ücretsiz, hesap gerektirmez.">
+<meta property="og:title" content="Pugi Ders Koçu — Sınav hazırlığı">
+<meta property="og:description" content="Sınav hazırlığında akıllı çalışma arkadaşın. Ücretsiz başla, YKS ile dene.">
 <meta property="og:image" content="https://pugiapp.com/icon-512.png">
 <meta property="og:locale" content="tr_TR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Pugi — YKS Çalışma Takip">
+<meta name="twitter:title" content="Pugi Ders Koçu">
 <meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -50,48 +50,77 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 /* ══ LANDING ══ */
 #screenLanding{overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.landing-inner{max-width:430px;margin:0 auto;padding:52px 24px 44px;display:flex;flex-direction:column;min-height:100dvh;}
+.landing-inner{max-width:430px;margin:0 auto;padding:48px 22px 36px;display:flex;flex-direction:column;min-height:100dvh;}
 
-.hero{text-align:center;margin-bottom:34px;animation:fadeDown 0.7s cubic-bezier(.4,0,.2,1) both;}
-.hero-logo-icon{width:80px;height:80px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:2.1rem;box-shadow:0 8px 36px rgba(56,189,248,0.26),inset 0 1px 0 rgba(255,255,255,0.1);}
-.hero-logo-name{font-family:'Space Mono',monospace;font-size:2.6rem;font-weight:700;background:linear-gradient(135deg,#e2e8f0,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1.5px;margin-bottom:12px;}
-.hero-tagline{font-size:1.05rem;font-weight:800;color:var(--text);line-height:1.45;margin-bottom:8px;}
-.hero-sub{font-size:0.79rem;font-weight:600;color:var(--muted);line-height:1.65;}
+.landing-panel{display:none;flex-direction:column;flex:1;min-height:0;}
+.landing-panel.is-active{display:flex;animation:fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;}
 
-.feature-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:30px;animation:fadeUp 0.7s 0.1s cubic-bezier(.4,0,.2,1) both;}
-.feature-pill{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:0.71rem;font-weight:800;color:var(--text);white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
-.pill-icon{font-size:0.85rem;}
+.hero{text-align:center;margin-bottom:28px;animation:fadeDown 0.65s cubic-bezier(.4,0,.2,1) both;}
+.hero-logo-icon{width:88px;height:88px;background:linear-gradient(145deg,#38bdf8,#6366f1);border-radius:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:2.35rem;box-shadow:0 10px 40px rgba(56,189,248,0.28),0 4px 0 rgba(15,23,42,0.45),inset 0 2px 0 rgba(255,255,255,0.12);}
+.hero-logo-name{font-family:'Space Mono',monospace;font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,#f8fafc,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-2px;margin-bottom:14px;}
+.welcome-title{font-size:1.18rem;font-weight:900;color:var(--text);line-height:1.35;margin-bottom:10px;letter-spacing:-0.3px;}
+.welcome-sub{font-size:0.84rem;font-weight:700;color:var(--muted);line-height:1.55;max-width:320px;margin:0 auto;}
 
-.exam-section{animation:fadeUp 0.7s 0.2s cubic-bezier(.4,0,.2,1) both;margin-bottom:14px;}
-.exam-section-label{font-size:0.67rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;text-align:center;margin-bottom:12px;}
-.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+/* Duolingo-hissi: kalın ana buton, hafif 3D — marka mavileri */
+.btn-start{
+  width:100%;padding:17px 18px;border:none;border-radius:18px;
+  background:linear-gradient(180deg,#5ad4ff 0%,#38bdf8 45%,#0ea5e9 100%);
+  color:#0c1220;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;letter-spacing:0.02em;
+  cursor:pointer;transition:transform 0.15s, box-shadow 0.15s;
+  box-shadow:0 4px 0 #0369a1,0 10px 28px rgba(56,189,248,0.38);
+  animation:fadeUp 0.55s 0.12s cubic-bezier(.4,0,.2,1) both;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn-start:active{transform:translateY(3px);box-shadow:0 1px 0 #0369a1,0 4px 18px rgba(56,189,248,0.28);}
 
-.exam-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:17px 13px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
-.exam-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.22s;}
-.exam-card.yks::before{background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.1));}
-.exam-card.kpss::before{background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(251,191,36,0.1));}
-.exam-card.lgs::before{background:linear-gradient(135deg,rgba(244,114,182,0.1),rgba(251,146,60,0.1));}
-.exam-card.other::before{background:linear-gradient(135deg,rgba(148,163,184,0.07),rgba(100,116,139,0.07));}
-.exam-card:active{transform:scale(0.95);}
-.exam-card.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(56,189,248,0.14);}
-.exam-card.selected::before{opacity:1;}
-.exam-card.coming-soon{cursor:default;opacity:0.62;}
+.btn-secondary-landing{
+  width:100%;margin-top:12px;padding:14px 18px;border:2px solid var(--border);border-radius:16px;background:var(--card);
+  color:var(--text);font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:800;cursor:pointer;
+  transition:border-color 0.2s,background 0.2s;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
+  animation:fadeUp 0.55s 0.18s cubic-bezier(.4,0,.2,1) both;-webkit-tap-highlight-color:transparent;
+}
+.btn-secondary-landing:active{transform:scale(0.98);}
+
+.login-link{text-align:center;margin-top:18px;font-size:0.8rem;font-weight:700;color:var(--muted);animation:fadeUp 0.55s 0.22s cubic-bezier(.4,0,.2,1) both;}
+.login-link span{color:var(--accent);cursor:pointer;font-weight:800;text-decoration:underline;text-underline-offset:3px;}
+
+.landing-footer{margin-top:auto;padding-top:28px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.75;animation:fadeUp 0.55s 0.26s cubic-bezier(.4,0,.2,1) both;}
+.landing-footer strong{color:var(--accent3);}
+
+/* Sınav seçim paneli */
+.exam-picker-head{margin-bottom:20px;}
+.landing-back-row{display:flex;align-items:center;margin-bottom:18px;}
+.btn-landing-back{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.2s;margin-right:4px;-webkit-tap-highlight-color:transparent;}
+.btn-landing-back:hover{border-color:var(--accent);color:var(--text);}
+.exam-section-label{font-size:1.02rem;font-weight:900;color:var(--text);letter-spacing:-0.2px;margin-bottom:6px;}
+.exam-section-hint{font-size:0.78rem;font-weight:700;color:var(--muted);line-height:1.45;}
+
+.exam-section{margin-top:4px;margin-bottom:8px;animation:fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+.exam-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:18px 12px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.2s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
+.exam-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;border-radius:18px;}
+.exam-card.yks::before{background:linear-gradient(135deg,rgba(56,189,248,0.14),rgba(129,140,248,0.12));}
+.exam-card.kpss::before{background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(251,191,36,0.1));}
+.exam-card.lgs::before{background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(251,146,60,0.1));}
+.exam-card.ales::before{background:linear-gradient(135deg,rgba(167,139,250,0.12),rgba(56,189,248,0.08));}
+.exam-card:active:not(.coming-soon){transform:scale(0.96);}
+.exam-card.yks:active{box-shadow:0 0 0 3px rgba(56,189,248,0.2);}
+.exam-card.coming-soon{cursor:default;opacity:0.58;}
 .exam-card.coming-soon:active{transform:none;}
 
-.coming-badge{position:absolute;top:8px;right:8px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;font-size:0.46rem;font-weight:900;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;padding:2px 5px;}
-.exam-emoji{font-size:1.75rem;display:block;margin-bottom:7px;}
-.exam-label{font-size:0.88rem;font-weight:900;display:block;margin-bottom:3px;color:var(--text);}
-.exam-desc{font-size:0.59rem;font-weight:700;color:var(--muted);line-height:1.5;}
+.coming-badge{position:absolute;top:9px;right:9px;background:rgba(15,23,42,0.85);border:1px solid var(--border);border-radius:6px;font-size:0.5rem;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;padding:3px 6px;}
+.exam-emoji{font-size:1.85rem;display:block;margin-bottom:8px;}
+.exam-label{font-size:0.9rem;font-weight:900;display:block;margin-bottom:4px;color:var(--text);}
+.exam-desc{font-size:0.6rem;font-weight:700;color:var(--muted);line-height:1.45;}
 
-.btn-start{width:100%;padding:15px;border:none;border-radius:15px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:900;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 22px rgba(56,189,248,0.28);animation:fadeUp 0.7s 0.3s cubic-bezier(.4,0,.2,1) both;-webkit-tap-highlight-color:transparent;}
-.btn-start:disabled{opacity:0.3;cursor:not-allowed;box-shadow:none;}
-.btn-start:not(:disabled):active{transform:scale(0.97);}
-
-.login-link{text-align:center;margin-top:14px;font-size:0.77rem;font-weight:700;color:var(--muted);animation:fadeUp 0.7s 0.35s cubic-bezier(.4,0,.2,1) both;}
-.login-link span{color:var(--accent);cursor:pointer;font-weight:800;text-decoration:underline;text-underline-offset:2px;}
-
-.landing-footer{margin-top:auto;padding-top:26px;text-align:center;font-size:0.63rem;font-weight:700;color:var(--muted);line-height:1.8;animation:fadeUp 0.7s 0.4s cubic-bezier(.4,0,.2,1) both;}
-.landing-footer strong{color:var(--accent3);}
+.landing-toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120%);
+  background:var(--bg2);border:1.5px solid var(--border);border-radius:14px;padding:12px 20px;
+  font-size:0.82rem;font-weight:800;color:var(--text);box-shadow:0 12px 40px rgba(0,0,0,0.45);
+  z-index:800;opacity:0;transition:transform 0.35s cubic-bezier(.34,1.56,.64,1),opacity 0.25s;pointer-events:none;max-width:min(340px,92vw);text-align:center;
+}
+.landing-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
 /* ══ AUTH EKRANI ══ */
 #screenAuth{align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;}
@@ -170,12 +199,12 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .ob-sinif-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);color:var(--accent);}
 
 @media(max-height:680px){
-  .landing-inner{padding:32px 20px 28px;}
-  .hero-logo-icon{width:62px;height:62px;font-size:1.7rem;}
+  .landing-inner{padding:28px 18px 24px;}
+  .hero-logo-icon{width:72px;height:72px;font-size:2rem;}
   .hero-logo-name{font-size:2.1rem;}
-  .feature-pills{margin-bottom:22px;}
-  .exam-card{padding:13px 10px;}
-  .exam-emoji{font-size:1.5rem;margin-bottom:5px;}
+  .welcome-title{font-size:1.05rem;}
+  .exam-card{padding:14px 10px;}
+  .exam-emoji{font-size:1.55rem;margin-bottom:5px;}
 }
 </style>
 </head>
@@ -194,71 +223,72 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div class="screen active" id="screenLanding">
   <div class="landing-inner">
 
-    <div class="hero">
-      <div class="hero-logo-icon">&#x1F98A;</div>
-      <div class="hero-logo-name">Pugi</div>
-      <div class="hero-tagline">YKS hazırlığının<br>akıllı yardımcısı</div>
-      <div class="hero-sub">Zamanlayıcı, hedef takibi, AI koç ve daha fazlası.<br>Tamamen ücretsiz.</div>
-    </div>
+    <!-- Karşılama -->
+    <div id="panelWelcome" class="landing-panel is-active">
+      <div class="hero">
+        <div class="hero-logo-icon">&#x1F98A;</div>
+        <div class="hero-logo-name">Pugi</div>
+        <h1 class="welcome-title">Pugi Ders Koçu&#x2019;na<br>hoş geldin!</h1>
+        <p class="welcome-sub">Sınav hazırlığını planla, çalışmanı takip et, hedefe odaklan &mdash; tek yerden.</p>
+      </div>
 
-    <div class="feature-pills">
-      <div class="feature-pill"><span class="pill-icon">&#x23F1;</span>Zamanlayıcı</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F3AF;</span>Hedef Takibi</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F4CA;</span>İstatistikler</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F916;</span>AI Koç</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F525;</span>Günlük Seri</div>
-      <div class="feature-pill"><span class="pill-icon">&#x1F3C6;</span>Rozetler</div>
-    </div>
+      <button type="button" class="btn-start" onclick="openExamPicker()">Hemen Başla</button>
+      <button type="button" class="btn-secondary-landing" onclick="goToAuthScreen()">Giriş yap / Kayıt ol</button>
 
-    <div class="exam-section">
-      <div class="exam-section-label">Hangi sınava çalışıyorsun?</div>
-      <div class="exam-grid">
-
-        <div class="exam-card yks" id="examYks" onclick="selectExam('yks',this)">
-          <span class="exam-emoji">&#x1F4DA;</span>
-          <span class="exam-label">YKS</span>
-          <span class="exam-desc">TYT &middot; AYT<br>SAY / SÖZ / EA / DİL</span>
-        </div>
-
-        <div class="exam-card kpss coming-soon" onclick="showComingSoon()">
-          <span class="coming-badge">Yakında</span>
-          <span class="exam-emoji">&#x1F3DB;</span>
-          <span class="exam-label">KPSS</span>
-          <span class="exam-desc">Kamu personeli<br>seçme sınavı</span>
-        </div>
-
-        <div class="exam-card lgs coming-soon" onclick="showComingSoon()">
-          <span class="coming-badge">Yakında</span>
-          <span class="exam-emoji">&#x1F392;</span>
-          <span class="exam-label">LGS</span>
-          <span class="exam-desc">Liseye geçiş<br>sınavı</span>
-        </div>
-
-        <div class="exam-card other coming-soon" onclick="showComingSoon()">
-          <span class="coming-badge">Yakında</span>
-          <span class="exam-emoji">&#x1F4DD;</span>
-          <span class="exam-label">Diğer</span>
-          <span class="exam-desc">ALES &middot; DGS<br>ve daha fazlası</span>
-        </div>
-
+      <div class="landing-footer">
+        Misafir olarak <strong>YKS</strong> ile hemen başlayabilirsin.<br>
+        Daha fazlası için kayıt ol &mdash; <strong>temel özellikler ücretsiz</strong>.
       </div>
     </div>
 
-    <button class="btn-start" id="btnStart" onclick="goToExamAction()" disabled>
-      Hemen Başla &#x2192;
-    </button>
+    <!-- Sınav seçimi (misafir) -->
+    <div id="panelExams" class="landing-panel">
+      <div class="exam-picker-head">
+        <div class="landing-back-row">
+          <button type="button" class="btn-landing-back" onclick="closeExamPicker()" aria-label="Geri">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
+        <div class="exam-section-label">Hangi sınava hazırlanıyorsun?</div>
+        <p class="exam-section-hint">Birini seç; şu an <strong style="color:var(--accent)">YKS</strong> ile devam edebilirsin.</p>
+      </div>
 
-    <div class="login-link">
-      <span onclick="goToAuthScreen()">Giriş Yap / Kayıt Ol</span>
-    </div>
+      <div class="exam-section">
+        <div class="exam-grid">
+          <div class="exam-card yks" onclick="guestEnterExam('yks')">
+            <span class="exam-emoji">&#x1F4DA;</span>
+            <span class="exam-label">YKS</span>
+            <span class="exam-desc">TYT &middot; AYT<br>Sayısal / Sözel / EA / Dil</span>
+          </div>
 
-    <div class="landing-footer">
-      <strong>Kayıt gerektirmez.</strong> Hemen dene, beğenirsen kayıt ol.<br>
-      Tüm özellikler <strong>tamamen ücretsiz</strong>.
+          <div class="exam-card lgs coming-soon" onclick="showComingSoon()">
+            <span class="coming-badge">Yakında</span>
+            <span class="exam-emoji">&#x1F392;</span>
+            <span class="exam-label">LGS</span>
+            <span class="exam-desc">Liseye geçiş sınavı</span>
+          </div>
+
+          <div class="exam-card ales coming-soon" onclick="showComingSoon()">
+            <span class="coming-badge">Yakında</span>
+            <span class="exam-emoji">&#x1F4C8;</span>
+            <span class="exam-label">ALES</span>
+            <span class="exam-desc">Lisansüstü sınavı</span>
+          </div>
+
+          <div class="exam-card kpss coming-soon" onclick="showComingSoon()">
+            <span class="coming-badge">Yakında</span>
+            <span class="exam-emoji">&#x1F3DB;</span>
+            <span class="exam-label">KPSS</span>
+            <span class="exam-desc">Kamu personeli seçme</span>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
 </div>
+
+<div id="landingToast" class="landing-toast" role="status" aria-live="polite"></div>
 
 <!-- EKRAN 2: HESAP TÜRÜ + GİRİŞ/KAYIT -->
 <div class="screen" id="screenAuth">
@@ -491,7 +521,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
 <script>
 'use strict';
-var selectedAccountType=null,selectedExam=null,authMode='login';
+var selectedAccountType=null,authMode='login';
 
 // ── Onboarding State ─────────────────────────────
 var _obDal      = null;   // sayisal|sozel|ea|dil
@@ -544,24 +574,37 @@ var firebaseConfig = {
 var _fbApp=null,_fbDb=null,_fbAuth=null;
 
 function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
-function goToLanding(){showScreen('screenLanding');}
+function resetLandingToWelcome(){
+  var w=document.getElementById('panelWelcome'),e=document.getElementById('panelExams');
+  if(w&&e){e.classList.remove('is-active');w.classList.add('is-active');}
+}
+function goToLanding(){showScreen('screenLanding');resetLandingToWelcome();}
 function goToAuthScreen(){showScreen('screenAuth');document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';}
 
-function selectExam(exam,el){
-  document.querySelectorAll('.exam-card:not(.coming-soon)').forEach(function(c){c.classList.remove('selected');});
-  el.classList.add('selected');selectedExam=exam;
-  var btn=document.getElementById('btnStart');btn.disabled=false;btn.textContent='Hemen Başla \u2192';
+function openExamPicker(){
+  var w=document.getElementById('panelWelcome'),e=document.getElementById('panelExams');
+  if(!w||!e)return;
+  w.classList.remove('is-active');e.classList.add('is-active');
+  window.scrollTo(0,0);
 }
-function showComingSoon(){
-  var btn=document.getElementById('btnStart'),orig=btn.textContent;
-  btn.style.background='linear-gradient(135deg,var(--muted),#374151)';btn.style.boxShadow='none';btn.textContent='\u23F3 Yakında geliyor!';
-  setTimeout(function(){btn.style.background='';btn.style.boxShadow='';btn.textContent=orig;},1800);
+function closeExamPicker(){
+  resetLandingToWelcome();
+  window.scrollTo(0,0);
 }
-function goToExamAction(){
-  if(!selectedExam)return;
-  sessionStorage.setItem('pugi_sinav',selectedExam);
+
+function guestEnterExam(exam){
+  if(exam!=='yks')return;
+  sessionStorage.setItem('pugi_sinav',exam);
   sessionStorage.setItem('pugi_guest','true');
   window.location.href='student.html';
+}
+function showComingSoon(){
+  var t=document.getElementById('landingToast');
+  if(!t)return;
+  t.textContent='\u23F3 Bu sınav yakında eklenecek!';
+  t.classList.add('show');
+  clearTimeout(window._landingToastTimer);
+  window._landingToastTimer=setTimeout(function(){t.classList.remove('show');},2400);
 }
 
 function selectType(type,el){
