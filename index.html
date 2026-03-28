@@ -183,6 +183,40 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 }
 .landing-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 
+/* Kaydırınca sağ üst — Hemen Başla */
+.landing-float-cta{
+  position:fixed;
+  top:max(10px, env(safe-area-inset-top, 10px));
+  right:max(12px, env(safe-area-inset-right, 12px));
+  z-index:70;
+  padding:10px 16px;
+  border:none;
+  border-radius:999px;
+  font-family:'Nunito',sans-serif;
+  font-size:0.78rem;
+  font-weight:900;
+  letter-spacing:0.02em;
+  color:#0c1220;
+  background:linear-gradient(180deg,#5ad4ff 0%,#38bdf8 45%,#0ea5e9 100%);
+  box-shadow:0 3px 0 #0369a1, 0 8px 22px rgba(56,189,248,0.35);
+  cursor:pointer;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(-10px) scale(0.96);
+  transition:opacity 0.28s ease, transform 0.28s cubic-bezier(.34,1.56,.64,1);
+  -webkit-tap-highlight-color:transparent;
+}
+.landing-float-cta.is-visible{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateY(0) scale(1);
+}
+.landing-float-cta:active{transform:translateY(2px) scale(0.98);box-shadow:0 1px 0 #0369a1, 0 4px 14px rgba(56,189,248,0.3);}
+@media(prefers-reduced-motion:reduce){
+  .landing-float-cta{transition:opacity 0.2s;}
+  .landing-float-cta.is-visible{transform:translateY(0) scale(1);}
+}
+
 /* ══ AUTH EKRANI ══ */
 #screenAuth{align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 .auth-inner{width:100%;max-width:420px;padding:24px 20px;}
@@ -408,6 +442,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
   </div>
 </div>
+
+<button type="button" id="landingFloatCta" class="landing-float-cta" onclick="landingFloatHemenBasla()" aria-label="Hemen başla — sınav seç">
+  Hemen Başla
+</button>
 
 <div id="landingToast" class="landing-toast" role="status" aria-live="polite"></div>
 
@@ -694,7 +732,7 @@ var firebaseConfig = {
 };
 var _fbApp=null,_fbDb=null,_fbAuth=null;
 
-function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);updateLandingFloatCta();}
 function resetLandingToWelcome(){
   var w=document.getElementById('panelWelcome'),e=document.getElementById('panelExams');
   if(w&&e){e.classList.remove('is-active');w.classList.add('is-active');}
@@ -702,15 +740,34 @@ function resetLandingToWelcome(){
 function goToLanding(){showScreen('screenLanding');resetLandingToWelcome();}
 function goToAuthScreen(){showScreen('screenAuth');document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';}
 
+function updateLandingFloatCta(){
+  var btn=document.getElementById('landingFloatCta');
+  var land=document.getElementById('screenLanding');
+  var welcome=document.getElementById('panelWelcome');
+  if(!btn||!land)return;
+  var onLanding=land.classList.contains('active');
+  var onWelcome=welcome&&welcome.classList.contains('is-active');
+  var scrolled=land.scrollTop>100;
+  btn.classList.toggle('is-visible',onLanding&&onWelcome&&scrolled);
+}
+function landingFloatHemenBasla(){
+  openExamPicker();
+}
 function openExamPicker(){
   var w=document.getElementById('panelWelcome'),e=document.getElementById('panelExams');
+  var land=document.getElementById('screenLanding');
   if(!w||!e)return;
   w.classList.remove('is-active');e.classList.add('is-active');
+  if(land) land.scrollTop=0;
   window.scrollTo(0,0);
+  updateLandingFloatCta();
 }
 function closeExamPicker(){
   resetLandingToWelcome();
+  var land=document.getElementById('screenLanding');
+  if(land) land.scrollTop=0;
   window.scrollTo(0,0);
+  updateLandingFloatCta();
 }
 function scrollToLandingIntro(){
   var el=document.getElementById('landingIntro');
@@ -1126,6 +1183,11 @@ function getErrorMsg(code){var msgs={'auth/user-not-found':'Bu email ile kayıtl
 document.addEventListener('DOMContentLoaded',function(){
   initFirebase();
   document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('step2').style.display!=='none')submitAuth();});
+  var land=document.getElementById('screenLanding');
+  if(land){
+    land.addEventListener('scroll',updateLandingFloatCta,{passive:true});
+  }
+  updateLandingFloatCta();
 });
 </script>
 </body>
