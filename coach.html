@@ -382,6 +382,80 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
     </div>
   </div>
 
+  <!-- Profil Düzenleme Seçenekleri -->
+  <div onclick="toggleCoachCollapse('coachProfileEditBody','coachProfileEditArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
+    <div class="sec" style="margin-bottom:0">📝 Profil Bilgileri</div>
+    <svg id="coachProfileEditArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div id="coachProfileEditBody" style="display:none;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px">
+    
+    <!-- Fotoğraf Yükleme -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Profil Fotoğrafı</label>
+      <div id="coachPhotoPreview" style="width:100%;height:160px;border-radius:12px;background:var(--bg2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:8px;overflow:hidden">
+        <div style="text-align:center;pointer-events:none">
+          <div style="font-size:2rem;margin-bottom:6px">📷</div>
+          <div style="font-size:0.75rem;color:var(--muted);font-weight:700">Fotoğraf seç</div>
+        </div>
+      </div>
+      <input type="file" id="coachPhotoInput" accept="image/*" onchange="loadCoachPhoto()" style="display:none">
+      <button onclick="document.getElementById('coachPhotoInput').click()" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.8rem;cursor:pointer;margin-bottom:8px">📷 Fotoğraf Yükle</button>
+    </div>
+
+    <!-- Video Yükleme -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Tanıtım Videosu (Opsiyonel)</label>
+      <input type="file" id="coachVideoInput" accept="video/*" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.8rem">
+    </div>
+
+    <!-- Aylık Ücret -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">💰 Aylık Ücret (₺)</label>
+      <input type="number" id="coachMonthlyPrice" placeholder="Örn: 500" min="50" max="50000" style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.88rem;font-weight:700;outline:none">
+    </div>
+
+    <!-- Deneyim (Yıl) -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">📚 Öğretim Deneyimi (Yıl)</label>
+      <input type="number" id="coachExperience" placeholder="Örn: 5" min="0" max="60" style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.88rem;font-weight:700;outline:none">
+    </div>
+
+    <!-- Seviye -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">🎯 Seviye</label>
+      <select id="coachLevel" style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.88rem;font-weight:700;outline:none">
+        <option value="beginner">🟢 Başlangıç Seviyesi</option>
+        <option value="intermediate">🟡 Orta Seviye</option>
+        <option value="advanced">🔴 İleri Seviye</option>
+      </select>
+    </div>
+
+    <!-- Uzmanlık Alanları -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">🎓 Uzmanlık Alanları</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Matematik" style="cursor:pointer"> Matematik</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Türkçe" style="cursor:pointer"> Türkçe</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Fizik" style="cursor:pointer"> Fizik</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Kimya" style="cursor:pointer"> Kimya</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Biyoloji" style="cursor:pointer"> Biyoloji</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Tarih" style="cursor:pointer"> Tarih</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Coğrafya" style="cursor:pointer"> Coğrafya</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="İngilizce" style="cursor:pointer"> İngilizce</label>
+      </div>
+    </div>
+
+    <!-- Açıklama -->
+    <div style="margin-bottom:14px">
+      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">📄 Hakkında (Açıklama)</label>
+      <textarea id="coachDescription" placeholder="Kendini tanıt. Örn: Metodun, tecrübesi, başarıları vb..." 
+        style="width:100%;padding:11px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:0.85rem;font-weight:700;outline:none;resize:none;min-height:100px;font-family:'Nunito',sans-serif"></textarea>
+    </div>
+
+    <!-- Kaydet Butonu -->
+    <button onclick="saveCoachProfile()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--coach),var(--coach2));color:#000;font-weight:900;font-size:0.9rem;cursor:pointer;font-family:'Nunito',sans-serif">✅ Profili Kaydet</button>
+  </div>
+
   <!-- Rozetler -->
   <div onclick="toggleCoachCollapse('coachBadgesBody','coachBadgesArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
     <div class="sec" style="margin-bottom:0">Başarımlarım</div>
@@ -2533,5 +2607,96 @@ document.addEventListener('DOMContentLoaded', initFirebase);
     <button onclick="closeCoachBadgeTooltip()" style="margin-top:14px;padding:8px 20px;border:none;border-radius:10px;background:var(--coach);color:#000;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:Nunito,sans-serif">Tamam</button>
   </div>
 </div>
+
+<!-- KOÇ PROFIL SCRIPT -->
+<script>
+
+// Koç profil fotoğrafı yükleme
+function loadCoachPhoto() {
+  var input = document.getElementById('coachPhotoInput');
+  if (!input.files || !input.files[0]) return;
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var preview = document.getElementById('coachPhotoPreview');
+    preview.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
+    window._coachPhotoData = e.target.result;
+    showToast('✅ Fotoğraf yüklendi');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+// Koç profil kaydetme
+function saveCoachProfile() {
+  var monthlyPrice = parseInt(document.getElementById('coachMonthlyPrice').value) || 0;
+  var experience = parseInt(document.getElementById('coachExperience').value) || 0;
+  var level = document.getElementById('coachLevel').value || 'beginner';
+  var description = document.getElementById('coachDescription').value.trim();
+  
+  // Uzmanlık alanlarını topla
+  var specialties = [];
+  document.querySelectorAll('.coachSpecialty:checked').forEach(function(checkbox) {
+    specialties.push(checkbox.value);
+  });
+
+  if (monthlyPrice < 50) {
+    showToast('❌ Ücret en az 50₺ olmalıdır');
+    return;
+  }
+
+  if (specialties.length === 0) {
+    showToast('❌ En az bir uzmanlık alanı seçmelisin');
+    return;
+  }
+
+  var coachProfileData = {
+    monthlyPrice: monthlyPrice,
+    experience: experience,
+    level: level,
+    description: description,
+    specialties: specialties,
+    photo: window._coachPhotoData || null,
+    updatedAt: new Date().toISOString()
+  };
+
+  // LocalStorage'a kaydet
+  localStorage.setItem('coachProfile', JSON.stringify(coachProfileData));
+  
+  showToast('✅ Profil başarıyla kaydedildi!');
+  
+  // Profil editleme bölümünü kapat
+  document.getElementById('coachProfileEditBody').style.display = 'none';
+}
+
+// Koç profil bilgilerini yükle (sayfa açıldığında)
+function loadCoachProfileData() {
+  var saved = localStorage.getItem('coachProfile');
+  if (!saved) return;
+
+  var data = JSON.parse(saved);
+  
+  if (data.monthlyPrice) document.getElementById('coachMonthlyPrice').value = data.monthlyPrice;
+  if (data.experience) document.getElementById('coachExperience').value = data.experience;
+  if (data.level) document.getElementById('coachLevel').value = data.level;
+  if (data.description) document.getElementById('coachDescription').value = data.description;
+  
+  if (data.specialties && data.specialties.length > 0) {
+    document.querySelectorAll('.coachSpecialty').forEach(function(checkbox) {
+      checkbox.checked = data.specialties.includes(checkbox.value);
+    });
+  }
+
+  if (data.photo) {
+    document.getElementById('coachPhotoPreview').innerHTML = '<img src="' + data.photo + '" style="width:100%;height:100%;object-fit:cover">';
+  }
+}
+
+// Sayfa yüklenince koç profil verisini yükle
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(loadCoachProfileData, 500);
+});
+
+</script>
+
 </body>
 </html>
