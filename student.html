@@ -1287,123 +1287,72 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div style="height:100px"></div>
 </div>
 
-<!-- ════════════════════ PAGE: KOÇLAR ════════════════════ -->
+<!-- ════════════════════ PAGE: DENEME ════════════════════ -->
 <div class="page" id="page-deneme">
-  <!-- Benim Koçlarım Butonu -->
+  <!-- Mod Seçici -->
   <div style="display:flex;gap:8px;margin-bottom:12px;margin-top:4px">
-    <button onclick="showMyCoaches()" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--accent2);background:rgba(129,140,248,0.12);color:var(--accent2);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">👨‍🏫 Benim Koçlarım</button>
-    <button onclick="toggleCoachSort()" style="padding:10px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">📊 Sırala</button>
+    <button id="modTamBtn" onclick="setDenemeMode('tam')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.12);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">📋 Tam Deneme</button>
+    <button id="modBransBtn" onclick="setDenemeMode('brans')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">🎯 Branş Denemesi</button>
   </div>
 
-  <!-- Arama ve Filtreleme -->
-  <div style="margin-bottom:12px">
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <input type="text" id="coachSearchInput" placeholder="Koç adı ara..." 
-        style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none"
-        oninput="filterCoaches()">
-      <button onclick="toggleCoachFilters()" style="padding:10px 14px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">⚙️ Filtre</button>
+  <!-- Tam Deneme Tipi -->
+  <div id="tamDenemeWrap">
+    <div class="sec" style="margin-top:0">Sınav Türü</div>
+    <div class="deneme-type-grid" id="denemeTypeGrid">
+      <div class="deneme-chip active" onclick="selectDenemeType('TYT',this)">📋 TYT</div>
+      <div class="deneme-chip" onclick="selectDenemeType('AYT_SAY',this)">🔢 AYT Sayısal</div>
+      <div class="deneme-chip" onclick="selectDenemeType('AYT_SOZ',this)">📜 AYT Sözel</div>
+      <div class="deneme-chip" onclick="selectDenemeType('AYT_EA',this)">⚖️ AYT EA</div>
     </div>
+  </div>
 
-    <!-- Filtreler (Gizli) -->
-    <div id="coachFiltersWrap" style="display:none;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;margin-bottom:10px">
-      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Seviye</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.78rem">
-          <input type="checkbox" id="levelBeginner" onchange="filterCoaches()" style="cursor:pointer"> 🟢 Başlangıç
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.78rem">
-          <input type="checkbox" id="levelIntermediate" onchange="filterCoaches()" style="cursor:pointer"> 🟡 Orta
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.78rem">
-          <input type="checkbox" id="levelAdvanced" onchange="filterCoaches()" style="cursor:pointer"> 🔴 İleri
-        </label>
+  <!-- Branş Denemesi Tipi -->
+  <div id="bransDenemeWrap" style="display:none">
+    <div class="sec" style="margin-top:0">Branş Seç</div>
+    <div style="margin-bottom:6px">
+      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">TYT</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px" id="bransTYTGrid">
+        <div class="brans-chip active" onclick="selectBransType('TYT_TURKCE',this)" data-key="TYT_TURKCE">📖 Türkçe <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('TYT_MAT',this)" data-key="TYT_MAT">📐 Matematik <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('TYT_FEN',this)" data-key="TYT_FEN">🧪 Fen <span class="brans-max">20 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('TYT_SOSYAL',this)" data-key="TYT_SOSYAL">🌍 Sosyal <span class="brans-max">20 soru</span></div>
       </div>
-
-      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Fiyat Aralığı</div>
-      <input type="range" id="coachPriceRange" min="0" max="10000" value="10000" onchange="filterCoaches()" 
-        style="width:100%;cursor:pointer;margin-bottom:6px">
-      <div style="font-size:0.72rem;color:var(--text);font-weight:700;text-align:center">₺ 0 - <span id="priceDisplay">10000</span> / Ay</div>
-    </div>
-  </div>
-
-  <div class="sec">Tüm Koçlar</div>
-  <div id="coachList" style="display:flex;flex-direction:column;gap:10px">
-    <!-- Koç kartları buraya gelecek -->
-    <div style="text-align:center;padding:40px 20px;color:var(--muted)">
-      <div style="font-size:1.2rem;margin-bottom:8px">📚</div>
-      <div style="font-size:0.85rem;font-weight:700">Koç yükleniyor...</div>
-    </div>
-  </div>
-
-  <!-- Koç Detay Modal -->
-  <div class="day-modal" id="coachDetailModal">
-    <div class="day-modal-overlay" onclick="closeCoachDetail()"></div>
-    <div class="day-modal-sheet" style="max-height:90vh">
-      <div class="day-modal-handle"></div>
-      <div class="day-modal-header">
-        <div>
-          <div class="day-modal-title" id="coachDetailName">Koç Adı</div>
-          <div style="font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:2px" id="coachDetailLevel">Seviye</div>
-        </div>
-        <button class="day-modal-close" onclick="closeCoachDetail()">✕</button>
-      </div>
-      <div class="day-modal-body" style="overflow-y:auto">
-        
-        <!-- Fotoğraf -->
-        <div id="coachDetailPhotoWrap" style="margin-bottom:16px;border-radius:14px;overflow:hidden;height:240px;background:var(--bg2)">
-          <img id="coachDetailPhoto" src="" alt="Coach" style="width:100%;height:100%;object-fit:cover">
-        </div>
-
-        <!-- Bilgiler -->
-        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-            <div>
-              <div style="font-size:0.65rem;font-weight:800;color:var(--muted);text-transform:uppercase">Aylık Ücret</div>
-              <div style="font-size:1.1rem;font-weight:900;color:var(--text);margin-top:4px" id="coachDetailPrice">₺ 0</div>
-            </div>
-            <div>
-              <div style="font-size:0.65rem;font-weight:800;color:var(--muted);text-transform:uppercase">Puan</div>
-              <div style="font-size:1.1rem;font-weight:900;color:var(--accent);margin-top:4px" id="coachDetailRating">⭐ 0.0</div>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div>
-              <div style="font-size:0.65rem;font-weight:800;color:var(--muted);text-transform:uppercase">Öğrenci</div>
-              <div style="font-size:1rem;font-weight:900;color:var(--text);margin-top:4px" id="coachDetailStudents">0</div>
-            </div>
-            <div>
-              <div style="font-size:0.65rem;font-weight:800;color:var(--muted);text-transform:uppercase">Tecrübe</div>
-              <div style="font-size:1rem;font-weight:900;color:var(--text);margin-top:4px" id="coachDetailExperience">0 yıl</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Açıklama -->
-        <div style="margin-bottom:12px">
-          <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hakkında</div>
-          <div id="coachDetailDescription" style="font-size:0.82rem;color:var(--text);line-height:1.6;background:var(--bg2);border-radius:10px;padding:12px;font-weight:600">Açıklama yok</div>
-        </div>
-
-        <!-- Uzmanlık Alanları -->
-        <div style="margin-bottom:16px">
-          <div style="font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Uzmanlık Alanları</div>
-          <div id="coachDetailSpecialties" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-        </div>
-
-        <!-- İletişim Butonu -->
-        <button id="coachContactBtn" onclick="contactCoachViaWhatsapp()" 
-          style="width:100%;padding:14px;background:linear-gradient(135deg,#34d399,#fbbf24);border:none;border-radius:14px;color:#000;font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(52,211,153,0.3);margin-bottom:10px">
-          💬 WhatsApp ile İletişim Kur
-        </button>
-
-        <div style="text-align:center;font-size:0.72rem;color:var(--muted);font-weight:600;margin-bottom:20px">
-          Aylık abonelik - Sistem içi ödeme yöntemi gelecek
-        </div>
-
+      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">AYT</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="bransAYTGrid">
+        <div class="brans-chip" onclick="selectBransType('AYT_MAT',this)" data-key="AYT_MAT">📐 Matematik <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_FEN',this)" data-key="AYT_FEN">⚛️ Fen <span class="brans-max">40 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_EDEBIYAT',this)" data-key="AYT_EDEBIYAT">📚 Edebiyat <span class="brans-max">24 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_TARIH',this)" data-key="AYT_TARIH">📜 Tarih <span class="brans-max">21 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_COG',this)" data-key="AYT_COG">🗺️ Coğrafya <span class="brans-max">17 soru</span></div>
+        <div class="brans-chip" onclick="selectBransType('AYT_FELSEFE',this)" data-key="AYT_FELSEFE">🤔 Felsefe <span class="brans-max">12 soru</span></div>
       </div>
     </div>
   </div>
 
+  <div class="sec">Sonuçlar</div>
+  <div id="denemeFields" class="deneme-fields" style="overflow:hidden"></div>
+
+  <div class="input-row" style="margin-bottom:8px">
+    <div class="input-group" style="flex:2">
+      <div class="input-label">🏷 Deneme Adı</div>
+      <input class="num-input" type="text" id="denemeIsim" placeholder="Örn: TYT Denemesi 1">
+    </div>
+    <div class="input-group" style="flex:1">
+      <div class="input-label">📅 Tarih</div>
+      <input class="num-input" type="date" id="denemedTarih">
+    </div>
+  </div>
+  <div class="input-row">
+    <div class="input-group">
+      <div class="input-label">📝 Not (isteğe bağlı)</div>
+      <input class="num-input" type="text" id="denemeNot" placeholder="Yorum...">
+    </div>
+  </div>
+
+  <button class="btn-save" onclick="saveDeneme()">💾 Deneme Kaydet</button>
+
+  <div class="sec">Geçmiş Denemeler</div>
+  <div class="log-list" id="denemeLog"></div>
   <div style="height:100px"></div>
 </div>
 
@@ -1884,7 +1833,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <!-- BOTTOM TABS -->
 <div class="tabs">
   <button class="tab-btn" onclick="switchTab('calis',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Çalış</span></button>
-  <button class="tab-btn" onclick="switchTab('deneme',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Koçlar</span></button>
+  <button class="tab-btn" onclick="switchTab('deneme',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span><span>Deneme</span></button>
   <button class="tab-btn active" onclick="switchTab('ana',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Ana</span></button>
   <button class="tab-btn" onclick="switchTab('stat',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>İstatistik</span></button>
   <button class="tab-btn" onclick="switchTab('rozet',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Profilim</span></button>
@@ -8718,354 +8667,6 @@ function confirmModalOk() {
     </div>
   </div>
 </div>
-
-// ═══════════════════════════════════════════════
-// KOÇLAR SİSTEMİ
-// ═══════════════════════════════════════════════
-
-var allCoaches = [
-  // Örnek Koçlar
-  { id: 1, name: 'Ahmet Yılmaz', level: 'advanced', rating: 4.9, price: 500, students: 45, experience: 6, description: 'YKS tarihçe uzmanı. 6 yıl tecrübe. Öğrencilerim her sınavda başarılı oluyor.', photo: 'https://via.placeholder.com/300x240?text=Coach1', specialties: ['Tarih', 'Coğrafya'] },
-  { id: 2, name: 'Zeynep Kaya', level: 'advanced', rating: 4.8, price: 450, students: 38, experience: 5, description: 'Matematik ve fizik profesörü. Sorum-cevap tekniği kullanırım.', photo: 'https://via.placeholder.com/300x240?text=Coach2', specialties: ['Matematik', 'Fizik'] },
-  { id: 3, name: 'Murat Demir', level: 'intermediate', rating: 4.6, price: 350, students: 28, experience: 3, description: 'Kimya ve biyoloji dersleri. Anlaşılır anlatım tarzı.', photo: 'https://via.placeholder.com/300x240?text=Coach3', specialties: ['Kimya', 'Biyoloji'] },
-  { id: 4, name: 'Ayşe Akşoy', level: 'intermediate', rating: 4.5, price: 300, students: 22, experience: 2, description: 'Türkçe ve İngilizce. Metod odaklı öğretim.', photo: 'https://via.placeholder.com/300x240?text=Coach4', specialties: ['Türkçe', 'İngilizce'] },
-  { id: 5, name: 'Emre Sever', level: 'beginner', rating: 4.3, price: 200, students: 15, experience: 1, description: 'Başlangıç seviyesi öğrenciler için ideal.', photo: 'https://via.placeholder.com/300x240?text=Coach5', specialties: ['Matematik', 'Türkçe'] },
-];
-
-var _currentCoachSort = 'rating';
-var _filteredCoaches = [...allCoaches];
-
-function initCoaches() {
-  renderCoachList();
-}
-
-function renderCoachList() {
-  var listEl = document.getElementById('coachList');
-  if (!_filteredCoaches || _filteredCoaches.length === 0) {
-    listEl.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--muted)"><div style="font-size:1.2rem;margin-bottom:8px">👨‍🏫</div><div style="font-size:0.85rem;font-weight:700">Koç bulunamadı</div></div>';
-    return;
-  }
-
-  var html = _filteredCoaches.map(function(coach) {
-    var levelIcon = coach.level === 'advanced' ? '🔴' : coach.level === 'intermediate' ? '🟡' : '🟢';
-    var levelText = coach.level === 'advanced' ? 'İleri' : coach.level === 'intermediate' ? 'Orta' : 'Başlangıç';
-    return `
-      <div onclick="showCoachDetail(${coach.id})" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;display:flex;gap:12px;cursor:pointer;transition:all 0.2s;align-items:flex-start">
-        <img src="${coach.photo}" alt="" style="width:64px;height:64px;border-radius:10px;object-fit:cover;flex-shrink:0">
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-            <div style="font-size:0.9rem;font-weight:900;color:var(--text)">${coach.name}</div>
-            <div style="font-size:0.7rem;background:rgba(52,211,153,0.15);color:#34d399;padding:2px 6px;border-radius:4px;font-weight:800">${levelIcon} ${levelText}</div>
-          </div>
-          <div style="font-size:0.75rem;color:var(--muted);font-weight:700;margin-bottom:6px">${coach.experience} yıl tecrübe • ${coach.students} öğrenci</div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-size:0.82rem;color:var(--accent);font-weight:800">⭐ ${coach.rating.toFixed(1)}</div>
-            <div style="font-size:0.9rem;font-weight:900;color:var(--text)">₺ ${coach.price}/Ay</div>
-          </div>
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  listEl.innerHTML = html;
-}
-
-function showCoachDetail(coachId) {
-  var coach = allCoaches.find(c => c.id === coachId);
-  if (!coach) return;
-
-  document.getElementById('coachDetailName').textContent = coach.name;
-  var levelText = coach.level === 'advanced' ? '🔴 İleri Seviye' : coach.level === 'intermediate' ? '🟡 Orta Seviye' : '🟢 Başlangıç Seviyesi';
-  document.getElementById('coachDetailLevel').textContent = levelText;
-  document.getElementById('coachDetailPhoto').src = coach.photo;
-  document.getElementById('coachDetailPrice').textContent = '₺ ' + coach.price + '/Ay';
-  document.getElementById('coachDetailRating').textContent = '⭐ ' + coach.rating.toFixed(1);
-  document.getElementById('coachDetailStudents').textContent = coach.students;
-  document.getElementById('coachDetailExperience').textContent = coach.experience + ' yıl';
-  document.getElementById('coachDetailDescription').textContent = coach.description;
-
-  var specialtiesHtml = coach.specialties.map(s => `<span style="background:var(--accent2)15;color:var(--accent2);padding:6px 10px;border-radius:8px;font-size:0.75rem;font-weight:800">${s}</span>`).join('');
-  document.getElementById('coachDetailSpecialties').innerHTML = specialtiesHtml;
-
-  // Modal açma
-  var modal = document.getElementById('coachDetailModal');
-  modal.style.display = 'flex';
-  modal.style.pointerEvents = 'auto';
-  setTimeout(function() {
-    modal.style.opacity = '1';
-    document.querySelector('#coachDetailModal .day-modal-sheet').style.transform = 'translateY(0)';
-  }, 50);
-
-  // İletişim butonu
-  window._selectedCoachId = coachId;
-}
-
-function closeCoachDetail() {
-  var modal = document.getElementById('coachDetailModal');
-  modal.style.opacity = '0';
-  document.querySelector('#coachDetailModal .day-modal-sheet').style.transform = 'translateY(100%)';
-  setTimeout(function() {
-    modal.style.display = 'none';
-    modal.style.pointerEvents = 'none';
-  }, 300);
-}
-
-function contactCoachViaWhatsapp() {
-  var coach = allCoaches.find(c => c.id === window._selectedCoachId);
-  if (!coach) return;
-  
-  var message = encodeURIComponent(`Merhaba! ${coach.name} ile çalışmak istiyorum. Aylık ${coach.price}₺'ye neler sunuyorsunuz?`);
-  var whatsappUrl = `https://wa.me/?text=${message}`;
-  window.open(whatsappUrl, '_blank');
-  showToast('💬 WhatsApp açılıyor...');
-  
-  // Koç aboneliği kaydet
-  subscribeToCoach(coach.id);
-}
-
-function subscribeToCoach(coachId) {
-  var coach = allCoaches.find(c => c.id === coachId);
-  if (!coach) return;
-
-  var studentCoaches = JSON.parse(localStorage.getItem('studentCoaches') || '[]');
-  
-  // Zaten var mı kontrol et
-  var existing = studentCoaches.find(sc => sc.coachId === coachId);
-  if (existing) {
-    showToast('⚠️ Bu koçla zaten bağlantılısın');
-    return;
-  }
-
-  var subscription = {
-    coachId: coachId,
-    coachName: coach.name,
-    coachPrice: coach.price,
-    startDate: new Date().toISOString(),
-    status: 'pending', // pending -> active -> paused
-    paymentMethod: 'whatsapp' // İlk aşama: whatsapp
-  };
-
-  studentCoaches.push(subscription);
-  localStorage.setItem('studentCoaches', JSON.stringify(studentCoaches));
-  
-  setTimeout(function() {
-    closeCoachDetail();
-    showMyCoaches();
-  }, 2000);
-}
-
-function showMyCoaches() {
-  var studentCoaches = JSON.parse(localStorage.getItem('studentCoaches') || '[]');
-  
-  // Modal oluştur
-  var modal = document.createElement('div');
-  modal.id = 'myCoachesModal';
-  modal.className = 'day-modal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:150;display:flex;align-items:flex-end;justify-content:center;pointer-events:auto;opacity:1';
-  
-  var html = `
-    <div class="day-modal-overlay" onclick="closeMyCoachesModal()"></div>
-    <div class="day-modal-sheet" style="max-height:85vh">
-      <div class="day-modal-handle"></div>
-      <div class="day-modal-header">
-        <div>
-          <div class="day-modal-title">👨‍🏫 Koçlarım</div>
-          <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:2px">Aktif ve Bekleyen Abonelikler</div>
-        </div>
-        <button class="day-modal-close" onclick="closeMyCoachesModal()">✕</button>
-      </div>
-      <div class="day-modal-body">
-  `;
-
-  if (studentCoaches.length === 0) {
-    html += '<div style="text-align:center;padding:40px 20px;color:var(--muted)"><div style="font-size:1.2rem;margin-bottom:8px">📚</div><div style="font-size:0.85rem;font-weight:700">Henüz koç seçmemişsin</div></div>';
-  } else {
-    studentCoaches.forEach(function(sub, idx) {
-      var statusColor = sub.status === 'active' ? '#34d399' : sub.status === 'pending' ? '#fbbf24' : '#6b7280';
-      var statusLabel = sub.status === 'active' ? '✅ Aktif' : sub.status === 'pending' ? '⏳ Beklemede' : '⏸️ Duraklat';
-      
-      html += `
-        <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
-            <div>
-              <div style="font-size:0.9rem;font-weight:900;color:var(--text)">${sub.coachName}</div>
-              <div style="font-size:0.75rem;color:var(--muted);font-weight:700;margin-top:2px">Aylık: ₺ ${sub.coachPrice}</div>
-            </div>
-            <div style="background:${statusColor}20;color:${statusColor};padding:4px 8px;border-radius:6px;font-size:0.68rem;font-weight:800">${statusLabel}</div>
-          </div>
-          <div style="font-size:0.7rem;color:var(--muted);margin-bottom:10px">
-            Başlama: ${new Date(sub.startDate).toLocaleDateString('tr-TR')}
-          </div>
-          <div style="display:flex;gap:6px">
-            <button onclick="contactCoachDirect(${sub.coachId})" style="flex:1;padding:8px;background:rgba(52,211,153,0.1);border:1.5px solid rgba(52,211,153,0.3);border-radius:10px;color:#34d399;font-size:0.75rem;font-weight:800;cursor:pointer">💬 İletişim</button>
-            <button onclick="removeCoachSubscription(${idx})" style="flex:1;padding:8px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.3);border-radius:10px;color:#ef4444;font-size:0.75rem;font-weight:800;cursor:pointer">🗑️ Sil</button>
-          </div>
-        </div>
-      `;
-    });
-  }
-
-  html += `
-        <div style="text-align:center;font-size:0.7rem;color:var(--muted);margin-top:16px;padding:16px;border-top:1.5px solid var(--border)">
-          <strong>⚠️ Ödeme Sistemi Yapımda</strong><br>
-          Şu an koçlarla WhatsApp üzerinden iletişim kurabilirsiniz. Sistem içi ödeme özelliği yakında aktif olacak.
-        </div>
-      </div>
-    </div>
-  `;
-
-  modal.innerHTML = html;
-  
-  // Eski modal'ı kaldır
-  var oldModal = document.getElementById('myCoachesModal');
-  if (oldModal) oldModal.remove();
-  
-  document.body.appendChild(modal);
-}
-
-function closeMyCoachesModal() {
-  var modal = document.getElementById('myCoachesModal');
-  if (modal) {
-    modal.style.opacity = '0';
-    setTimeout(() => modal.remove(), 300);
-  }
-}
-
-function contactCoachDirect(coachId) {
-  var coach = allCoaches.find(c => c.id === coachId);
-  if (coach) {
-    var message = encodeURIComponent(`Merhaba ${coach.name}! Öğretim sürecim hakkında konuşmak istiyorum.`);
-    var whatsappUrl = `https://wa.me/?text=${message}`;
-    window.open(whatsappUrl, '_blank');
-  }
-}
-
-function removeCoachSubscription(idx) {
-  if (!confirm('Bu koçtan ayrılmak istediğine emin misin?')) return;
-  
-  var studentCoaches = JSON.parse(localStorage.getItem('studentCoaches') || '[]');
-  studentCoaches.splice(idx, 1);
-  localStorage.setItem('studentCoaches', JSON.stringify(studentCoaches));
-  
-  showToast('❌ Koç aboneliği kaldırıldı');
-  showMyCoaches();
-}
-
-function toggleCoachFilters() {
-  var filtersWrap = document.getElementById('coachFiltersWrap');
-  filtersWrap.style.display = filtersWrap.style.display === 'none' ? 'block' : 'none';
-}
-
-function toggleCoachSort() {
-  // Sırala butonuna tıklanınca sıralama menüsü aç
-  var filtersWrap = document.getElementById('coachFiltersWrap');
-  // Hem filtreler hemde sırala açılsın
-  filtersWrap.style.display = filtersWrap.style.display === 'none' ? 'block' : 'none';
-  
-  // Sıralama butonlarını göster
-  var sortButtons = document.querySelectorAll('.coach-sort-btn');
-  if (sortButtons.length === 0) {
-    // Sıralama butonlarını dinamik olarak ekle
-    var sortHtml = `
-      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Sırala</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px">
-        <button onclick="sortCoaches('rating')" class="coach-sort-btn" style="padding:8px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.12);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer">⭐ Puan</button>
-        <button onclick="sortCoaches('price_low')" class="coach-sort-btn" style="padding:8px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer">💰 Ucuz</button>
-        <button onclick="sortCoaches('price_high')" class="coach-sort-btn" style="padding:8px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer">💸 Pahalı</button>
-        <button onclick="sortCoaches('name')" class="coach-sort-btn" style="padding:8px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer">A-Z</button>
-      </div>
-      <button onclick="sortCoaches('popular')" class="coach-sort-btn" style="width:100%;padding:8px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;margin-bottom:12px">👥 En Çok Tercih</button>
-    `;
-    
-    var wrap = document.getElementById('coachFiltersWrap');
-    wrap.innerHTML = sortHtml + wrap.innerHTML;
-  }
-}
-
-function filterCoaches() {
-  var searchTerm = (document.getElementById('coachSearchInput').value || '').toLowerCase();
-  var priceMax = parseInt(document.getElementById('coachPriceRange').value) || 10000;
-  var levelBeginner = document.getElementById('levelBeginner').checked;
-  var levelIntermediate = document.getElementById('levelIntermediate').checked;
-  var levelAdvanced = document.getElementById('levelAdvanced').checked;
-
-  // Fiyat aralığını güncelle
-  document.getElementById('priceDisplay').textContent = priceMax;
-
-  _filteredCoaches = allCoaches.filter(function(coach) {
-    var matchName = coach.name.toLowerCase().includes(searchTerm);
-    var matchPrice = coach.price <= priceMax;
-    var selectedLevels = [];
-    if (levelBeginner) selectedLevels.push('beginner');
-    if (levelIntermediate) selectedLevels.push('intermediate');
-    if (levelAdvanced) selectedLevels.push('advanced');
-    var matchLevel = selectedLevels.length === 0 || selectedLevels.includes(coach.level);
-
-    return matchName && matchPrice && matchLevel;
-  });
-
-  if (_currentCoachSort !== 'rating') {
-    sortCoaches(_currentCoachSort);
-  } else {
-    renderCoachList();
-  }
-}
-
-function sortCoaches(type) {
-  _currentCoachSort = type;
-  
-  // Buton rengini güncelle
-  document.querySelectorAll('.coach-sort-btn').forEach(btn => {
-    btn.style.border = '1.5px solid var(--border)';
-    btn.style.background = 'transparent';
-    btn.style.color = 'var(--muted)';
-  });
-  
-  var activeBtn = null;
-  if (type === 'rating') {
-    activeBtn = document.querySelector('.coach-sort-btn:nth-of-type(1)');
-    _filteredCoaches.sort((a, b) => b.rating - a.rating);
-  } else if (type === 'price_low') {
-    activeBtn = document.querySelector('.coach-sort-btn:nth-of-type(2)');
-    _filteredCoaches.sort((a, b) => a.price - b.price);
-  } else if (type === 'price_high') {
-    activeBtn = document.querySelector('.coach-sort-btn:nth-of-type(3)');
-    _filteredCoaches.sort((a, b) => b.price - a.price);
-  } else if (type === 'name') {
-    activeBtn = document.querySelector('.coach-sort-btn:nth-of-type(4)');
-    _filteredCoaches.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
-  } else if (type === 'popular') {
-    _filteredCoaches.sort((a, b) => b.students - a.students);
-  }
-
-  if (activeBtn) {
-    activeBtn.style.border = '1.5px solid var(--accent)';
-    activeBtn.style.background = 'rgba(56,189,248,0.12)';
-    activeBtn.style.color = 'var(--accent)';
-  }
-
-  renderCoachList();
-}
-
-// Sayfa açılınca koçları yükle
-document.addEventListener('DOMContentLoaded', function() {
-  if (document.getElementById('coachList')) {
-    initCoaches();
-  }
-});
-
-// Deneme tab'a basıldığında koçları yükle
-var originalSwitchTab = window.switchTab;
-window.switchTab = function(name, el) {
-  if (originalSwitchTab) {
-    originalSwitchTab(name, el);
-  }
-  if (name === 'deneme') {
-    setTimeout(initCoaches, 100);
-  }
-};
-
-</script>
 
 </body>
 </html>
