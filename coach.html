@@ -170,10 +170,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   </div>
 </div>
 
-<!-- SAYFA: Genel Bakış -->
-<div class="page active" id="page-overview">
-  <div class="sec">Genel Bakış</div>
-  <div class="stat-row">
+<!-- SAYFA: Öğrencilerim (Genel bakış istatistikleri dahil) -->
+<div class="page active" id="page-students">
+  <!-- İstatistik kartları -->
+  <div class="stat-row" style="margin-top:8px">
     <div class="stat-card">
       <div class="stat-val" id="ovStudentCount">—</div>
       <div class="stat-lbl">Öğrenci</div>
@@ -200,13 +200,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   <div id="pendingList"></div>
 
   <div class="sec">Öğrencilerim</div>
-  <div id="overviewStudentList"></div>
-</div>
-
-<!-- SAYFA: Öğrencilerim -->
-<div class="page" id="page-students">
-  <div class="sec">Öğrencilerim</div>
   <div id="studentList"></div>
+  <div id="overviewStudentList" style="display:none"></div>
 </div>
 
 <!-- SAYFA: Öğrenci İstatistik -->
@@ -430,21 +425,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
       </select>
     </div>
 
-    <!-- Uzmanlık Alanları -->
-    <div style="margin-bottom:14px">
-      <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">🎓 Uzmanlık Alanları</label>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Matematik" style="cursor:pointer"> Matematik</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Türkçe" style="cursor:pointer"> Türkçe</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Fizik" style="cursor:pointer"> Fizik</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Kimya" style="cursor:pointer"> Kimya</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Biyoloji" style="cursor:pointer"> Biyoloji</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Tarih" style="cursor:pointer"> Tarih</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="Coğrafya" style="cursor:pointer"> Coğrafya</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.8rem"><input type="checkbox" class="coachSpecialty" value="İngilizce" style="cursor:pointer"> İngilizce</label>
-      </div>
-    </div>
-
     <!-- Açıklama -->
     <div style="margin-bottom:14px">
       <label style="font-size:0.72rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">📄 Hakkında (Açıklama)</label>
@@ -472,79 +452,102 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 <!-- ════════════════════ SAYFA: İLAN ════════════════════ -->
 <div class="page" id="page-ilan">
 
-  <!-- Aktif İlan Özeti -->
-  <div id="ilanActiveWrap" style="display:none;background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(251,191,36,0.07));border:1.5px solid rgba(52,211,153,0.25);border-radius:18px;padding:16px;margin-bottom:14px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div style="font-size:0.68rem;font-weight:900;color:#34d399;letter-spacing:2px;text-transform:uppercase">✅ Aktif İlanın</div>
-      <button onclick="deleteCoachListing()" style="background:rgba(244,114,182,0.12);border:1.5px solid rgba(244,114,182,0.25);border-radius:8px;padding:5px 12px;color:#f472b6;font-weight:800;font-size:0.72rem;cursor:pointer;font-family:'Nunito',sans-serif">🗑 Kaldır</button>
+  <!-- Onay Durumu Banner -->
+  <div id="ilanApprovalBanner" style="display:none;border-radius:14px;padding:12px 14px;margin-bottom:12px;margin-top:6px"></div>
+
+  <!-- Profil Özeti Kartı (profil sayfasından gelen bilgiler) -->
+  <div style="background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(251,191,36,0.06));border:1.5px solid rgba(52,211,153,0.2);border-radius:18px;padding:16px;margin-bottom:12px;margin-top:6px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+      <div id="ilanProfilePhoto" style="width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#000;flex-shrink:0;overflow:hidden">K</div>
+      <div style="flex:1;min-width:0">
+        <div id="ilanProfileName" style="font-size:1rem;font-weight:900;margin-bottom:2px">—</div>
+        <div id="ilanProfilePrice" style="font-size:0.82rem;font-weight:900;color:var(--yellow)">—</div>
+        <div id="ilanProfileExp" style="font-size:0.7rem;color:var(--muted);font-weight:700;margin-top:2px">—</div>
+      </div>
     </div>
-    <div id="ilanActivePreview"></div>
+    <!-- İstatistik Satırı -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px">
+      <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
+        <div id="ilanStatViews" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#34d399">0</div>
+        <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Görüntüleme</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
+        <div id="ilanStatReviews" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#fbbf24">0</div>
+        <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Yorum</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
+        <div id="ilanStatRating" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#f472b6">—</div>
+        <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Puan</div>
+      </div>
+    </div>
+    <!-- Öğrenci Kabul Toggle -->
+    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.2);border-radius:12px;padding:12px 14px">
+      <div>
+        <div style="font-size:0.82rem;font-weight:900">Öğrenci Kabul Ediyorum</div>
+        <div id="ilanAcceptLabel" style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Aktif — Yeni öğrenci alabilirsin</div>
+      </div>
+      <div id="ilanAcceptToggle" onclick="toggleAcceptingStudents()" style="width:46px;height:26px;border-radius:13px;background:var(--coach);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
+        <div id="ilanAcceptThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:23px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
+      </div>
+    </div>
   </div>
 
-  <!-- İlan Form -->
-  <div class="sec" style="margin-top:4px">📢 İlan Bilgileri</div>
-  <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px">
+  <!-- İlan Detayları (sadece onaylıysa yayınlama formu görünür) -->
+  <div id="ilanFormWrap">
+    <div class="sec" style="margin-top:4px">📢 İlan Bilgileri</div>
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px">
 
-    <!-- Fotoğraf -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📷 Profil Fotoğrafı</div>
-      <div id="ilanPhotoPreview" onclick="document.getElementById('ilanPhotoInput').click()" style="width:100%;height:150px;border-radius:12px;background:var(--bg2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;margin-bottom:8px">
-        <div style="text-align:center;pointer-events:none">
-          <div style="font-size:2rem;margin-bottom:6px">📷</div>
-          <div style="font-size:0.75rem;color:var(--muted);font-weight:700">Fotoğraf eklemek için tıkla</div>
+      <!-- Fotoğraf -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📷 Profil Fotoğrafı</div>
+        <div id="ilanPhotoPreview" onclick="document.getElementById('ilanPhotoInput').click()" style="width:100%;height:150px;border-radius:12px;background:var(--bg2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;margin-bottom:8px">
+          <div style="text-align:center;pointer-events:none">
+            <div style="font-size:2rem;margin-bottom:6px">📷</div>
+            <div style="font-size:0.75rem;color:var(--muted);font-weight:700">Fotoğraf eklemek için tıkla</div>
+          </div>
         </div>
+        <input type="file" id="ilanPhotoInput" accept="image/*" onchange="loadIlanPhoto()" style="display:none">
       </div>
-      <input type="file" id="ilanPhotoInput" accept="image/*" onchange="loadIlanPhoto()" style="display:none">
-    </div>
 
-    <!-- Video -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🎬 Tanıtım Videosu (Opsiyonel)</div>
-      <div id="ilanVideoPreview" style="display:none;border-radius:10px;overflow:hidden;margin-bottom:8px;background:var(--bg2)">
-        <video id="ilanVideoEl" controls style="width:100%;max-height:200px;display:block"></video>
+      <!-- Video -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🎬 Tanıtım Videosu (Opsiyonel)</div>
+        <div id="ilanVideoPreview" style="display:none;border-radius:10px;overflow:hidden;margin-bottom:8px;background:var(--bg2)">
+          <video id="ilanVideoEl" controls style="width:100%;max-height:200px;display:block"></video>
+        </div>
+        <button onclick="document.getElementById('ilanVideoInput').click()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🎬 Video Yükle</button>
+        <input type="file" id="ilanVideoInput" accept="video/*" onchange="loadIlanVideo()" style="display:none">
       </div>
-      <button onclick="document.getElementById('ilanVideoInput').click()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🎬 Video Yükle</button>
-      <input type="file" id="ilanVideoInput" accept="video/*" onchange="loadIlanVideo()" style="display:none">
-    </div>
 
-    <!-- Aylık Fiyat -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">💰 Aylık Ücret (₺)</div>
-      <input type="number" id="ilanPrice" placeholder="Örn: 800" min="50" max="100000" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none" oninput="this.style.borderColor='var(--coach)'">
-    </div>
+      <!-- Aylık Fiyat -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">💰 Aylık Ücret (₺)</div>
+        <input type="number" id="ilanPrice" placeholder="Örn: 800" min="50" max="100000" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none" oninput="this.style.borderColor='var(--coach)'">
+      </div>
 
-    <!-- WhatsApp -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📱 WhatsApp Numarası</div>
-      <input type="tel" id="ilanWhatsapp" placeholder="Örn: 905xxxxxxxxx" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none" oninput="this.style.borderColor='var(--coach)'">
-      <div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:4px">Ülke kodu ile yaz (örn: 905321234567)</div>
-    </div>
+      <!-- WhatsApp -->
+      <div style="margin-bottom:14px">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📱 WhatsApp Numarası</div>
+        <input type="tel" id="ilanWhatsapp" placeholder="Örn: 905xxxxxxxxx" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none" oninput="this.style.borderColor='var(--coach)'">
+        <div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:4px">Ülke kodu ile yaz (örn: 905321234567)</div>
+      </div>
 
-    <!-- Uzmanlık -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🎓 Uzmanlık Alanları</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Matematik" style="cursor:pointer;accent-color:#34d399"> Matematik</label>
-        <label style="display:flex;align-items:center;gap=6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Türkçe" style="cursor:pointer;accent-color:#34d399"> Türkçe</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Fizik" style="cursor:pointer;accent-color:#34d399"> Fizik</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Kimya" style="cursor:pointer;accent-color:#34d399"> Kimya</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Biyoloji" style="cursor:pointer;accent-color:#34d399"> Biyoloji</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Tarih" style="cursor:pointer;accent-color:#34d399"> Tarih</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Coğrafya" style="cursor:pointer;accent-color:#34d399"> Coğrafya</label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="İngilizce" style="cursor:pointer;accent-color:#34d399"> İngilizce</label>
+      <!-- Açıklama -->
+      <div style="margin-bottom:16px">
+        <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📄 Açıklama</div>
+        <textarea id="ilanDesc" placeholder="Kendinizi tanıtın. Metodunuzu, tecrübenizi, başarılarınızı yazın..." style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;outline:none;resize:none;min-height:110px" oninput="this.style.borderColor='var(--coach)'"></textarea>
+      </div>
+
+      <!-- Yayınla Butonu -->
+      <button id="ilanPublishBtn" onclick="publishCoachListing()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 4px 18px rgba(52,211,153,0.3);transition:transform 0.15s" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''">
+        🚀 İlanı Yayınla
+      </button>
+
+      <!-- Aktif ilan kaldır -->
+      <div id="ilanDeleteWrap" style="display:none;margin-top:8px">
+        <button onclick="deleteCoachListing()" style="width:100%;padding:11px;border-radius:12px;border:1.5px solid rgba(244,114,182,0.3);background:rgba(244,114,182,0.08);color:#f472b6;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.88rem;cursor:pointer">🗑 Aktif İlanı Kaldır</button>
       </div>
     </div>
-
-    <!-- Açıklama -->
-    <div style="margin-bottom:16px">
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📄 Açıklama</div>
-      <textarea id="ilanDesc" placeholder="Kendinizi tanıtın. Metodunuzu, tecrübenizi, başarılarınızı yazın..." style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;outline:none;resize:none;min-height:110px" oninput="this.style.borderColor='var(--coach)'"></textarea>
-    </div>
-
-    <!-- Yayınla Butonu -->
-    <button onclick="publishCoachListing()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 4px 18px rgba(52,211,153,0.3);transition:transform 0.15s" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''">
-      🚀 İlanı Yayınla
-    </button>
   </div>
 
   <div style="height:100px"></div>
@@ -658,11 +661,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   </div>
 </div>
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('overview',this)">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-    <span>Genel</span>
-  </button>
-  <button class="tab-btn" onclick="switchTab('students',this)">
+  <button class="tab-btn active" id="studentsTabBtn" onclick="switchTab('students',this)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
     <span>Öğrenciler</span>
   </button>
@@ -794,9 +793,14 @@ function initFirebase() {
         _auth.onAuthStateChanged(function(user) {
           if (!user) { window.location.href = 'index.html'; return; }
           _user = user;
+          // Admin test modunda sınırlamaları kaldır
+          var adminTesting = sessionStorage.getItem('pugi_admin_testing');
+          if (adminTesting) {
+            window._isAdminTesting = true;
+          }
           loadCoachProfile();
-      coachProcessPendingAccepted();
-      coachProcessPendingRemoved();
+          coachProcessPendingAccepted();
+          coachProcessPendingRemoved();
         });
       });
     });
@@ -806,14 +810,34 @@ function initFirebase() {
 // ════════════════════ PROFİL ════════════════════
 function loadCoachProfile() {
   _db.collection('users').doc(_user.uid).get().then(function(doc) {
-    if (!doc.exists || doc.data().accountType !== 'coach') {
+    if (!doc.exists) { window.location.href = 'student.html'; return; }
+    var d = doc.data();
+
+    // Admin kontrolü — admin kendi paneline, ama test modundaysa geç
+    if (d.isAdmin && !window._isAdminTesting) {
+      window.location.href = 'admin.html';
+      return;
+    }
+
+    if (d.accountType !== 'coach' && !window._isAdminTesting) {
       window.location.href = 'student.html'; return;
     }
-    var d = doc.data();
     document.getElementById('coachAvatar').textContent = (d.displayName || 'K').charAt(0).toUpperCase();
     document.getElementById('coachName').textContent = d.displayName || '';
     document.getElementById('coachUname').textContent = '@' + (d.username || '');
+
+    // Admin test modu bildirimi
+    if (window._isAdminTesting) {
+      var banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;text-align:center;font-size:0.72rem;font-weight:900;padding:6px;z-index:9999;letter-spacing:0.5px';
+      banner.innerHTML = '⚡ ADMİN TEST MODU — <a href="admin.html" style="color:#000;text-decoration:underline">Panele Dön</a>';
+      document.body.insertBefore(banner, document.body.firstChild);
+    }
+
     document.getElementById('loading').classList.add('hidden');
+    // İlk tab: öğrenciler
+    var studentsBtn = document.getElementById('studentsTabBtn');
+    if (studentsBtn) studentsBtn.classList.add('active');
     loadAllData();
   });
 }
@@ -1818,6 +1842,7 @@ function switchTab(tab, el) {
   if (tab === 'reports') loadReports();
   if (tab === 'profile') { if (typeof loadCoachProfilePage === 'function') loadCoachProfilePage(); }
   if (tab === 'ilan')    { if (typeof loadIlanPage === 'function') loadIlanPage(); }
+  if (tab === 'students') { renderStudents(); renderPending(); updateOverviewStats(); }
 }
 
 function logout() {
@@ -2824,7 +2849,64 @@ function loadIlanVideo() {
   reader.readAsDataURL(file);
 }
 
+var _ilanPhotoData = null;
+var _ilanVideoData = null;
+var _coachAcceptingStudents = true;
+
+function loadIlanPhoto() {
+  var file = document.getElementById('ilanPhotoInput').files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast('❌ Fotoğraf 5MB\'dan küçük olmalı'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _ilanPhotoData = e.target.result;
+    var prev = document.getElementById('ilanPhotoPreview');
+    prev.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
+    showToast('✅ Fotoğraf yüklendi');
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadIlanVideo() {
+  var file = document.getElementById('ilanVideoInput').files[0];
+  if (!file) return;
+  if (file.size > 30 * 1024 * 1024) {
+    showToast('❌ Video 30MB\'dan küçük olmalı');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _ilanVideoData = e.target.result;
+    document.getElementById('ilanVideoPreview').style.display = 'block';
+    document.getElementById('ilanVideoEl').src = e.target.result;
+    showToast('✅ Video yüklendi');
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleAcceptingStudents() {
+  _coachAcceptingStudents = !_coachAcceptingStudents;
+  var toggle = document.getElementById('ilanAcceptToggle');
+  var thumb = document.getElementById('ilanAcceptThumb');
+  var label = document.getElementById('ilanAcceptLabel');
+  if (_coachAcceptingStudents) {
+    toggle.style.background = 'var(--coach)';
+    thumb.style.left = '23px';
+    label.textContent = 'Aktif — Yeni öğrenci alabilirsin';
+  } else {
+    toggle.style.background = 'var(--border)';
+    thumb.style.left = '3px';
+    label.textContent = 'Kapalı — Yeni öğrenci kabul etmiyorsun';
+  }
+  // Firestore'a kaydet
+  if (_user && _db) {
+    _db.collection('coachListings').doc(_user.uid).set({ acceptingStudents: _coachAcceptingStudents }, { merge: true });
+  }
+}
+
 function publishCoachListing() {
+  if (!_user || !_db) { showToast('❌ Giriş gerekli'); return; }
+
   var price = parseInt(document.getElementById('ilanPrice').value) || 0;
   var desc = document.getElementById('ilanDesc').value.trim();
   var whatsapp = document.getElementById('ilanWhatsapp').value.trim();
@@ -2833,107 +2915,148 @@ function publishCoachListing() {
   if (!desc) { showToast('❌ Açıklama boş bırakılamaz'); return; }
   if (!whatsapp) { showToast('❌ WhatsApp numarası giriniz'); return; }
 
-  var specialties = [];
-  document.querySelectorAll('.ilanSpecialty:checked').forEach(function(c){ specialties.push(c.value); });
-  if (specialties.length === 0) { showToast('❌ En az bir ders seçiniz'); return; }
+  var userName = _user.displayName || _user.email || 'Koç';
+  var btn = document.getElementById('ilanPublishBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Kaydediliyor...'; }
 
-  // Mevcut kullanıcı bilgisi
-  var userName = (typeof _user !== 'undefined' && _user) ? (_user.displayName || _user._username || _user.email || 'Koç') : 'Koç';
-  var userId = (typeof _user !== 'undefined' && _user) ? _user.uid : ('coach_' + Date.now());
+  // Profil bilgilerini çek
+  _db.collection('users').doc(_user.uid).get().then(function(uDoc) {
+    var profile = {};
+    try { profile = JSON.parse(localStorage.getItem('coachProfile_' + _user.uid) || '{}'); } catch(e){}
+    var d = uDoc.exists ? uDoc.data() : {};
 
-  // Koç XP (profil sayfasından al)
-  var coachXP = 0;
-  try {
-    var cData = JSON.parse(localStorage.getItem('coachData_' + userId) || '{}');
-    coachXP = cData.xp || 0;
-  } catch(e) {}
+    var listing = {
+      coachUid: _user.uid,
+      name: d.displayName || userName,
+      username: d.username || '',
+      monthlyPrice: price,
+      description: desc,
+      whatsapp: whatsapp,
+      photo: _ilanPhotoData || null,
+      video: _ilanVideoData || null,
+      experience: profile.experience || d.coachExperience || 0,
+      level: profile.level || d.coachLevel || 'beginner',
+      acceptingStudents: _coachAcceptingStudents,
+      approvalStatus: 'pending', // admin onayı bekliyor
+      views: 0,
+      reviewCount: 0,
+      rating: null,
+      updatedAt: new Date().toISOString()
+    };
 
-  // Koç rozetleri
-  var coachBadges = [];
-  try {
-    coachBadges = JSON.parse(localStorage.getItem('coachBadges_' + userId) || '[]');
-  } catch(e) {}
-
-  var listing = {
-    id: userId,
-    name: userName,
-    monthlyPrice: price,
-    description: desc,
-    whatsapp: whatsapp,
-    specialties: specialties,
-    photo: _ilanPhotoData || null,
-    video: _ilanVideoData || null,
-    xp: coachXP,
-    badges: coachBadges,
-    experience: (function(){
-      try { return JSON.parse(localStorage.getItem('coachProfile') || '{}').experience || 0; } catch(e){ return 0; }
-    })(),
-    publishedAt: new Date().toISOString()
-  };
-
-  // Tüm ilanları oku, bu koçun eskisini sil, yenisini ekle
-  var all = [];
-  try { all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]'); } catch(e){}
-  all = all.filter(function(l){ return l.id !== userId; });
-  all.unshift(listing);
-  localStorage.setItem('pugi_coach_listings', JSON.stringify(all));
-
-  showToast('🚀 İlanın yayınlandı!');
-  loadIlanPage();
+    return _db.collection('coachListings').doc(_user.uid).set(listing, { merge: true });
+  }).then(function() {
+    showToast('🚀 İlanın onay için gönderildi!');
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 İlanı Güncelle'; }
+    loadIlanPage();
+  }).catch(function(e) {
+    showToast('❌ Hata: ' + e.message);
+    if (btn) { btn.disabled = false; btn.textContent = '🚀 İlanı Yayınla'; }
+  });
 }
 
 function deleteCoachListing() {
-  var userId = (typeof _user !== 'undefined' && _user) ? _user.uid : null;
-  if (!userId) { showToast('❌ Oturum açık değil'); return; }
-  var all = [];
-  try { all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]'); } catch(e){}
-  all = all.filter(function(l){ return l.id !== userId; });
-  localStorage.setItem('pugi_coach_listings', JSON.stringify(all));
-  showToast('🗑 İlanın kaldırıldı');
-  loadIlanPage();
+  if (!_user || !_db) return;
+  _db.collection('coachListings').doc(_user.uid).delete().then(function() {
+    showToast('🗑 İlanın kaldırıldı');
+    loadIlanPage();
+  }).catch(function(e) { showToast('❌ ' + e.message); });
 }
 
 function loadIlanPage() {
-  var userId = (typeof _user !== 'undefined' && _user) ? _user.uid : null;
-  if (!userId) return;
+  if (!_user || !_db) return;
 
-  var all = [];
-  try { all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]'); } catch(e){}
-  var myListing = all.find(function(l){ return l.id === userId; });
+  // Profil bilgilerini göster
+  var d = {};
+  try { d = JSON.parse(localStorage.getItem('coachProfile_' + _user.uid) || '{}'); } catch(e){}
 
-  var activeWrap = document.getElementById('ilanActiveWrap');
-  var activePreview = document.getElementById('ilanActivePreview');
-  if (!activeWrap) return;
+  _db.collection('users').doc(_user.uid).get().then(function(uDoc) {
+    var ud = uDoc.exists ? uDoc.data() : {};
+    var nameEl = document.getElementById('ilanProfileName');
+    var priceEl = document.getElementById('ilanProfilePrice');
+    var expEl = document.getElementById('ilanProfileExp');
+    if (nameEl) nameEl.textContent = ud.displayName || _user.displayName || 'Koç';
+    if (priceEl) priceEl.textContent = d.monthlyPrice ? d.monthlyPrice + '₺/ay' : 'Ücret belirtilmemiş';
+    if (expEl) expEl.textContent = (d.experience || ud.coachExperience || 0) + ' yıl deneyim';
 
-  if (myListing) {
-    activeWrap.style.display = 'block';
-    var specialtyTags = (myListing.specialties || []).map(function(s){
-      return '<span style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:0.65rem;font-weight:800;padding:3px 9px;border-radius:99px">' + s + '</span>';
-    }).join('');
-    activePreview.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
-      + (myListing.photo ? '<img src="' + myListing.photo + '" style="width:48px;height:48px;border-radius:12px;object-fit:cover;flex-shrink:0">' : '<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">🎓</div>')
-      + '<div><div style="font-weight:900;font-size:0.9rem;margin-bottom:2px">' + (myListing.name || 'Koç') + '</div>'
-      + '<div style="font-size:0.8rem;font-weight:900;color:var(--yellow)">' + myListing.monthlyPrice + '₺/ay</div></div></div>'
-      + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">' + specialtyTags + '</div>'
-      + (myListing.video ? '<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:10px;padding:8px;font-size:0.75rem;font-weight:800;color:#34d399;margin-bottom:6px">🎬 Video mevcut</div>' : '')
-      + '<div style="font-size:0.78rem;color:var(--muted);font-weight:700;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + myListing.description + '</div>';
-
-    // Formu doldur
-    document.getElementById('ilanPrice').value = myListing.monthlyPrice || '';
-    document.getElementById('ilanDesc').value = myListing.description || '';
-    document.getElementById('ilanWhatsapp').value = myListing.whatsapp || '';
-    if (myListing.photo) {
-      document.getElementById('ilanPhotoPreview').innerHTML = '<img src="' + myListing.photo + '" style="width:100%;height:100%;object-fit:cover">';
-      _ilanPhotoData = myListing.photo;
+    // Avatar
+    var avatarEl = document.getElementById('ilanProfilePhoto');
+    if (avatarEl) {
+      if (d.photo) {
+        avatarEl.innerHTML = '<img src="' + d.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">';
+      } else {
+        avatarEl.textContent = (ud.displayName || 'K').charAt(0).toUpperCase();
+      }
     }
-    if (myListing.specialties) {
-      document.querySelectorAll('.ilanSpecialty').forEach(function(c){
-        c.checked = myListing.specialties.includes(c.value);
-      });
+  });
+
+  // Firestore'dan ilan verilerini çek
+  _db.collection('coachListings').doc(_user.uid).get().then(function(doc) {
+    var banner = document.getElementById('ilanApprovalBanner');
+    var deleteWrap = document.getElementById('ilanDeleteWrap');
+    var publishBtn = document.getElementById('ilanPublishBtn');
+
+    if (doc.exists) {
+      var data = doc.data();
+
+      // İstatistikler
+      var viewsEl = document.getElementById('ilanStatViews');
+      var reviewsEl = document.getElementById('ilanStatReviews');
+      var ratingEl = document.getElementById('ilanStatRating');
+      if (viewsEl) viewsEl.textContent = data.views || 0;
+      if (reviewsEl) reviewsEl.textContent = data.reviewCount || 0;
+      if (ratingEl) ratingEl.textContent = data.rating ? data.rating.toFixed(1) : '—';
+
+      // Öğrenci kabul toggle
+      _coachAcceptingStudents = data.acceptingStudents !== false;
+      var toggle = document.getElementById('ilanAcceptToggle');
+      var thumb = document.getElementById('ilanAcceptThumb');
+      var label = document.getElementById('ilanAcceptLabel');
+      if (toggle) toggle.style.background = _coachAcceptingStudents ? 'var(--coach)' : 'var(--border)';
+      if (thumb) thumb.style.left = _coachAcceptingStudents ? '23px' : '3px';
+      if (label) label.textContent = _coachAcceptingStudents ? 'Aktif — Yeni öğrenci alabilirsin' : 'Kapalı — Yeni öğrenci kabul etmiyorsun';
+
+      // Onay durumu
+      var status = data.approvalStatus || 'pending';
+      if (banner) {
+        banner.style.display = 'block';
+        if (status === 'approved') {
+          banner.style.background = 'rgba(52,211,153,0.1)';
+          banner.style.border = '1.5px solid rgba(52,211,153,0.3)';
+          banner.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">✅</span><div><div style="font-size:0.82rem;font-weight:900;color:#34d399">İlanın Yayında!</div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-top:2px">Öğrenciler profilini görebilir.</div></div></div>';
+        } else if (status === 'rejected') {
+          banner.style.background = 'rgba(244,114,182,0.08)';
+          banner.style.border = '1.5px solid rgba(244,114,182,0.25)';
+          banner.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">❌</span><div><div style="font-size:0.82rem;font-weight:900;color:#f472b6">İlanın Reddedildi</div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-top:2px">' + (data.rejectionReason || 'Düzenleyip tekrar gönderebilirsin.') + '</div></div></div>';
+        } else {
+          banner.style.background = 'rgba(251,191,36,0.08)';
+          banner.style.border = '1.5px solid rgba(251,191,36,0.25)';
+          banner.innerHTML = '<div style="display:flex;align-items:center;gap:8px"><span style="font-size:1.1rem">⏳</span><div><div style="font-size:0.82rem;font-weight:900;color:#fbbf24">Onay Bekleniyor</div><div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-top:2px">İlanın admin tarafından inceleniyor.</div></div></div>';
+        }
+      }
+
+      // Formu doldur
+      var priceInput = document.getElementById('ilanPrice');
+      var descInput = document.getElementById('ilanDesc');
+      var wpInput = document.getElementById('ilanWhatsapp');
+      if (priceInput) priceInput.value = data.monthlyPrice || '';
+      if (descInput) descInput.value = data.description || '';
+      if (wpInput) wpInput.value = data.whatsapp || '';
+      if (data.photo) {
+        _ilanPhotoData = data.photo;
+        var prev = document.getElementById('ilanPhotoPreview');
+        if (prev) prev.innerHTML = '<img src="' + data.photo + '" style="width:100%;height:100%;object-fit:cover">';
+      }
+
+      if (publishBtn) publishBtn.textContent = '🔄 İlanı Güncelle';
+      if (deleteWrap) deleteWrap.style.display = 'block';
+
+    } else {
+      // İlan yok
+      if (banner) banner.style.display = 'none';
+      if (deleteWrap) deleteWrap.style.display = 'none';
+      if (publishBtn) publishBtn.textContent = '🚀 İlanı Yayınla';
     }
-  } else {
-    activeWrap.style.display = 'none';
-  }
+  });
 }
-
 </script>

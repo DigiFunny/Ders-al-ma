@@ -1389,7 +1389,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
           <div id="cpm-avatar" style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#000;flex-shrink:0;overflow:hidden"></div>
           <div style="flex:1;min-width:0">
             <div id="cpm-name" style="font-size:1rem;font-weight:900;margin-bottom:3px"></div>
-            <div id="cpm-specialties" style="font-size:0.68rem;color:#34d399;font-weight:800;margin-bottom:4px"></div>
             <div id="cpm-price" style="font-size:0.8rem;font-weight:900;color:var(--yellow)"></div>
           </div>
           <button onclick="closeCoachProfileModal()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:4px;flex-shrink:0">✕</button>
@@ -3977,6 +3976,22 @@ function onUserLoggedIn(user) {
     var accountType = data.accountType || 'student';
     if (_currentUser) { _currentUser._username = username; _currentUser._accountType = accountType; }
 
+    // Admin kontrolü — test modunda değilse admin paneline yönlendir
+    var adminTesting = sessionStorage.getItem('pugi_admin_testing');
+    if (data.isAdmin && !adminTesting) {
+      window.location.href = 'admin.html';
+      return;
+    }
+    // Admin test modu aktifse limit kısıtlamalarını kaldır
+    if (adminTesting) {
+      window._isAdminTesting = true;
+      // Üst banner ekle
+      var ab = document.createElement('div');
+      ab.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#000;text-align:center;font-size:0.72rem;font-weight:900;padding:6px;z-index:9999;letter-spacing:0.5px';
+      ab.innerHTML = '⚡ ADMİN TEST MODU — <a href="admin.html" style="color:#000;text-decoration:underline">Panele Dön</a>';
+      document.body.insertBefore(ab, document.body.firstChild);
+    }
+
     // Kullanıcı profilini global state'e yükle
     _userProfil = {
       dal:                data.dal                || null,
@@ -4539,6 +4554,12 @@ function _updateDeepBtn() {
  * Hak kontrolü yapar, Gemini'ye uzun analiz isteği gönderir.
  */
 function requestDeepAnalysis() {
+  // Admin test modunda sınırsız kullanım
+  if (window._isAdminTesting) {
+    _fetchAiSuggestion(true);
+    showToast('🔍 Derin analiz başlatıldı... (Admin)');
+    return;
+  }
   if (_aiDeepHakSayisi <= 0) {
     showToast('Bu haftaki derin analiz hakkını kullandın. Pazartesi yenilenir.');
     return;
@@ -8699,22 +8720,23 @@ function setCoachSort(mode) {
 function renderCoachListings() {
   _coachSubjectFilter = '';
   _coachSortMode = 'default';
-  filterCoachListings();
+  if (_fbDb) {
+    loadCoachListingsFromFirestore();
+  } else {
+    filterCoachListings();
+  }
 }
 
 function filterCoachListings() {
   var listings = getCoachListings();
   var query = ((document.getElementById('coachSearchInput') || {}).value || '').toLowerCase();
 
-  // Arama + ders filtresi
+  // Arama filtresi (specialty kaldırıldı)
   var filtered = listings.filter(function(l) {
     var matchQuery = !query ||
       (l.name && l.name.toLowerCase().includes(query)) ||
-      (l.specialties && l.specialties.join(' ').toLowerCase().includes(query)) ||
       (l.description && l.description.toLowerCase().includes(query));
-    var matchSubject = !_coachSubjectFilter ||
-      (l.specialties && l.specialties.includes(_coachSubjectFilter));
-    return matchQuery && matchSubject;
+    return matchQuery;
   });
 
   // Sıralama
@@ -8784,14 +8806,11 @@ function renderFilteredCoaches(filtered) {
       ? '<img src="' + coach.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">'
       : '<span style="font-size:1.5rem;font-weight:900;color:#000">' + (coach.name||'?').charAt(0).toUpperCase() + '</span>';
 
-    var specialtyTags = (coach.specialties||[]).slice(0,3).map(function(s){
-      return '<span style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:0.6rem;font-weight:800;padding:2px 7px;border-radius:99px">' + s + '</span>';
-    }).join('');
-
     var badgeCount  = (coach.badges||[]).length;
     var badgeHtml   = badgeCount ? '<span style="font-size:0.62rem;color:var(--yellow);font-weight:800">🏆 ' + badgeCount + ' rozet</span>' : '';
     var ratingHtml  = avgRating  ? '<span style="font-size:0.72rem;font-weight:900;color:var(--warn)">⭐ ' + avgRating + '</span>' : '';
     var xpHtml      = coach.xp  ? '<span style="font-size:0.62rem;color:#818cf8;font-weight:800">✨ ' + coach.xp + ' XP</span>' : '';
+    var acceptHtml  = coach.acceptingStudents === false ? '<span style="font-size:0.6rem;color:#f472b6;font-weight:800;background:rgba(244,114,182,0.1);padding:2px 7px;border-radius:99px">Dolu</span>' : '<span style="font-size:0.6rem;color:#34d399;font-weight:800;background:rgba(52,211,153,0.1);padding:2px 7px;border-radius:99px">Kabul ediyor</span>';
 
     return '<div onclick="openCoachProfileModal(\'' + coach.id + '\')" '
       + 'style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s;display:flex;gap:12px;align-items:flex-start" '
@@ -8802,7 +8821,7 @@ function renderFilteredCoaches(filtered) {
           + '<div style="font-size:0.9rem;font-weight:900">' + (coach.name||'Koç') + '</div>'
           + '<div style="font-size:0.8rem;font-weight:900;color:var(--yellow)">' + (coach.monthlyPrice ? coach.monthlyPrice+'₺/ay' : '') + '</div>'
         + '</div>'
-        + '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">' + specialtyTags + '</div>'
+        + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">' + acceptHtml + '</div>'
         + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
           + '<span style="font-size:0.62rem;color:var(--muted);font-weight:700">' + (coach.experience||0) + ' yıl · ' + reviews.length + ' değerlendirme</span>'
           + ratingHtml + badgeHtml + xpHtml
@@ -8813,10 +8832,63 @@ function renderFilteredCoaches(filtered) {
 }
 
 function getCoachListings() {
-  try {
-    var all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]');
-    return all;
-  } catch(e) { return []; }
+  // Firestore'dan onaylı ilanları çek — filterCoachListings çağrıldığında
+  // _coachListingsCache kullanılır
+  return window._coachListingsCache || [];
+}
+
+// Firestore'dan koç ilanlarını yükle (sadece approved)
+function loadCoachListingsFromFirestore() {
+  if (!_fbDb) return;
+  var container = document.getElementById('coachListingCards');
+  if (container) container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);font-size:0.82rem;font-weight:700">Yükleniyor...</div>';
+
+  // Cache varsa hemen göster
+  if (window._coachListingsCache && window._coachListingsCache.length > 0) {
+    filterCoachListings();
+  }
+
+  _fbDb.collection('coachListings')
+    .where('approvalStatus', '==', 'approved')
+    .get()
+    .then(function(snap) {
+      var listings = [];
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        listings.push({
+          id: d.coachUid || doc.id,
+          name: d.name || 'Koç',
+          username: d.username || '',
+          monthlyPrice: d.monthlyPrice || 0,
+          description: d.description || '',
+          whatsapp: d.whatsapp || '',
+          photo: d.photo || null,
+          video: d.video || null,
+          experience: d.experience || 0,
+          xp: d.xp || 0,
+          badges: d.badges || [],
+          rating: d.rating || null,
+          reviewCount: d.reviewCount || 0,
+          views: d.views || 0,
+          acceptingStudents: d.acceptingStudents !== false
+        });
+      });
+      window._coachListingsCache = listings;
+      filterCoachListings();
+    }).catch(function(e) {
+      // Bağlantı hatası — cache varsa onu kullan
+      if (window._coachListingsCache && window._coachListingsCache.length > 0) {
+        filterCoachListings();
+        return;
+      }
+      if (container) container.innerHTML =
+        '<div style="text-align:center;padding:40px 20px">'
+        + '<div style="font-size:2rem;margin-bottom:10px">📡</div>'
+        + '<div style="font-size:0.88rem;font-weight:800;color:var(--text);margin-bottom:6px">Bağlantı Hatası</div>'
+        + '<div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:14px">İnternet bağlantını kontrol et ve tekrar dene.</div>'
+        + '<button onclick="loadCoachListingsFromFirestore()" style="padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-family:\'Nunito\',sans-serif;font-weight:900;font-size:0.85rem;cursor:pointer">↻ Tekrar Dene</button>'
+        + '</div>';
+    });
 }
 
 function getCoachReviews(coachId) {
@@ -8833,6 +8905,13 @@ function openCoachProfileModal(coachId) {
   _cpmCurrentCoach = coach;
   _cpmSelectedStar = 0;
 
+  // Görüntüleme sayısını artır
+  if (typeof _fbDb !== 'undefined' && _fbDb) {
+    _fbDb.collection('coachListings').doc(coachId).update({
+      views: firebase.firestore.FieldValue.increment(1)
+    }).catch(function(){});
+  }
+
   // Doldur
   var avatarEl = document.getElementById('cpm-avatar');
   if (coach.photo) {
@@ -8841,7 +8920,6 @@ function openCoachProfileModal(coachId) {
     avatarEl.innerHTML = (coach.name || '?').charAt(0).toUpperCase();
   }
   document.getElementById('cpm-name').textContent = coach.name || 'Koç';
-  document.getElementById('cpm-specialties').textContent = (coach.specialties || []).join(' · ');
   document.getElementById('cpm-price').textContent = coach.monthlyPrice ? '💰 ' + coach.monthlyPrice + '₺ / Ay' : '';
   document.getElementById('cpm-xp').textContent = coach.xp || '0';
   document.getElementById('cpm-exp').textContent = coach.experience || '0';

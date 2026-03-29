@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pugi Admin Paneli</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080d18; --bg2: #0e1628; --bg3: #131e33;
+  --card: #111827; --border: #1c2d47;
+  --accent: #38bdf8; --accent2: #818cf8; --accent3: #34d399;
+  --warn: #f472b6; --orange: #fb923c; --yellow: #fbbf24;
+  --text: #e2e8f0; --muted: #4b6280;
+  --admin: #f59e0b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif; max-width: 430px; margin: 0 auto; min-height: 100dvh; padding-bottom: 120px; }
+.header { position: sticky; top: 0; z-index: 60; background: linear-gradient(180deg, var(--bg) 85%, transparent); padding: 14px 16px 8px; display: flex; align-items: center; justify-content: space-between; }
+.logo { font-family: 'Space Mono', monospace; font-size: 1.2rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.admin-badge { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-size: 0.55rem; font-weight: 900; padding: 3px 8px; border-radius: 99px; letter-spacing: 1px; }
+.tabs { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: calc(100% - 24px); max-width: 406px; background: var(--card); border: 1px solid rgba(245,158,11,0.2); border-radius: 20px 20px 0 0; display: flex; padding: 10px 8px 18px; gap: 4px; z-index: 100; box-shadow: 0 -4px 24px rgba(0,0,0,0.4); }
+.tab-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border: none; background: transparent; color: var(--muted); cursor: pointer; border-radius: 14px; transition: all 0.2s; font-family: 'Nunito', sans-serif; font-size: 0.55rem; font-weight: 800; letter-spacing: 0.3px; }
+.tab-btn.active { background: rgba(245,158,11,0.12); color: var(--admin); }
+.page { display: none; padding: 0 16px 20px; }
+.page.active { display: block; }
+.card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
+.sec { font-size: 0.68rem; font-weight: 900; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin: 16px 0 10px; }
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.stat-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 12px; text-align: center; }
+.stat-val { font-family: 'Space Mono', monospace; font-size: 1.6rem; font-weight: 700; color: var(--text); }
+.stat-lbl { font-size: 0.65rem; font-weight: 800; color: var(--muted); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+.btn { padding: 10px 18px; border-radius: 10px; border: none; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 0.82rem; cursor: pointer; transition: all 0.15s; }
+.btn-approve { background: linear-gradient(135deg, #34d399, #059669); color: #fff; }
+.btn-reject { background: rgba(244,114,182,0.12); border: 1.5px solid rgba(244,114,182,0.3); color: #f472b6; }
+.btn-admin { background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; }
+.toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 20px; font-size: 0.82rem; font-weight: 800; opacity: 0; transition: all 0.3s; z-index: 300; white-space: nowrap; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.loading { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 999; transition: opacity 0.4s; }
+.loading.hidden { opacity: 0; pointer-events: none; }
+.spinner { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--admin); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Login overlay */
+#loginOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+.login-card { background: var(--card); border: 1.5px solid rgba(245,158,11,0.3); border-radius: 20px; padding: 28px 22px; width: 100%; max-width: 380px; }
+input[type=email], input[type=password] { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 0.9rem; font-weight: 700; padding: 12px; outline: none; margin-bottom: 10px; }
+input:focus { border-color: var(--admin); }
+
+/* Coach listing card */
+.listing-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 10px; }
+.listing-card.pending { border-color: rgba(251,191,36,0.3); }
+.listing-card.approved { border-color: rgba(52,211,153,0.3); }
+.listing-card.rejected { border-color: rgba(244,114,182,0.3); }
+
+/* Switch profile panel */
+.switch-btn { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s; }
+.switch-btn:hover { border-color: var(--admin); }
+.switch-btn-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading" id="loading">
+  <div class="spinner"></div>
+  <div style="font-size:0.78rem;font-weight:800;color:var(--muted)">YÜKLENİYOR...</div>
+</div>
+
+<!-- Login Overlay -->
+<div id="loginOverlay">
+  <div style="text-align:center;margin-bottom:24px">
+    <div style="font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;margin-bottom:6px">🦊 Pugi</div>
+    <div style="font-size:0.72rem;color:var(--muted);font-weight:700">Admin Paneli</div>
+  </div>
+  <div class="login-card">
+    <div style="font-size:1rem;font-weight:900;margin-bottom:16px;text-align:center">🔐 Admin Girişi</div>
+    <input type="email" id="loginEmail" placeholder="E-posta adresi">
+    <input type="password" id="loginPassword" placeholder="Şifre">
+    <div id="loginMsg" style="font-size:0.72rem;color:#ef4444;font-weight:700;min-height:18px;margin-bottom:8px"></div>
+    <button onclick="doAdminLogin()" class="btn btn-admin" style="width:100%;padding:13px;font-size:0.92rem">Giriş Yap</button>
+    <div style="margin-top:14px;text-align:center">
+      <div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-bottom:8px">veya</div>
+      <button onclick="doGoogleLogin()" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.85rem;cursor:pointer">🔑 Google ile Giriş</button>
+    </div>
+  </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    🦊 Pugi <span class="admin-badge">ADMİN</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <div id="adminName" style="font-size:0.78rem;font-weight:900;color:var(--admin)"></div>
+    <button onclick="adminLogout()" style="padding:6px 12px;border-radius:8px;border:1.5px solid rgba(245,158,11,0.3);background:transparent;color:var(--admin);font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:800;cursor:pointer">Çıkış</button>
+  </div>
+</div>
+
+<!-- SAYFA: İstatistikler -->
+<div class="page active" id="page-stats">
+  <div class="sec" style="margin-top:8px">Genel İstatistikler</div>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-val" id="statTotalUsers" style="color:var(--accent)">—</div>
+      <div class="stat-lbl">Toplam Kullanıcı</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statTotalCoaches" style="color:var(--admin)">—</div>
+      <div class="stat-lbl">Koç</div>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="stat-val" id="statTotalStudents" style="color:var(--accent3)">—</div>
+      <div class="stat-lbl">Öğrenci</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="statPendingListings" style="color:var(--yellow)">—</div>
+      <div class="stat-lbl">Bekleyen İlan</div>
+    </div>
+  </div>
+
+  <div class="sec">Sınav Dağılımı</div>
+  <div id="examDistribution" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px">
+    Yükleniyor...
+  </div>
+
+  <div class="sec">Son Kayıtlar</div>
+  <div id="recentUsers">Yükleniyor...</div>
+</div>
+
+<!-- SAYFA: İlan Onayları -->
+<div class="page" id="page-listings">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+    <div class="sec" style="margin:0">Bekleyen İlanlar</div>
+    <button onclick="loadListings()" style="font-size:0.72rem;font-weight:800;color:var(--admin);background:transparent;border:none;cursor:pointer;padding:4px 8px">↻ Yenile</button>
+  </div>
+  <div id="pendingListings" style="margin-top:10px">Yükleniyor...</div>
+
+  <div class="sec" style="margin-top:16px">Onaylanan İlanlar</div>
+  <div id="approvedListings">Yükleniyor...</div>
+
+  <div class="sec" style="margin-top:16px">Reddedilen İlanlar</div>
+  <div id="rejectedListings">Yükleniyor...</div>
+</div>
+
+<!-- SAYFA: Test / Profil Geçiş -->
+<div class="page" id="page-switch">
+  <div class="sec" style="margin-top:8px">Profil Geçişi</div>
+  <div style="background:rgba(245,158,11,0.08);border:1.5px solid rgba(245,158,11,0.2);border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:0.78rem;color:var(--muted);font-weight:700;line-height:1.6">
+    ⚠️ Admin hesabın için tüm limit kısıtlamaları geçerli değil. Uygulamayı test etmek amacıyla koç veya öğrenci görünümüne geçiş yapabilirsin.
+  </div>
+
+  <div class="switch-btn" onclick="switchToCoachView()">
+    <div class="switch-btn-icon" style="background:rgba(52,211,153,0.15)">🎓</div>
+    <div style="flex:1">
+      <div style="font-size:0.88rem;font-weight:900">Koç Profiline Geç</div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:2px">coach.html'yi admin olarak aç</div>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+
+  <div class="switch-btn" onclick="switchToStudentView()">
+    <div class="switch-btn-icon" style="background:rgba(56,189,248,0.15)">📚</div>
+    <div style="flex:1">
+      <div style="font-size:0.88rem;font-weight:900">Öğrenci Profiline Geç</div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:2px">student.html'yi admin olarak aç</div>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+
+  <div class="sec" style="margin-top:16px">Kullanıcı Ara</div>
+  <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px">
+    <input type="text" id="switchUserInput" placeholder="@kullaniciadı" style="width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;padding:11px 12px;outline:none;margin-bottom:10px">
+    <button onclick="findAndSwitchUser()" class="btn btn-admin" style="width:100%;padding:12px">🔍 Kullanıcıyı Bul ve Geç</button>
+    <div id="switchMsg" style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-top:8px;min-height:16px"></div>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchAdminTab('stats',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    <span>İstatistik</span>
+  </button>
+  <button class="tab-btn" onclick="switchAdminTab('listings',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>İlanlar</span>
+  </button>
+  <button class="tab-btn" onclick="switchAdminTab('switch',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+    <span>Geçiş</span>
+  </button>
+</div>
+
+<!-- Reddet Modal -->
+<div id="rejectModal" style="position:fixed;inset:0;z-index:200;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)">
+  <div style="background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px;max-height:70dvh;overflow-y:auto">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 16px"></div>
+    <div style="font-size:1rem;font-weight:900;margin-bottom:12px">❌ İlanı Reddet</div>
+    <textarea id="rejectReason" placeholder="Reddetme sebebi (isteğe bağlı)..." style="width:100%;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;padding:11px 12px;outline:none;resize:none;min-height:80px;margin-bottom:10px"></textarea>
+    <button onclick="confirmReject()" class="btn btn-reject" style="width:100%;padding:13px;border-radius:12px;font-size:0.9rem;margin-bottom:8px">❌ Reddet</button>
+    <button onclick="closeRejectModal()" style="width:100%;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer">İptal</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+var firebaseConfig = {
+  apiKey: "AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
+  authDomain: "pugi-app-deeaa.firebaseapp.com",
+  projectId: "pugi-app-deeaa",
+  storageBucket: "pugi-app-deeaa.firebasestorage.app",
+  messagingSenderId: "219082394848",
+  appId: "1:219082394848:web:8780f59490374d6566d485"
+};
+
+// Admin e-posta/UID listesi — bunu config.js'e taşıyabilirsin
+var ADMIN_EMAILS = ['pugiappofficial@gmail.com']; // buraya admin e-postalarını ekle
+
+var _db = null, _auth = null, _adminUser = null;
+var _pendingRejectUid = null;
+
+function loadScript(src, cb) {
+  var s = document.createElement('script');
+  s.src = src; s.onload = cb; document.head.appendChild(s);
+}
+
+function initFirebase() {
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js', function() {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js', function() {
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js', function() {
+        firebase.initializeApp(firebaseConfig);
+        _db = firebase.firestore();
+        _auth = firebase.auth();
+        document.getElementById('loading').classList.add('hidden');
+        _auth.onAuthStateChanged(function(user) {
+          if (!user) {
+            document.getElementById('loginOverlay').style.display = 'flex';
+            return;
+          }
+          checkAdminAccess(user);
+        });
+      });
+    });
+  });
+}
+
+function checkAdminAccess(user) {
+  _db.collection('users').doc(user.uid).get().then(function(doc) {
+    var isAdmin = false;
+    if (doc.exists) {
+      isAdmin = doc.data().isAdmin === true;
+    }
+    // E-posta bazlı fallback
+    if (!isAdmin && ADMIN_EMAILS.indexOf(user.email) !== -1) {
+      isAdmin = true;
+      // Firestore'a işaretle
+      _db.collection('users').doc(user.uid).set({ isAdmin: true }, { merge: true });
+    }
+    if (!isAdmin) {
+      showToast('❌ Admin yetkisi yok');
+      setTimeout(function() {
+        _auth.signOut().then(function() {
+          document.getElementById('loginOverlay').style.display = 'flex';
+          document.getElementById('loginMsg').textContent = 'Bu hesabın admin yetkisi yok.';
+          document.getElementById('loginMsg').style.color = '#ef4444';
+        });
+      }, 1500);
+      return;
+    }
+    _adminUser = user;
+    // Admin modunu localStorage'a kaydet (coach.html/student.html okuyacak)
+    localStorage.setItem('pugi_admin_mode', user.uid);
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('adminName').textContent = user.displayName || user.email || 'Admin';
+    loadStats();
+    loadListings();
+  });
+}
+
+function doAdminLogin() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var pw = document.getElementById('loginPassword').value;
+  var msg = document.getElementById('loginMsg');
+  if (!email || !pw) { msg.textContent = 'Tüm alanları doldur.'; return; }
+  msg.textContent = 'Giriş yapılıyor...'; msg.style.color = 'var(--muted)';
+  _auth.signInWithEmailAndPassword(email, pw).catch(function(e) {
+    msg.style.color = '#ef4444';
+    var code = e.code || '';
+    if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') msg.textContent = 'Şifre yanlış.';
+    else if (code === 'auth/user-not-found') msg.textContent = 'Kullanıcı bulunamadı.';
+    else msg.textContent = e.message;
+  });
+}
+
+function doGoogleLogin() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  _auth.signInWithPopup(provider).catch(function(e) {
+    document.getElementById('loginMsg').textContent = e.message;
+    document.getElementById('loginMsg').style.color = '#ef4444';
+  });
+}
+
+function adminLogout() {
+  localStorage.removeItem('pugi_admin_mode');
+  _auth.signOut().then(function() {
+    document.getElementById('loginOverlay').style.display = 'flex';
+    _adminUser = null;
+  });
+}
+
+// ════════════ STATS ════════════
+function loadStats() {
+  if (!_db) return;
+
+  Promise.all([
+    _db.collection('users').get(),
+    _db.collection('coachListings').where('approvalStatus', '==', 'pending').get()
+  ]).then(function(results) {
+    var usersSnap = results[0];
+    var pendingSnap = results[1];
+
+    var totalUsers = usersSnap.size;
+    var coaches = 0, students = 0;
+    var examCounts = {};
+    var recentUsers = [];
+
+    usersSnap.forEach(function(doc) {
+      var d = doc.data();
+      if (d.accountType === 'coach') coaches++;
+      else if (d.accountType === 'student') students++;
+      var exam = d.examType || d.sinav || 'Belirtilmemiş';
+      examCounts[exam] = (examCounts[exam] || 0) + 1;
+      if (d.createdAt) recentUsers.push({ name: d.displayName || d.username || '?', email: d.email || '', createdAt: d.createdAt, type: d.accountType || 'student' });
+    });
+
+    document.getElementById('statTotalUsers').textContent = totalUsers;
+    document.getElementById('statTotalCoaches').textContent = coaches;
+    document.getElementById('statTotalStudents').textContent = students;
+    document.getElementById('statPendingListings').textContent = pendingSnap.size;
+
+    // Sınav dağılımı
+    var examHtml = Object.keys(examCounts).map(function(k) {
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">'
+        + '<span style="font-size:0.82rem;font-weight:800">' + k + '</span>'
+        + '<span style="font-family:\'Space Mono\',monospace;font-size:0.88rem;font-weight:700;color:var(--accent)">' + examCounts[k] + '</span>'
+        + '</div>';
+    }).join('');
+    document.getElementById('examDistribution').innerHTML = examHtml || '<div style="color:var(--muted);font-size:0.78rem">Veri yok</div>';
+
+    // Son kayıtlar
+    recentUsers.sort(function(a,b){ return b.createdAt > a.createdAt ? 1 : -1; });
+    var recentHtml = recentUsers.slice(0, 8).map(function(u) {
+      return '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:6px;display:flex;align-items:center;gap:10px">'
+        + '<div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,' + (u.type==='coach'?'#34d399,#fbbf24':'#38bdf8,#818cf8') + ');display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;font-size:0.9rem;flex-shrink:0">' + (u.name||'?').charAt(0).toUpperCase() + '</div>'
+        + '<div style="flex:1;min-width:0"><div style="font-size:0.82rem;font-weight:900">' + (u.name||'—') + '</div>'
+        + '<div style="font-size:0.62rem;color:var(--muted);font-weight:700">' + (u.type==='coach'?'🎓 Koç':'📚 Öğrenci') + ' · ' + (u.createdAt||'').slice(0,10) + '</div></div>'
+        + '</div>';
+    }).join('');
+    document.getElementById('recentUsers').innerHTML = recentHtml || '<div style="color:var(--muted);font-size:0.78rem;padding:10px">Kullanıcı yok</div>';
+  });
+}
+
+// ════════════ LİSTİNGS ════════════
+function loadListings() {
+  if (!_db) return;
+
+  ['pending','approved','rejected'].forEach(function(status) {
+    var elId = status === 'pending' ? 'pendingListings' : status === 'approved' ? 'approvedListings' : 'rejectedListings';
+    document.getElementById(elId).innerHTML = 'Yükleniyor...';
+    _db.collection('coachListings').where('approvalStatus', '==', status).get().then(function(snap) {
+      if (snap.empty) {
+        document.getElementById(elId).innerHTML = '<div style="color:var(--muted);font-size:0.78rem;padding:10px">İlan yok</div>';
+        return;
+      }
+      var html = '';
+      snap.forEach(function(doc) {
+        var d = doc.data();
+        html += renderListingCard(doc.id, d, status);
+      });
+      document.getElementById(elId).innerHTML = html;
+    });
+  });
+
+  // Pending badge'i güncelle
+  _db.collection('coachListings').where('approvalStatus', '==', 'pending').get().then(function(snap) {
+    document.getElementById('statPendingListings').textContent = snap.size;
+  });
+}
+
+function renderListingCard(uid, d, status) {
+  var statusBadge = status === 'approved'
+    ? '<span style="font-size:0.6rem;background:rgba(52,211,153,0.15);color:#34d399;padding:2px 8px;border-radius:99px;font-weight:800">✅ Onaylı</span>'
+    : status === 'rejected'
+    ? '<span style="font-size:0.6rem;background:rgba(244,114,182,0.12);color:#f472b6;padding:2px 8px;border-radius:99px;font-weight:800">❌ Reddedildi</span>'
+    : '<span style="font-size:0.6rem;background:rgba(251,191,36,0.12);color:#fbbf24;padding:2px 8px;border-radius:99px;font-weight:800">⏳ Bekliyor</span>';
+
+  var actionBtns = status === 'pending'
+    ? '<div style="display:flex;gap:8px;margin-top:10px">'
+      + '<button onclick="approveListingById(\'' + uid + '\')" class="btn btn-approve" style="flex:1;padding:9px">✅ Onayla</button>'
+      + '<button onclick="openRejectModal(\'' + uid + '\')" class="btn btn-reject" style="flex:1;padding:9px">❌ Reddet</button>'
+      + '</div>'
+    : status === 'approved'
+    ? '<div style="margin-top:10px"><button onclick="openRejectModal(\'' + uid + '\')" class="btn btn-reject" style="padding:8px 14px;font-size:0.75rem">İlanı Kaldır</button></div>'
+    : '<div style="margin-top:10px"><button onclick="approveListingById(\'' + uid + '\')" class="btn btn-approve" style="padding:8px 14px;font-size:0.75rem">Tekrar Onayla</button></div>';
+
+  return '<div class="listing-card ' + status + '">'
+    + '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">'
+    + '<div style="width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900;color:#000;flex-shrink:0;overflow:hidden">'
+    + (d.photo ? '<img src="' + d.photo + '" style="width:100%;height:100%;object-fit:cover">' : (d.name||'K').charAt(0).toUpperCase())
+    + '</div>'
+    + '<div style="flex:1;min-width:0">'
+    + '<div style="font-size:0.88rem;font-weight:900">' + (d.name||'Koç') + '</div>'
+    + '<div style="font-size:0.68rem;color:var(--muted);font-weight:700">@' + (d.username||'') + ' · ' + (d.monthlyPrice||0) + '₺/ay</div>'
+    + '</div>' + statusBadge + '</div>'
+    + '<div style="font-size:0.75rem;color:var(--muted);font-weight:700;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + (d.description||'') + '</div>'
+    + (d.rejectionReason ? '<div style="font-size:0.7rem;color:#f472b6;font-weight:700;margin-top:6px">Sebep: ' + d.rejectionReason + '</div>' : '')
+    + actionBtns + '</div>';
+}
+
+function approveListingById(uid) {
+  if (!_db) return;
+  _db.collection('coachListings').doc(uid).update({ approvalStatus: 'approved', rejectionReason: null }).then(function() {
+    showToast('✅ İlan onaylandı!');
+    loadListings();
+  }).catch(function(e) { showToast('❌ ' + e.message); });
+}
+
+function openRejectModal(uid) {
+  _pendingRejectUid = uid;
+  document.getElementById('rejectReason').value = '';
+  document.getElementById('rejectModal').style.display = 'flex';
+}
+
+function closeRejectModal() {
+  document.getElementById('rejectModal').style.display = 'none';
+  _pendingRejectUid = null;
+}
+
+function confirmReject() {
+  if (!_pendingRejectUid || !_db) return;
+  var reason = document.getElementById('rejectReason').value.trim();
+  _db.collection('coachListings').doc(_pendingRejectUid).update({
+    approvalStatus: 'rejected',
+    rejectionReason: reason || 'Admin tarafından reddedildi.'
+  }).then(function() {
+    showToast('🗑 İlan reddedildi');
+    closeRejectModal();
+    loadListings();
+  }).catch(function(e) { showToast('❌ ' + e.message); });
+}
+
+// ════════════ PROFİL GEÇİŞ ════════════
+function switchToCoachView() {
+  // Admin modunu sessionStorage'a kaydet, coach.html okuyacak
+  sessionStorage.setItem('pugi_admin_testing', 'coach');
+  window.location.href = 'coach.html';
+}
+
+function switchToStudentView() {
+  sessionStorage.setItem('pugi_admin_testing', 'student');
+  window.location.href = 'student.html';
+}
+
+function findAndSwitchUser() {
+  if (!_db) return;
+  var uname = (document.getElementById('switchUserInput').value || '').trim().toLowerCase().replace(/^@/, '');
+  var msg = document.getElementById('switchMsg');
+  if (!uname) { msg.textContent = 'Kullanıcı adı gir.'; msg.style.color = '#ef4444'; return; }
+  msg.textContent = 'Aranıyor...'; msg.style.color = 'var(--muted)';
+  _db.collection('usernames').doc(uname).get().then(function(doc) {
+    if (!doc.exists) { msg.textContent = 'Kullanıcı bulunamadı.'; msg.style.color = '#ef4444'; return; }
+    var uid = doc.data().uid;
+    return _db.collection('users').doc(uid).get().then(function(uDoc) {
+      var type = uDoc.exists ? (uDoc.data().accountType || 'student') : 'student';
+      sessionStorage.setItem('pugi_admin_testing', type);
+      sessionStorage.setItem('pugi_admin_testing_uid', uid);
+      msg.textContent = '✅ Geçiş yapılıyor...'; msg.style.color = 'var(--admin)';
+      setTimeout(function() {
+        window.location.href = type === 'coach' ? 'coach.html' : 'student.html';
+      }, 600);
+    });
+  }).catch(function(e) { msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444'; });
+}
+
+// ════════════ UI ════════════
+function switchAdminTab(tab, el) {
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('page-' + tab).classList.add('active');
+  el.classList.add('active');
+  if (tab === 'stats') loadStats();
+  if (tab === 'listings') loadListings();
+}
+
+var _toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+
+document.addEventListener('DOMContentLoaded', initFirebase);
+</script>
+</body>
+</html>
