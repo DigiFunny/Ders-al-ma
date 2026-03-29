@@ -130,6 +130,23 @@ body {
 .tab-btn .ti svg { transition: transform 0.2s; }
 .tab-btn.active .ti svg { transform: scale(1.1); }
 .tab-btn span:last-of-type { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.coach-filter-chip {
+  padding: 6px 12px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: var(--bg2); color: var(--muted); font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem; font-weight: 800; cursor: pointer; transition: all 0.15s;
+}
+.coach-filter-chip.active {
+  border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.12);
+}
+.coach-sort-btn {
+  padding: 9px 8px; border-radius: 10px; border: 1.5px solid var(--border);
+  background: var(--bg2); color: var(--muted); font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem; font-weight: 800; cursor: pointer; transition: all 0.15s;
+  text-align: center;
+}
+.coach-sort-btn.active {
+  border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.12);
+}
 .tab-btn.active { color: var(--fox-orange); background: linear-gradient(135deg, rgba(251,146,60,0.15), rgba(251,146,60,0.06)); box-shadow: inset 0 1px 0 rgba(251,146,60,0.15); }
 .tab-dot { display: none; }
 
@@ -1287,73 +1304,160 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div style="height:100px"></div>
 </div>
 
-<!-- ════════════════════ PAGE: DENEME ════════════════════ -->
+<!-- ════════════════════ PAGE: KOÇLAR ════════════════════ -->
 <div class="page" id="page-deneme">
-  <!-- Mod Seçici -->
-  <div style="display:flex;gap:8px;margin-bottom:12px;margin-top:4px">
-    <button id="modTamBtn" onclick="setDenemeMode('tam')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.12);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">📋 Tam Deneme</button>
-    <button id="modBransBtn" onclick="setDenemeMode('brans')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.82rem;cursor:pointer;transition:all 0.2s">🎯 Branş Denemesi</button>
+  <!-- Başlık -->
+  <div style="margin-top:6px;margin-bottom:14px">
+    <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:4px">🎯 Koç Bul</div>
+    <div style="font-size:0.72rem;color:var(--muted);font-weight:700">Sana özel koç ilanlarını keşfet</div>
   </div>
 
-  <!-- Tam Deneme Tipi -->
-  <div id="tamDenemeWrap">
-    <div class="sec" style="margin-top:0">Sınav Türü</div>
-    <div class="deneme-type-grid" id="denemeTypeGrid">
-      <div class="deneme-chip active" onclick="selectDenemeType('TYT',this)">📋 TYT</div>
-      <div class="deneme-chip" onclick="selectDenemeType('AYT_SAY',this)">🔢 AYT Sayısal</div>
-      <div class="deneme-chip" onclick="selectDenemeType('AYT_SOZ',this)">📜 AYT Sözel</div>
-      <div class="deneme-chip" onclick="selectDenemeType('AYT_EA',this)">⚖️ AYT EA</div>
-    </div>
+  <!-- Arama -->
+  <div style="position:relative;margin-bottom:10px">
+    <input id="coachSearchInput" type="text" placeholder="Koç veya ders ara..." oninput="filterCoachListings()" style="width:100%;padding:10px 12px 10px 36px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='rgba(52,211,153,0.6)'" onblur="this.style.borderColor='var(--border)'">
+    <svg style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   </div>
 
-  <!-- Branş Denemesi Tipi -->
-  <div id="bransDenemeWrap" style="display:none">
-    <div class="sec" style="margin-top:0">Branş Seç</div>
-    <div style="margin-bottom:6px">
-      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">TYT</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px" id="bransTYTGrid">
-        <div class="brans-chip active" onclick="selectBransType('TYT_TURKCE',this)" data-key="TYT_TURKCE">📖 Türkçe <span class="brans-max">40 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('TYT_MAT',this)" data-key="TYT_MAT">📐 Matematik <span class="brans-max">40 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('TYT_FEN',this)" data-key="TYT_FEN">🧪 Fen <span class="brans-max">20 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('TYT_SOSYAL',this)" data-key="TYT_SOSYAL">🌍 Sosyal <span class="brans-max">20 soru</span></div>
-      </div>
-      <div style="font-size:0.65rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">AYT</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px" id="bransAYTGrid">
-        <div class="brans-chip" onclick="selectBransType('AYT_MAT',this)" data-key="AYT_MAT">📐 Matematik <span class="brans-max">40 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('AYT_FEN',this)" data-key="AYT_FEN">⚛️ Fen <span class="brans-max">40 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('AYT_EDEBIYAT',this)" data-key="AYT_EDEBIYAT">📚 Edebiyat <span class="brans-max">24 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('AYT_TARIH',this)" data-key="AYT_TARIH">📜 Tarih <span class="brans-max">21 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('AYT_COG',this)" data-key="AYT_COG">🗺️ Coğrafya <span class="brans-max">17 soru</span></div>
-        <div class="brans-chip" onclick="selectBransType('AYT_FELSEFE',this)" data-key="AYT_FELSEFE">🤔 Felsefe <span class="brans-max">12 soru</span></div>
-      </div>
-    </div>
+  <!-- Filtrele Butonu -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div id="coachActiveFilterLabel" style="font-size:0.68rem;font-weight:800;color:var(--muted)">Sıralama: Varsayılan</div>
+    <button onclick="toggleCoachFilterPanel()" id="coachFilterBtn" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;transition:all 0.2s">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      Filtrele
+    </button>
   </div>
 
-  <div class="sec">Sonuçlar</div>
-  <div id="denemeFields" class="deneme-fields" style="overflow:hidden"></div>
+  <!-- Filtre Paneli (açılır/kapanır) -->
+  <div id="coachFilterPanel" style="display:none;background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:12px;animation:fadeUp 0.2s ease">
 
-  <div class="input-row" style="margin-bottom:8px">
-    <div class="input-group" style="flex:2">
-      <div class="input-label">🏷 Deneme Adı</div>
-      <input class="num-input" type="text" id="denemeIsim" placeholder="Örn: TYT Denemesi 1">
+    <!-- Ders Filtresi -->
+    <div style="font-size:0.65rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">📚 Bölüme Göre</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+      <button onclick="setCoachSubject('')" class="coach-filter-chip active" id="csub-">Tümü</button>
+      <button onclick="setCoachSubject('Matematik')" class="coach-filter-chip" id="csub-Matematik">Matematik</button>
+      <button onclick="setCoachSubject('Türkçe')" class="coach-filter-chip" id="csub-Türkçe">Türkçe</button>
+      <button onclick="setCoachSubject('Fizik')" class="coach-filter-chip" id="csub-Fizik">Fizik</button>
+      <button onclick="setCoachSubject('Kimya')" class="coach-filter-chip" id="csub-Kimya">Kimya</button>
+      <button onclick="setCoachSubject('Biyoloji')" class="coach-filter-chip" id="csub-Biyoloji">Biyoloji</button>
+      <button onclick="setCoachSubject('Tarih')" class="coach-filter-chip" id="csub-Tarih">Tarih</button>
+      <button onclick="setCoachSubject('Coğrafya')" class="coach-filter-chip" id="csub-Coğrafya">Coğrafya</button>
+      <button onclick="setCoachSubject('İngilizce')" class="coach-filter-chip" id="csub-İngilizce">İngilizce</button>
     </div>
-    <div class="input-group" style="flex:1">
-      <div class="input-label">📅 Tarih</div>
-      <input class="num-input" type="date" id="denemedTarih">
+
+    <!-- Sıralama -->
+    <div style="font-size:0.65rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">🔃 Sırala</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <button onclick="setCoachSort('default')" class="coach-sort-btn active" id="csort-default">⚡ Varsayılan</button>
+      <button onclick="setCoachSort('rating_desc')" class="coach-sort-btn" id="csort-rating_desc">⭐ En Yüksek Puan</button>
+      <button onclick="setCoachSort('rating_asc')" class="coach-sort-btn" id="csort-rating_asc">⭐ En Düşük Puan</button>
+      <button onclick="setCoachSort('price_asc')" class="coach-sort-btn" id="csort-price_asc">💰 Fiyat: Artan</button>
+      <button onclick="setCoachSort('price_desc')" class="coach-sort-btn" id="csort-price_desc">💰 Fiyat: Azalan</button>
+      <button onclick="setCoachSort('popular')" class="coach-sort-btn" id="csort-popular">🔥 Popülerlik</button>
+      <button onclick="setCoachSort('reviews')" class="coach-sort-btn" id="csort-reviews">💬 Öğrenci Sayısı</button>
+      <button onclick="setCoachSort('badges')" class="coach-sort-btn" id="csort-badges">🏆 Rozet Sayısı</button>
+      <button onclick="setCoachSort('xp')" class="coach-sort-btn" id="csort-xp">✨ XP Seviyesi</button>
+      <button onclick="setCoachSort('experience')" class="coach-sort-btn" id="csort-experience">📚 Deneyim Yılı</button>
     </div>
+
+    <!-- Uygula Butonu -->
+    <button onclick="toggleCoachFilterPanel()" style="width:100%;margin-top:12px;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-weight:900;font-size:0.88rem;cursor:pointer;font-family:'Nunito',sans-serif">✅ Uygula</button>
   </div>
-  <div class="input-row">
-    <div class="input-group">
-      <div class="input-label">📝 Not (isteğe bağlı)</div>
-      <input class="num-input" type="text" id="denemeNot" placeholder="Yorum...">
+
+  <!-- Koç İlanları Listesi -->
+  <div id="coachListingsWrap">
+    <div id="coachListingsEmpty" style="text-align:center;padding:40px 20px;display:none">
+      <div style="font-size:2.5rem;margin-bottom:10px">🔍</div>
+      <div style="font-size:0.88rem;font-weight:800;color:var(--text);margin-bottom:4px">İlan bulunamadı</div>
+      <div style="font-size:0.72rem;color:var(--muted)">Farklı bir arama veya filtre dene</div>
     </div>
+    <div id="coachListingCards"></div>
   </div>
 
-  <button class="btn-save" onclick="saveDeneme()">💾 Deneme Kaydet</button>
-
-  <div class="sec">Geçmiş Denemeler</div>
-  <div class="log-list" id="denemeLog"></div>
   <div style="height:100px"></div>
+</div>
+
+<!-- ════════ KOÇ PROFİL MODALI (Öğrenci Görünümü) ════════ -->
+<div id="coachProfileModal" style="position:fixed;inset:0;z-index:9991;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none">
+  <div id="coachProfileModalOverlay" onclick="closeCoachProfileModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.3s"></div>
+  <div id="coachProfileModalSheet" style="background:var(--bg2);border-radius:24px 24px 0 0;border-top:2px solid rgba(52,211,153,0.4);padding:0 0 30px;max-height:90vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.35s cubic-bezier(.4,0,.2,1);position:relative">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:99px;margin:12px auto 0"></div>
+
+    <!-- Koç Profil Header -->
+    <div style="padding:16px 16px 0">
+      <div id="cpm-hero" style="background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(251,191,36,0.06));border:1.5px solid rgba(52,211,153,0.18);border-radius:18px;padding:18px 16px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+          <div id="cpm-avatar" style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#000;flex-shrink:0;overflow:hidden"></div>
+          <div style="flex:1;min-width:0">
+            <div id="cpm-name" style="font-size:1rem;font-weight:900;margin-bottom:3px"></div>
+            <div id="cpm-specialties" style="font-size:0.68rem;color:#34d399;font-weight:800;margin-bottom:4px"></div>
+            <div id="cpm-price" style="font-size:0.8rem;font-weight:900;color:var(--yellow)"></div>
+          </div>
+          <button onclick="closeCoachProfileModal()" style="background:none;border:none;color:var(--muted);font-size:1.4rem;cursor:pointer;padding:4px;flex-shrink:0">✕</button>
+        </div>
+        <!-- İstatistikler -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
+            <div id="cpm-xp" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#34d399">—</div>
+            <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">XP</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
+            <div id="cpm-exp" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#fbbf24">—</div>
+            <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Yıl Deneyim</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
+            <div id="cpm-rating" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#f472b6">—</div>
+            <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Puan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Video -->
+    <div id="cpm-video-wrap" style="padding:0 16px;margin-bottom:14px;display:none">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">🎬 Tanıtım Videosu</div>
+      <div id="cpm-video-container" style="border-radius:14px;overflow:hidden;background:var(--card);border:1.5px solid var(--border)"></div>
+    </div>
+
+    <!-- Açıklama -->
+    <div style="padding:0 16px;margin-bottom:14px">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">📄 Hakkında</div>
+      <div id="cpm-desc" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;font-size:0.82rem;font-weight:700;color:var(--text);line-height:1.6"></div>
+    </div>
+
+    <!-- Rozetler -->
+    <div style="padding:0 16px;margin-bottom:14px">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">🏆 Rozetler</div>
+      <div id="cpm-badges" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
+
+    <!-- Değerlendirmeler -->
+    <div style="padding:0 16px;margin-bottom:16px">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">⭐ Öğrenci Değerlendirmeleri</div>
+      <div id="cpm-reviews"></div>
+      <!-- Değerlendirme Yaz -->
+      <div id="cpm-review-form" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-top:10px">
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);margin-bottom:8px">Değerlendirme Yaz</div>
+        <div style="display:flex;gap:6px;margin-bottom:8px" id="cpm-star-row">
+          <span onclick="setCpmStar(1)" class="cpm-star" style="font-size:1.4rem;cursor:pointer;filter:grayscale(1)">⭐</span>
+          <span onclick="setCpmStar(2)" class="cpm-star" style="font-size:1.4rem;cursor:pointer;filter:grayscale(1)">⭐</span>
+          <span onclick="setCpmStar(3)" class="cpm-star" style="font-size:1.4rem;cursor:pointer;filter:grayscale(1)">⭐</span>
+          <span onclick="setCpmStar(4)" class="cpm-star" style="font-size:1.4rem;cursor:pointer;filter:grayscale(1)">⭐</span>
+          <span onclick="setCpmStar(5)" class="cpm-star" style="font-size:1.4rem;cursor:pointer;filter:grayscale(1)">⭐</span>
+        </div>
+        <textarea id="cpm-review-text" placeholder="Koç hakkında düşüncelerini yaz..." style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;resize:none;min-height:70px"></textarea>
+        <button onclick="submitCpmReview()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-weight:900;font-size:0.88rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px">⭐ Değerlendirimi Gönder</button>
+      </div>
+    </div>
+
+    <!-- WhatsApp Butonu -->
+    <div style="padding:0 16px">
+      <button id="cpm-whatsapp-btn" onclick="openCoachWhatsapp()" style="width:100%;padding:15px;border-radius:16px;border:none;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(37,211,102,0.3)">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp ile İletişime Geç
+      </button>
+    </div>
+
+  </div>
 </div>
 
 <!-- ════════════════════ PAGE: İSTATİSTİK ════════════════════ -->
@@ -1833,7 +1937,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <!-- BOTTOM TABS -->
 <div class="tabs">
   <button class="tab-btn" onclick="switchTab('calis',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Çalış</span></button>
-  <button class="tab-btn" onclick="switchTab('deneme',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span><span>Deneme</span></button>
+  <button class="tab-btn" onclick="switchTab('deneme',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></svg></span><span>Koçlar</span></button>
   <button class="tab-btn active" onclick="switchTab('ana',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Ana</span></button>
   <button class="tab-btn" onclick="switchTab('stat',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span><span>İstatistik</span></button>
   <button class="tab-btn" onclick="switchTab('rozet',this)"><span class="ti"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><span>Profilim</span></button>
@@ -2021,8 +2125,7 @@ function switchTab(name, btn) {
   // Misafir modunda kilitli sekmeler
   if (_isGuest) {
     if (name === 'deneme') {
-      _showGuestLockModal('Deneme Kaydı', 'Deneme sonuçlarını kaydetmek ve geçmiş denemelerini görmek için kayıt ol.');
-      return;
+      // Koçlar sekmesi misafirde de açılır
     }
     if (name === 'rozet') {
       // Profilim sekmesi misafirde açılır ama içerik kısıtlı
@@ -2044,7 +2147,7 @@ function switchTab(name, btn) {
       renderStat(); renderCharts(); renderGoalCard(); renderAnalysis(); renderTopicMap(); renderGoalPieChart();
     }
   }
-  if (name === 'deneme') { renderDenemeFields(); renderDenemeLog(); }
+  if (name === 'deneme') { renderCoachListings(); }
   if (name === 'yedek')  { renderBackupSummary(); }
   if (name === 'rozet')  {
     if (!_isGuest) {
@@ -2683,6 +2786,7 @@ function clearInputs() {
 // DENEME
 // ════════════════════════════════════════════
 function setDenemeMode(mode) {
+  if (!document.getElementById('tamDenemeWrap')) return;
   _denemeMode = mode;
   var isBrans = mode === 'brans';
   document.getElementById('tamDenemeWrap').style.display = isBrans ? 'none' : 'block';
@@ -2699,6 +2803,7 @@ function setDenemeMode(mode) {
 }
 
 function selectBransType(key, el) {
+  if (!document.getElementById('denemeFields')) return;
   currentBransType = key;
   document.querySelectorAll('.brans-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
@@ -2706,6 +2811,7 @@ function selectBransType(key, el) {
 }
 
 function selectDenemeType(type, el) {
+  if (!document.getElementById('denemeFields')) return;
   currentDenemeType = type;
   document.querySelectorAll('.deneme-chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
@@ -2714,6 +2820,7 @@ function selectDenemeType(type, el) {
 }
 
 function renderDenemeFields() {
+  if (!document.getElementById('denemeFields')) return; // Deneme sayfası kaldırıldı
   var isBrans = _denemeMode === 'brans';
   var bransInfo = isBrans ? BRANS_FIELDS[currentBransType] : null;
   var fields = isBrans ? (bransInfo ? bransInfo.fields : []) : (DENEME_FIELDS[currentDenemeType] || []);
@@ -2759,6 +2866,7 @@ function renderDenemeFields() {
 
 
 function calcDenemeNet() {
+  if (!document.getElementById("denemeFields")) return;
   var fields = DENEME_FIELDS[currentDenemeType] || [];
   var totalD = 0, totalY = 0, totalNet = 0;
 
@@ -2791,6 +2899,7 @@ function calcDenemeNet() {
 }
 
 function saveDeneme() {
+  if (!document.getElementById('denemeFields')) return;
   // Edit mode
   if (window._editingDenemeId) {
     var editIdx = denemeler.findIndex(function(x){ return x.id === window._editingDenemeId; });
@@ -2919,6 +3028,7 @@ function saveDeneme() {
 }
 
 function renderDenemeLog() {
+  if (!document.getElementById("denemeLog")) return; // Deneme sayfası kaldırıldı
   var list = document.getElementById('denemeLog');
   if (!list) return;
   var isBransView = _denemeMode === 'brans';
@@ -6811,6 +6921,7 @@ function renderMonthlyChart() {
 }
 
 function renderDenemeNetChart() {
+  if (!document.getElementById("denemeNetChartWrap")) return; // Deneme sayfası kaldırıldı
   var wrap = document.getElementById('denemeNetChartWrap');
   if (!wrap) return;
 
@@ -8535,6 +8646,333 @@ function confirmModalOk() {
   var cb = _confirmModalCallback;
   closeConfirmModal();
   setTimeout(function() { if (cb) cb(); }, 320);
+}
+
+// ════════════════════════════════════════════
+// KOÇLAR SAYFASI
+// ════════════════════════════════════════════
+
+var _cpmCurrentCoach = null;
+var _cpmSelectedStar = 0;
+
+// ── Koç Filtre State ──────────────────────────────────────────────────────
+var _coachSubjectFilter = '';
+var _coachSortMode = 'default';
+
+function toggleCoachFilterPanel() {
+  var panel = document.getElementById('coachFilterPanel');
+  var btn   = document.getElementById('coachFilterBtn');
+  if (!panel) return;
+  var isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'block';
+  btn.style.borderColor = isOpen ? 'var(--border)' : '#34d399';
+  btn.style.color = isOpen ? 'var(--text)' : '#34d399';
+}
+
+function setCoachSubject(val) {
+  _coachSubjectFilter = val;
+  // chip aktif durumu
+  document.querySelectorAll('.coach-filter-chip').forEach(function(b) { b.classList.remove('active'); });
+  var active = document.getElementById('csub-' + val);
+  if (active) active.classList.add('active');
+  filterCoachListings();
+}
+
+function setCoachSort(mode) {
+  _coachSortMode = mode;
+  // sort buton aktif durumu
+  document.querySelectorAll('.coach-sort-btn').forEach(function(b) { b.classList.remove('active'); });
+  var active = document.getElementById('csort-' + mode);
+  if (active) active.classList.add('active');
+  // aktif filtre etiketi
+  var labels = {
+    'default':'Varsayılan','rating_desc':'En Yüksek Puan','rating_asc':'En Düşük Puan',
+    'price_asc':'Fiyat: Artan','price_desc':'Fiyat: Azalan',
+    'popular':'Popülerlik','reviews':'Öğrenci Sayısı',
+    'badges':'Rozet Sayısı','xp':'XP Seviyesi','experience':'Deneyim Yılı'
+  };
+  var lbl = document.getElementById('coachActiveFilterLabel');
+  if (lbl) lbl.textContent = 'Sıralama: ' + (labels[mode] || mode);
+  filterCoachListings();
+}
+
+function renderCoachListings() {
+  _coachSubjectFilter = '';
+  _coachSortMode = 'default';
+  filterCoachListings();
+}
+
+function filterCoachListings() {
+  var listings = getCoachListings();
+  var query = ((document.getElementById('coachSearchInput') || {}).value || '').toLowerCase();
+
+  // Arama + ders filtresi
+  var filtered = listings.filter(function(l) {
+    var matchQuery = !query ||
+      (l.name && l.name.toLowerCase().includes(query)) ||
+      (l.specialties && l.specialties.join(' ').toLowerCase().includes(query)) ||
+      (l.description && l.description.toLowerCase().includes(query));
+    var matchSubject = !_coachSubjectFilter ||
+      (l.specialties && l.specialties.includes(_coachSubjectFilter));
+    return matchQuery && matchSubject;
+  });
+
+  // Sıralama
+  filtered = sortCoachListings(filtered, _coachSortMode);
+
+  renderFilteredCoaches(filtered);
+}
+
+function sortCoachListings(list, mode) {
+  var sorted = list.slice();
+  function getAvgRating(c) {
+    var r = getCoachReviews(c.id);
+    return r.length ? r.reduce(function(a,x){return a+x.stars;},0)/r.length : 0;
+  }
+  switch(mode) {
+    case 'rating_desc':
+      return sorted.sort(function(a,b){ return getAvgRating(b)-getAvgRating(a); });
+    case 'rating_asc':
+      return sorted.sort(function(a,b){ return getAvgRating(a)-getAvgRating(b); });
+    case 'price_asc':
+      return sorted.sort(function(a,b){ return (a.monthlyPrice||0)-(b.monthlyPrice||0); });
+    case 'price_desc':
+      return sorted.sort(function(a,b){ return (b.monthlyPrice||0)-(a.monthlyPrice||0); });
+    case 'popular':
+      // popülerlik = değerlendirme sayısı × ortalama puan
+      return sorted.sort(function(a,b){
+        var ra=getCoachReviews(a.id), rb=getCoachReviews(b.id);
+        var sa=ra.length?(ra.reduce(function(x,y){return x+y.stars;},0)/ra.length):0;
+        var sb=rb.length?(rb.reduce(function(x,y){return x+y.stars;},0)/rb.length):0;
+        return (rb.length*sb)-(ra.length*sa);
+      });
+    case 'reviews':
+      return sorted.sort(function(a,b){
+        return getCoachReviews(b.id).length - getCoachReviews(a.id).length;
+      });
+    case 'badges':
+      return sorted.sort(function(a,b){
+        return ((b.badges||[]).length) - ((a.badges||[]).length);
+      });
+    case 'xp':
+      return sorted.sort(function(a,b){ return (b.xp||0)-(a.xp||0); });
+    case 'experience':
+      return sorted.sort(function(a,b){ return (b.experience||0)-(a.experience||0); });
+    default:
+      return sorted;
+  }
+}
+
+function renderFilteredCoaches(filtered) {
+  var container = document.getElementById('coachListingCards');
+  var emptyEl   = document.getElementById('coachListingsEmpty');
+  if (!container) return;
+
+  if (filtered.length === 0) {
+    container.innerHTML = '';
+    if (emptyEl) emptyEl.style.display = 'block';
+    return;
+  }
+  if (emptyEl) emptyEl.style.display = 'none';
+
+  container.innerHTML = filtered.map(function(coach) {
+    var reviews   = getCoachReviews(coach.id);
+    var avgRating = reviews.length
+      ? (reviews.reduce(function(a,r){return a+r.stars;},0)/reviews.length).toFixed(1)
+      : null;
+    var avatarHtml = coach.photo
+      ? '<img src="' + coach.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:14px">'
+      : '<span style="font-size:1.5rem;font-weight:900;color:#000">' + (coach.name||'?').charAt(0).toUpperCase() + '</span>';
+
+    var specialtyTags = (coach.specialties||[]).slice(0,3).map(function(s){
+      return '<span style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:0.6rem;font-weight:800;padding:2px 7px;border-radius:99px">' + s + '</span>';
+    }).join('');
+
+    var badgeCount  = (coach.badges||[]).length;
+    var badgeHtml   = badgeCount ? '<span style="font-size:0.62rem;color:var(--yellow);font-weight:800">🏆 ' + badgeCount + ' rozet</span>' : '';
+    var ratingHtml  = avgRating  ? '<span style="font-size:0.72rem;font-weight:900;color:var(--warn)">⭐ ' + avgRating + '</span>' : '';
+    var xpHtml      = coach.xp  ? '<span style="font-size:0.62rem;color:#818cf8;font-weight:800">✨ ' + coach.xp + ' XP</span>' : '';
+
+    return '<div onclick="openCoachProfileModal(\'' + coach.id + '\')" '
+      + 'style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color 0.2s;display:flex;gap:12px;align-items:flex-start" '
+      + 'onmouseover="this.style.borderColor=\'rgba(52,211,153,0.5)\'" onmouseout="this.style.borderColor=\'var(--border)\'">'
+      + '<div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden">' + avatarHtml + '</div>'
+      + '<div style="flex:1;min-width:0">'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
+          + '<div style="font-size:0.9rem;font-weight:900">' + (coach.name||'Koç') + '</div>'
+          + '<div style="font-size:0.8rem;font-weight:900;color:var(--yellow)">' + (coach.monthlyPrice ? coach.monthlyPrice+'₺/ay' : '') + '</div>'
+        + '</div>'
+        + '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">' + specialtyTags + '</div>'
+        + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+          + '<span style="font-size:0.62rem;color:var(--muted);font-weight:700">' + (coach.experience||0) + ' yıl · ' + reviews.length + ' değerlendirme</span>'
+          + ratingHtml + badgeHtml + xpHtml
+        + '</div>'
+      + '</div>'
+    + '</div>';
+  }).join('');
+}
+
+function getCoachListings() {
+  try {
+    var all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]');
+    return all;
+  } catch(e) { return []; }
+}
+
+function getCoachReviews(coachId) {
+  try {
+    var all = JSON.parse(localStorage.getItem('pugi_coach_reviews_' + coachId) || '[]');
+    return all;
+  } catch(e) { return []; }
+}
+
+function openCoachProfileModal(coachId) {
+  var listings = getCoachListings();
+  var coach = listings.find(function(l){ return l.id === coachId; });
+  if (!coach) return;
+  _cpmCurrentCoach = coach;
+  _cpmSelectedStar = 0;
+
+  // Doldur
+  var avatarEl = document.getElementById('cpm-avatar');
+  if (coach.photo) {
+    avatarEl.innerHTML = '<img src="' + coach.photo + '" style="width:100%;height:100%;object-fit:cover">';
+  } else {
+    avatarEl.innerHTML = (coach.name || '?').charAt(0).toUpperCase();
+  }
+  document.getElementById('cpm-name').textContent = coach.name || 'Koç';
+  document.getElementById('cpm-specialties').textContent = (coach.specialties || []).join(' · ');
+  document.getElementById('cpm-price').textContent = coach.monthlyPrice ? '💰 ' + coach.monthlyPrice + '₺ / Ay' : '';
+  document.getElementById('cpm-xp').textContent = coach.xp || '0';
+  document.getElementById('cpm-exp').textContent = coach.experience || '0';
+
+  // Video
+  var videoWrap = document.getElementById('cpm-video-wrap');
+  var videoContainer = document.getElementById('cpm-video-container');
+  if (coach.video) {
+    videoWrap.style.display = 'block';
+    videoContainer.innerHTML = '<video src="' + coach.video + '" controls style="width:100%;display:block;max-height:220px"></video>';
+  } else if (coach.videoUrl) {
+    videoWrap.style.display = 'block';
+    videoContainer.innerHTML = '<video src="' + coach.videoUrl + '" controls style="width:100%;display:block;max-height:220px"></video>';
+  } else {
+    videoWrap.style.display = 'none';
+    videoContainer.innerHTML = '';
+  }
+
+  // Açıklama
+  document.getElementById('cpm-desc').textContent = coach.description || 'Açıklama eklenmemiş.';
+
+  // Rozetler
+  var badgesEl = document.getElementById('cpm-badges');
+  var badges = coach.badges || [];
+  if (badges.length > 0) {
+    badgesEl.innerHTML = badges.map(function(b){
+      return '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:8px 12px;font-size:0.78rem;font-weight:800;display:flex;align-items:center;gap:6px">' + (b.icon||'🏆') + ' ' + (b.name||b) + '</div>';
+    }).join('');
+  } else {
+    badgesEl.innerHTML = '<div style="font-size:0.78rem;color:var(--muted);font-weight:700">Henüz rozet yok</div>';
+  }
+
+  // Rating
+  var reviews = getCoachReviews(coachId);
+  var avgRating = reviews.length ? (reviews.reduce(function(a,r){return a+r.stars;},0) / reviews.length).toFixed(1) : '—';
+  document.getElementById('cpm-rating').textContent = avgRating !== '—' ? '⭐ ' + avgRating : '—';
+
+  // Değerlendirmeler
+  renderCpmReviews(coachId);
+
+  // Star sıfırla
+  setCpmStar(0);
+
+  // Modal aç
+  var modal = document.getElementById('coachProfileModal');
+  var overlay = document.getElementById('coachProfileModalOverlay');
+  var sheet = document.getElementById('coachProfileModalSheet');
+  modal.style.pointerEvents = 'all';
+  overlay.style.background = 'rgba(0,0,0,0.65)';
+  sheet.style.transform = 'translateY(0)';
+  // Scroll to top
+  sheet.scrollTop = 0;
+}
+
+function renderCpmReviews(coachId) {
+  var reviews = getCoachReviews(coachId);
+  var el = document.getElementById('cpm-reviews');
+  if (!el) return;
+  if (reviews.length === 0) {
+    el.innerHTML = '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;font-size:0.78rem;color:var(--muted);font-weight:700;text-align:center">Henüz değerlendirme yok. İlk değerlendiren sen ol!</div>';
+    return;
+  }
+  el.innerHTML = reviews.slice().reverse().slice(0,8).map(function(r){
+    var stars = '⭐'.repeat(r.stars) + '☆'.repeat(5-r.stars);
+    return '<div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;margin-bottom:8px">'
+      + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'
+        + '<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:900;color:#fff">' + (r.author||'?').charAt(0).toUpperCase() + '</div>'
+        + '<div style="flex:1"><div style="font-size:0.78rem;font-weight:800">' + (r.author||'Öğrenci') + '</div>'
+        + '<div style="font-size:0.65rem;color:var(--muted)">' + (r.date||'') + '</div></div>'
+        + '<div style="font-size:0.8rem">' + stars + '</div>'
+      + '</div>'
+      + (r.text ? '<div style="font-size:0.78rem;color:var(--text);font-weight:700;line-height:1.5">' + r.text + '</div>' : '')
+    + '</div>';
+  }).join('');
+}
+
+function closeCoachProfileModal() {
+  var modal = document.getElementById('coachProfileModal');
+  var overlay = document.getElementById('coachProfileModalOverlay');
+  var sheet = document.getElementById('coachProfileModalSheet');
+  overlay.style.background = 'rgba(0,0,0,0)';
+  sheet.style.transform = 'translateY(100%)';
+  setTimeout(function(){ modal.style.pointerEvents = 'none'; }, 350);
+}
+
+function setCpmStar(n) {
+  _cpmSelectedStar = n;
+  var stars = document.querySelectorAll('.cpm-star');
+  stars.forEach(function(s, i) {
+    s.style.filter = i < n ? 'none' : 'grayscale(1)';
+  });
+}
+
+function submitCpmReview() {
+  if (!_cpmCurrentCoach) return;
+  if (_cpmSelectedStar === 0) { showToast('⭐ Önce yıldız seç'); return; }
+  var text = document.getElementById('cpm-review-text').value.trim();
+  var userName = (_currentUser && (_currentUser.displayName || _currentUser._username)) || 'Öğrenci';
+
+  var review = {
+    stars: _cpmSelectedStar,
+    text: text,
+    author: userName,
+    date: new Date().toLocaleDateString('tr-TR'),
+    ts: Date.now()
+  };
+
+  var key = 'pugi_coach_reviews_' + _cpmCurrentCoach.id;
+  var existing = getCoachReviews(_cpmCurrentCoach.id);
+  existing.push(review);
+  localStorage.setItem(key, JSON.stringify(existing));
+
+  // Ortalama güncelle
+  var avg = (existing.reduce(function(a,r){return a+r.stars;},0) / existing.length).toFixed(1);
+  document.getElementById('cpm-rating').textContent = '⭐ ' + avg;
+
+  document.getElementById('cpm-review-text').value = '';
+  setCpmStar(0);
+  renderCpmReviews(_cpmCurrentCoach.id);
+  showToast('✅ Değerlendirmen kaydedildi!');
+}
+
+function openCoachWhatsapp() {
+  if (!_cpmCurrentCoach || !_cpmCurrentCoach.whatsapp) {
+    showToast('❌ Koçun WhatsApp numarası paylaşılmamış');
+    return;
+  }
+  var phone = _cpmCurrentCoach.whatsapp.replace(/\D/g, '');
+  var name = _cpmCurrentCoach.name || 'Koç';
+  var msg = encodeURIComponent('Merhaba ' + name + ', Pugi üzerinden ilanınızı gördüm. Koçluk hakkında bilgi almak istiyorum.');
+  window.open('https://wa.me/' + phone + '?text=' + msg, '_blank');
 }
 
 </script>

@@ -469,6 +469,87 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
 </div>
 </div>
 
+<!-- ════════════════════ SAYFA: İLAN ════════════════════ -->
+<div class="page" id="page-ilan">
+
+  <!-- Aktif İlan Özeti -->
+  <div id="ilanActiveWrap" style="display:none;background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(251,191,36,0.07));border:1.5px solid rgba(52,211,153,0.25);border-radius:18px;padding:16px;margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:0.68rem;font-weight:900;color:#34d399;letter-spacing:2px;text-transform:uppercase">✅ Aktif İlanın</div>
+      <button onclick="deleteCoachListing()" style="background:rgba(244,114,182,0.12);border:1.5px solid rgba(244,114,182,0.25);border-radius:8px;padding:5px 12px;color:#f472b6;font-weight:800;font-size:0.72rem;cursor:pointer;font-family:'Nunito',sans-serif">🗑 Kaldır</button>
+    </div>
+    <div id="ilanActivePreview"></div>
+  </div>
+
+  <!-- İlan Form -->
+  <div class="sec" style="margin-top:4px">📢 İlan Bilgileri</div>
+  <div style="background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:16px;margin-bottom:10px">
+
+    <!-- Fotoğraf -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📷 Profil Fotoğrafı</div>
+      <div id="ilanPhotoPreview" onclick="document.getElementById('ilanPhotoInput').click()" style="width:100%;height:150px;border-radius:12px;background:var(--bg2);border:1.5px dashed var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;margin-bottom:8px">
+        <div style="text-align:center;pointer-events:none">
+          <div style="font-size:2rem;margin-bottom:6px">📷</div>
+          <div style="font-size:0.75rem;color:var(--muted);font-weight:700">Fotoğraf eklemek için tıkla</div>
+        </div>
+      </div>
+      <input type="file" id="ilanPhotoInput" accept="image/*" onchange="loadIlanPhoto()" style="display:none">
+    </div>
+
+    <!-- Video -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🎬 Tanıtım Videosu (Opsiyonel)</div>
+      <div id="ilanVideoPreview" style="display:none;border-radius:10px;overflow:hidden;margin-bottom:8px;background:var(--bg2)">
+        <video id="ilanVideoEl" controls style="width:100%;max-height:200px;display:block"></video>
+      </div>
+      <button onclick="document.getElementById('ilanVideoInput').click()" style="width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🎬 Video Yükle</button>
+      <input type="file" id="ilanVideoInput" accept="video/*" onchange="loadIlanVideo()" style="display:none">
+    </div>
+
+    <!-- Aylık Fiyat -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">💰 Aylık Ücret (₺)</div>
+      <input type="number" id="ilanPrice" placeholder="Örn: 800" min="50" max="100000" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none" oninput="this.style.borderColor='var(--coach)'">
+    </div>
+
+    <!-- WhatsApp -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📱 WhatsApp Numarası</div>
+      <input type="tel" id="ilanWhatsapp" placeholder="Örn: 905xxxxxxxxx" style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none" oninput="this.style.borderColor='var(--coach)'">
+      <div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:4px">Ülke kodu ile yaz (örn: 905321234567)</div>
+    </div>
+
+    <!-- Uzmanlık -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">🎓 Uzmanlık Alanları</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Matematik" style="cursor:pointer;accent-color:#34d399"> Matematik</label>
+        <label style="display:flex;align-items:center;gap=6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Türkçe" style="cursor:pointer;accent-color:#34d399"> Türkçe</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Fizik" style="cursor:pointer;accent-color:#34d399"> Fizik</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Kimya" style="cursor:pointer;accent-color:#34d399"> Kimya</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Biyoloji" style="cursor:pointer;accent-color:#34d399"> Biyoloji</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Tarih" style="cursor:pointer;accent-color:#34d399"> Tarih</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="Coğrafya" style="cursor:pointer;accent-color:#34d399"> Coğrafya</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.82rem;font-weight:700"><input type="checkbox" class="ilanSpecialty" value="İngilizce" style="cursor:pointer;accent-color:#34d399"> İngilizce</label>
+      </div>
+    </div>
+
+    <!-- Açıklama -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">📄 Açıklama</div>
+      <textarea id="ilanDesc" placeholder="Kendinizi tanıtın. Metodunuzu, tecrübenizi, başarılarınızı yazın..." style="width:100%;padding:12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;outline:none;resize:none;min-height:110px" oninput="this.style.borderColor='var(--coach)'"></textarea>
+    </div>
+
+    <!-- Yayınla Butonu -->
+    <button onclick="publishCoachListing()" style="width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;box-shadow:0 4px 18px rgba(52,211,153,0.3);transition:transform 0.15s" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform=''">
+      🚀 İlanı Yayınla
+    </button>
+  </div>
+
+  <div style="height:100px"></div>
+</div>
+
 <!-- AYARLAR SAYFASI (Koç) -->
 <div id="coachSettingsPage" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;overflow-y:auto">
   <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
@@ -592,6 +673,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Nunito', sans-se
   <button class="tab-btn" onclick="switchTab('reports',this)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
     <span>Raporlar</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('ilan',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>İlan</span>
   </button>
   <button class="tab-btn" id="profileTabBtn" onclick="switchTab('profile',this)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -1724,10 +1809,15 @@ function switchTab(tab, el) {
   _currentDetailUid = null;
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('page-' + tab).classList.add('active');
-  el.classList.add('active');
+  var pg = document.getElementById('page-' + tab);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+  var sb = document.getElementById('coachSettingsBtn');
+  if (sb) sb.style.display = tab === 'profile' ? 'flex' : 'none';
   if (tab === 'suggest') loadSentSuggestions();
   if (tab === 'reports') loadReports();
+  if (tab === 'profile') { if (typeof loadCoachProfilePage === 'function') loadCoachProfilePage(); }
+  if (tab === 'ilan')    { if (typeof loadIlanPage === 'function') loadIlanPage(); }
 }
 
 function logout() {
@@ -1789,14 +1879,7 @@ function closeCoachSettings() {
   if (pg) pg.style.display = 'none';
 }
 
-// switchTab override to show/hide settings btn
-var _origSwitchTab = switchTab;
-switchTab = function(tab, el) {
-  _origSwitchTab(tab, el);
-  var sb = document.getElementById('coachSettingsBtn');
-  if (sb) sb.style.display = tab === 'profile' ? 'flex' : 'none';
-  if (tab === 'profile') loadCoachProfilePage();
-};
+
 
 // Load profile page data
 function loadCoachProfilePage() {
@@ -2694,9 +2777,163 @@ function loadCoachProfileData() {
 // Sayfa yüklenince koç profil verisini yükle
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(loadCoachProfileData, 500);
+  setTimeout(loadIlanPage, 600);
 });
 
 </script>
 
-</body>
-</html>
+<!-- İLAN SAYFASI SCRIPT -->
+<script>
+
+var _ilanPhotoData = null;
+var _ilanVideoData = null;
+
+function loadIlanPhoto() {
+  var input = document.getElementById('ilanPhotoInput');
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if (file.size > 2 * 1024 * 1024) {
+    showToast('❌ Fotoğraf 2MB\'dan küçük olmalı');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _ilanPhotoData = e.target.result;
+    var preview = document.getElementById('ilanPhotoPreview');
+    preview.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
+    showToast('✅ Fotoğraf yüklendi');
+  };
+  reader.readAsDataURL(file);
+}
+
+function loadIlanVideo() {
+  var input = document.getElementById('ilanVideoInput');
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if (file.size > 30 * 1024 * 1024) {
+    showToast('❌ Video 30MB\'dan küçük olmalı');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _ilanVideoData = e.target.result;
+    document.getElementById('ilanVideoPreview').style.display = 'block';
+    document.getElementById('ilanVideoEl').src = e.target.result;
+    showToast('✅ Video yüklendi');
+  };
+  reader.readAsDataURL(file);
+}
+
+function publishCoachListing() {
+  var price = parseInt(document.getElementById('ilanPrice').value) || 0;
+  var desc = document.getElementById('ilanDesc').value.trim();
+  var whatsapp = document.getElementById('ilanWhatsapp').value.trim();
+
+  if (price < 50) { showToast('❌ Ücret en az 50₺ olmalıdır'); return; }
+  if (!desc) { showToast('❌ Açıklama boş bırakılamaz'); return; }
+  if (!whatsapp) { showToast('❌ WhatsApp numarası giriniz'); return; }
+
+  var specialties = [];
+  document.querySelectorAll('.ilanSpecialty:checked').forEach(function(c){ specialties.push(c.value); });
+  if (specialties.length === 0) { showToast('❌ En az bir ders seçiniz'); return; }
+
+  // Mevcut kullanıcı bilgisi
+  var userName = (typeof _user !== 'undefined' && _user) ? (_user.displayName || _user._username || _user.email || 'Koç') : 'Koç';
+  var userId = (typeof _user !== 'undefined' && _user) ? _user.uid : ('coach_' + Date.now());
+
+  // Koç XP (profil sayfasından al)
+  var coachXP = 0;
+  try {
+    var cData = JSON.parse(localStorage.getItem('coachData_' + userId) || '{}');
+    coachXP = cData.xp || 0;
+  } catch(e) {}
+
+  // Koç rozetleri
+  var coachBadges = [];
+  try {
+    coachBadges = JSON.parse(localStorage.getItem('coachBadges_' + userId) || '[]');
+  } catch(e) {}
+
+  var listing = {
+    id: userId,
+    name: userName,
+    monthlyPrice: price,
+    description: desc,
+    whatsapp: whatsapp,
+    specialties: specialties,
+    photo: _ilanPhotoData || null,
+    video: _ilanVideoData || null,
+    xp: coachXP,
+    badges: coachBadges,
+    experience: (function(){
+      try { return JSON.parse(localStorage.getItem('coachProfile') || '{}').experience || 0; } catch(e){ return 0; }
+    })(),
+    publishedAt: new Date().toISOString()
+  };
+
+  // Tüm ilanları oku, bu koçun eskisini sil, yenisini ekle
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]'); } catch(e){}
+  all = all.filter(function(l){ return l.id !== userId; });
+  all.unshift(listing);
+  localStorage.setItem('pugi_coach_listings', JSON.stringify(all));
+
+  showToast('🚀 İlanın yayınlandı!');
+  loadIlanPage();
+}
+
+function deleteCoachListing() {
+  var userId = (typeof _user !== 'undefined' && _user) ? _user.uid : null;
+  if (!userId) { showToast('❌ Oturum açık değil'); return; }
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]'); } catch(e){}
+  all = all.filter(function(l){ return l.id !== userId; });
+  localStorage.setItem('pugi_coach_listings', JSON.stringify(all));
+  showToast('🗑 İlanın kaldırıldı');
+  loadIlanPage();
+}
+
+function loadIlanPage() {
+  var userId = (typeof _user !== 'undefined' && _user) ? _user.uid : null;
+  if (!userId) return;
+
+  var all = [];
+  try { all = JSON.parse(localStorage.getItem('pugi_coach_listings') || '[]'); } catch(e){}
+  var myListing = all.find(function(l){ return l.id === userId; });
+
+  var activeWrap = document.getElementById('ilanActiveWrap');
+  var activePreview = document.getElementById('ilanActivePreview');
+  if (!activeWrap) return;
+
+  if (myListing) {
+    activeWrap.style.display = 'block';
+    var specialtyTags = (myListing.specialties || []).map(function(s){
+      return '<span style="background:rgba(52,211,153,0.15);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:0.65rem;font-weight:800;padding:3px 9px;border-radius:99px">' + s + '</span>';
+    }).join('');
+    activePreview.innerHTML = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">'
+      + (myListing.photo ? '<img src="' + myListing.photo + '" style="width:48px;height:48px;border-radius:12px;object-fit:cover;flex-shrink:0">' : '<div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0">🎓</div>')
+      + '<div><div style="font-weight:900;font-size:0.9rem;margin-bottom:2px">' + (myListing.name || 'Koç') + '</div>'
+      + '<div style="font-size:0.8rem;font-weight:900;color:var(--yellow)">' + myListing.monthlyPrice + '₺/ay</div></div></div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">' + specialtyTags + '</div>'
+      + (myListing.video ? '<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:10px;padding:8px;font-size:0.75rem;font-weight:800;color:#34d399;margin-bottom:6px">🎬 Video mevcut</div>' : '')
+      + '<div style="font-size:0.78rem;color:var(--muted);font-weight:700;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">' + myListing.description + '</div>';
+
+    // Formu doldur
+    document.getElementById('ilanPrice').value = myListing.monthlyPrice || '';
+    document.getElementById('ilanDesc').value = myListing.description || '';
+    document.getElementById('ilanWhatsapp').value = myListing.whatsapp || '';
+    if (myListing.photo) {
+      document.getElementById('ilanPhotoPreview').innerHTML = '<img src="' + myListing.photo + '" style="width:100%;height:100%;object-fit:cover">';
+      _ilanPhotoData = myListing.photo;
+    }
+    if (myListing.specialties) {
+      document.querySelectorAll('.ilanSpecialty').forEach(function(c){
+        c.checked = myListing.specialties.includes(c.value);
+      });
+    }
+  } else {
+    activeWrap.style.display = 'none';
+  }
+}
+
+</script>
