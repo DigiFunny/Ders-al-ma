@@ -220,7 +220,7 @@ var firebaseConfig = {
 };
 
 // Admin e-posta/UID listesi — bunu config.js'e taşıyabilirsin
-var ADMIN_EMAILS = ['pugiappofficial@gmail.com']; // buraya admin e-postalarını ekle
+var ADMIN_EMAILS = ['admin@pugiapp.com']; // buraya admin e-postalarını ekle
 
 var _db = null, _auth = null, _adminUser = null;
 var _pendingRejectUid = null;
@@ -308,9 +308,10 @@ function doGoogleLogin() {
 
 function adminLogout() {
   localStorage.removeItem('pugi_admin_mode');
+  sessionStorage.removeItem('pugi_admin_testing');
+  sessionStorage.removeItem('pugi_admin_testing_uid');
   _auth.signOut().then(function() {
-    document.getElementById('loginOverlay').style.display = 'flex';
-    _adminUser = null;
+    window.location.href = 'index.html';
   });
 }
 

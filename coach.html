@@ -768,7 +768,7 @@ var firebaseConfig = {
   appId: "1:219082394848:web:8780f59490374d6566d485"
 };
 
-var _db = null, _auth = null, _user = null;
+var _db = null, _auth = null, _storage = null, _user = null;
 var _currentStatsData = null;
 var _students = []; // [{uid, username, displayName, stats}]
 var _snapListeners = {}; // uid -> unsubscribe fn
@@ -787,20 +787,18 @@ function initFirebase() {
   loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js', function() {
     loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js', function() {
       loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js', function() {
-        firebase.initializeApp(firebaseConfig);
-        _db = firebase.firestore();
-        _auth = firebase.auth();
-        _auth.onAuthStateChanged(function(user) {
-          if (!user) { window.location.href = 'index.html'; return; }
-          _user = user;
-          // Admin test modunda sınırlamaları kaldır
-          var adminTesting = sessionStorage.getItem('pugi_admin_testing');
-          if (adminTesting) {
-            window._isAdminTesting = true;
-          }
-          loadCoachProfile();
-          coachProcessPendingAccepted();
-          coachProcessPendingRemoved();
+        loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-storage-compat.min.js', function() {
+          firebase.initializeApp(firebaseConfig);
+          _db = firebase.firestore();
+          _auth = firebase.auth();
+          _storage = firebase.storage();
+          _auth.onAuthStateChanged(function(user) {
+            if (!user) { window.location.href = 'index.html'; return; }
+            _user = user;
+            loadCoachProfile();
+            coachProcessPendingAccepted();
+            coachProcessPendingRemoved();
+          });
         });
       });
     });
@@ -814,9 +812,14 @@ function loadCoachProfile() {
     var d = doc.data();
 
     // Admin kontrolü — admin kendi paneline, ama test modundaysa geç
-    if (d.isAdmin && !window._isAdminTesting) {
+    var adminTesting = sessionStorage.getItem('pugi_admin_testing');
+    if (d.isAdmin && !adminTesting) {
       window.location.href = 'admin.html';
       return;
+    }
+    // Sadece gerçek admin test modundaysa banner göster
+    if (d.isAdmin && adminTesting) {
+      window._isAdminTesting = true;
     }
 
     if (d.accountType !== 'coach' && !window._isAdminTesting) {
@@ -2812,57 +2815,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
 var _ilanPhotoData = null;
 var _ilanVideoData = null;
-
-function loadIlanPhoto() {
-  var input = document.getElementById('ilanPhotoInput');
-  if (!input.files || !input.files[0]) return;
-  var file = input.files[0];
-  if (file.size > 2 * 1024 * 1024) {
-    showToast('❌ Fotoğraf 2MB\'dan küçük olmalı');
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _ilanPhotoData = e.target.result;
-    var preview = document.getElementById('ilanPhotoPreview');
-    preview.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
-    showToast('✅ Fotoğraf yüklendi');
-  };
-  reader.readAsDataURL(file);
-}
-
-function loadIlanVideo() {
-  var input = document.getElementById('ilanVideoInput');
-  if (!input.files || !input.files[0]) return;
-  var file = input.files[0];
-  if (file.size > 30 * 1024 * 1024) {
-    showToast('❌ Video 30MB\'dan küçük olmalı');
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _ilanVideoData = e.target.result;
-    document.getElementById('ilanVideoPreview').style.display = 'block';
-    document.getElementById('ilanVideoEl').src = e.target.result;
-    showToast('✅ Video yüklendi');
-  };
-  reader.readAsDataURL(file);
-}
-
-var _ilanPhotoData = null;
-var _ilanVideoData = null;
-var _coachAcceptingStudents = true;
+var _ilanVideoFile = null;
 
 function loadIlanPhoto() {
   var file = document.getElementById('ilanPhotoInput').files[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showToast('❌ Fotoğraf 5MB\'dan küçük olmalı'); return; }
+  if (file.size > 10 * 1024 * 1024) { showToast('❌ Fotoğraf 10MB\'dan küçük olmalı'); return; }
+  // Canvas ile sıkıştır — max 600px, %70 kalite
+  var img = new Image();
   var reader = new FileReader();
   reader.onload = function(e) {
-    _ilanPhotoData = e.target.result;
-    var prev = document.getElementById('ilanPhotoPreview');
-    prev.innerHTML = '<img src="' + e.target.result + '" style="width:100%;height:100%;object-fit:cover">';
-    showToast('✅ Fotoğraf yüklendi');
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      var maxSize = 600;
+      var w = img.width, h = img.height;
+      if (w > maxSize || h > maxSize) {
+        if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+        else { w = Math.round(w * maxSize / h); h = maxSize; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      _ilanPhotoData = canvas.toDataURL('image/jpeg', 0.7);
+      var prev = document.getElementById('ilanPhotoPreview');
+      prev.innerHTML = '<img src="' + _ilanPhotoData + '" style="width:100%;height:100%;object-fit:cover">';
+      showToast('✅ Fotoğraf yüklendi');
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
@@ -2870,18 +2848,13 @@ function loadIlanPhoto() {
 function loadIlanVideo() {
   var file = document.getElementById('ilanVideoInput').files[0];
   if (!file) return;
-  if (file.size > 30 * 1024 * 1024) {
-    showToast('❌ Video 30MB\'dan küçük olmalı');
-    return;
-  }
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _ilanVideoData = e.target.result;
-    document.getElementById('ilanVideoPreview').style.display = 'block';
-    document.getElementById('ilanVideoEl').src = e.target.result;
-    showToast('✅ Video yüklendi');
-  };
-  reader.readAsDataURL(file);
+  if (file.size > 50 * 1024 * 1024) { showToast('❌ Video 50MB\'dan küçük olmalı'); return; }
+  _ilanVideoFile = file; // Storage'a yüklemek için tut
+  var url = URL.createObjectURL(file);
+  _ilanVideoData = url;
+  document.getElementById('ilanVideoPreview').style.display = 'block';
+  document.getElementById('ilanVideoEl').src = url;
+  showToast('✅ Video seçildi');
 }
 
 function toggleAcceptingStudents() {
@@ -2915,39 +2888,55 @@ function publishCoachListing() {
   if (!desc) { showToast('❌ Açıklama boş bırakılamaz'); return; }
   if (!whatsapp) { showToast('❌ WhatsApp numarası giriniz'); return; }
 
-  var userName = _user.displayName || _user.email || 'Koç';
   var btn = document.getElementById('ilanPublishBtn');
   if (btn) { btn.disabled = true; btn.textContent = '⏳ Kaydediliyor...'; }
 
-  // Profil bilgilerini çek
-  _db.collection('users').doc(_user.uid).get().then(function(uDoc) {
-    var profile = {};
-    try { profile = JSON.parse(localStorage.getItem('coachProfile_' + _user.uid) || '{}'); } catch(e){}
-    var d = uDoc.exists ? uDoc.data() : {};
+  // Önce videoyu Storage'a yükle (varsa)
+  var videoUploadPromise;
+  if (_ilanVideoFile && _storage) {
+    if (btn) btn.textContent = '📤 Video yükleniyor...';
+    var storageRef = _storage.ref('coach_videos/' + _user.uid + '_' + Date.now());
+    videoUploadPromise = storageRef.put(_ilanVideoFile).then(function(snap) {
+      return snap.ref.getDownloadURL();
+    });
+  } else {
+    videoUploadPromise = Promise.resolve(null);
+  }
 
-    var listing = {
-      coachUid: _user.uid,
-      name: d.displayName || userName,
-      username: d.username || '',
-      monthlyPrice: price,
-      description: desc,
-      whatsapp: whatsapp,
-      photo: _ilanPhotoData || null,
-      video: _ilanVideoData || null,
-      experience: profile.experience || d.coachExperience || 0,
-      level: profile.level || d.coachLevel || 'beginner',
-      acceptingStudents: _coachAcceptingStudents,
-      approvalStatus: 'pending', // admin onayı bekliyor
-      views: 0,
-      reviewCount: 0,
-      rating: null,
-      updatedAt: new Date().toISOString()
-    };
+  videoUploadPromise.then(function(videoUrl) {
+    if (btn) btn.textContent = '⏳ Kaydediliyor...';
+    return _db.collection('users').doc(_user.uid).get().then(function(uDoc) {
+      var profile = {};
+      try { profile = JSON.parse(localStorage.getItem('coachProfile_' + _user.uid) || '{}'); } catch(e){}
+      var d = uDoc.exists ? uDoc.data() : {};
+      var userName = _user.displayName || _user.email || 'Koç';
 
-    return _db.collection('coachListings').doc(_user.uid).set(listing, { merge: true });
+      var listing = {
+        coachUid: _user.uid,
+        name: d.displayName || userName,
+        username: d.username || '',
+        monthlyPrice: price,
+        description: desc,
+        whatsapp: whatsapp,
+        photo: _ilanPhotoData || null,
+        video: videoUrl || null,
+        hasVideo: !!(videoUrl || _ilanVideoData),
+        experience: profile.experience || d.coachExperience || 0,
+        level: profile.level || d.coachLevel || 'beginner',
+        acceptingStudents: _coachAcceptingStudents,
+        approvalStatus: 'pending',
+        views: 0,
+        reviewCount: 0,
+        rating: null,
+        updatedAt: new Date().toISOString()
+      };
+
+      return _db.collection('coachListings').doc(_user.uid).set(listing, { merge: true });
+    });
   }).then(function() {
     showToast('🚀 İlanın onay için gönderildi!');
-    if (btn) { btn.disabled = false; btn.textContent = '🚀 İlanı Güncelle'; }
+    if (btn) { btn.disabled = false; btn.textContent = '🔄 İlanı Güncelle'; }
+    _ilanVideoFile = null;
     loadIlanPage();
   }).catch(function(e) {
     showToast('❌ Hata: ' + e.message);
