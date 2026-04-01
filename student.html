@@ -4492,12 +4492,138 @@ function _showAiText(text, isDeep) {
   if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'});
 }
 
-function _showDeepAnalysisModal(html) {
+/**
+ * requestDeepAnalysis — Derin analiz butonuna basılınca modalı açar.
+ */
+function requestDeepAnalysis() {
+  openDeepAnalysisModal();
+}
+
+/**
+ * openDeepAnalysisModal — Modalı açar, hak durumunu ve önceki analizi gösterir.
+ */
+function openDeepAnalysisModal() {
   var modal = document.getElementById('deepAnalysisModal');
-  var body  = document.getElementById('deepAnalysisBody');
-  if (!modal || !body) return;
-  body.innerHTML = html;
+  if (!modal) return;
   modal.classList.add('open');
+
+  var hakBadge  = document.getElementById('deepHakBadge');
+  var startBtn  = document.getElementById('deepStartBtn');
+  var hakInfo   = document.getElementById('deepHakInfo');
+  var resultWrap = document.getElementById('deepAnalysisResult');
+  var loadingWrap = document.getElementById('deepAnalysisLoading');
+  var bodyEl    = document.getElementById('deepAnalysisBody');
+  var subtitle  = document.getElementById('deepAnalysisSubtitle');
+
+  // Yükleniyor'u gizle
+  if (loadingWrap) loadingWrap.style.display = 'none';
+
+  var hak = window._isAdminTesting ? 99 : _aiDeepHakSayisi;
+
+  if (hak > 0) {
+    // Hak var — butonu aktif göster
+    if (hakBadge) {
+      hakBadge.textContent = hak + ' hak';
+      hakBadge.style.background = 'rgba(52,211,153,0.15)';
+      hakBadge.style.color = '#34d399';
+    }
+    if (startBtn) { startBtn.disabled = false; startBtn.style.opacity = '1'; }
+    if (hakInfo) hakInfo.textContent = 'Pazartesi günü yeni hak yüklenir.';
+  } else {
+    // Hak yok — butonu devre dışı bırak
+    if (hakBadge) {
+      hakBadge.textContent = 'Hakkın bitti';
+      hakBadge.style.background = 'rgba(244,114,182,0.12)';
+      hakBadge.style.color = '#f472b6';
+    }
+    if (startBtn) { startBtn.disabled = true; startBtn.style.opacity = '0.4'; startBtn.style.cursor = 'not-allowed'; }
+    if (hakInfo) hakInfo.textContent = 'Bu haftaki hakkını kullandın. Pazartesi yenilenir.';
+  }
+
+  // Önceki analiz sonucunu göster
+  var uid2 = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
+  var prevText = localStorage.getItem('pugi_ai_deep_result_' + uid2) || '';
+  var prevDate = localStorage.getItem('pugi_ai_deep_date_' + uid2) || '';
+
+  if (prevText && resultWrap && bodyEl) {
+    resultWrap.style.display = 'block';
+    bodyEl.innerHTML = prevText;
+    var lbl = document.getElementById('deepResultLabel');
+    if (lbl) lbl.textContent = prevDate ? ('📅 ' + prevDate + ' tarihli analiz') : 'Önceki Analiz';
+    if (subtitle) subtitle.textContent = 'Önceki analizin aşağıda';
+  } else {
+    if (resultWrap) resultWrap.style.display = 'none';
+    if (subtitle) subtitle.textContent = 'AI Koçunun haftalık değerlendirmesi';
+  }
+}
+
+/**
+ * _startDeepAnalysis — Modal içindeki "Başlat" butonuna basılınca çağrılır.
+ */
+function _startDeepAnalysis() {
+  if (!window._isAdminTesting && _aiDeepHakSayisi <= 0) {
+    showToast('Bu haftaki derin analiz hakkını kullandın. Pazartesi yenilenir.');
+    return;
+  }
+
+  // Hakkı düş
+  if (!window._isAdminTesting) {
+    _aiDeepHakSayisi--;
+    var uid2 = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
+    localStorage.setItem('pugi_ai_dh_' + uid2, _aiDeepHakSayisi.toString());
+    _updateDeepBtn();
+  }
+
+  // Yükleniyor göster, butonu gizle, sonucu gizle
+  var startBtn = document.getElementById('deepStartBtn');
+  var hakWrap = document.getElementById('deepAnalysisHakWrap');
+  var loadingWrap = document.getElementById('deepAnalysisLoading');
+  var resultWrap = document.getElementById('deepAnalysisResult');
+  if (startBtn) { startBtn.disabled = true; startBtn.style.opacity = '0.4'; }
+  if (loadingWrap) loadingWrap.style.display = 'block';
+  if (resultWrap) resultWrap.style.display = 'none';
+
+  _fetchAiSuggestion(true);
+}
+
+function _showDeepAnalysisModal(html) {
+  var loadingWrap = document.getElementById('deepAnalysisLoading');
+  var resultWrap  = document.getElementById('deepAnalysisResult');
+  var bodyEl      = document.getElementById('deepAnalysisBody');
+  var subtitle    = document.getElementById('deepAnalysisSubtitle');
+  var lbl         = document.getElementById('deepResultLabel');
+  var startBtn    = document.getElementById('deepStartBtn');
+  var hakBadge    = document.getElementById('deepHakBadge');
+  var hakInfo     = document.getElementById('deepHakInfo');
+
+  if (loadingWrap) loadingWrap.style.display = 'none';
+  if (resultWrap) resultWrap.style.display = 'block';
+  if (bodyEl) bodyEl.innerHTML = html;
+
+  var now = new Date().toLocaleDateString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric'});
+  if (lbl) lbl.textContent = '📅 ' + now + ' tarihli analiz';
+  if (subtitle) subtitle.textContent = 'Analiz tamamlandı ✓';
+
+  // Hak bilgisini güncelle
+  var hak = window._isAdminTesting ? 99 : _aiDeepHakSayisi;
+  if (hak > 0) {
+    if (hakBadge) { hakBadge.textContent = hak + ' hak'; hakBadge.style.background = 'rgba(52,211,153,0.15)'; hakBadge.style.color = '#34d399'; }
+    if (startBtn) { startBtn.disabled = false; startBtn.style.opacity = '1'; startBtn.style.cursor = 'pointer'; }
+    if (hakInfo) hakInfo.textContent = 'Pazartesi günü yeni hak yüklenir.';
+  } else {
+    if (hakBadge) { hakBadge.textContent = 'Hakkın bitti'; hakBadge.style.background = 'rgba(244,114,182,0.12)'; hakBadge.style.color = '#f472b6'; }
+    if (startBtn) { startBtn.disabled = true; startBtn.style.opacity = '0.4'; startBtn.style.cursor = 'not-allowed'; }
+    if (hakInfo) hakInfo.textContent = 'Bu haftaki hakkını kullandın. Pazartesi yenilenir.';
+  }
+
+  // Sonucu localStorage'a kaydet
+  var uid2 = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
+  localStorage.setItem('pugi_ai_deep_result_' + uid2, html);
+  localStorage.setItem('pugi_ai_deep_date_' + uid2, now);
+
+  // Kart başlığını güncelle
+  var dateEl = document.getElementById('aiCoachDate');
+  if (dateEl) dateEl.textContent = 'Derin analiz tamamlandı ✓';
 }
 
 function closeDeepAnalysisModal() {
@@ -4573,26 +4699,6 @@ function _updateDeepBtn() {
 
 /**
  * requestDeepAnalysis — Kullanıcı derin analiz butonuna basınca çağrılır.
- * Hak kontrolü yapar, Gemini'ye uzun analiz isteği gönderir.
- */
-function requestDeepAnalysis() {
-  // Admin test modunda sınırsız kullanım
-  if (window._isAdminTesting) {
-    _fetchAiSuggestion(true);
-    showToast('🔍 Derin analiz başlatıldı... (Admin)');
-    return;
-  }
-  if (_aiDeepHakSayisi <= 0) {
-    showToast('Bu haftaki derin analiz hakkını kullandın. Pazartesi yenilenir.');
-    return;
-  }
-  _aiDeepHakSayisi--;
-  var uid2 = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
-  localStorage.setItem('pugi_ai_dh_' + uid2, _aiDeepHakSayisi.toString());
-  _updateDeepBtn();
-  _fetchAiSuggestion(true);
-  showToast('🔍 Derin analiz başlatıldı...');
-}
 
 function onGuestMode() {
   // User bar: misafir göster
@@ -9217,17 +9323,42 @@ function openCoachWhatsapp() {
 <!-- DERİN ANALİZ SONUÇ MODALI -->
 <div class="day-modal" id="deepAnalysisModal">
   <div class="day-modal-overlay" onclick="closeDeepAnalysisModal()"></div>
-  <div class="day-modal-sheet" style="max-height:85vh">
+  <div class="day-modal-sheet" style="max-height:88vh">
     <div class="day-modal-handle"></div>
     <div class="day-modal-header">
       <div>
         <div class="day-modal-title">🔍 Derin Analiz</div>
-        <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:2px">AI Koçunun haftalık değerlendirmesi</div>
+        <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:2px" id="deepAnalysisSubtitle">AI Koçunun haftalık değerlendirmesi</div>
       </div>
       <button class="day-modal-close" onclick="closeDeepAnalysisModal()">✕</button>
     </div>
     <div class="day-modal-body">
-      <div id="deepAnalysisBody" style="font-size:0.84rem;font-weight:600;color:var(--text);line-height:1.75"></div>
+
+      <!-- Hak durumu -->
+      <div id="deepAnalysisHakWrap" style="background:rgba(129,140,248,0.08);border:1.5px solid rgba(129,140,248,0.2);border-radius:14px;padding:14px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:0.8rem;font-weight:900;color:var(--accent2)">Haftada 1 Kullanım Hakkı</div>
+          <div id="deepHakBadge" style="font-size:0.65rem;font-weight:800;padding:3px 10px;border-radius:99px"></div>
+        </div>
+        <button id="deepStartBtn" onclick="_startDeepAnalysis()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.9rem;cursor:pointer;transition:opacity 0.2s">
+          🔍 Derin Analizi Başlat
+        </button>
+        <div id="deepHakInfo" style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-top:8px;text-align:center"></div>
+      </div>
+
+      <!-- Yükleniyor -->
+      <div id="deepAnalysisLoading" style="display:none;text-align:center;padding:30px 20px">
+        <div style="width:48px;height:48px;border:3px solid rgba(129,140,248,0.2);border-top-color:var(--accent2);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px"></div>
+        <div style="font-size:0.82rem;font-weight:700;color:var(--muted)">Analiz yapılıyor...</div>
+        <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:4px">Bu 10-20 saniye sürebilir</div>
+      </div>
+
+      <!-- Sonuç -->
+      <div id="deepAnalysisResult" style="display:none">
+        <div style="font-size:0.65rem;font-weight:900;color:var(--accent2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px" id="deepResultLabel">Analiz Sonucu</div>
+        <div id="deepAnalysisBody" style="font-size:0.84rem;font-weight:600;color:var(--text);line-height:1.75;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px"></div>
+      </div>
+
       <div style="height:20px"></div>
     </div>
   </div>
