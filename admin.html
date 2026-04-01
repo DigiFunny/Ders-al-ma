@@ -165,8 +165,17 @@ input:focus { border-color: var(--admin); }
   <div class="switch-btn" onclick="switchToStudentView()">
     <div class="switch-btn-icon" style="background:rgba(56,189,248,0.15)">📚</div>
     <div style="flex:1">
-      <div style="font-size:0.88rem;font-weight:900">Öğrenci Profiline Geç</div>
+      <div style="font-size:0.88rem;font-weight:900">YKS Öğrenci Profiline Geç</div>
       <div style="font-size:0.68rem;color:var(--muted);margin-top:2px">student.html'yi admin olarak aç</div>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+
+  <div class="switch-btn" onclick="switchToKpssView()">
+    <div class="switch-btn-icon" style="background:rgba(52,211,153,0.15)">🏛️</div>
+    <div style="flex:1">
+      <div style="font-size:0.88rem;font-weight:900">KPSS Profili Test Et</div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:2px">kpss.html'yi admin olarak aç</div>
     </div>
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
@@ -466,6 +475,11 @@ function switchToCoachView() {
 function switchToStudentView() {
   sessionStorage.setItem('pugi_admin_testing', 'student');
   window.location.href = 'student.html';
+}
+
+function switchToKpssView() {
+  sessionStorage.setItem('pugi_admin_testing', 'student');
+  window.location.href = 'kpss.html';
 }
 
 function findAndSwitchUser() {

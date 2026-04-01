@@ -430,11 +430,10 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             <span class="exam-desc">Lisansüstü sınavı</span>
           </div>
 
-          <div class="exam-card kpss coming-soon" onclick="showComingSoon()">
-            <span class="coming-badge">Yakında</span>
+          <div class="exam-card kpss" onclick="guestEnterExam('kpss')">
             <span class="exam-emoji">&#x1F3DB;</span>
             <span class="exam-label">KPSS</span>
-            <span class="exam-desc">Kamu personeli seçme</span>
+            <span class="exam-desc">GY · GK · Eğitim Bil.</span>
           </div>
         </div>
       </div>
@@ -775,10 +774,11 @@ function scrollToLandingIntro(){
 }
 
 function guestEnterExam(exam){
-  if(exam!=='yks')return;
+  var examMap = { yks:'student.html', kpss:'kpss.html' };
+  if(!examMap[exam]) return;
   sessionStorage.setItem('pugi_sinav',exam);
   sessionStorage.setItem('pugi_guest','true');
-  window.location.href='student.html';
+  window.location.href = examMap[exam];
 }
 function showComingSoon(){
   var t=document.getElementById('landingToast');
