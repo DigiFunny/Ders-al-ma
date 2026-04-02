@@ -1673,53 +1673,80 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
 
     <!-- Sınav Bilgilerim -->
-    <div class="u-settings-row" style="flex-direction:column;align-items:flex-start;gap:12px">
+    <div class="u-settings-row" style="flex-direction:column;align-items:flex-start;gap:14px">
       <div style="font-size:0.85rem;font-weight:900;width:100%">🎯 Sınav Bilgilerim</div>
 
-      <!-- Dal seçimi (YKS: Sözel / Dil) -->
-      <div style="width:100%" id="settDalWrap">
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Alan (YKS)</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📖 Sözel</button>
-          <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">🌍 Dil</button>
+      <!-- KPSS Kadro Türü -->
+      <div style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">KPSS Kadro Türü</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+
+          <!-- Lisans A Grubu -->
+          <button id="settKpssLisansA" onclick="settingSelectKpssKat('lisans_a',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem">⚖️</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Lisans — A Grubu / Kariyer</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">Müfettiş, Uzman, Kontrolör, Denetmen</div>
+            </div>
+          </button>
+
+          <!-- Lisans B Grubu -->
+          <button id="settKpssLisansB" onclick="settingSelectKpssKat('lisans_b',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem">🏛️</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Lisans — B Grubu / Memur</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">KPSS P1–P121, genel devlet memurluğu</div>
+            </div>
+          </button>
+
+          <!-- Lisans Eğitim -->
+          <button id="settKpssLisansE" onclick="settingSelectKpssKat('lisans_egitim',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem">🏫</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Lisans — Eğitim (ÖABT)</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">Öğretmenlik · Alan Bilgisi Testi</div>
+            </div>
+          </button>
+
+          <!-- Ön Lisans -->
+          <button id="settKpssOnLisans" onclick="settingSelectKpssKat('on_lisans',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem">📋</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Ön Lisans</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">KPSS P93–P94, 2 yıllık mezunlar</div>
+            </div>
+          </button>
+
+          <!-- Ortaöğretim / Lise -->
+          <button id="settKpssLise" onclick="settingSelectKpssKat('lise',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem">🎒</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Ortaöğretim (Lise)</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">KPSS P95–P96, lise mezunları</div>
+            </div>
+          </button>
+
         </div>
       </div>
 
-      <!-- Hedef türü — KPSS sadece Puan, YKS Sıralama veya Okul/Bölüm -->
-      <div style="width:100%" id="settHedefTurWrap">
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Türü</div>
-        <div id="settHedefTurBtns" style="display:flex;gap:8px;margin-bottom:12px">
-          <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
-          <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
-        </div>
+      <!-- Hedef Puan -->
+      <div style="width:100%">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600">(opsiyonel)</span></div>
+        <input type="number" id="settHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
+          style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+          oninput="_settOnSiralamaInput();">
       </div>
 
-      <!-- Puan/Sıralama hedefi -->
-      <div id="settSiralamaWrap" style="width:100%">
-        <div id="settHedefInputLabel" style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Puan</div>
-        <input type="number" id="settHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01"
-          style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
-          oninput="this.style.borderColor='var(--accent)'; _settOnSiralamaInput();">
-      </div>
-
-      <!-- Okul hedefi -->
-      <div id="settOkulWrap" style="width:100%;display:none">
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Şehir</div>
-        <select id="settIlSel" onchange="settLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
-          <option value="">Şehir seç...</option>
-        </select>
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Üniversite</div>
-        <select id="settUniSel" onchange="settLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
-          <option value="">Önce şehir seç...</option>
-        </select>
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Bölüm</div>
-        <select id="settBolumSel" onchange="settSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
-          <option value="">Önce üniversite seç...</option>
-        </select>
-        <div id="settProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:4px"></div>
-      </div>
-
-      <button id="settProfilSaveBtn" onclick="saveSettingsProfil()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px;display:none">Kaydet</button>
+      <button id="settProfilSaveBtn" onclick="saveSettingsProfil()"
+        style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px;display:none">
+        Kaydet
+      </button>
     </div>
 
 
@@ -4083,9 +4110,15 @@ function _renderKpssKategoriInProfil(data) {
 
   if (lastExam === 'kpss') {
     var katMap = {
-      gy_gk:    { label: 'GY + GK (Lisans)', emoji: '📝', color: '#34d399' },
-      egitim:   { label: 'Eğitim Bilimleri (ÖABT)', emoji: '🏫', color: '#a78bfa' },
-      a_grubu:  { label: 'A Grubu Kadro', emoji: '⚖️', color: '#fb923c' }
+      lisans_a:      { label: 'Lisans — A Grubu / Kariyer', emoji: '⚖️', color: '#fb923c' },
+      lisans_b:      { label: 'Lisans — B Grubu / Memur',  emoji: '🏛️', color: '#34d399' },
+      lisans_egitim: { label: 'Lisans — Eğitim (ÖABT)',    emoji: '🏫', color: '#a78bfa' },
+      on_lisans:     { label: 'Ön Lisans',                  emoji: '📋', color: '#38bdf8' },
+      lise:          { label: 'Ortaöğretim (Lise)',         emoji: '🎒', color: '#fbbf24' },
+      // eski format uyumluluk
+      gy_gk:   { label: 'GY + GK (Lisans)',      emoji: '📝', color: '#34d399' },
+      egitim:  { label: 'Eğitim Bilimleri',      emoji: '🏫', color: '#a78bfa' },
+      a_grubu: { label: 'A Grubu Kadro',          emoji: '⚖️', color: '#fb923c' }
     };
     var kpssP = data.kpssProfile || {};
     var kat   = katMap[kpssP.kategori] || { label: 'KPSS', emoji: '🏛️', color: '#34d399' };
@@ -7766,6 +7799,7 @@ var _notifEnabled = true; // default açık
 var _settDal = null;
 var _settHedefTur = 'siralama';
 var _settProgram = null;
+var _settKpssKat = null;
 
 // İl listesi (Firestore ile eşleşen)
 var SETT_IL_LISTESI = [
@@ -7801,90 +7835,57 @@ var SETT_IL_LISTESI = [
 function _populateSettingsProfil() {
   if (!_userProfil) return;
 
-  // ── İl dropdown doldu mu kontrol ──
-  var ilSel = document.getElementById('settIlSel');
-  if (ilSel && ilSel.options.length <= 1) {
-    SETT_IL_LISTESI.forEach(function(il){
-      var o = document.createElement('option');
-      o.value = il.v; o.textContent = il.l;
-      ilSel.appendChild(o);
-    });
-  }
+  // ── KPSS Kadro türü butonlarını işaretle ──
+  var kpssKat = (_userProfil.kpssProfile && _userProfil.kpssProfile.kategori) || null;
+  var katMap = {
+    lisans_a:      'settKpssLisansA',
+    lisans_b:      'settKpssLisansB',
+    lisans_egitim: 'settKpssLisansE',
+    on_lisans:     'settKpssOnLisans',
+    lise:          'settKpssLise'
+  };
+  // Eski format dönüşümü: gy_gk→lisans_b, egitim→lisans_egitim, a_grubu→lisans_a
+  var legacyMap = { gy_gk:'lisans_b', egitim:'lisans_egitim', a_grubu:'lisans_a' };
+  if (kpssKat && legacyMap[kpssKat]) kpssKat = legacyMap[kpssKat];
+  _settKpssKat = kpssKat;
 
-  // ── Kullanıcının sınav tipi → dal bölümü KPSS'de gizle, YKS'de göster ──
-  var isKpss = (_userProfil.lastActiveExam === 'kpss') ||
-               (!_userProfil.lastActiveExam && !!(_userProfil.kpssProfile));
-  var dalWrap = document.getElementById('settDalWrap');
-  var hedefTurWrap = document.getElementById('settHedefTurWrap');
-  var hedefInputLabel = document.getElementById('settHedefInputLabel');
-  var sirEl = document.getElementById('settHedefSiralama');
+  Object.keys(katMap).forEach(function(kat) {
+    var btn = document.getElementById(katMap[kat]);
+    if (!btn) return;
+    _applyKpssKatStyle(btn, kat === kpssKat);
+  });
 
-  if (isKpss) {
-    // KPSS → dal bölümünü gizle, hedef türü gizle, sadece puan göster
-    if (dalWrap) dalWrap.style.display = 'none';
-    if (hedefTurWrap) hedefTurWrap.style.display = 'none';
-    if (hedefInputLabel) hedefInputLabel.textContent = 'Hedef Puan';
-    if (sirEl) sirEl.placeholder = 'örn: 85.50';
-    // Değeri yükle
-    if (sirEl) sirEl.value = _userProfil.hedefPuan || '';
-    // Sıralama wrap'i göster (puan için kullanıyoruz)
-    var sirWrap = document.getElementById('settSiralamaWrap');
-    if (sirWrap) sirWrap.style.display = 'block';
-    var okulWrap = document.getElementById('settOkulWrap');
-    if (okulWrap) okulWrap.style.display = 'none';
-  } else {
-    // YKS → normal akış
-    if (dalWrap) dalWrap.style.display = 'block';
-    if (hedefTurWrap) hedefTurWrap.style.display = 'block';
-    if (hedefInputLabel) hedefInputLabel.textContent = 'Hedef Sıralama';
-    if (sirEl) sirEl.placeholder = 'örn: 10000';
-
-    // ── Dal butonları — sadece Sözel ve Dil ──
-    _settDal = _userProfil.dal || null;
-    var dalIdMap = {sozel:'settDalSoz', dil:'settDalDil'};
-    Object.keys(dalIdMap).forEach(function(dal){
-      var btn = document.getElementById(dalIdMap[dal]);
-      if (!btn) return;
-      var active = dal === _settDal;
-      btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
-      btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
-      btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
-    });
-
-    // ── Hedef türü ──
-    _settHedefTur = _userProfil.hedefTur || 'siralama';
-    settSelectHedefTur(_settHedefTur, true);
-
-    // ── Sıralama değeri ──
-    if (sirEl) sirEl.value = _userProfil.hedefSiralama || '';
-
-    // ── Okul hedefi: program geri yükle + preview ──
-    if (_userProfil.hedefTur === 'okul' && _userProfil.hedefProgram) {
-      _settProgram = _userProfil.hedefProgram;
-      var prev = document.getElementById('settProgramPreview');
-      if (prev) {
-        var hp = _userProfil.hedefProgram;
-        var detay = [];
-        if (hp.siralama_2024) detay.push('2024 Sıra: ' + parseInt(hp.siralama_2024).toLocaleString('tr-TR'));
-        if (hp.min_puan_2024) detay.push('Taban: ' + parseFloat(hp.min_puan_2024).toFixed(2));
-        prev.innerHTML =
-          '<strong>' + (hp.uni || '') + '</strong> — ' + (hp.bolum || '') +
-          (detay.length ? '<br><span style="color:var(--muted);font-size:0.68rem">' + detay.join(' | ') + '</span>' : '');
-        prev.style.display = 'block';
-      }
-    } else {
-      _settProgram = null;
-      var prev2 = document.getElementById('settProgramPreview');
-      if (prev2) prev2.style.display = 'none';
-    }
-  }
+  // ── Hedef Puan değerini yükle ──
+  var puanEl = document.getElementById('settHedefSiralama');
+  if (puanEl) puanEl.value = _userProfil.hedefPuan || (_userProfil.kpssProfile && _userProfil.kpssProfile.hedefPuan) || '';
 
   // ── Kaydet butonu: bilgi varsa gizle ──
   var saveBtn = document.getElementById('settProfilSaveBtn');
   if (saveBtn) {
-    var hedefVar = _userProfil.hedefTur || _userProfil.hedefPuan || _userProfil.dal;
-    saveBtn.style.display = hedefVar ? 'none' : 'block';
+    saveBtn.style.display = (kpssKat || _userProfil.hedefPuan) ? 'none' : 'block';
   }
+}
+
+function _applyKpssKatStyle(btn, active) {
+  btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+  btn.style.background  = active ? 'rgba(52,211,153,0.1)' : 'transparent';
+  btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
+}
+
+function settingSelectKpssKat(kat, el) {
+  _settKpssKat = kat;
+  _settMarkChanged();
+  var katMap = {
+    lisans_a:      'settKpssLisansA',
+    lisans_b:      'settKpssLisansB',
+    lisans_egitim: 'settKpssLisansE',
+    on_lisans:     'settKpssOnLisans',
+    lise:          'settKpssLise'
+  };
+  Object.keys(katMap).forEach(function(k) {
+    var btn = document.getElementById(katMap[k]);
+    if (btn) _applyKpssKatStyle(btn, k === kat);
+  });
 }
 
 function settSelectHedefTur(tur, silent) {
@@ -8042,28 +8043,26 @@ function settingSelectDal(dal) {
 
 function saveSettingsProfil() {
   if (!_currentUser || !_fbDb) return;
+  var puan = parseFloat(document.getElementById('settHedefSiralama').value) || null;
   var update = { onboardingDone: true };
-  if (_settDal) update.dal = _settDal;
 
-  var puan    = parseFloat(document.getElementById('settHedefSiralama').value) || null;
-  var program = _settProgram;
-
-  if (program) {
-    update.hedefTur      = 'okul';
-    update.hedefProgram  = program;
-    update.hedefSiralama = null;
-    update.hedefPuan     = null;
-  } else if (puan) {
-    // KPSS → puan hedefi
-    update.hedefTur      = 'puan';
-    update.hedefPuan     = puan;
+  // KPSS kategori
+  if (_settKpssKat) {
+    update.kpssProfile = Object.assign({}, (_userProfil && _userProfil.kpssProfile) || {}, {
+      kategori: _settKpssKat
+    });
+  }
+  // Puan hedefi
+  if (puan) {
+    update.hedefPuan = puan;
+    update.hedefTur  = 'puan';
     update.hedefSiralama = null;
     update.hedefProgram  = null;
   }
+
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
     if (!_userProfil) _userProfil = {};
     Object.keys(update).forEach(function(k){ _userProfil[k] = update[k]; });
-    _applyDalFilter();
     showToast('✅ Profil güncellendi!');
     var btn = document.getElementById('settProfilSaveBtn');
     if (btn) btn.style.display = 'none';

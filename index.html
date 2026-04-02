@@ -640,37 +640,61 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <button class="btn-back" onclick="showScreen('screenExamPick')" style="margin-bottom:14px">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">KPSS — Kategori Seç</div>
-        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">Hangi sınavı hedefliyorsun?</div>
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">KPSS — Kadro Türünü Seç</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">Hangi kadro için hazırlanıyorsun?</div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
-        <div class="kpss-kat-card" id="kkatGygk" onclick="selectKpssKat('gy_gk',this)" style="text-align:left;padding:14px">
+      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:24px">
+
+        <div class="kpss-kat-card" id="kkatLisansA" onclick="selectKpssKat('lisans_a',this)" style="text-align:left;padding:13px">
           <div style="display:flex;align-items:center;gap:12px">
-            <span style="font-size:1.6rem">📝</span>
+            <span style="font-size:1.5rem">⚖️</span>
             <div>
-              <div style="font-size:0.92rem;font-weight:900;color:#34d399">GY + GK (KPSS Lisans)</div>
-              <div style="font-size:0.64rem;color:var(--muted);font-weight:700;margin-top:2px">Türkçe · Matematik · Tarih · Coğrafya · Anayasa · Vatandaşlık</div>
+              <div style="font-size:0.88rem;font-weight:900;color:#fb923c">Lisans — A Grubu / Kariyer</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">Müfettiş · Uzman · Kontrolör · Denetmen</div>
             </div>
           </div>
         </div>
-        <div class="kpss-kat-card" id="kkatEgitim" onclick="selectKpssKat('egitim',this)" style="text-align:left;padding:14px">
+
+        <div class="kpss-kat-card" id="kkatLisansB" onclick="selectKpssKat('lisans_b',this)" style="text-align:left;padding:13px">
           <div style="display:flex;align-items:center;gap:12px">
-            <span style="font-size:1.6rem">🏫</span>
+            <span style="font-size:1.5rem">🏛️</span>
             <div>
-              <div style="font-size:0.92rem;font-weight:900;color:#a78bfa">Eğitim Bilimleri (ÖABT)</div>
-              <div style="font-size:0.64rem;color:var(--muted);font-weight:700;margin-top:2px">Gelişim · Öğrenme · Program · Ölçme · Rehberlik</div>
+              <div style="font-size:0.88rem;font-weight:900;color:#34d399">Lisans — B Grubu / Memur</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">KPSS P1–P121 · Genel devlet memurluğu</div>
             </div>
           </div>
         </div>
-        <div class="kpss-kat-card" id="kkatAgrup" onclick="selectKpssKat('a_grubu',this)" style="text-align:left;padding:14px">
+
+        <div class="kpss-kat-card" id="kkatLisansE" onclick="selectKpssKat('lisans_egitim',this)" style="text-align:left;padding:13px">
           <div style="display:flex;align-items:center;gap:12px">
-            <span style="font-size:1.6rem">⚖️</span>
+            <span style="font-size:1.5rem">🏫</span>
             <div>
-              <div style="font-size:0.92rem;font-weight:900;color:#fb923c">A Grubu Kadro</div>
-              <div style="font-size:0.64rem;color:var(--muted);font-weight:700;margin-top:2px">Hukuk · İktisat · Maliye · İdare</div>
+              <div style="font-size:0.88rem;font-weight:900;color:#a78bfa">Lisans — Eğitim (ÖABT)</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">Öğretmenlik · Alan Bilgisi Testi</div>
             </div>
           </div>
         </div>
+
+        <div class="kpss-kat-card" id="kkatOnLisans" onclick="selectKpssKat('on_lisans',this)" style="text-align:left;padding:13px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">📋</span>
+            <div>
+              <div style="font-size:0.88rem;font-weight:900;color:#38bdf8">Ön Lisans</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">KPSS P93–P94 · 2 yıllık mezunlar</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpss-kat-card" id="kkatLise" onclick="selectKpssKat('lise',this)" style="text-align:left;padding:13px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">🎒</span>
+            <div>
+              <div style="font-size:0.88rem;font-weight:900;color:#fbbf24">Ortaöğretim (Lise)</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">KPSS P95–P96 · Lise mezunları</div>
+            </div>
+          </div>
+        </div>
+
       </div>
       <button class="btn-main" id="kpssObStep1Btn" onclick="kpssObGoStep2()" disabled style="background:linear-gradient(135deg,#34d399,#a78bfa)">Devam Et →</button>
       <div class="login-link" style="margin-top:12px"><span onclick="skipKpssOnboarding()">Şimdi atla, sonra ekle</span></div>
