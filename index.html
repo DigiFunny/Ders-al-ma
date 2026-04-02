@@ -89,7 +89,40 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 .landing-footer{margin-top:22px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.75;animation:fadeUp 0.55s 0.24s cubic-bezier(.4,0,.2,1) both;}
 .landing-footer strong{color:var(--accent3);}
 
+/* Sınav Seçim Ekranı */
+.sinav-pick-card {
+  background: var(--card); border: 2px solid var(--border); border-radius: 20px;
+  padding: 20px 16px; cursor: pointer; text-align: center; position: relative;
+  overflow: hidden; transition: all 0.22s cubic-bezier(.4,0,.2,1);
+  -webkit-tap-highlight-color: transparent;
+}
+.sinav-pick-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.22s; border-radius: 18px;
+}
+.sinav-pick-card.yks::before { background: linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.1)); }
+.sinav-pick-card.kpss::before { background: linear-gradient(135deg,rgba(52,211,153,0.1),rgba(167,139,250,0.1)); }
+.sinav-pick-card.lgs::before { background: linear-gradient(135deg,rgba(251,146,60,0.08),rgba(251,191,36,0.06)); }
+.sinav-pick-card:active:not(.disabled) { transform: scale(0.96); }
+.sinav-pick-card.disabled { opacity: 0.5; cursor: default; }
+.sinav-pick-card.selected.yks  { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
+.sinav-pick-card.selected.kpss { border-color: #34d399;       box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
+.sinav-pick-card:hover:not(.disabled)::before { opacity: 1; }
+.sp-emoji { font-size: 2rem; display: block; margin-bottom: 8px; }
+.sp-label { font-size: 0.95rem; font-weight: 900; display: block; margin-bottom: 4px; }
+.sp-desc  { font-size: 0.62rem; font-weight: 700; color: var(--muted); line-height: 1.4; }
+.sp-badge { position:absolute;top:8px;right:8px;background:rgba(15,23,42,0.85);border:1px solid var(--border);border-radius:5px;font-size:0.48rem;font-weight:900;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;padding:2px 5px; }
+
+/* KPSS kategori kartları */
+.kpss-kat-card {
+  background: var(--card); border: 2px solid var(--border); border-radius: 14px;
+  padding: 14px 12px; cursor: pointer; text-align: center; transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.kpss-kat-card.selected { border-color: #34d399; background: rgba(52,211,153,0.08); }
+.kpss-kat-card:active { transform: scale(0.96); }
+
 /* Kaydır ipucu */
+
 .scroll-reveal-hint{
   display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:20px;padding:10px 8px 4px;
   background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:800;
@@ -430,10 +463,11 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             <span class="exam-desc">Lisansüstü sınavı</span>
           </div>
 
-          <div class="exam-card kpss" onclick="guestEnterExam('kpss')">
+          <div class="exam-card kpss coming-soon" onclick="showComingSoon()">
+            <span class="coming-badge">Yakında</span>
             <span class="exam-emoji">&#x1F3DB;</span>
             <span class="exam-label">KPSS</span>
-            <span class="exam-desc">GY · GK · Eğitim Bil.</span>
+            <span class="exam-desc">Kamu personeli seçme</span>
           </div>
         </div>
       </div>
@@ -545,8 +579,124 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════════════
+     EKRAN 3b — SINAV SEÇİMİ (kayıt/giriş sonrası)
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screenExamPick">
+  <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">🦊</div>
+      <div class="auth-logo-name">Pugi</div>
+    </div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hangi sınava hazırlanıyorsun?</div>
+    <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-bottom:22px">Birden fazla sınav için profil oluşturabilirsin, sonradan ekleyebilirsin</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+      <div class="sinav-pick-card yks" id="spYks" onclick="pickExam('yks',this)">
+        <span class="sp-emoji">📚</span>
+        <span class="sp-label" style="color:var(--accent)">YKS</span>
+        <span class="sp-desc">TYT · AYT<br>Sayısal / Sözel / EA / Dil</span>
+      </div>
+      <div class="sinav-pick-card kpss" id="spKpss" onclick="pickExam('kpss',this)">
+        <span class="sp-emoji">🏛️</span>
+        <span class="sp-label" style="color:#34d399">KPSS</span>
+        <span class="sp-desc">GY · GK · Eğitim Bil.</span>
+      </div>
+      <div class="sinav-pick-card lgs disabled" onclick="">
+        <span class="sp-badge">Yakında</span>
+        <span class="sp-emoji">🎒</span>
+        <span class="sp-label" style="color:var(--orange)">LGS</span>
+        <span class="sp-desc">Liseye Geçiş Sınavı</span>
+      </div>
+      <div class="sinav-pick-card lgs disabled" onclick="">
+        <span class="sp-badge">Yakında</span>
+        <span class="sp-emoji">📈</span>
+        <span class="sp-label" style="color:var(--accent2)">ALES</span>
+        <span class="sp-desc">Lisansüstü Eğitim</span>
+      </div>
+    </div>
+
+    <button class="btn-main" id="examPickBtn" onclick="confirmExamPick()" disabled>Devam Et →</button>
+    <div class="login-link" style="margin-top:12px">
+      <span onclick="skipExamPick()">Şimdi atla, sonra ekle</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     EKRAN 3c — KPSS ONBOARDİNG (sadece kategori seçimi)
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screenKpssOnboarding">
+  <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
+
+    <!-- İlerleme -->
+    <div style="display:flex;gap:6px;margin-bottom:24px">
+      <div style="flex:1;height:4px;border-radius:99px;background:#34d399"></div>
+      <div id="kpssOb2Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
+    </div>
+
+    <!-- ADIM 1: Kategori -->
+    <div id="kpssObStep1">
+      <div style="margin-bottom:20px">
+        <button class="btn-back" onclick="showScreen('screenExamPick')" style="margin-bottom:14px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">KPSS — Kategori Seç</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">Hangi sınavı hedefliyorsun?</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <div class="kpss-kat-card" id="kkatGygk" onclick="selectKpssKat('gy_gk',this)" style="text-align:left;padding:14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.6rem">📝</span>
+            <div>
+              <div style="font-size:0.92rem;font-weight:900;color:#34d399">GY + GK (KPSS Lisans)</div>
+              <div style="font-size:0.64rem;color:var(--muted);font-weight:700;margin-top:2px">Türkçe · Matematik · Tarih · Coğrafya · Anayasa · Vatandaşlık</div>
+            </div>
+          </div>
+        </div>
+        <div class="kpss-kat-card" id="kkatEgitim" onclick="selectKpssKat('egitim',this)" style="text-align:left;padding:14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.6rem">🏫</span>
+            <div>
+              <div style="font-size:0.92rem;font-weight:900;color:#a78bfa">Eğitim Bilimleri (ÖABT)</div>
+              <div style="font-size:0.64rem;color:var(--muted);font-weight:700;margin-top:2px">Gelişim · Öğrenme · Program · Ölçme · Rehberlik</div>
+            </div>
+          </div>
+        </div>
+        <div class="kpss-kat-card" id="kkatAgrup" onclick="selectKpssKat('a_grubu',this)" style="text-align:left;padding:14px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.6rem">⚖️</span>
+            <div>
+              <div style="font-size:0.92rem;font-weight:900;color:#fb923c">A Grubu Kadro</div>
+              <div style="font-size:0.64rem;color:var(--muted);font-weight:700;margin-top:2px">Hukuk · İktisat · Maliye · İdare</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-main" id="kpssObStep1Btn" onclick="kpssObGoStep2()" disabled style="background:linear-gradient(135deg,#34d399,#a78bfa)">Devam Et →</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipKpssOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+    <!-- ADIM 2: Hedef sıralama (opsiyonel) -->
+    <div id="kpssObStep2" style="display:none">
+      <button class="btn-back" onclick="kpssObGoStep1()" style="margin-bottom:14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedef Sıralaman Kaç?</div>
+      <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-bottom:20px">Opsiyonel — istersen atla</div>
+      <input type="number" id="kpssHedefSiralama" placeholder="örn: 5000" min="1" max="1000000"
+        style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px;transition:border-color 0.2s"
+        onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='var(--border)'">
+      <div style="font-size:0.68rem;color:var(--muted);font-weight:600;margin-bottom:24px">İlk kaçıncı olmak istiyorsun?</div>
+      <button class="btn-main" onclick="finishKpssOnboarding()" style="background:linear-gradient(135deg,#34d399,#a78bfa);margin-bottom:10px">🚀 KPSS Profilini Oluştur!</button>
+      <div class="login-link"><span onclick="skipKpssOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+  </div>
+</div>
+
 <!-- ══════════════════════════════════
-     EKRAN 3 — ONBOARDİNG
+     EKRAN 3 — YKS ONBOARDİNG
      Kayıt sonrası dal / hedef / sınıf
 ══════════════════════════════════ -->
 <div class="screen" id="screenOnboarding">
@@ -682,6 +832,8 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 var selectedAccountType=null,authMode='login';
 
 // ── Onboarding State ─────────────────────────────
+var _obExam     = null;   // 'yks' | 'kpss'
+var _obKpssKat  = null;   // gy_gk|egitim|a_grubu
 var _obDal      = null;   // sayisal|sozel|ea|dil
 var _obHedefTur = 'siralama'; // siralama|okul
 var _obSiralama = null;
@@ -774,11 +926,10 @@ function scrollToLandingIntro(){
 }
 
 function guestEnterExam(exam){
-  var examMap = { yks:'student.html', kpss:'kpss.html' };
-  if(!examMap[exam]) return;
+  if(exam!=='yks')return;
   sessionStorage.setItem('pugi_sinav',exam);
   sessionStorage.setItem('pugi_guest','true');
-  window.location.href = examMap[exam];
+  window.location.href='student.html';
 }
 function showComingSoon(){
   var t=document.getElementById('landingToast');
@@ -828,7 +979,16 @@ function checkAccountTypeAndRedirect(user){
   _fbDb.collection('users').doc(user.uid).get().then(function(doc){
     hideLoading();
     if(!doc.exists){showScreen('screenAuth');showStep2ForNewGoogleUser(user);return;}
-    window.location.href=doc.data().accountType==='coach'?'coach.html':'student.html';
+    var d=doc.data();
+    if(d.accountType==='coach'){window.location.href='coach.html';return;}
+    // Mevcut kullanıcı: onboarding tamamlandı mı?
+    if(!d.onboardingDone && !d.kpssProfile){
+      // Hiç profil yok → sınav seçimine gönder
+      _obUid=user.uid; _fbDbOb=_fbDb; showScreen('screenExamPick'); return;
+    }
+    // lastActiveExam'a göre yönlendir (varsayılan: yks)
+    var last=d.lastActiveExam||'yks';
+    window.location.href=(last==='kpss')?'kpss.html':'student.html';
   }).catch(function(){hideLoading();});
 }
 
@@ -853,7 +1013,7 @@ function submitAuth(){
         if(selectedAccountType==='coach'){
           window.location.href='coach.html';
         } else {
-          showOnboarding(cred.user.uid);
+          showExamPick(cred.user.uid);
         }
       });
     }).catch(function(e){hideLoading();showError(e.code?getErrorMsg(e.code):'Bir hata oluştu.');});
@@ -872,7 +1032,7 @@ function signInWithGoogle(){
         if(type==='coach'){
           window.location.href='coach.html';
         } else {
-          showOnboarding(user.uid);
+          showExamPick(user.uid);
         }
       });
     }
@@ -907,6 +1067,16 @@ function hideLoading(){document.getElementById('loadingOverlay').classList.add('
 // ════════════════════════════════════════════
 // ONBOARDİNG FONKSİYONLARI
 // ════════════════════════════════════════════
+
+function showExamPick(uid) {
+  _obUid = uid;
+  _fbDbOb = _fbDb;
+  _obExam = null;
+  _obKpssKat = null;
+  document.getElementById('examPickBtn').disabled = true;
+  document.querySelectorAll('.sinav-pick-card').forEach(function(c){c.classList.remove('selected');});
+  showScreen('screenExamPick');
+}
 
 function showOnboarding(uid) {
   _obUid = uid;
@@ -1164,6 +1334,7 @@ function finishOnboarding() {
     profil.hedefProgram  = null;
   }
   showLoading();
+  profil.lastActiveExam = 'yks';
   _fbDb.collection('users').doc(_obUid).set(profil,{merge:true}).then(function(){
     hideLoading();
     window.location.href = 'student.html';
@@ -1173,9 +1344,102 @@ function finishOnboarding() {
 // ── Onboarding atla ──
 function skipOnboarding() {
   if(_obUid && _fbDb){
-    _fbDb.collection('users').doc(_obUid).set({onboardingDone:true},{merge:true});
+    _fbDb.collection('users').doc(_obUid).set({onboardingDone:true,lastActiveExam:'yks'},{merge:true});
   }
   window.location.href = 'student.html';
+}
+
+
+// ════════════════════════════════════════════
+// SINAV SEÇİMİ FONKSİYONLARI
+// ════════════════════════════════════════════
+
+function pickExam(exam, el) {
+  _obExam = exam;
+  document.querySelectorAll('.sinav-pick-card:not(.disabled)').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('examPickBtn').disabled = false;
+}
+
+function confirmExamPick() {
+  if(!_obExam) return;
+  if(_obExam === 'yks') {
+    showScreen('screenOnboarding');
+    // İl listesini doldur
+    var sel = document.getElementById('hedefIlSel');
+    if(sel.options.length <= 1){
+      IL_LISTESI.forEach(function(il){
+        var o=document.createElement('option'); o.value=il.v; o.textContent=il.l; sel.appendChild(o);
+      });
+    }
+    _updateObProgress(1);
+  } else if(_obExam === 'kpss') {
+    _obKpssKat = null;
+    document.querySelectorAll('.kpss-kat-card').forEach(function(c){c.classList.remove('selected');});
+    document.getElementById('kpssObStep1Btn').disabled = true;
+    document.getElementById('kpssObStep1').style.display = 'block';
+    document.getElementById('kpssObStep2').style.display = 'none';
+    document.getElementById('kpssOb2Bar').style.background = 'var(--border)';
+    showScreen('screenKpssOnboarding');
+  }
+}
+
+function skipExamPick() {
+  // Sınav seçmeden atla → YKS varsayılan
+  if(_obUid && _fbDb){
+    _fbDb.collection('users').doc(_obUid).set({onboardingDone:true,lastActiveExam:'yks'},{merge:true});
+  }
+  window.location.href = 'student.html';
+}
+
+// ── KPSS Onboarding ──────────────────────
+function selectKpssKat(kat, el) {
+  _obKpssKat = kat;
+  document.querySelectorAll('.kpss-kat-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('kpssObStep1Btn').disabled = false;
+}
+
+function kpssObGoStep1() {
+  document.getElementById('kpssObStep2').style.display = 'none';
+  document.getElementById('kpssObStep1').style.display = 'block';
+  document.getElementById('kpssOb2Bar').style.background = 'var(--border)';
+}
+
+function kpssObGoStep2() {
+  if(!_obKpssKat) return;
+  document.getElementById('kpssObStep1').style.display = 'none';
+  document.getElementById('kpssObStep2').style.display = 'block';
+  document.getElementById('kpssOb2Bar').style.background = '#34d399';
+}
+
+function finishKpssOnboarding() {
+  if(!_obUid || !_fbDb) return;
+  var siralama = parseInt(document.getElementById('kpssHedefSiralama').value)||null;
+  var kpssProfile = {
+    kategori: _obKpssKat,
+    onboardingDone: true,
+    createdAt: new Date().toISOString()
+  };
+  if(siralama) kpssProfile.hedefSiralama = siralama;
+  showLoading();
+  _fbDb.collection('users').doc(_obUid).set({
+    kpssProfile: kpssProfile,
+    lastActiveExam: 'kpss'
+  },{merge:true}).then(function(){
+    hideLoading();
+    window.location.href = 'kpss.html';
+  }).catch(function(){ hideLoading(); window.location.href='kpss.html'; });
+}
+
+function skipKpssOnboarding() {
+  if(_obUid && _fbDb){
+    _fbDb.collection('users').doc(_obUid).set({
+      kpssProfile: { onboardingDone: true, kategori: null, createdAt: new Date().toISOString() },
+      lastActiveExam: 'kpss'
+    },{merge:true});
+  }
+  window.location.href = 'kpss.html';
 }
 
 function getErrorMsg(code){var msgs={'auth/user-not-found':'Bu email ile kayıtlı hesap yok.','auth/wrong-password':'Şifre hatalı.','auth/email-already-in-use':'Bu email zaten kullanımda.','auth/invalid-email':'Geçersiz email adresi.','auth/weak-password':'Şifre çok zayıf.','auth/too-many-requests':'Çok fazla deneme. Biraz bekle.','auth/invalid-credential':'Email veya şifre hatalı.'};return msgs[code]||'Bir hata oluştu.';}
