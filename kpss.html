@@ -1676,30 +1676,28 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <div class="u-settings-row" style="flex-direction:column;align-items:flex-start;gap:12px">
       <div style="font-size:0.85rem;font-weight:900;width:100%">🎯 Sınav Bilgilerim</div>
 
-      <!-- Dal seçimi -->
-      <div style="width:100%">
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Alan</div>
+      <!-- Dal seçimi (YKS: Sözel / Dil) -->
+      <div style="width:100%" id="settDalWrap">
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Alan (YKS)</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-          <button id="settDalSay" onclick="settingSelectDal('sayisal')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📐 Sayısal</button>
           <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📖 Sözel</button>
-          <button id="settDalEa" onclick="settingSelectDal('ea')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">⚖️ Eşit Ağırlık</button>
           <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">🌍 Dil</button>
         </div>
       </div>
 
-      <!-- Hedef türü -->
-      <div style="width:100%">
+      <!-- Hedef türü — KPSS sadece Puan, YKS Sıralama veya Okul/Bölüm -->
+      <div style="width:100%" id="settHedefTurWrap">
         <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Türü</div>
-        <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div id="settHedefTurBtns" style="display:flex;gap:8px;margin-bottom:12px">
           <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
           <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
         </div>
       </div>
 
-      <!-- Sıralama hedefi -->
+      <!-- Puan/Sıralama hedefi -->
       <div id="settSiralamaWrap" style="width:100%">
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
-        <input type="number" id="settHedefSiralama" placeholder="örn: 10000" min="1"
+        <div id="settHedefInputLabel" style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Puan</div>
+        <input type="number" id="settHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01"
           style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
           oninput="this.style.borderColor='var(--accent)'; _settOnSiralamaInput();">
       </div>
@@ -4000,9 +3998,12 @@ function onUserLoggedIn(user) {
       dal:                data.dal                || null,
       hedefTur:           data.hedefTur           || null,
       hedefSiralama:      data.hedefSiralama       || null,
+      hedefPuan:          data.hedefPuan           || null,
       hedefProgram:       data.hedefProgram        || null,
       sinif:              data.sinif               || null,
       onboardingDone:     data.onboardingDone      || false,
+      lastActiveExam:     data.lastActiveExam      || 'kpss',
+      kpssProfile:        data.kpssProfile         || null,
       _hiddenSuggestions: data.hiddenSuggestions   || []
     };
 
@@ -4012,6 +4013,21 @@ function onUserLoggedIn(user) {
     document.getElementById('userAvatarBar').textContent = displayName.charAt(0).toUpperCase();
     document.getElementById('userNameBar').textContent = displayName;
     document.getElementById('userUnameBar').textContent = '@' + username;
+
+    // Profilim kartını doldur
+    var heroCard = document.getElementById('profileHeroCard');
+    if (heroCard) {
+      heroCard.style.display = 'block';
+      var heroName = document.getElementById('profileHeroName');
+      var heroUname = document.getElementById('profileHeroUname');
+      if (heroName) heroName.textContent = displayName;
+      if (heroUname) heroUname.textContent = '@' + username;
+    }
+    var xbw2 = document.getElementById('xpBarWrap2');
+    if (xbw2) xbw2.style.display = 'block';
+
+    // KPSS kategori rozetini Profilim'de göster
+    _renderKpssKategoriInProfil(data);
 
     // Login banner gizle
     var banner = document.getElementById('loginPromptBanner');
@@ -4047,6 +4063,54 @@ function onUserLoggedIn(user) {
 // ════════════════════════════════════════════
 // MİSAFİR MODU
 // ════════════════════════════════════════════
+
+/**
+ * _renderKpssKategoriInProfil — Profilim kartına sınav tipi bilgisini ekler.
+ * KPSS kullanıcısı ise KPSS kategorisini, YKS kullanıcısı ise YKS dalını gösterir.
+ */
+function _renderKpssKategoriInProfil(data) {
+  // Mevcut bilgi bannerini varsa temizle
+  var existing = document.getElementById('profilExamBadge');
+  if (existing) existing.remove();
+
+  var heroCard = document.getElementById('profileHeroCard');
+  if (!heroCard) return;
+
+  var lastExam = data.lastActiveExam || 'kpss';
+  var badge = document.createElement('div');
+  badge.id = 'profilExamBadge';
+  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:12px;flex-wrap:wrap;gap:8px';
+
+  if (lastExam === 'kpss') {
+    var katMap = {
+      gy_gk:    { label: 'GY + GK (Lisans)', emoji: '📝', color: '#34d399' },
+      egitim:   { label: 'Eğitim Bilimleri (ÖABT)', emoji: '🏫', color: '#a78bfa' },
+      a_grubu:  { label: 'A Grubu Kadro', emoji: '⚖️', color: '#fb923c' }
+    };
+    var kpssP = data.kpssProfile || {};
+    var kat   = katMap[kpssP.kategori] || { label: 'KPSS', emoji: '🏛️', color: '#34d399' };
+    var puan  = data.hedefPuan || kpssP.hedefPuan || null;
+    badge.innerHTML =
+      '<span style="font-size:1.2rem">' + kat.emoji + '</span>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:0.78rem;font-weight:900;color:' + kat.color + '">KPSS — ' + kat.label + '</div>' +
+        (puan ? '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Hedef Puan: ' + puan + '</div>' : '') +
+      '</div>';
+  } else {
+    var dalMap = { sozel:'Sözel (SÖZ)', dil:'Dil', sayisal:'Sayısal (SAY)', ea:'Eşit Ağırlık (EA)' };
+    var dal = dalMap[data.dal] || 'YKS';
+    var sir = data.hedefSiralama || null;
+    badge.style.background = 'rgba(56,189,248,0.08)';
+    badge.style.borderColor = 'rgba(56,189,248,0.2)';
+    badge.innerHTML =
+      '<span style="font-size:1.2rem">📚</span>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:0.78rem;font-weight:900;color:var(--accent3)">YKS — ' + dal + '</div>' +
+        (sir ? '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Hedef Sıralama: ' + parseInt(sir).toLocaleString('tr-TR') + '</div>' : '') +
+      '</div>';
+  }
+  heroCard.appendChild(badge);
+}
 
 /**
  * onGuestMode — Firebase giriş gerektirmeden uygulamayı başlatır.
@@ -5032,15 +5096,12 @@ function selectModalDal(dal, el) {
 
 function saveOnboardingModal() {
   if (!_modalDal || !_currentUser || !_fbDb) return;
-  var siralama = parseInt(document.getElementById('modalHedefSiralama').value) || null;
+  var puan = parseFloat(document.getElementById('modalHedefSiralama').value) || null;
   var update = { dal: _modalDal, onboardingDone: true };
-  if (_modalProgram) {
-    update.hedefTur = 'okul';
-    update.hedefProgram = _modalProgram;
+  if (puan) {
+    update.hedefTur = 'puan';
+    update.hedefPuan = puan;
     update.hedefSiralama = null;
-  } else if (siralama) {
-    update.hedefTur = 'siralama';
-    update.hedefSiralama = siralama;
     update.hedefProgram = null;
   }
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
@@ -5048,7 +5109,6 @@ function saveOnboardingModal() {
     _applyDalFilter();
     closeOnboardingModal(false);
     showToast('✅ Profil güncellendi!');
-    // AI öneriyi yenile (dal bilgisiyle)
     localStorage.removeItem('pugi_ai_date');
     loadAiDailyCoach();
   });
@@ -7751,50 +7811,78 @@ function _populateSettingsProfil() {
     });
   }
 
-  // ── Dal butonları — doğru ID map ──
-  _settDal = _userProfil.dal || null;
-  var dalIdMap = {sayisal:'settDalSay', sozel:'settDalSoz', ea:'settDalEa', dil:'settDalDil'};
-  Object.keys(dalIdMap).forEach(function(dal){
-    var btn = document.getElementById(dalIdMap[dal]);
-    if (!btn) return;
-    var active = dal === _settDal;
-    btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
-    btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
-    btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
-  });
-
-  // ── Hedef türü ──
-  _settHedefTur = _userProfil.hedefTur || 'siralama';
-  settSelectHedefTur(_settHedefTur, true);
-
-  // ── Sıralama değeri ──
+  // ── Kullanıcının sınav tipi → dal bölümü KPSS'de gizle, YKS'de göster ──
+  var isKpss = (_userProfil.lastActiveExam === 'kpss') ||
+               (!_userProfil.lastActiveExam && !!(_userProfil.kpssProfile));
+  var dalWrap = document.getElementById('settDalWrap');
+  var hedefTurWrap = document.getElementById('settHedefTurWrap');
+  var hedefInputLabel = document.getElementById('settHedefInputLabel');
   var sirEl = document.getElementById('settHedefSiralama');
-  if (sirEl) sirEl.value = _userProfil.hedefSiralama || '';
 
-  // ── Okul hedefi: program geri yükle + preview ──
-  if (_userProfil.hedefTur === 'okul' && _userProfil.hedefProgram) {
-    _settProgram = _userProfil.hedefProgram;
-    var prev = document.getElementById('settProgramPreview');
-    if (prev) {
-      var hp = _userProfil.hedefProgram;
-      var detay = [];
-      if (hp.siralama_2024) detay.push('2024 Sıra: ' + parseInt(hp.siralama_2024).toLocaleString('tr-TR'));
-      if (hp.min_puan_2024) detay.push('Taban: ' + parseFloat(hp.min_puan_2024).toFixed(2));
-      prev.innerHTML =
-        '<strong>' + (hp.uni || '') + '</strong> — ' + (hp.bolum || '') +
-        (detay.length ? '<br><span style="color:var(--muted);font-size:0.68rem">' + detay.join(' | ') + '</span>' : '');
-      prev.style.display = 'block';
-    }
+  if (isKpss) {
+    // KPSS → dal bölümünü gizle, hedef türü gizle, sadece puan göster
+    if (dalWrap) dalWrap.style.display = 'none';
+    if (hedefTurWrap) hedefTurWrap.style.display = 'none';
+    if (hedefInputLabel) hedefInputLabel.textContent = 'Hedef Puan';
+    if (sirEl) sirEl.placeholder = 'örn: 85.50';
+    // Değeri yükle
+    if (sirEl) sirEl.value = _userProfil.hedefPuan || '';
+    // Sıralama wrap'i göster (puan için kullanıyoruz)
+    var sirWrap = document.getElementById('settSiralamaWrap');
+    if (sirWrap) sirWrap.style.display = 'block';
+    var okulWrap = document.getElementById('settOkulWrap');
+    if (okulWrap) okulWrap.style.display = 'none';
   } else {
-    _settProgram = null;
-    var prev2 = document.getElementById('settProgramPreview');
-    if (prev2) prev2.style.display = 'none';
+    // YKS → normal akış
+    if (dalWrap) dalWrap.style.display = 'block';
+    if (hedefTurWrap) hedefTurWrap.style.display = 'block';
+    if (hedefInputLabel) hedefInputLabel.textContent = 'Hedef Sıralama';
+    if (sirEl) sirEl.placeholder = 'örn: 10000';
+
+    // ── Dal butonları — sadece Sözel ve Dil ──
+    _settDal = _userProfil.dal || null;
+    var dalIdMap = {sozel:'settDalSoz', dil:'settDalDil'};
+    Object.keys(dalIdMap).forEach(function(dal){
+      var btn = document.getElementById(dalIdMap[dal]);
+      if (!btn) return;
+      var active = dal === _settDal;
+      btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+      btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
+      btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
+    });
+
+    // ── Hedef türü ──
+    _settHedefTur = _userProfil.hedefTur || 'siralama';
+    settSelectHedefTur(_settHedefTur, true);
+
+    // ── Sıralama değeri ──
+    if (sirEl) sirEl.value = _userProfil.hedefSiralama || '';
+
+    // ── Okul hedefi: program geri yükle + preview ──
+    if (_userProfil.hedefTur === 'okul' && _userProfil.hedefProgram) {
+      _settProgram = _userProfil.hedefProgram;
+      var prev = document.getElementById('settProgramPreview');
+      if (prev) {
+        var hp = _userProfil.hedefProgram;
+        var detay = [];
+        if (hp.siralama_2024) detay.push('2024 Sıra: ' + parseInt(hp.siralama_2024).toLocaleString('tr-TR'));
+        if (hp.min_puan_2024) detay.push('Taban: ' + parseFloat(hp.min_puan_2024).toFixed(2));
+        prev.innerHTML =
+          '<strong>' + (hp.uni || '') + '</strong> — ' + (hp.bolum || '') +
+          (detay.length ? '<br><span style="color:var(--muted);font-size:0.68rem">' + detay.join(' | ') + '</span>' : '');
+        prev.style.display = 'block';
+      }
+    } else {
+      _settProgram = null;
+      var prev2 = document.getElementById('settProgramPreview');
+      if (prev2) prev2.style.display = 'none';
+    }
   }
 
   // ── Kaydet butonu: bilgi varsa gizle ──
   var saveBtn = document.getElementById('settProfilSaveBtn');
   if (saveBtn) {
-    var hedefVar = _userProfil.hedefTur || _userProfil.dal;
+    var hedefVar = _userProfil.hedefTur || _userProfil.hedefPuan || _userProfil.dal;
     saveBtn.style.display = hedefVar ? 'none' : 'block';
   }
 }
@@ -7957,36 +8045,28 @@ function saveSettingsProfil() {
   var update = { onboardingDone: true };
   if (_settDal) update.dal = _settDal;
 
-  var siralama = parseInt(document.getElementById('settHedefSiralama').value) || null;
-  var program  = _settProgram;
+  var puan    = parseFloat(document.getElementById('settHedefSiralama').value) || null;
+  var program = _settProgram;
 
-  if (program && siralama) {
-    // İkisi de var — hangisi son değiştirildiyse o geçerli
-    // _settProgram null değilse okul seçimi daha yeni demektir
-    // (sıralama girilince _settProgram sıfırlanıyor zaten)
-    // Bu noktaya ikisi de doluysa okul öncelikli
+  if (program) {
     update.hedefTur      = 'okul';
     update.hedefProgram  = program;
     update.hedefSiralama = null;
-  } else if (program) {
-    update.hedefTur      = 'okul';
-    update.hedefProgram  = program;
+    update.hedefPuan     = null;
+  } else if (puan) {
+    // KPSS → puan hedefi
+    update.hedefTur      = 'puan';
+    update.hedefPuan     = puan;
     update.hedefSiralama = null;
-  } else if (siralama) {
-    update.hedefTur      = 'siralama';
-    update.hedefSiralama = siralama;
     update.hedefProgram  = null;
   }
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
-    // _userProfil'i tam güncelle
     if (!_userProfil) _userProfil = {};
     Object.keys(update).forEach(function(k){ _userProfil[k] = update[k]; });
     _applyDalFilter();
     showToast('✅ Profil güncellendi!');
-    // Kaydet butonunu gizle
     var btn = document.getElementById('settProfilSaveBtn');
     if (btn) btn.style.display = 'none';
-    // AI öneriyi yenile
     localStorage.removeItem('pugi_ai_date');
     loadAiDailyCoach();
   }).catch(function(e){ showToast('❌ Hata: ' + e.message); });
@@ -8002,9 +8082,12 @@ function openSettingsModal() {
           dal:                data.dal                || null,
           hedefTur:           data.hedefTur           || null,
           hedefSiralama:      data.hedefSiralama       || null,
+          hedefPuan:          data.hedefPuan           || null,
           hedefProgram:       data.hedefProgram        || null,
           sinif:              data.sinif               || null,
           onboardingDone:     data.onboardingDone      || false,
+          lastActiveExam:     data.lastActiveExam      || 'kpss',
+          kpssProfile:        data.kpssProfile         || null,
           _hiddenSuggestions: data.hiddenSuggestions   || []
         };
         // Sınav geçişi kartını güncelle — YKS profili var mı?
@@ -9276,23 +9359,13 @@ function openCoachWhatsapp() {
     </div>
     <div class="day-modal-body">
 
-      <!-- Dal seçimi -->
+      <!-- Dal seçimi (KPSS için Sözel/Dil) -->
       <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Hangi alanda çalışıyorsun?</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-        <div class="ob-modal-dal" id="mdSay" onclick="selectModalDal('sayisal',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">📐</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--accent)">Sayısal</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Mat·Fiz·Kim·Bio</div>
-        </div>
         <div class="ob-modal-dal" id="mdSoz" onclick="selectModalDal('sozel',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
           <div style="font-size:1.3rem;margin-bottom:4px">📖</div>
           <div style="font-size:0.82rem;font-weight:900;color:var(--warn)">Sözel</div>
           <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Ede·Tar·Coğ·Fel</div>
-        </div>
-        <div class="ob-modal-dal" id="mdEa" onclick="selectModalDal('ea',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">⚖️</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--accent3)">Eşit Ağırlık</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Mat·Ede·Tar·Coğ</div>
         </div>
         <div class="ob-modal-dal" id="mdDil" onclick="selectModalDal('dil',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
           <div style="font-size:1.3rem;margin-bottom:4px">🌍</div>
@@ -9301,32 +9374,14 @@ function openCoachWhatsapp() {
         </div>
       </div>
 
-      <!-- Hedef türü -->
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button id="modalHedefSirBtn" onclick="modalSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🏆 Sıralama</button>
-        <button id="modalHedefOkulBtn" onclick="modalSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🎓 Okul/Bölüm</button>
-      </div>
+      <!-- Puan hedefi -->
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
 
-      <!-- Sıralama -->
+      <!-- Sıralama (puan) -->
       <div id="modalSiralamaWrap" style="margin-bottom:12px">
-        <input type="number" id="modalHedefSiralama" placeholder="örn: 10000" min="1" max="3000000"
+        <input type="number" id="modalHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
           style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
           oninput="this.style.borderColor='var(--accent)'; _modalOnSiralamaInput();">
-      </div>
-
-      <!-- Okul -->
-      <div id="modalOkulWrap" style="display:none;margin-bottom:12px">
-        <select id="modalIlSel" onchange="modalLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
-          <option value="">Şehir seç...</option>
-        </select>
-        <select id="modalUniSel" onchange="modalLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
-          <option value="">Önce şehir seç...</option>
-        </select>
-        <select id="modalBolumSel" onchange="modalSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
-          <option value="">Önce üniversite seç...</option>
-        </select>
-        <div id="modalProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.74rem;font-weight:700;color:var(--text)"></div>
       </div>
 
       <!-- Kaydet butonu -->

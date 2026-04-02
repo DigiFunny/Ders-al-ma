@@ -411,7 +411,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <details class="intro-details">
           <summary>Hangi sınavlar var? <span class="sum-chev">▼</span></summary>
           <div class="intro-details-body">
-            Şu an <strong>YKS</strong> tam destekli. <strong>LGS, ALES, KPSS</strong> için çalışmalar sürüyor; açıldığında aynı uygulama içinden seçebileceksin.
+            Şu an <strong>YKS</strong> ve <strong>KPSS</strong> tam destekli. <strong>LGS, ALES</strong> için çalışmalar sürüyor; açıldığında aynı uygulama içinden seçebileceksin.
           </div>
         </details>
 
@@ -438,7 +438,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
           </button>
         </div>
         <div class="exam-section-label">Hangi sınava hazırlanıyorsun?</div>
-        <p class="exam-section-hint">Birini seç; şu an <strong style="color:var(--accent)">YKS</strong> ile devam edebilirsin.</p>
+        <p class="exam-section-hint">Birini seç; şu an <strong style="color:var(--accent)">YKS</strong> ve <strong style="color:#34d399">KPSS</strong> ile devam edebilirsin.</p>
       </div>
 
       <div class="exam-section">
@@ -463,8 +463,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
             <span class="exam-desc">Lisansüstü sınavı</span>
           </div>
 
-          <div class="exam-card kpss coming-soon" onclick="showComingSoon()">
-            <span class="coming-badge">Yakında</span>
+          <div class="exam-card kpss" onclick="guestEnterExam('kpss')">
             <span class="exam-emoji">&#x1F3DB;</span>
             <span class="exam-label">KPSS</span>
             <span class="exam-desc">Kamu personeli seçme</span>
@@ -677,17 +676,17 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div class="login-link" style="margin-top:12px"><span onclick="skipKpssOnboarding()">Şimdi atla, sonra ekle</span></div>
     </div>
 
-    <!-- ADIM 2: Hedef sıralama (opsiyonel) -->
+    <!-- ADIM 2: Hedef puan (opsiyonel) -->
     <div id="kpssObStep2" style="display:none">
       <button class="btn-back" onclick="kpssObGoStep1()" style="margin-bottom:14px">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       </button>
-      <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedef Sıralaman Kaç?</div>
+      <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedef Puanın Kaç?</div>
       <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-bottom:20px">Opsiyonel — istersen atla</div>
-      <input type="number" id="kpssHedefSiralama" placeholder="örn: 5000" min="1" max="1000000"
+      <input type="number" id="kpssHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
         style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px;transition:border-color 0.2s"
         onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='var(--border)'">
-      <div style="font-size:0.68rem;color:var(--muted);font-weight:600;margin-bottom:24px">İlk kaçıncı olmak istiyorsun?</div>
+      <div style="font-size:0.68rem;color:var(--muted);font-weight:600;margin-bottom:24px">Sınavda kaç puan almak istiyorsun?</div>
       <button class="btn-main" onclick="finishKpssOnboarding()" style="background:linear-gradient(135deg,#34d399,#a78bfa);margin-bottom:10px">🚀 KPSS Profilini Oluştur!</button>
       <div class="login-link"><span onclick="skipKpssOnboarding()">Şimdi atla, sonra ekle</span></div>
     </div>
@@ -926,10 +925,10 @@ function scrollToLandingIntro(){
 }
 
 function guestEnterExam(exam){
-  if(exam!=='yks')return;
+  if(exam!=='yks'&&exam!=='kpss')return;
   sessionStorage.setItem('pugi_sinav',exam);
   sessionStorage.setItem('pugi_guest','true');
-  window.location.href='student.html';
+  window.location.href=(exam==='kpss')?'kpss.html':'student.html';
 }
 function showComingSoon(){
   var t=document.getElementById('landingToast');
@@ -1415,16 +1414,17 @@ function kpssObGoStep2() {
 
 function finishKpssOnboarding() {
   if(!_obUid || !_fbDb) return;
-  var siralama = parseInt(document.getElementById('kpssHedefSiralama').value)||null;
+  var puan = parseFloat(document.getElementById('kpssHedefSiralama').value)||null;
   var kpssProfile = {
     kategori: _obKpssKat,
     onboardingDone: true,
     createdAt: new Date().toISOString()
   };
-  if(siralama) kpssProfile.hedefSiralama = siralama;
+  if(puan) kpssProfile.hedefPuan = puan;
   showLoading();
   _fbDb.collection('users').doc(_obUid).set({
     kpssProfile: kpssProfile,
+    hedefPuan: puan || null,
     lastActiveExam: 'kpss'
   },{merge:true}).then(function(){
     hideLoading();
