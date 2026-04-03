@@ -68,7 +68,6 @@ body {
   min-height: 100dvh;
 }
 
-
 /* SCROLLBAR */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -164,25 +163,25 @@ body {
 @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.3); } }
 
 /* SECTION TITLE */
-.sec { font-size: 0.7rem; font-weight: 800; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; margin-top: 16px; }
+.sec { font-size: 0.7rem; font-weight: 800; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; margin-top: 20px; }
 
 /* CARDS */
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 10px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
 
 /* TODAY STATS */
 .today-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 4px; }
-.today-card { background: linear-gradient(160deg, var(--card), var(--bg2)); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 8px; text-align: center; box-shadow: inset 0 1px 0 rgba(56,189,248,0.06); transition: border-color 0.2s; }
+.today-card { background: linear-gradient(160deg, var(--card), var(--bg2)); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 10px; text-align: center; box-shadow: inset 0 1px 0 rgba(56,189,248,0.06); transition: border-color 0.2s; }
 .today-val { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; display: block; }
 .today-lbl { font-size: 0.6rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
 /* SUBJECT SELECTOR */
 .exam-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-.exam-tab { flex: 1; padding: 9px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.exam-tab { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.2s; }
 .exam-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(52,211,153,0.08); }
 
 .subj-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; margin-bottom: 12px; }
 .subj-scroll::-webkit-scrollbar { display: none; }
-.subj-chip { flex-shrink: 0; padding: 8px 14px; border-radius: 99px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-weight: 800; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.subj-chip { flex-shrink: 0; padding: 9px 16px; border-radius: 99px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-weight: 800; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
 .subj-chip.active { border-color: var(--accent2); color: var(--accent2); background: rgba(167,139,250,0.12); box-shadow: 0 0 8px rgba(167,139,250,0.2); }
 
 /* TOPIC LIST */
@@ -203,7 +202,7 @@ body {
 
 /* TYPE BUTTONS */
 .type-row { display: flex; gap: 6px; margin-bottom: 12px; }
-.type-btn { flex: 1; padding: 9px 6px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.type-btn { flex: 1; padding: 10px 8px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; }
 .type-btn.active-soru { border-color: var(--accent3); color: var(--accent3); background: rgba(52,211,153,0.08); }
 .type-btn.active-sure { border-color: var(--orange); color: var(--orange); background: rgba(251,146,60,0.08); }
 .type-btn.active-genel { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.08); }
@@ -226,7 +225,6 @@ body {
 .btn-sm { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgba(52,211,153,0.25); background: rgba(52,211,153,0.08); color: var(--accent); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .btn-sm:hover { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.5); }
 .btn-sm:active { transform: scale(0.9); }
-
 
 /* BIG BUTTON */
 .btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; letter-spacing: 0.3px; box-shadow: 0 4px 14px rgba(52,211,153,0.25); }
@@ -749,8 +747,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   .timer-section ~ .exam-tabs { grid-column: 2; }
 }
 
-
-
 /* AUTH MODAL */
 .auth-modal { position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center; }
 .auth-modal.open { display:flex;pointer-events:all; }
@@ -822,7 +818,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
 </head>
 <body>
-
 
 <!-- GÜN DETAY MODAL -->
 <div class="day-modal" id="dayModal">
@@ -1478,7 +1473,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="sec">En Güçlü & En Zayıf Konu</div>
   <div class="analysis-row" id="analysisRow"></div>
 
-
   <div id="goalPieSection" style="display:none">
     <div class="sec">Hedef İlerlemesi</div>
     <!-- Günlük -->
@@ -1542,8 +1536,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
   <div class="sec">Haftalık Hedef</div>
   <div class="goal-card" id="goalCard"></div>
-
-
 
   <div style="height:100px"></div>
 </div>
@@ -1628,7 +1620,38 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div style="height:100px"></div>
 </div>
 
+<!-- HEDEF SETİ MODALI -->
+<div id="goalSetModal" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto">
+  <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:8px">
+      <button onclick="closeGoalSetModal()" style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="font-size:1.1rem;font-weight:900">Hedef Seti</div>
+    </div>
 
+    <!-- Periyot -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Periyot</div>
+      <div style="display:flex;gap:8px">
+        <button id="gsPeriodDaily" onclick="selectGsPeriod('daily')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:var(--accent)20;color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer">Günlük</button>
+        <button id="gsPeriodWeekly" onclick="selectGsPeriod('weekly')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer">Haftalık</button>
+      </div>
+      <div id="gsPeriodHint" style="font-size:0.7rem;color:#f59e0b;font-weight:700;margin-top:8px;min-height:16px"></div>
+    </div>
+
+    <!-- Hedef Kalemleri -->
+    <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Hedef Kalemleri</div>
+    <div id="gsItemsList" style="margin-bottom:10px"></div>
+    <button onclick="addGsItem()" style="width:100%;padding:11px;border-radius:12px;border:1.5px dashed var(--border);background:transparent;color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Kalem Ekle
+    </button>
+
+    <button onclick="saveGoalSet()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:900;font-size:0.9rem;cursor:pointer;margin-bottom:10px">Hedefi Kaydet</button>
+    <button onclick="closeGoalSetModal()" style="width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.85rem;cursor:pointer">Vazgeç</button>
+  </div>
+</div>
 
 <!-- HEDEF SETİ MODALI -->
 <div id="goalSetModal" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto">
@@ -1672,83 +1695,82 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <div style="font-size:1.1rem;font-weight:900">Ayarlar</div>
     </div>
 
-    <!-- Sınav Bilgilerim -->
-    <div class="u-settings-row" style="flex-direction:column;align-items:flex-start;gap:14px">
-      <div style="font-size:0.85rem;font-weight:900;width:100%">🎯 Sınav Bilgilerim</div>
+    <!-- Sınav Bilgilerim — açılır/kapanır kart -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('sinavBilgExpand','sinavBilgArrow')">
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#34d399,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">🎯</div>
+        <div style="flex:1">
+          <div style="font-size:0.85rem;font-weight:900">Sınav Bilgilerim</div>
+          <div id="sinavBilgSubtitle" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Kadro türü ve hedef puan</div>
+        </div>
+        <span id="sinavBilgArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
+      </div>
+      <div id="sinavBilgExpand" style="display:none;margin-top:14px">
 
-      <!-- KPSS Kadro Türü -->
-      <div style="width:100%">
+        <!-- KPSS Kadro Türü -->
         <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">KPSS Kadro Türü</div>
-        <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
 
-          <!-- Lisans A Grubu -->
           <button id="settKpssLisansA" onclick="settingSelectKpssKat('lisans_a',this)"
             style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
-            <span style="font-size:1.2rem">⚖️</span>
+            <span style="font-size:1.2rem;flex-shrink:0">⚖️</span>
             <div>
               <div style="font-size:0.82rem;font-weight:900">Lisans — A Grubu / Kariyer</div>
-              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">Müfettiş, Uzman, Kontrolör, Denetmen</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Müfettiş, Uzman, Kontrolör, Denetmen</div>
             </div>
           </button>
 
-          <!-- Lisans B Grubu -->
           <button id="settKpssLisansB" onclick="settingSelectKpssKat('lisans_b',this)"
             style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
-            <span style="font-size:1.2rem">🏛️</span>
+            <span style="font-size:1.2rem;flex-shrink:0">🏛️</span>
             <div>
               <div style="font-size:0.82rem;font-weight:900">Lisans — B Grubu / Memur</div>
-              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">KPSS P1–P121, genel devlet memurluğu</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">KPSS P1–P121 · Genel devlet memurluğu</div>
             </div>
           </button>
 
-          <!-- Lisans Eğitim -->
           <button id="settKpssLisansE" onclick="settingSelectKpssKat('lisans_egitim',this)"
             style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
-            <span style="font-size:1.2rem">🏫</span>
+            <span style="font-size:1.2rem;flex-shrink:0">🏫</span>
             <div>
               <div style="font-size:0.82rem;font-weight:900">Lisans — Eğitim (ÖABT)</div>
-              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">Öğretmenlik · Alan Bilgisi Testi</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Öğretmenlik · Alan Bilgisi Testi</div>
             </div>
           </button>
 
-          <!-- Ön Lisans -->
           <button id="settKpssOnLisans" onclick="settingSelectKpssKat('on_lisans',this)"
             style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
-            <span style="font-size:1.2rem">📋</span>
+            <span style="font-size:1.2rem;flex-shrink:0">📋</span>
             <div>
               <div style="font-size:0.82rem;font-weight:900">Ön Lisans</div>
-              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">KPSS P93–P94, 2 yıllık mezunlar</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">KPSS P93–P94 · 2 yıllık mezunlar</div>
             </div>
           </button>
 
-          <!-- Ortaöğretim / Lise -->
           <button id="settKpssLise" onclick="settingSelectKpssKat('lise',this)"
             style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
-            <span style="font-size:1.2rem">🎒</span>
+            <span style="font-size:1.2rem;flex-shrink:0">🎒</span>
             <div>
               <div style="font-size:0.82rem;font-weight:900">Ortaöğretim (Lise)</div>
-              <div style="font-size:0.62rem;color:var(--muted);margin-top:1px">KPSS P95–P96, lise mezunları</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">KPSS P95–P96 · Lise mezunları</div>
             </div>
           </button>
 
         </div>
-      </div>
 
-      <!-- Hedef Puan -->
-      <div style="width:100%">
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600">(opsiyonel)</span></div>
+        <!-- Hedef Puan -->
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600;text-transform:none">(opsiyonel)</span></div>
         <input type="number" id="settHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
-          style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s"
+          style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s;margin-bottom:14px"
           onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
           oninput="_settOnSiralamaInput();">
+
+        <button id="settProfilSaveBtn" onclick="saveSettingsProfil()"
+          style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;display:none">
+          Kaydet
+        </button>
       </div>
-
-      <button id="settProfilSaveBtn" onclick="saveSettingsProfil()"
-        style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:4px;display:none">
-        Kaydet
-      </button>
     </div>
-
 
         <!-- Tema -->
     <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
@@ -1952,7 +1974,6 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   </div>
 </div>
 
-
 <!-- ONAY MODALI -->
 <div id="confirmModal" style="display:none;position:fixed;inset:0;z-index:500;display:flex;align-items:flex-end;justify-content:center;pointer-events:none" class="confirm-modal-wrap">
   <div id="confirmModalOverlay" onclick="closeConfirmModal()" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(3px);opacity:0;transition:opacity 0.25s;pointer-events:none"></div>
@@ -2051,7 +2072,6 @@ var DENEME_FIELDS = {
     { key:"rehberlik",label:"Rehberlik",        max:10 }
   ]
 };
-
 
 var BRANS_FIELDS = {
   GY_TURKCE:   { label:'GY Türkçe',         emoji:'📖', color:'#f472b6', fields:[{ key:'turkce',      label:'Türkçe',           max:30 }] },
@@ -2267,7 +2287,6 @@ function toggleFullscreenTimer() {
   syncFullscreenTimer();
 }
 
-
 // Yatay/dikey geçişinde tam ekran güncelle
 window.addEventListener('orientationchange', function() {
   setTimeout(function() {
@@ -2424,7 +2443,6 @@ function skipTimer() {
   updateTimerUI();
   timerDone();
 }
-
 
 // ═══════════════════════════════════════════════
 // TİTREŞİM & MELODİ
@@ -2893,7 +2911,6 @@ function renderDenemeFields() {
   document.getElementById('denemedTarih').value = today;
 }
 
-
 function calcDenemeNet() {
   if (!document.getElementById("denemeFields")) return;
   var fields = DENEME_FIELDS[currentDenemeType] || [];
@@ -3097,7 +3114,6 @@ function renderDenemeLog() {
     '</div>';
   }).join('');
 }
-
 
 function editDeneme(id) {
   var d = denemeler.find(function(x){ return x.id === id; });
@@ -3430,8 +3446,6 @@ function openDayModal(dateStr, dayLabel) {
 
   document.getElementById('dayModal').classList.add('open');
 }
-
-
 
 function openStreakModal() {
   const dates = new Set(entries.map(e => e.date));
@@ -4911,7 +4925,6 @@ function _addGuestCoachCard() {
     '<div style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,var(--accent3),#fbbf24);border:none;border-radius:10px;padding:8px 16px;color:#000;font-size:0.78rem;font-weight:900">&#x1F680; Ücretsiz Kayıt Ol</div>';
   wrap.appendChild(coachCard);
 
-
   // Arkadaşlar başlığından önce ekle
   var friendsHeader = document.querySelector('#profilPanel [onclick*="friendsBody"]');
   if (friendsHeader) {
@@ -4920,7 +4933,6 @@ function _addGuestCoachCard() {
     profilPanel.appendChild(wrap);
   }
 }
-
 
 function _applyGuestCalisLayout() {
   if (!_isGuest) return;
@@ -5275,8 +5287,6 @@ function submitAuth() {
     });
   }
 }
-
-
 
 function togglePasswordVisibility() {
   var input = document.getElementById('authPassword');
@@ -5870,7 +5880,6 @@ function removeFriendFromModal() {
   }).catch(function(e) { showToast('❌ Hata: ' + e.message); });
 }
 
-
 // Arkadaş / davet state
 var _friendCount = 0;
 var _totalInvitesSent = 0;
@@ -5987,7 +5996,6 @@ function doSendCoachRequest() {
 }
 
 function confirmAddUser() { doAddFriend(); } // legacy compat
-
 
 // ════════════════════════════════════════════════
 // ARKADAŞLIK İSTEKLERİ
@@ -6363,8 +6371,6 @@ function sendFeedback() {
   });
 }
 
-
-
 function removeCoachRequest(docId, coachName, status) {
   var msg = status === 'accepted'
     ? coachName + ' adlı koçunuzdan ayrılmak istediğinize emin misiniz?'
@@ -6518,9 +6524,7 @@ function loadFriends() {
   });
 }
 
-
 // removeFriend moved to removeFriendFromModal
-
 
 // ════════════════════════════════════════════
 // BİLDİRİM SİSTEMİ
@@ -6775,8 +6779,6 @@ function renderBackupSummary() {
     '<div class="summary-card"><span class="summary-val" style="color:var(--accent2)">' + denemeler.length + '</span><div class="summary-lbl">Deneme Kaydı</div></div>' +
     '<div class="summary-card"><span class="summary-val" style="color:var(--yellow)">' + uniqueDays + '</span><div class="summary-lbl">Çalışılan Gün</div></div>';
 }
-
-
 
 // ═══════════════════════════════════════════════
 // TEMA
@@ -7074,8 +7076,6 @@ function renderBadges() {
     '<div class="summary-card"><span class="summary-val" style="color:var(--accent3)">' + calcStreak() + '</span><div class="summary-lbl">Günlük Seri</div></div>' +
     '<div class="summary-card"><span class="summary-val" style="color:var(--accent2)">' + xp + '</span><div class="summary-lbl">Toplam XP</div></div>';
 
-
-
   document.getElementById('badgesGrid').innerHTML = BADGES.map(b => {
     const isEarned = earned.includes(b.id);
     const colorData = BADGE_COLOR_MAP[b.id] || ['#64748b', '#1e293b'];
@@ -7322,7 +7322,6 @@ function setDenemeChartType(type) {
   window._denemeChartType = type || null;
   renderDenemeNetChart();
 }
-
 
 // ═══════════════════════════════════════════════
 // ANALİZ: EN GÜÇLÜ / EN ZAYIF
@@ -7835,8 +7834,6 @@ var SETT_IL_LISTESI = [
 function _populateSettingsProfil() {
   if (!_userProfil) return;
 
-  // ── KPSS Kadro türü butonlarını işaretle ──
-  var kpssKat = (_userProfil.kpssProfile && _userProfil.kpssProfile.kategori) || null;
   var katMap = {
     lisans_a:      'settKpssLisansA',
     lisans_b:      'settKpssLisansB',
@@ -7844,26 +7841,45 @@ function _populateSettingsProfil() {
     on_lisans:     'settKpssOnLisans',
     lise:          'settKpssLise'
   };
-  // Eski format dönüşümü: gy_gk→lisans_b, egitim→lisans_egitim, a_grubu→lisans_a
+  var katLabel = {
+    lisans_a:      'A Grubu / Kariyer',
+    lisans_b:      'B Grubu / Memur',
+    lisans_egitim: 'Eğitim (ÖABT)',
+    on_lisans:     'Ön Lisans',
+    lise:          'Ortaöğretim (Lise)',
+    // eski format
+    gy_gk:   'GY+GK',
+    egitim:  'Eğitim (ÖABT)',
+    a_grubu: 'A Grubu'
+  };
   var legacyMap = { gy_gk:'lisans_b', egitim:'lisans_egitim', a_grubu:'lisans_a' };
+
+  var kpssKat = (_userProfil.kpssProfile && _userProfil.kpssProfile.kategori) || null;
   if (kpssKat && legacyMap[kpssKat]) kpssKat = legacyMap[kpssKat];
   _settKpssKat = kpssKat;
 
   Object.keys(katMap).forEach(function(kat) {
     var btn = document.getElementById(katMap[kat]);
-    if (!btn) return;
-    _applyKpssKatStyle(btn, kat === kpssKat);
+    if (btn) _applyKpssKatStyle(btn, kat === kpssKat);
   });
 
-  // ── Hedef Puan değerini yükle ──
+  // Hedef Puan
   var puanEl = document.getElementById('settHedefSiralama');
-  if (puanEl) puanEl.value = _userProfil.hedefPuan || (_userProfil.kpssProfile && _userProfil.kpssProfile.hedefPuan) || '';
+  var puan = _userProfil.hedefPuan || (_userProfil.kpssProfile && _userProfil.kpssProfile.hedefPuan) || '';
+  if (puanEl) puanEl.value = puan;
 
-  // ── Kaydet butonu: bilgi varsa gizle ──
-  var saveBtn = document.getElementById('settProfilSaveBtn');
-  if (saveBtn) {
-    saveBtn.style.display = (kpssKat || _userProfil.hedefPuan) ? 'none' : 'block';
+  // Subtitle güncelle
+  var subtitle = document.getElementById('sinavBilgSubtitle');
+  if (subtitle) {
+    var parts = [];
+    if (kpssKat) parts.push(katLabel[kpssKat] || kpssKat);
+    if (puan) parts.push('Hedef: ' + puan + ' puan');
+    subtitle.textContent = parts.length ? parts.join(' · ') : 'Kadro türü ve hedef puan';
   }
+
+  // Kaydet butonu
+  var saveBtn = document.getElementById('settProfilSaveBtn');
+  if (saveBtn) saveBtn.style.display = (kpssKat || puan) ? 'none' : 'block';
 }
 
 function _applyKpssKatStyle(btn, active) {
@@ -8066,6 +8082,8 @@ function saveSettingsProfil() {
     showToast('✅ Profil güncellendi!');
     var btn = document.getElementById('settProfilSaveBtn');
     if (btn) btn.style.display = 'none';
+    // Subtitle'ı güncelle
+    _populateSettingsProfil();
     localStorage.removeItem('pugi_ai_date');
     loadAiDailyCoach();
   }).catch(function(e){ showToast('❌ Hata: ' + e.message); });
@@ -8151,7 +8169,6 @@ function goToYks() {
   }
   window.location.href = 'student.html';
 }
-
 
 function closeSettingsModal() {
   var page = document.getElementById('settingsPage');
@@ -8347,7 +8364,6 @@ function checkAndResetGoals() {
     }
   }
 }
-
 
 // ════════════════════════════════════════════════
 // KİŞİSEL HEDEFLER — YENİ MODEL
@@ -8744,7 +8760,6 @@ function renderGoalPieChart() {
 
 function renderPersonalGoals() { renderAnaGoals(); }
 
-
 // ════════════════════════════════════════════════
 // KOÇ ÖNERİLERİ
 // ════════════════════════════════════════════════
@@ -8889,7 +8904,6 @@ function deleteSuggestion(docId) {
     }
   });
 }
-
 
 // ── Ayarlardan Veri Temizle ───────────────────
 function clearAllDataFromSettings() {
