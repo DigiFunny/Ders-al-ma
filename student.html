@@ -4036,6 +4036,23 @@ function onUserLoggedIn(user) {
     document.getElementById('userNameBar').textContent = displayName;
     document.getElementById('userUnameBar').textContent = '@' + username;
 
+    // Profilim kartını doldur
+    var heroCard = document.getElementById('profileHeroCard');
+    if (heroCard) {
+      heroCard.style.display = 'block';
+      var heroAvatar = document.getElementById('profileHeroAvatar');
+      var heroName   = document.getElementById('profileHeroName');
+      var heroUname  = document.getElementById('profileHeroUname');
+      if (heroAvatar) heroAvatar.textContent = displayName.charAt(0).toUpperCase();
+      if (heroName)   heroName.textContent   = displayName;
+      if (heroUname)  heroUname.textContent  = '@' + username;
+    }
+    var xbw2 = document.getElementById('xpBarWrap2');
+    if (xbw2) xbw2.style.display = 'block';
+
+    // YKS dal + hedef badge'ini Profilim'de göster
+    _renderYksDalBadge(data);
+
     // Login banner gizle
     var banner = document.getElementById('loginPromptBanner');
     if (banner) banner.style.display = 'none';
@@ -4070,6 +4087,59 @@ function onUserLoggedIn(user) {
 // ════════════════════════════════════════════
 // MİSAFİR MODU
 // ════════════════════════════════════════════
+
+/**
+ * _renderYksDalBadge — Profilim kartına YKS dal + hedef bilgisini ekler.
+ * Dal emoji/rengi ve hedef (sıralama veya okul) gösterilir.
+ */
+function _renderYksDalBadge(data) {
+  // Önceki badge varsa kaldır
+  var existing = document.getElementById('profilExamBadge');
+  if (existing) existing.remove();
+
+  var heroCard = document.getElementById('profileHeroCard');
+  if (!heroCard) return;
+
+  var dalConfig = {
+    sayisal: { emoji: '📐', label: 'Sayısal (SAY)', color: '#38bdf8' },
+    sozel:   { emoji: '📖', label: 'Sözel (SÖZ)',   color: '#fb923c' },
+    ea:      { emoji: '⚖️', label: 'Eşit Ağırlık (EA)', color: '#34d399' },
+    dil:     { emoji: '🌍', label: 'Dil',            color: '#a78bfa' }
+  };
+
+  var dal    = data.dal || null;
+  var cfg    = dal ? (dalConfig[dal] || { emoji: '📚', label: dal, color: 'var(--accent)' }) : null;
+
+  // Hedef satırı
+  var hedefStr = '';
+  if (data.hedefTur === 'okul' && data.hedefProgram) {
+    hedefStr = (data.hedefProgram.bolum || '') + (data.hedefProgram.uni ? ' — ' + data.hedefProgram.uni : '');
+  } else if (data.hedefTur === 'siralama' && data.hedefSiralama) {
+    hedefStr = 'Hedef: ilk ' + parseInt(data.hedefSiralama).toLocaleString('tr-TR');
+  }
+
+  var badge = document.createElement('div');
+  badge.id = 'profilExamBadge';
+  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:12px';
+
+  if (cfg) {
+    badge.innerHTML =
+      '<span style="font-size:1.2rem">' + cfg.emoji + '</span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:0.78rem;font-weight:900;color:' + cfg.color + '">YKS — ' + cfg.label + '</div>' +
+        (hedefStr ? '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + hedefStr + '</div>' : '') +
+      '</div>';
+  } else {
+    badge.innerHTML =
+      '<span style="font-size:1.2rem">📚</span>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:0.78rem;font-weight:900;color:var(--accent)">YKS</div>' +
+        '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Ayarlardan alan seçebilirsin</div>' +
+      '</div>';
+  }
+
+  heroCard.appendChild(badge);
+}
 
 /**
  * onGuestMode — Firebase giriş gerektirmeden uygulamayı başlatır.
@@ -4431,8 +4501,11 @@ function _fetchAiSuggestion(isDeep) {
     // Hata kontrolü
     if (data.error) {
       console.warn('Gemini API hatası (sessiz):', data.error.code, data.error.message);
-      // Kota veya hata durumunda sessizce kural bazlı öneri göster
-      _showAiText(_buildRuleBasedSuggestion(), false);
+      if (isDeep) {
+        _showDeepAnalysisModal('<p>' + _buildRuleBasedSuggestion() + '</p>');
+      } else {
+        _showAiText(_buildRuleBasedSuggestion(), false);
+      }
       return;
     }
     var text = '';
@@ -4448,7 +4521,11 @@ function _fetchAiSuggestion(isDeep) {
     }
     if (!text) {
       console.warn('Gemini boş yanıt döndü. Tam data:', JSON.stringify(data).slice(0,300));
-      _showAiText(_buildRuleBasedSuggestion(), false);
+      if (isDeep) {
+        _showDeepAnalysisModal('<p>' + _buildRuleBasedSuggestion() + '</p>');
+      } else {
+        _showAiText(_buildRuleBasedSuggestion(), false);
+      }
       return;
     }
 
@@ -4463,7 +4540,11 @@ function _fetchAiSuggestion(isDeep) {
   })
   .catch(function(err) {
     console.error('Gemini fetch hatası:', err);
-    _showAiText(_buildRuleBasedSuggestion(), false);
+    if (isDeep) {
+      _showDeepAnalysisModal('<p>' + _buildRuleBasedSuggestion() + '</p>');
+    } else {
+      _showAiText(_buildRuleBasedSuggestion(), false);
+    }
   });
 }
 
@@ -4702,8 +4783,8 @@ function _updateDeepBtn() {
 }
 
 /**
- * requestDeepAnalysis — Kullanıcı derin analiz butonuna basınca çağrılır.
-
+ * requestDeepAnalysis — Kullanıcı derin analiz butonuna basınca çağrılır. (alias)
+ */
 function onGuestMode() {
   // User bar: misafir göster
   var loggedInBar = document.getElementById('userBarLoggedIn');
@@ -8008,6 +8089,9 @@ function saveSettingsProfil() {
     // Kaydet butonunu gizle
     var btn = document.getElementById('settProfilSaveBtn');
     if (btn) btn.style.display = 'none';
+    // Subtitle ve badge'i yenile
+    _populateSettingsProfil();
+    _renderYksDalBadge(_userProfil);
     // AI öneriyi yenile
     localStorage.removeItem('pugi_ai_date');
     loadAiDailyCoach();
