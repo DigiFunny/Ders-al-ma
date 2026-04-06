@@ -4480,31 +4480,44 @@ function loadAiDailyCoach() {
  * @param {boolean} isDeep - true: derin analiz, false: günlük kısa öneri
  */
 function _fetchAiSuggestion(isDeep) {
-  var textEl = document.getElementById('aiCoachText');
-  if (!textEl) return;
-
-  // Yükleniyor göster
-  textEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:var(--muted)"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s infinite"></div>' + (isDeep ? 'Analiz yapılıyor...' : 'Önerin hazırlanıyor...') + '</div>';
+  // isDeep=false için textEl kontrolü, isDeep=true için doğrudan modal kullan
+  if (!isDeep) {
+    var textEl = document.getElementById('aiCoachText');
+    if (!textEl) return;
+    textEl.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:var(--muted)"><div style="width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 1.5s infinite"></div>Önerin hazırlanıyor...</div>';
+  }
 
   var prompt = _buildAiPrompt(isDeep);
+
+  // 30 saniyelik timeout için AbortController
+  var controller = new AbortController();
+  var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
 
   fetch(GEMINI_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    signal: controller.signal,
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { maxOutputTokens: isDeep ? 1200 : 350, temperature: 0.75 }
     })
   })
-  .then(function(res) { return res.json(); })
+  .then(function(res) {
+    clearTimeout(timeoutId);
+    // JSON olmayan yanıt gelse de patlama
+    return res.text().then(function(raw) {
+      try { return JSON.parse(raw); }
+      catch(e) { return { error: { code: res.status, message: 'JSON parse hatası: ' + raw.slice(0, 80) } }; }
+    });
+  })
   .then(function(data) {
-    // Hata kontrolü
     if (data.error) {
-      console.warn('Gemini API hatası (sessiz):', data.error.code, data.error.message);
+      console.warn('Gemini API hatası:', data.error.code, data.error.message);
+      var fallback = _buildRuleBasedSuggestion();
       if (isDeep) {
-        _showDeepAnalysisModal('<p>' + _buildRuleBasedSuggestion() + '</p>');
+        _showDeepAnalysisModal('<p>' + fallback + '</p>');
       } else {
-        _showAiText(_buildRuleBasedSuggestion(), false);
+        _showAiText(fallback, false);
       }
       return;
     }
@@ -4514,21 +4527,16 @@ function _fetchAiSuggestion(isDeep) {
       if (cand.content && cand.content.parts && cand.content.parts[0]) {
         text = cand.content.parts[0].text || '';
       }
-      // Finish reason kontrolü
-      if (!text && cand.finishReason) {
-        console.warn('Gemini finishReason:', cand.finishReason);
-      }
     }
     if (!text) {
-      console.warn('Gemini boş yanıt döndü. Tam data:', JSON.stringify(data).slice(0,300));
+      var fallback2 = _buildRuleBasedSuggestion();
       if (isDeep) {
-        _showDeepAnalysisModal('<p>' + _buildRuleBasedSuggestion() + '</p>');
+        _showDeepAnalysisModal('<p>' + fallback2 + '</p>');
       } else {
-        _showAiText(_buildRuleBasedSuggestion(), false);
+        _showAiText(fallback2, false);
       }
       return;
     }
-
     if (!isDeep) {
       var todayKey = new Date().toISOString().slice(0,10);
       var uidSl = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
@@ -4539,9 +4547,13 @@ function _fetchAiSuggestion(isDeep) {
     _showAiText(text, isDeep);
   })
   .catch(function(err) {
+    clearTimeout(timeoutId);
     console.error('Gemini fetch hatası:', err);
+    var msg = err && err.name === 'AbortError'
+      ? '⏱ Bağlantı zaman aşımına uğradı. Lütfen tekrar dene.'
+      : _buildRuleBasedSuggestion();
     if (isDeep) {
-      _showDeepAnalysisModal('<p>' + _buildRuleBasedSuggestion() + '</p>');
+      _showDeepAnalysisModal('<p>' + msg + '</p>');
     } else {
       _showAiText(_buildRuleBasedSuggestion(), false);
     }
