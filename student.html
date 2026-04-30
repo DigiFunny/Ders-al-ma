@@ -31,7 +31,7 @@
 <meta name="twitter:description" content="YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması.">
 <meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
 <title>YKS Takip 🎯</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #080d18;
@@ -61,7 +61,7 @@ html { overflow-x: hidden; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Sora', sans-serif;
   max-width: 430px;
   margin: 0 auto;
   padding-bottom: 120px;
@@ -82,7 +82,7 @@ body {
   -webkit-backdrop-filter: blur(8px);
 }
 .header-row { display: flex; align-items: center; justify-content: space-between; }
-.logo { font-family: 'Space Mono', monospace; font-size: 1.2rem; background: linear-gradient(135deg, var(--fox-orange), var(--fox-amber)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-weight: 700; }
+.logo { display: flex; align-items: center; }
 
 /* YKS COUNTDOWN */
 .yks-bar {
@@ -97,7 +97,7 @@ body {
   justify-content: space-between;
 }
 .yks-label { font-size: 0.75rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-.yks-days { font-family: 'Space Mono', monospace; font-size: 1.6rem; color: var(--accent); font-weight: 700; }
+.yks-days { font-family: 'JetBrains Mono', monospace; font-size: 1.6rem; color: var(--accent); font-weight: 700; }
 .yks-date { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
 .yks-progress-wrap { flex: 1; margin: 0 16px; }
 .yks-progress-bg { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
@@ -121,7 +121,7 @@ body {
 .tab-btn {
   flex: 1; background: none; border: none; color: var(--muted);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-  font-size: 0.6rem; font-family: 'Nunito', sans-serif; font-weight: 800;
+  font-size: 0.6rem; font-family: 'Sora', sans-serif; font-weight: 800;
   cursor: pointer; transition: all 0.2s; padding: 7px 4px; letter-spacing: 0.3px;
   border-radius: 20px; min-width: 0;
 }
@@ -131,7 +131,7 @@ body {
 .tab-btn span:last-of-type { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .coach-filter-chip {
   padding: 6px 12px; border-radius: 99px; border: 1.5px solid var(--border);
-  background: var(--bg2); color: var(--muted); font-family: 'Nunito', sans-serif;
+  background: var(--bg2); color: var(--muted); font-family: 'Sora', sans-serif;
   font-size: 0.72rem; font-weight: 800; cursor: pointer; transition: all 0.15s;
 }
 .coach-filter-chip.active {
@@ -139,7 +139,7 @@ body {
 }
 .coach-sort-btn {
   padding: 9px 8px; border-radius: 10px; border: 1.5px solid var(--border);
-  background: var(--bg2); color: var(--muted); font-family: 'Nunito', sans-serif;
+  background: var(--bg2); color: var(--muted); font-family: 'Sora', sans-serif;
   font-size: 0.72rem; font-weight: 800; cursor: pointer; transition: all 0.15s;
   text-align: center;
 }
@@ -171,12 +171,12 @@ body {
 /* TODAY STATS */
 .today-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 4px; }
 .today-card { background: linear-gradient(160deg, var(--card), var(--bg2)); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 10px; text-align: center; box-shadow: inset 0 1px 0 rgba(56,189,248,0.06); transition: border-color 0.2s; }
-.today-val { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; display: block; }
+.today-val { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; display: block; }
 .today-lbl { font-size: 0.6rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
 /* SUBJECT SELECTOR */
 .exam-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-.exam-tab { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.exam-tab { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.2s; }
 .exam-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.08); }
 
 .subj-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; margin-bottom: 12px; }
@@ -190,19 +190,19 @@ body {
 .topic-item:last-child { border-bottom: none; }
 .topic-item:active { background: var(--bg3); }
 .topic-item.selected { background: rgba(129,140,248,0.1); color: var(--accent2); }
-.topic-num { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); min-width: 18px; }
+.topic-num { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); min-width: 18px; }
 
 /* INPUT ROW */
 .input-row { display: flex; gap: 8px; margin-bottom: 12px; }
 .input-group { flex: 1; }
 .input-label { font-size: 0.68rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 5px; }
-.num-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 12px; color: var(--text); font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 700; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
+.num-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 10px; padding: 11px 12px; color: var(--text); font-family: 'Sora', sans-serif; font-size: 1rem; font-weight: 700; outline: none; transition: border-color 0.2s; -webkit-appearance: none; }
 .num-input:focus { border-color: var(--accent2); }
 .num-input::placeholder { color: var(--muted); }
 
 /* TYPE BUTTONS */
 .type-row { display: flex; gap: 6px; margin-bottom: 12px; }
-.type-btn { flex: 1; padding: 10px 8px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.type-btn { flex: 1; padding: 10px 8px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; }
 .type-btn.active-soru { border-color: var(--accent3); color: var(--accent3); background: rgba(52,211,153,0.08); }
 .type-btn.active-sure { border-color: var(--orange); color: var(--orange); background: rgba(251,146,60,0.08); }
 .type-btn.active-genel { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.08); }
@@ -215,7 +215,7 @@ body {
 .ring-fill { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s linear; filter: drop-shadow(0 0 6px var(--accent)); }
 .ring-fill.t-break { stroke: var(--accent3); filter: drop-shadow(0 0 6px var(--accent3)); }
 .ring-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
-.ring-time { font-family: 'Space Mono', monospace; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+.ring-time { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; line-height: 1; }
 .ring-sublabel { font-size: 0.65rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
 .timer-btns { display: flex; gap: 14px; align-items: center; }
@@ -227,7 +227,7 @@ body {
 .btn-sm:active { transform: scale(0.9); }
 
 /* BIG BUTTON */
-.btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; letter-spacing: 0.3px; box-shadow: 0 4px 14px rgba(56,189,248,0.25); }
+.btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Sora', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; letter-spacing: 0.3px; box-shadow: 0 4px 14px rgba(56,189,248,0.25); }
 .btn-save:hover { box-shadow: 0 6px 20px rgba(56,189,248,0.35); }
 .btn-save:active { opacity: 0.85; }
 .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -268,7 +268,7 @@ body {
 
 /* STATS */
 .period-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
-.period-tab { flex: 1; padding: 8px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.period-tab { flex: 1; padding: 8px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; }
 .period-tab.active { border-color: var(--yellow); color: var(--yellow); background: rgba(251,191,36,0.08); }
 
 .bar-chart { display: flex; flex-direction: column; gap: 8px; }
@@ -276,7 +276,7 @@ body {
 .bar-label { font-size: 0.72rem; font-weight: 800; color: var(--muted); min-width: 90px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
 .bar-track { flex: 1; background: var(--bg3); border-radius: 99px; height: 8px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.6s ease; box-shadow: 0 0 6px rgba(56,189,248,0.3); }
-.bar-val { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--muted); min-width: 36px; text-align: right; }
+.bar-val { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--muted); min-width: 36px; text-align: right; }
 
 /* LOG LIST */
 .log-list { display: flex; flex-direction: column; gap: 8px; }
@@ -286,7 +286,7 @@ body {
 .log-info { flex: 1; min-width: 0; }
 .log-title { font-weight: 800; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .log-sub { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
-.log-val { font-family: 'Space Mono', monospace; font-size: 0.82rem; font-weight: 700; text-align: right; flex-shrink: 0; }
+.log-val { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 700; text-align: right; flex-shrink: 0; }
 .log-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.9rem; padding: 4px; flex-shrink: 0; }
 
 /* EMPTY */
@@ -300,7 +300,7 @@ body {
 
 /* MODE PILLS */
 .mode-pills { display: flex; gap: 6px; margin-bottom: 12px; }
-.mode-pill { flex: 1; padding: 8px 4px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.72rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.mode-pill { flex: 1; padding: 8px 4px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.72rem; cursor: pointer; text-align: center; transition: all 0.2s; }
 .mode-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.08); }
 .mode-pill.break.active { border-color: var(--accent3); color: var(--accent3); background: rgba(52,211,153,0.08); }
 
@@ -315,10 +315,10 @@ body {
 
 .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px; }
 .summary-card { background: linear-gradient(160deg, var(--card), var(--bg2)); border: 1px solid var(--border); border-radius: var(--r); padding: 12px 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.03); }
-.summary-val { font-family: 'Space Mono', monospace; font-size: 1.3rem; font-weight: 700; display: block; }
+.summary-val { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 700; display: block; }
 .summary-lbl { font-size: 0.65rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 
-.quick-btn { padding: 7px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--bg3); color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+.quick-btn { padding: 7px 12px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--bg3); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
 .quick-btn:active, .quick-btn.qactive { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.12); }
 
 /* THEME */
@@ -330,11 +330,11 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 /* XP BAR */
 .xp-bar-wrap { background:linear-gradient(160deg,var(--card),var(--bg2));border:1px solid rgba(251,191,36,0.15);border-radius:var(--r);padding:10px 14px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(251,191,36,0.08); }
 .xp-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:6px; }
-.xp-level { font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--yellow); }
+.xp-level { font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--yellow); }
 .xp-title { font-size:0.72rem;font-weight:800;color:var(--muted); }
 .xp-track { background:var(--bg3);border-radius:99px;height:8px;overflow:hidden;position:relative; }
 .xp-fill { height:100%;background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:99px;transition:width 0.8s cubic-bezier(.4,0,.2,1); }
-.xp-pts { font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:4px;text-align:right; }
+.xp-pts { font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:4px;text-align:right; }
 
 /* BADGES */
 .badges-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px; }
@@ -355,7 +355,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .badge-tooltip-box { position:relative;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:24px 22px;text-align:center;max-width:280px;width:90%;transform:scale(0.8);opacity:0;transition:all 0.25s cubic-bezier(.34,1.56,.64,1); }
 .badge-tooltip.open .badge-tooltip-box { transform:scale(1);opacity:1; }
 .badge-tooltip-icon { font-size:3rem;display:block;margin-bottom:10px; }
-.badge-tooltip-name { font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;margin-bottom:6px; }
+.badge-tooltip-name { font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;margin-bottom:6px; }
 .badge-tooltip-status { font-size:0.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px; }
 .badge-tooltip-hint { font-size:0.82rem;color:var(--muted);font-weight:700;line-height:1.5;background:var(--bg3);border-radius:10px;padding:10px; }
 
@@ -425,7 +425,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .levelup-modal { position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:var(--card);border:2px solid var(--yellow);border-radius:20px;padding:30px 24px;text-align:center;z-index:9998;transition:transform 0.4s cubic-bezier(.34,1.56,.64,1);min-width:260px; }
 .levelup-modal.show { transform:translate(-50%,-50%) scale(1); }
 .levelup-modal .lv-icon { font-size:3rem;display:block;margin-bottom:8px; }
-.levelup-modal .lv-title { font-family:'Space Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--yellow);margin-bottom:4px; }
+.levelup-modal .lv-title { font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:var(--yellow);margin-bottom:4px; }
 .levelup-modal .lv-sub { font-size:0.85rem;color:var(--muted); }
 .modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9997;display:none; }
 .modal-overlay.show { display:block; }
@@ -439,11 +439,11 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .day-modal.open .day-modal-sheet { transform:translateY(0); }
 .day-modal-handle { width:40px; height:4px; background:var(--border); border-radius:99px; margin:12px auto 0; }
 .day-modal-header { padding:12px 16px 8px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--border); }
-.day-modal-title { font-family:'Space Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--accent); }
+.day-modal-title { font-family:'JetBrains Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--accent); }
 .day-modal-close { background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer; padding:4px; }
 .day-modal-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:12px 14px; }
 .day-modal-stat { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px 8px; text-align:center; }
-.day-modal-stat-val { font-family:'Space Mono',monospace; font-size:1.1rem; font-weight:700; display:block; }
+.day-modal-stat-val { font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:700; display:block; }
 .day-modal-stat-lbl { font-size:0.6rem; color:var(--muted); font-weight:800; text-transform:uppercase; margin-top:2px; }
 .day-modal-list { padding:0 14px; }
 .heat-day { cursor:pointer; transition:transform 0.15s; }
@@ -460,19 +460,19 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .soru-modal.open .soru-modal-sheet { transform:translateY(0); }
 .soru-modal-handle { width:40px; height:4px; background:var(--border); border-radius:99px; margin:12px auto 0; }
 .soru-modal-header { padding:14px 18px 10px; border-bottom:1px solid var(--border); }
-.soru-modal-title { font-family:'Space Mono',monospace; font-size:1rem; font-weight:700; color:var(--accent); margin-bottom:2px; }
+.soru-modal-title { font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:700; color:var(--accent); margin-bottom:2px; }
 .soru-modal-sub { font-size:0.72rem; color:var(--muted); font-weight:700; }
 .soru-modal-body { padding:16px 18px; }
 .soru-input-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
 .soru-input-item { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:12px 10px; text-align:center; transition:border-color 0.2s; }
 .soru-input-item:focus-within { border-color:var(--accent); }
 .soru-input-item .soru-lbl { font-size:0.65rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
-.soru-input-item input { background:none; border:none; outline:none; width:100%; text-align:center; font-family:'Space Mono',monospace; font-size:1.4rem; font-weight:700; color:var(--text); -webkit-appearance:none; appearance:none; }
+.soru-input-item input { background:none; border:none; outline:none; width:100%; text-align:center; font-family:'JetBrains Mono',monospace; font-size:1.4rem; font-weight:700; color:var(--text); -webkit-appearance:none; appearance:none; }
 .soru-net-display { background:var(--card); border:1.5px solid var(--accent2); border-radius:14px; padding:12px; text-align:center; margin-bottom:16px; }
-.soru-net-val { font-family:'Space Mono',monospace; font-size:1.8rem; font-weight:700; color:var(--accent2); }
+.soru-net-val { font-family:'JetBrains Mono',monospace; font-size:1.8rem; font-weight:700; color:var(--accent2); }
 .soru-net-lbl { font-size:0.65rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-top:2px; }
 .soru-modal-btns { display:flex; flex-direction:column; gap:8px; }
-.btn-skip { background:none; border:1.5px solid var(--border); border-radius:14px; padding:13px; color:var(--muted); font-family:'Nunito',sans-serif; font-weight:800; font-size:0.9rem; cursor:pointer; transition:all 0.2s; }
+.btn-skip { background:none; border:1.5px solid var(--border); border-radius:14px; padding:13px; color:var(--muted); font-family:'Sora',sans-serif; font-weight:800; font-size:0.9rem; cursor:pointer; transition:all 0.2s; }
 .btn-skip:active { background:var(--bg3); }
 
 /* HAFTALIK DETAY MODAL */
@@ -484,10 +484,10 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .week-modal.open .week-modal-sheet { transform:translateY(0); }
 .week-modal-handle { width:40px; height:4px; background:var(--border); border-radius:99px; margin:12px auto 0; }
 .week-modal-header { padding:14px 18px 12px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-.week-modal-title { font-family:'Space Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--accent2); }
+.week-modal-title { font-family:'JetBrains Mono',monospace; font-size:0.95rem; font-weight:700; color:var(--accent2); }
 .week-compare { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:14px 16px 8px; }
 .week-compare-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center; }
-.week-compare-val { font-family:'Space Mono',monospace; font-size:1.2rem; font-weight:700; display:block; }
+.week-compare-val { font-family:'JetBrains Mono',monospace; font-size:1.2rem; font-weight:700; display:block; }
 .week-compare-lbl { font-size:0.6rem; color:var(--muted); font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-top:3px; }
 .week-compare-diff { font-size:0.72rem; font-weight:800; margin-top:4px; }
 .week-day-block { margin:0 14px 4px; }
@@ -523,7 +523,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   text-align: center;
 }
 .fs-time {
-  font-family: 'Space Mono', monospace;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 3.8rem; font-weight: 700;
   color: var(--text); line-height: 1;
   letter-spacing: -2px;
@@ -570,9 +570,9 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .streak-modal-sheet { background:var(--bg2);border-radius:24px 24px 0 0;border-top:2px solid var(--fox-orange);width:100%;max-width:430px;position:relative;padding-bottom:30px;max-height:80vh;overflow-y:auto; }
 .streak-modal-handle { width:40px;height:4px;background:var(--border);border-radius:99px;margin:12px auto 0; }
 .streak-modal-header { padding:14px 18px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
-.streak-modal-title { font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--fox-orange); }
+.streak-modal-title { font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--fox-orange); }
 .streak-big { text-align:center;padding:20px 16px 12px; }
-.streak-big-num { font-family:'Space Mono',monospace;font-size:3.5rem;font-weight:700;color:var(--fox-orange);line-height:1; }
+.streak-big-num { font-family:'JetBrains Mono',monospace;font-size:3.5rem;font-weight:700;color:var(--fox-orange);line-height:1; }
 .streak-big-lbl { font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px; }
 .streak-days-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:0 14px 14px; }
 .streak-day { background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:8px 4px;text-align:center; }
@@ -755,7 +755,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .auth-logo-row { display:flex;align-items:center;gap:10px;margin-bottom:20px; }
 .auth-logo-icon { width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:flex;align-items:center;justify-content:center; }
 .auth-logo-icon svg { width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
-.auth-title { font-family:'Space Mono',monospace;font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:4px; }
+.auth-title { font-family:'JetBrains Mono',monospace;font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:4px; }
 .auth-sub { font-size:0.75rem;color:var(--muted);margin-bottom:20px;line-height:1.5; }
 .auth-label { font-size:0.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px; }
 .auth-input { width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:0.88rem;color:var(--text);margin-bottom:14px;outline:none;transition:border-color 0.2s; }
@@ -763,7 +763,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .google-btn {
   width: 100%; padding: 12px; border-radius: 12px;
   border: 1.5px solid var(--border); background: var(--card);
-  color: var(--text); font-family: 'Nunito', sans-serif;
+  color: var(--text); font-family: 'Sora', sans-serif;
   font-weight: 800; font-size: 0.88rem; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   gap: 10px; transition: all 0.2s; margin-bottom: 12px;
@@ -807,13 +807,327 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .friend-uname { font-size:0.65rem;color:var(--muted); }
 .friend-stats-row { display:grid;grid-template-columns:repeat(3,1fr);gap:6px; }
 .friend-stat { background:var(--bg3);border-radius:8px;padding:8px 6px;text-align:center; }
-.friend-stat-val { font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent); }
+.friend-stat-val { font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent); }
 .friend-stat-lbl { font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px; }
 .friend-remove { float:right;font-size:0.65rem;color:var(--muted);background:none;border:none;cursor:pointer;padding:0; }
 .no-login-msg { text-align:center;padding:30px 20px; }
 .no-login-msg .nl-icon { font-size:2.5rem;margin-bottom:10px; }
 .no-login-msg p { font-size:0.82rem;color:var(--muted);margin-bottom:14px; }
 .no-login-btn { background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:11px 24px;color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer; }
+
+/* ═══════════════ PUGI UI ENHANCEMENTs ═══════════════ */
+
+/* Better body */
+body {
+  background: #060c18 !important;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(56,189,248,0.04) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 85% 100%, rgba(129,140,248,0.03) 0%, transparent 65%) !important;
+}
+
+/* Better header */
+.header {
+  background: linear-gradient(180deg, rgba(6,12,24,0.97) 80%, transparent) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+  padding: 14px 16px 10px !important;
+}
+
+/* Logo: wordmark style */
+.logo {
+  font-family: 'Sora', sans-serif !important;
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.5px !important;
+  background: linear-gradient(135deg, #38bdf8, #818cf8) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* YKS countdown bar */
+.yks-bar {
+  background: linear-gradient(135deg, rgba(56,189,248,0.07), rgba(129,140,248,0.07)) !important;
+  border: 1px solid rgba(56,189,248,0.14) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(56,189,248,0.08) !important;
+}
+
+/* Section title — stronger hierarchy */
+.sec {
+  font-size: 0.62rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  color: #4b6280 !important;
+  margin-top: 22px !important;
+  margin-bottom: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding-left: 2px !important;
+}
+.sec::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 12px;
+  background: linear-gradient(180deg, #38bdf8, #818cf8);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.sec::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(56,189,248,0.12), transparent);
+}
+
+/* Cards — richer depth */
+.card {
+  background: linear-gradient(160deg, #111827, #0f1929) !important;
+  border: 1px solid #1c2d47 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(56,189,248,0.12), transparent);
+  pointer-events: none;
+}
+
+/* Today stat cards — icon space */
+.today-card {
+  background: linear-gradient(160deg, #111827, #0d1525) !important;
+  border-radius: 14px !important;
+  border: 1px solid #1c2d47 !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+  padding: 14px 8px 12px !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+.today-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  opacity: 0.4;
+}
+.today-card:nth-child(1)::before { background: #38bdf8; }
+.today-card:nth-child(2)::before { background: #34d399; }
+.today-card:nth-child(3)::before { background: #818cf8; }
+.today-val {
+  font-size: 1.6rem !important;
+  letter-spacing: -1px !important;
+}
+
+/* Log items */
+.log-item {
+  background: linear-gradient(135deg, #111827, #0f1929) !important;
+  border: 1px solid #1c2d47 !important;
+  border-radius: 12px !important;
+  transition: border-color 0.2s, transform 0.15s !important;
+}
+.log-item:active { border-color: rgba(56,189,248,0.4) !important; transform: scale(0.99) !important; }
+
+/* Mode pills — sleeker */
+.mode-pill {
+  flex-shrink: 0;
+  padding: 8px 14px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid #1c2d47 !important;
+  background: #111827 !important;
+  color: #4b6280 !important;
+  font-family: 'Sora', sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 0.78rem !important;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+}
+.mode-pill.active {
+  border-color: rgba(56,189,248,0.5) !important;
+  color: #38bdf8 !important;
+  background: rgba(56,189,248,0.08) !important;
+  box-shadow: 0 0 10px rgba(56,189,248,0.1) !important;
+}
+.mode-pill.break.active {
+  border-color: rgba(52,211,153,0.5) !important;
+  color: #34d399 !important;
+  background: rgba(52,211,153,0.08) !important;
+}
+
+/* Play button */
+.btn-play {
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #38bdf8, #818cf8) !important;
+  box-shadow: 0 4px 24px rgba(56,189,248,0.4), 0 0 0 4px rgba(56,189,248,0.1) !important;
+}
+.btn-sm {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 50% !important;
+  border: 1.5px solid rgba(56,189,248,0.2) !important;
+  background: rgba(56,189,248,0.07) !important;
+}
+
+/* Save button */
+.btn-save, .btn-add-entry {
+  border-radius: 14px !important;
+  font-family: 'Sora', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.3px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  box-shadow: 0 4px 18px rgba(56,189,248,0.25) !important;
+}
+
+/* Tabs nav */
+.tabs {
+  border: 1px solid rgba(56,189,248,0.12) !important;
+  border-radius: 28px !important;
+  padding: 7px 6px !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03) !important;
+  background: rgba(6,12,24,0.92) !important;
+}
+.tab-btn {
+  font-family: 'Sora', sans-serif !important;
+  font-size: 0.59rem !important;
+  font-weight: 700 !important;
+  border-radius: 22px !important;
+  padding: 7px 4px !important;
+}
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(251,146,60,0.18), rgba(251,146,60,0.06)) !important;
+  box-shadow: inset 0 1px 0 rgba(251,146,60,0.15) !important;
+}
+
+/* Inputs */
+.num-input {
+  background: #0d1525 !important;
+  border: 1.5px solid #1c2d47 !important;
+  border-radius: 12px !important;
+  font-family: 'Sora', sans-serif !important;
+  font-size: 0.95rem !important;
+}
+.num-input:focus { border-color: #818cf8 !important; box-shadow: 0 0 0 3px rgba(129,140,248,0.1) !important; }
+
+/* Auth box */
+.auth-box {
+  border-radius: 22px !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7) !important;
+  background: #111827 !important;
+}
+.auth-input {
+  background: #0d1525 !important;
+  border-radius: 12px !important;
+  border: 1.5px solid #1c2d47 !important;
+  font-family: 'Sora', sans-serif !important;
+}
+.auth-input:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 3px rgba(56,189,248,0.1) !important; }
+.auth-btn {
+  border-radius: 12px !important;
+  font-family: 'Sora', sans-serif !important;
+  font-weight: 800 !important;
+}
+.google-btn { border-radius: 12px !important; font-family: 'Sora', sans-serif !important; }
+
+/* Modal sheets */
+.soru-modal-sheet, .day-modal-sheet, .week-modal-sheet {
+  border-radius: 24px 24px 0 0 !important;
+}
+.soru-modal-sheet { border-top: 2px solid rgba(56,189,248,0.3) !important; }
+
+/* Timer ring */
+.ring-time { font-size: 2.3rem !important; letter-spacing: -2px !important; }
+.ring-cont { filter: drop-shadow(0 0 20px rgba(56,189,248,0.12)); }
+
+/* XP bar */
+.xp-track { background: rgba(255,255,255,0.05) !important; border-radius: 99px !important; height: 6px !important; }
+.xp-fill { background: linear-gradient(90deg, #38bdf8, #818cf8) !important; }
+
+/* Subj chips */
+.subj-chip { border-radius: 99px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; }
+.subj-chip.active { background: rgba(129,140,248,0.1) !important; box-shadow: 0 0 10px rgba(129,140,248,0.15) !important; }
+.exam-tab { font-family: 'Sora', sans-serif !important; font-weight: 700 !important; border-radius: 12px !important; }
+
+/* User bar */
+.user-bar { border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
+.user-avatar { border-radius: 10px !important; font-family: 'Sora', sans-serif !important; font-weight: 900 !important; }
+
+/* Summary items */
+.summary-item { border-radius: 14px !important; background: linear-gradient(160deg, #111827, #0f1929) !important; border: 1px solid #1c2d47 !important; }
+.summary-val { font-family: 'JetBrains Mono', monospace !important; }
+
+/* type-btn */
+.type-btn { font-family: 'Sora', sans-serif !important; font-weight: 700 !important; border-radius: 12px !important; }
+
+/* Heatmap handle */
+.heat-day:active .heat-box { filter: brightness(1.5) !important; }
+
+/* Quick btns */
+.quick-btn { font-family: 'Sora', sans-serif !important; font-weight: 700 !important; border-radius: 10px !important; }
+
+/* toast */
+#toast { font-family: 'Sora', sans-serif !important; border-radius: 99px !important; font-weight: 700 !important; }
+
+/* Empty state */
+.empty p { font-family: 'Sora', sans-serif !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px !important; }
+::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.15) !important; }
+
+/* ══ AI COACH CARD ══ */
+#aiCoachCard {
+  background: linear-gradient(135deg, rgba(129,140,248,0.07), rgba(56,189,248,0.05)) !important;
+  border: 1.5px solid rgba(129,140,248,0.2) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 4px 24px rgba(129,140,248,0.08) !important;
+}
+
+/* Motivation card */
+.motiv-card {
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, rgba(56,189,248,0.05), rgba(129,140,248,0.04)) !important;
+  border: 1px solid rgba(56,189,248,0.12) !important;
+  position: relative !important;
+  padding-left: 20px !important;
+}
+.motiv-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #38bdf8, #818cf8);
+  border-radius: 3px 0 0 3px;
+}
+.motiv-quote { font-style: italic !important; line-height: 1.65 !important; font-size: 0.84rem !important; }
+
+/* Period/stat tabs */
+.period-tab { font-family: 'Sora', sans-serif !important; border-radius: 12px !important; }
+.period-tab.active { background: rgba(129,140,248,0.08) !important; }
+
+/* Badge items */
+.badge-item { border-radius: 16px !important; }
+.badge-item.earned { border-color: rgba(56,189,248,0.3) !important; background: rgba(56,189,248,0.04) !important; }
+
 </style>
 
 </head>
@@ -826,7 +1140,9 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <div class="day-modal-handle"></div>
     <div class="day-modal-header">
       <div class="day-modal-title" id="dayModalTitle">—</div>
-      <button class="day-modal-close" onclick="closeDayModal()">✕</button>
+      <button class="day-modal-close" onclick="closeDayModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
     </div>
     <div class="day-modal-stats" id="dayModalStats"></div>
     <div class="day-modal-list" id="dayModalList"></div>
@@ -839,8 +1155,13 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="week-modal-sheet">
     <div class="week-modal-handle"></div>
     <div class="week-modal-header">
-      <div class="week-modal-title">📊 Bu Haftanın Detayı</div>
-      <button style="background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;" onclick="closeWeekModal()">✕</button>
+      <div class="week-modal-title" style="display:flex;align-items:center;gap:8px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Bu Haftanın Detayı
+    </div>
+      <button style="width:28px;height:28px;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="closeWeekModal()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
     </div>
     <div id="weekModalContent"></div>
   </div>
@@ -852,13 +1173,18 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div class="soru-modal-sheet">
     <div class="soru-modal-handle"></div>
     <div class="soru-modal-header">
-      <div class="soru-modal-title">📝 Soru Çözümü Tamamlandı!</div>
+      <div class="soru-modal-title" style="display:flex;align-items:center;gap:8px">
+      <div style="width:28px;height:28px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      Soru Çözümü Tamamlandı
+    </div>
       <div class="soru-modal-sub" id="soruModalSub">Sonuçları kaydetmek ister misin?</div>
     </div>
     <div class="soru-modal-body">
       <!-- Toplam soru — önce bu girilir -->
       <div style="margin-bottom:12px">
-        <div class="soru-lbl" style="color:#fbbf24;margin-bottom:6px">📦 Toplam Soru Sayısı</div>
+        <div class="soru-lbl" style="color:#fbbf24;margin-bottom:6px;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Toplam Soru</div>
         <div class="soru-input-item" style="border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px">
           <input type="number" id="soruToplam" placeholder="Kaç soru çözdün?" min="0" max="999"
             style="flex:1;font-size:1.3rem"
@@ -869,19 +1195,19 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <!-- D / Y / B grid -->
       <div class="soru-input-grid" style="margin-bottom:12px">
         <div class="soru-input-item">
-          <div class="soru-lbl" style="color:#34d399">✅ Doğru</div>
+          <div class="soru-lbl" style="color:#34d399;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Doğru</div>
           <input type="number" id="soruDogru" placeholder="0" min="0"
             oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*">
           <div id="soruDograErr" style="font-size:0.6rem;color:#f87171;margin-top:3px;min-height:12px"></div>
         </div>
         <div class="soru-input-item">
-          <div class="soru-lbl" style="color:#f87171">❌ Yanlış</div>
+          <div class="soru-lbl" style="color:#f87171;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Yanlış</div>
           <input type="number" id="soruYanlis" placeholder="0" min="0"
             oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*">
           <div id="soruYanlisErr" style="font-size:0.6rem;color:#f87171;margin-top:3px;min-height:12px"></div>
         </div>
         <div class="soru-input-item" style="grid-column:span 2">
-          <div class="soru-lbl" style="color:#94a3b8">⬜ Boş <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(otomatik hesaplanır)</span></div>
+          <div class="soru-lbl" style="color:#94a3b8;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Boş <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(otomatik hesaplanır)</span></div>
           <input type="number" id="soruBos" placeholder="—" min="0"
             oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*"
             style="color:var(--muted)">
@@ -895,7 +1221,10 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <!-- Hata mesajı -->
       <div id="soruModalErr" style="font-size:0.75rem;color:#f87171;font-weight:700;text-align:center;min-height:18px;margin-bottom:8px"></div>
       <div class="soru-modal-btns">
-        <button class="btn-save" id="soruKaydetBtn" onclick="saveSoruModal()">💾 Kaydet</button>
+        <button class="btn-save" id="soruKaydetBtn" onclick="saveSoruModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Kaydet
+      </button>
         <button class="btn-skip" onclick="skipSoruModal()">Eklemeden Devam Et →</button>
       </div>
     </div>
@@ -904,7 +1233,9 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
 <!-- FULLSCREEN TIMER OVERLAY -->
 <div class="fullscreen-timer" id="fullscreenTimer">
-  <button class="fs-close" onclick="toggleFullscreenTimer()">✕</button>
+  <button class="fs-close" onclick="toggleFullscreenTimer()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
   <div class="fs-ring-cont" id="fsRingCont">
     <svg id="fsRingSvg" width="280" height="280" viewBox="0 0 280 280" style="width:min(280px,70vmin);height:min(280px,70vmin);">
       <circle cx="140" cy="140" r="120" fill="none" stroke="var(--border)" stroke-width="10"/>
@@ -1003,7 +1334,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <div class="user-uname">Giriş yapılmadı</div>
       </div>
     </div>
-    <button onclick="window.location.href='index.html'" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:7px 14px;color:#fff;font-weight:800;font-size:0.75rem;cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif">Giriş Yap</button>
+    <button onclick="window.location.href='index.html'" style="background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:7px 14px;color:#fff;font-weight:800;font-size:0.75rem;cursor:pointer;white-space:nowrap;font-family:'Sora',sans-serif">Giriş Yap</button>
   </div>
 </div>
 
@@ -1045,7 +1376,9 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 <!-- HEADER -->
 <div class="header">
   <div class="header-row">
-    <div class="logo">Pugi</div>
+    <div class="logo" style="-webkit-text-fill-color:initial;background:none;">
+  <img src="icon-512.png" alt="Pugi" style="height:32px;width:auto;object-fit:contain;display:block;">
+</div>
     <div style="display:flex;gap:8px;align-items:center;">
 
     </div>
@@ -1061,9 +1394,11 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
       <div class="yks-progress-bg"><div class="yks-progress-fill" id="yksBar" style="width:0%"></div></div>
       <div style="font-size:0.62rem;color:var(--muted);margin-top:4px;text-align:center">%<span id="yksYuzde">0</span> tamamlandı</div>
     </div>
-    <div style="text-align:center">
-      <div style="font-size:1.2rem">📚</div>
-      <div style="font-size:0.62rem;color:var(--muted);font-weight:800">Başarılar!</div>
+    <div style="text-align:center;padding:0 4px">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+      </svg>
+      <div style="font-size:0.58rem;color:#4b6280;font-weight:800;margin-top:3px;letter-spacing:0.5px">SINAV</div>
     </div>
   </div>
 </div>
@@ -1099,15 +1434,19 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <!-- Başlık -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:30px;height:30px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0">🤖</div>
+        <div style="width:32px;height:32px;background:linear-gradient(135deg,#818cf8,#38bdf8);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(129,140,248,0.3)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><path d="M8 16h.01M12 16h.01M16 16h.01"/>
+        </svg>
+      </div>
         <div>
           <div style="font-size:0.8rem;font-weight:900;color:var(--text)">AI Koçun</div>
           <div id="aiCoachDate" style="font-size:0.6rem;font-weight:700;color:var(--muted)">Bugünün önerisi</div>
         </div>
       </div>
       <!-- Detaylı analiz butonu — haftada 1 hak -->
-      <button id="aiDeepBtn" onclick="requestDeepAnalysis()" style="background:rgba(129,140,248,0.12);border:1.5px solid rgba(129,140,248,0.3);border-radius:9px;padding:5px 10px;font-size:0.62rem;font-weight:800;color:var(--accent2);cursor:pointer;white-space:nowrap;font-family:'Nunito',sans-serif;display:none">
-        🔍 Derin Analiz
+      <button id="aiDeepBtn" onclick="requestDeepAnalysis()" style="background:rgba(129,140,248,0.12);border:1.5px solid rgba(129,140,248,0.3);border-radius:9px;padding:5px 10px;font-size:0.62rem;font-weight:800;color:var(--accent2);cursor:pointer;white-space:nowrap;font-family:'Sora',sans-serif;display:none">
+        Derin Analiz
       </button>
     </div>
 
@@ -1138,9 +1477,21 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
   <div class="sec">Bugün</div>
   <div class="today-grid">
-    <div class="today-card"><span class="today-val" id="todayMin" style="color:var(--accent)">0</span><div class="today-lbl">Dakika</div></div>
-    <div class="today-card"><span class="today-val" id="todaySoru" style="color:var(--accent3)">0</span><div class="today-lbl">Soru</div></div>
-    <div class="today-card"><span class="today-val" id="todayKonu" style="color:var(--accent2)">0</span><div class="today-lbl">Konu</div></div>
+    <div class="today-card">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px;opacity:0.7;display:block"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span class="today-val" id="todayMin" style="color:#38bdf8">0</span>
+      <div class="today-lbl">Dakika</div>
+    </div>
+    <div class="today-card">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px;opacity:0.7;display:block"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span class="today-val" id="todaySoru" style="color:#34d399">0</span>
+      <div class="today-lbl">Soru</div>
+    </div>
+    <div class="today-card">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px;opacity:0.7;display:block"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span class="today-val" id="todayKonu" style="color:#818cf8">0</span>
+      <div class="today-lbl">Konu</div>
+    </div>
   </div>
 
   <div class="sec">Bu Haftaki Aktivite</div>
@@ -1153,7 +1504,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   <div id="anaGoalsWrap">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <div class="sec" style="margin-bottom:0">Hedeflerim</div>
-      <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:var(--accent)18;border:1.5px solid var(--accent);border-radius:10px;padding:5px 11px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer">
+      <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:rgba(56,189,248,0.08);border:1.5px solid rgba(56,189,248,0.3);border-radius:10px;padding:6px 12px;font-size:0.72rem;font-weight:800;color:#38bdf8;cursor:pointer;font-family:'Sora',sans-serif">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Hedef Seti
       </button>
@@ -1193,20 +1544,35 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </button>
   </div>
   <div class="mode-pills" id="modePills">
-    <div class="mode-pill active" onclick="setTimerMode(0,this)">⏱ 25</div>
-    <div class="mode-pill" onclick="setTimerMode(1,this)">⏱ 15</div>
-    <div class="mode-pill break" onclick="setTimerMode(2,this)">☕ 5</div>
-    <div class="mode-pill" onclick="setTimerMode(3,this)">⚡ 45</div>
-    <div class="mode-pill" id="customPill" onclick="toggleCustomInput(this)">✏️ Özel</div>
+    <div class="mode-pill active" onclick="setTimerMode(0,this)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    25 dk
+  </div>
+    <div class="mode-pill" onclick="setTimerMode(1,this)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    15 dk
+  </div>
+    <div class="mode-pill break" onclick="setTimerMode(2,this)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+    Mola
+  </div>
+    <div class="mode-pill" onclick="setTimerMode(3,this)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    45 dk
+  </div>
+    <div class="mode-pill" id="customPill" onclick="toggleCustomInput(this)">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    Özel
+  </div>
   </div>
   <div style="display:flex;justify-content:flex-end;margin-top:-4px;margin-bottom:6px;">
     <button class="expand-btn" id="expandBtn" onclick="toggleFullscreenTimer()" title="Tam ekran" style="display:flex;align-items:center;gap:5px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;font-size:0.72rem;font-weight:800;color:var(--muted);">
-      <span style="font-size:0.9rem">⛶</span> Tam Ekran
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg> Tam Ekran
     </button>
   </div>
   <div id="customInputWrap" style="display:none;margin-bottom:12px;">
     <div style="background:var(--card);border:1.5px solid var(--accent2);border-radius:var(--r);padding:14px;">
-      <div style="font-size:0.72rem;font-weight:800;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">✏️ Özel Süre Ayarla</div>
+      <div style="font-size:0.72rem;font-weight:800;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Özel Süre Ayarla</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
         <button class="quick-btn" onclick="setCustomQuick(10)">10 dk</button>
         <button class="quick-btn" onclick="setCustomQuick(20)">20 dk</button>
@@ -1233,8 +1599,8 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
           <input class="num-input" type="number" id="customSec" placeholder="0" min="0" max="59" style="text-align:center;font-size:1.3rem;" oninput="previewCustom()">
         </div>
       </div>
-      <div id="customPreview" style="text-align:center;font-family:'Space Mono',monospace;font-size:1rem;color:var(--accent2);font-weight:700;margin-bottom:10px;min-height:22px;"></div>
-      <button class="btn-save" onclick="applyCustomTimer()" style="background:linear-gradient(135deg,var(--accent2),var(--accent))">✅ Süreyi Uygula</button>
+      <div id="customPreview" style="text-align:center;font-family:'JetBrains Mono',monospace;font-size:1rem;color:var(--accent2);font-weight:700;margin-bottom:10px;min-height:22px;"></div>
+      <button class="btn-save" onclick="applyCustomTimer()" style="background:linear-gradient(135deg,var(--accent2),var(--accent))">Uygula</button>
     </div>
   </div>
   <div class="timer-wrap">
@@ -1310,14 +1676,14 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 
   <!-- Arama -->
   <div style="position:relative;margin-bottom:10px">
-    <input id="coachSearchInput" type="text" placeholder="Koç veya ders ara..." oninput="filterCoachListings()" style="width:100%;padding:10px 12px 10px 36px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='rgba(52,211,153,0.6)'" onblur="this.style.borderColor='var(--border)'">
+    <input id="coachSearchInput" type="text" placeholder="Koç veya ders ara..." oninput="filterCoachListings()" style="width:100%;padding:10px 12px 10px 36px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;transition:border-color 0.2s" onfocus="this.style.borderColor='rgba(52,211,153,0.6)'" onblur="this.style.borderColor='var(--border)'">
     <svg style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
   </div>
 
   <!-- Filtrele Butonu -->
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
     <div id="coachActiveFilterLabel" style="font-size:0.68rem;font-weight:800;color:var(--muted)">Sıralama: Varsayılan</div>
-    <button onclick="toggleCoachFilterPanel()" id="coachFilterBtn" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;transition:all 0.2s">
+    <button onclick="toggleCoachFilterPanel()" id="coachFilterBtn" style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:'Sora',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;transition:all 0.2s">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
       Filtrele
     </button>
@@ -1356,7 +1722,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     </div>
 
     <!-- Uygula Butonu -->
-    <button onclick="toggleCoachFilterPanel()" style="width:100%;margin-top:12px;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-weight:900;font-size:0.88rem;cursor:pointer;font-family:'Nunito',sans-serif">✅ Uygula</button>
+    <button onclick="toggleCoachFilterPanel()" style="width:100%;margin-top:12px;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-weight:900;font-size:0.88rem;cursor:pointer;font-family:'Sora',sans-serif">✅ Uygula</button>
   </div>
 
   <!-- Koç İlanları Listesi -->
@@ -1392,15 +1758,15 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <!-- İstatistikler -->
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
           <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
-            <div id="cpm-xp" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#34d399">—</div>
+            <div id="cpm-xp" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:#34d399">—</div>
             <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">XP</div>
           </div>
           <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
-            <div id="cpm-exp" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#fbbf24">—</div>
+            <div id="cpm-exp" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:#fbbf24">—</div>
             <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Yıl Deneyim</div>
           </div>
           <div style="background:rgba(0,0,0,0.2);border-radius:12px;padding:10px 8px;text-align:center">
-            <div id="cpm-rating" style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:#f472b6">—</div>
+            <div id="cpm-rating" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:#f472b6">—</div>
             <div style="font-size:0.55rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px">Puan</div>
           </div>
         </div>
@@ -1439,14 +1805,14 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
           <span onclick="setCpmStar(4)" class="cpm-star" style="font-size:1.4rem;cursor:pointer;filter:grayscale(1)">⭐</span>
           <span onclick="setCpmStar(5)" class="cpm-star" style="font-size:1.4rem;cursor:pointer;filter:grayscale(1)">⭐</span>
         </div>
-        <textarea id="cpm-review-text" placeholder="Koç hakkında düşüncelerini yaz..." style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;resize:none;min-height:70px"></textarea>
-        <button onclick="submitCpmReview()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-weight:900;font-size:0.88rem;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:8px">⭐ Değerlendirimi Gönder</button>
+        <textarea id="cpm-review-text" placeholder="Koç hakkında düşüncelerini yaz..." style="width:100%;padding:10px 12px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;resize:none;min-height:70px"></textarea>
+        <button onclick="submitCpmReview()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-weight:900;font-size:0.88rem;cursor:pointer;font-family:'Sora',sans-serif;margin-top:8px">⭐ Değerlendirimi Gönder</button>
       </div>
     </div>
 
     <!-- WhatsApp Butonu -->
     <div style="padding:0 16px">
-      <button id="cpm-whatsapp-btn" onclick="openCoachWhatsapp()" style="width:100%;padding:15px;border-radius:16px;border:none;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(37,211,102,0.3)">
+      <button id="cpm-whatsapp-btn" onclick="openCoachWhatsapp()" style="width:100%;padding:15px;border-radius:16px;border:none;background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;font-family:'Sora',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 18px rgba(37,211,102,0.3)">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         WhatsApp ile İletişime Geç
       </button>
@@ -1678,24 +2044,24 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <!-- Dal seçimi -->
         <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Alan</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-          <button id="settDalSay" onclick="settingSelectDal('sayisal')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📐 Sayısal</button>
-          <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">📖 Sözel</button>
-          <button id="settDalEa" onclick="settingSelectDal('ea')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">⚖️ Eşit Ağırlık</button>
-          <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.2s">🌍 Dil</button>
+          <button id="settDalSay" onclick="settingSelectDal('sayisal')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">📐 Sayısal</button>
+          <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">📖 Sözel</button>
+          <button id="settDalEa" onclick="settingSelectDal('ea')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">⚖️ Eşit Ağırlık</button>
+          <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">🌍 Dil</button>
         </div>
 
         <!-- Hedef türü -->
         <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Türü</div>
         <div style="display:flex;gap:8px;margin-bottom:14px">
-          <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
-          <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
+          <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif">🏆 Sıralama</button>
+          <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif">🎓 Okul/Bölüm</button>
         </div>
 
         <!-- Sıralama hedefi -->
         <div id="settSiralamaWrap" style="margin-bottom:14px">
           <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
           <input type="number" id="settHedefSiralama" placeholder="örn: 10000" min="1"
-            style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s"
+            style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s"
             onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
             oninput="this.style.borderColor='var(--accent)'; _settOnSiralamaInput();">
         </div>
@@ -1703,22 +2069,22 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <!-- Okul hedefi -->
         <div id="settOkulWrap" style="display:none;margin-bottom:14px">
           <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Şehir</div>
-          <select id="settIlSel" onchange="settLoadUnis()" style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
+          <select id="settIlSel" onchange="settLoadUnis()" style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
             <option value="">Şehir seç...</option>
           </select>
           <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Üniversite</div>
-          <select id="settUniSel" onchange="settLoadBolumler()" disabled style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
+          <select id="settUniSel" onchange="settLoadBolumler()" disabled style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
             <option value="">Önce şehir seç...</option>
           </select>
           <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Bölüm</div>
-          <select id="settBolumSel" onchange="settSelectBolum()" disabled style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
+          <select id="settBolumSel" onchange="settSelectBolum()" disabled style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
             <option value="">Önce üniversite seç...</option>
           </select>
           <div id="settProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:4px"></div>
         </div>
 
         <button id="settProfilSaveBtn" onclick="saveSettingsProfil()"
-          style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Nunito',sans-serif;display:none">
+          style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Sora',sans-serif;display:none">
           Kaydet
         </button>
       </div>
@@ -1804,7 +2170,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
         <span id="feedbackExpandArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
       </div>
       <div id="feedbackExpand" style="display:none;margin-top:12px">
-        <textarea id="feedbackText" placeholder="Uygulama hakkındaki düşüncelerini yaz..." rows="4" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.85rem;color:var(--text);outline:none;resize:none;font-family:'Nunito',sans-serif;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        <textarea id="feedbackText" placeholder="Uygulama hakkındaki düşüncelerini yaz..." rows="4" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:0.85rem;color:var(--text);outline:none;resize:none;font-family:'Sora',sans-serif;margin-bottom:8px" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
         <div id="feedbackMsg" style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;min-height:16px"></div>
         <button onclick="sendFeedback()" style="width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer">Gönder</button>
       </div>
@@ -1890,8 +2256,8 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
     <div class="day-modal-body">
       <div id="fdContent"></div>
       <div style="padding:4px 0 8px;display:flex;flex-direction:column;gap:8px">
-        <button id="fdInviteBtn" onclick="inviteFriendFromModal()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif">🔔 Derse Çağır</button>
-        <button onclick="removeFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:var(--warn);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">Arkadaşlıktan Çıkar</button>
+        <button id="fdInviteBtn" onclick="inviteFriendFromModal()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif"> Derse Çağır</button>
+        <button onclick="removeFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:var(--warn);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:'Sora',sans-serif">Arkadaşlıktan Çıkar</button>
       </div>
     </div>
   </div>
@@ -1922,10 +2288,10 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
           <div id="previewType" style="font-size:0.68rem;font-weight:800;margin-top:2px"></div>
         </div>
       </div>
-      <button onclick="searchUser()" id="searchUserBtn" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;margin-bottom:8px">🔍 Ara</button>
+      <button onclick="searchUser()" id="searchUserBtn" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;margin-bottom:8px">🔍 Ara</button>
       <div id="studentAddBtns" style="display:none;flex-direction:column;gap:8px;margin-bottom:8px">
-        <button onclick="doAddFriend()" id="btnAddFriend" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">➕ Arkadaş Ekle</button>
-        <button onclick="doSendCoachRequest()" id="btnSendCoachReq" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">🎯 Koçluk İsteği Gönder</button>
+        <button onclick="doAddFriend()" id="btnAddFriend" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Sora',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">➕ Arkadaş Ekle</button>
+        <button onclick="doSendCoachRequest()" id="btnSendCoachReq" style="display:none;width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-family:'Sora',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer">🎯 Koçluk İsteği Gönder</button>
       </div>
       <div id="friendAddMsg" style="font-size:0.75rem;min-height:18px;text-align:center;font-weight:700;color:var(--muted)"></div>
     </div>
@@ -3676,7 +4042,7 @@ function drawDonut(svgId, legendId, data) {
 
   var total = data.reduce(function(a,d){ return a + d.value; }, 0);
   if (total === 0) {
-    svgEl.innerHTML = '<text x="50" y="54" text-anchor="middle" fill="#4b6280" font-size="8" font-family="Nunito,sans-serif">Veri yok</text>';
+    svgEl.innerHTML = '<text x="50" y="54" text-anchor="middle" fill="#4b6280" font-size="8" font-family="Sora,sans-serif">Veri yok</text>';
     legendEl.innerHTML = '';
     return;
   }
@@ -3712,7 +4078,7 @@ function drawDonut(svgId, legendId, data) {
   var topPct = data[0] ? Math.round(data[0].value / total * 100) : 0;
   var topLabel = data[0] ? data[0].label.slice(0,8) : '';
   paths += '<text x="50" y="47" text-anchor="middle" fill="#e2e8f0" font-size="10" font-weight="700" font-family="monospace">'+topPct+'%</text>';
-  paths += '<text x="50" y="58" text-anchor="middle" fill="#4b6280" font-size="5.5" font-family="Nunito,sans-serif">'+topLabel+'</text>';
+  paths += '<text x="50" y="58" text-anchor="middle" fill="#4b6280" font-size="5.5" font-family="Sora,sans-serif">'+topLabel+'</text>';
 
   svgEl.innerHTML = paths;
 
@@ -5768,7 +6134,7 @@ function openFriendDetail(friendUid, displayName, username, stats) {
     var canInv = (now - lastSent) >= _INVITE_COOLDOWN_MS;
     var remMins = canInv ? 0 : Math.ceil((_INVITE_COOLDOWN_MS - (now - lastSent)) / 60000);
     if (canInv) {
-      btn.textContent = '🔔 Derse Çağır';
+      btn.textContent = ' Derse Çağır';
       btn.disabled = false;
       btn.style.opacity = '1';
       btn.style.cursor = 'pointer';
@@ -6034,8 +6400,8 @@ function loadFriendRequests() {
           '<div style="font-size:0.82rem;font-weight:900">' + (req.fromDisplayName||req.fromUsername) + '</div>' +
           '<div style="font-size:0.65rem;color:var(--muted)">@' + (req.fromUsername||'') + ' · arkadaşlık isteği</div>' +
         '</div>' +
-        '<button class="fr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Kabul</button>' +
-        '<button class="fr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:var(--warn);font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Nunito,sans-serif">✕</button>';
+        '<button class="fr-acc" style="padding:6px 11px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--accent3),#fbbf24);color:#000;font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Sora,sans-serif">✓ Kabul</button>' +
+        '<button class="fr-rej" style="padding:6px 9px;border-radius:8px;border:1.5px solid rgba(248,113,113,0.3);background:transparent;color:var(--warn);font-weight:900;font-size:0.7rem;cursor:pointer;font-family:Sora,sans-serif">✕</button>';
       (function(reqObj) {
         row.querySelector('.fr-acc').onclick = function() { acceptFriendRequest(reqObj); };
         row.querySelector('.fr-rej').onclick = function() { rejectFriendRequest(reqObj); };
@@ -6306,7 +6672,7 @@ function loadStudyInvites() {
           '<div style="font-size:0.82rem;font-weight:900">' + (inv.fromName||'Arkadaşın') + '</div>' +
           '<div style="font-size:0.65rem;color:var(--muted)">seni ders çalışmaya davet etti!</div>' +
         '</div>' +
-        '<button class="inv-seen-btn" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(56,189,248,0.15);color:var(--accent);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Nunito,sans-serif">✓ Gördüm</button>';
+        '<button class="inv-seen-btn" style="padding:5px 10px;border-radius:8px;border:none;background:rgba(56,189,248,0.15);color:var(--accent);font-weight:900;font-size:0.68rem;cursor:pointer;font-family:Sora,sans-serif">✓ Gördüm</button>';
       (function(invObj, rowEl) {
         row.querySelector('.inv-seen-btn').onclick = function() { markInviteSeen(invObj, rowEl); };
       })(inv, row);
@@ -6544,7 +6910,7 @@ function handleNotifBtn() {
     return;
   }
   if (Notification.permission === 'granted') {
-    showToast('🔔 Bildirimler zaten açık!');
+    showToast(' Bildirimler zaten açık!');
     return;
   }
   requestNotificationPermission();
@@ -6577,7 +6943,7 @@ function requestNotificationPermission() {
   }
   Notification.requestPermission().then(function(perm) {
     if (perm === 'granted') {
-      showToast('🔔 Bildirimler açık!');
+      showToast(' Bildirimler açık!');
       updateNotifBtn();
       // Test bildirimi gönder
       sendNotification('🦊 Pugi hazır!', 'Zamanlayıcı bitince seni bilgilendireceğim.');
@@ -7522,7 +7888,7 @@ function renderGoalCard() {
   el.innerHTML =
     '<div class="goal-row">' +
       '<div style="font-weight:800">Bu Haftaki Hedef</div>' +
-      '<div style="font-family:\'Space Mono\',monospace;font-size:0.85rem;color:var(--accent3)">' + done + '/' + weeklyGoal + ' dk</div>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:0.85rem;color:var(--accent3)">' + done + '/' + weeklyGoal + ' dk</div>' +
     '</div>' +
     '<div class="goal-track"><div class="goal-fill" style="width:' + pct + '%"></div></div>' +
     '<div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-top:4px">' +
@@ -7616,15 +7982,15 @@ function renderWeeklySummaryCard() {
         '<div style="font-weight:900;font-size:0.9rem">Bu Hafta</div>' +
         '<div style="font-size:0.7rem;color:var(--muted);margin-top:1px">Detay için dokun →</div>' +
       '</div>' +
-      '<div style="font-family:\'Space Mono\',monospace;font-size:0.9rem;color:' + col + ';font-weight:700">' + arrow + ' ' + Math.abs(diffMins) + ' dk</div>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:0.9rem;color:' + col + ';font-weight:700">' + arrow + ' ' + Math.abs(diffMins) + ' dk</div>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
       '<div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">' +
-        '<div style="font-family:\'Space Mono\',monospace;font-size:1.2rem;font-weight:700;color:var(--accent)">' + thisWeek.totalMins + '</div>' +
+        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:1.2rem;font-weight:700;color:var(--accent)">' + thisWeek.totalMins + '</div>' +
         '<div style="font-size:0.62rem;color:var(--muted);font-weight:800">DAKİKA</div>' +
       '</div>' +
       '<div style="background:var(--bg3);border-radius:10px;padding:10px;text-align:center">' +
-        '<div style="font-family:\'Space Mono\',monospace;font-size:1.2rem;font-weight:700;color:var(--accent3)">' + thisWeek.totalSoru + '</div>' +
+        '<div style="font-family:\'JetBrains Mono\',monospace;font-size:1.2rem;font-weight:700;color:var(--accent3)">' + thisWeek.totalSoru + '</div>' +
         '<div style="font-size:0.62rem;color:var(--muted);font-weight:800">SORU</div>' +
       '</div>' +
     '</div>' +
@@ -7659,11 +8025,11 @@ function openWeekModal() {
   '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 10px;border-bottom:1px solid var(--border)">' +
     '<div style="text-align:center;padding:8px;background:var(--bg3);border-radius:10px;">' +
       '<div style="font-size:0.6rem;font-weight:800;color:var(--muted);margin-bottom:2px">GEÇEN HAFTA</div>' +
-      '<div style="font-family:\'Space Mono\',monospace;font-size:0.9rem;font-weight:700">' + prevWeek.totalMins + ' dk</div>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:0.9rem;font-weight:700">' + prevWeek.totalMins + ' dk</div>' +
     '</div>' +
     '<div style="text-align:center;padding:8px;background:var(--bg3);border-radius:10px;">' +
       '<div style="font-size:0.6rem;font-weight:800;color:var(--muted);margin-bottom:2px">GEÇEN HAFTA</div>' +
-      '<div style="font-family:\'Space Mono\',monospace;font-size:0.9rem;font-weight:700">' + prevWeek.totalSoru + ' soru</div>' +
+      '<div style="font-family:\'JetBrains Mono\',monospace;font-size:0.9rem;font-weight:700">' + prevWeek.totalSoru + ' soru</div>' +
     '</div>' +
   '</div>';
 
@@ -7697,7 +8063,7 @@ function openWeekModal() {
             '<div style="font-weight:800;font-size:0.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + e.subject + denemeBadge + '</div>' +
             '<div style="font-size:0.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + (e.topic||'') + '</div>' +
           '</div>' +
-          '<div style="font-family:\'Space Mono\',monospace;font-size:0.7rem;color:var(--muted);font-weight:700;text-align:right;flex-shrink:0">' + valParts.join('<br>') + '</div>' +
+          '<div style="font-family:\'JetBrains Mono\',monospace;font-size:0.7rem;color:var(--muted);font-weight:700;text-align:right;flex-shrink:0">' + valParts.join('<br>') + '</div>' +
         '</div>';
       });
     }
@@ -8328,7 +8694,7 @@ function toggleNotifSetting() {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().then(function(p) {
         if (p === 'granted') {
-          showToast('🔔 Bildirimler açıldı!');
+          showToast(' Bildirimler açıldı!');
           sendNotification('🦊 Pugi', 'Bildirimler açık!');
         } else {
           _notifEnabled = false;
@@ -8339,7 +8705,7 @@ function toggleNotifSetting() {
         updateNotifBtn();
       });
     } else {
-      showToast('🔔 Bildirimler açıldı!');
+      showToast(' Bildirimler açıldı!');
     }
   } else {
     showToast('🔕 Bildirimler kapatıldı.');
@@ -8590,7 +8956,7 @@ function renderGsItems() {
     // Subject select — deneme metriğinde gösterme
     if (item.metric !== 'deneme') {
       var subjSel = document.createElement('select');
-      subjSel.style.cssText = "width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 10px;outline:none;margin-bottom:8px";
+      subjSel.style.cssText = "width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 10px;outline:none;margin-bottom:8px";
       var opt0 = document.createElement('option'); opt0.value=''; opt0.textContent='Tüm Dersler'; subjSel.appendChild(opt0);
       subjects.forEach(function(s) {
         var o = document.createElement('option');
@@ -8605,7 +8971,7 @@ function renderGsItems() {
       if (item.subject && examData[item.subject] && examData[item.subject].topics) {
         var topics = examData[item.subject].topics;
         var topicSel = document.createElement('select');
-        topicSel.style.cssText = "width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 10px;outline:none;margin-bottom:8px";
+        topicSel.style.cssText = "width:100%;box-sizing:border-box;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 10px;outline:none;margin-bottom:8px";
         var topicOpt0 = document.createElement('option'); topicOpt0.value=''; topicOpt0.textContent='Tüm Konular'; topicSel.appendChild(topicOpt0);
         topics.forEach(function(t) {
           var o = document.createElement('option');
@@ -8623,7 +8989,7 @@ function renderGsItems() {
     targetRow.style.cssText = 'display:flex;align-items:center;gap:8px';
     var targetInput = document.createElement('input');
     targetInput.type='number'; targetInput.min='1'; targetInput.max='9999'; targetInput.value=item.target;
-    targetInput.style.cssText = "flex:1;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;padding:9px 10px;font-size:0.9rem;font-weight:900;color:var(--text);outline:none;font-family:'Nunito',sans-serif";
+    targetInput.style.cssText = "flex:1;background:var(--bg2);border:1.5px solid var(--border);border-radius:9px;padding:9px 10px;font-size:0.9rem;font-weight:900;color:var(--text);outline:none;font-family:'Sora',sans-serif";
     targetInput.onfocus = function(){ this.style.borderColor=color; };
     targetInput.onblur  = function(){ this.style.borderColor='var(--border)'; };
     (function(id){ targetInput.onchange = function(){ setGsItemTarget(id, this.value); }; })(item.id);
@@ -8942,7 +9308,7 @@ function loadCoachSuggestionsForStudent() {
             list.innerHTML = '';
             docs.forEach(function(doc) {
               var d = doc.data();
-              var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : '📖 Konu Çalışması';
+              var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : 'Konu Çalışması';
               var typeColor = d.type === 'test' ? '#f59e0b' : d.type === 'deneme' ? '#8b5cf6' : 'var(--accent)';
               var isDone = !!d.done;
               var dateStr = d.createdAt ? d.createdAt.slice(0,10).split('-').reverse().join('.') : '';
@@ -9294,7 +9660,7 @@ function loadCoachListingsFromFirestore() {
         + '<div style="font-size:2rem;margin-bottom:10px">📡</div>'
         + '<div style="font-size:0.88rem;font-weight:800;color:var(--text);margin-bottom:6px">Bağlantı Hatası</div>'
         + '<div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:14px">İnternet bağlantını kontrol et ve tekrar dene.</div>'
-        + '<button onclick="loadCoachListingsFromFirestore()" style="padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-family:\'Nunito\',sans-serif;font-weight:900;font-size:0.85rem;cursor:pointer">↻ Tekrar Dene</button>'
+        + '<button onclick="loadCoachListingsFromFirestore()" style="padding:10px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#fbbf24);color:#000;font-family:\'Sora\',sans-serif;font-weight:900;font-size:0.85rem;cursor:pointer">↻ Tekrar Dene</button>'
         + '</div>';
     });
 }
@@ -9505,26 +9871,26 @@ function openCoachWhatsapp() {
       <!-- Hedef türü -->
       <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
       <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button id="modalHedefSirBtn" onclick="modalSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🏆 Sıralama</button>
-        <button id="modalHedefOkulBtn" onclick="modalSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🎓 Okul/Bölüm</button>
+        <button id="modalHedefSirBtn" onclick="modalSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-family:'Sora',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🏆 Sıralama</button>
+        <button id="modalHedefOkulBtn" onclick="modalSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Sora',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🎓 Okul/Bölüm</button>
       </div>
 
       <!-- Sıralama -->
       <div id="modalSiralamaWrap" style="margin-bottom:12px">
         <input type="number" id="modalHedefSiralama" placeholder="örn: 10000" min="1" max="3000000"
-          style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
+          style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
           oninput="this.style.borderColor='var(--accent)'; _modalOnSiralamaInput();">
       </div>
 
       <!-- Okul -->
       <div id="modalOkulWrap" style="display:none;margin-bottom:12px">
-        <select id="modalIlSel" onchange="modalLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
+        <select id="modalIlSel" onchange="modalLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
           <option value="">Şehir seç...</option>
         </select>
-        <select id="modalUniSel" onchange="modalLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
+        <select id="modalUniSel" onchange="modalLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
           <option value="">Önce şehir seç...</option>
         </select>
-        <select id="modalBolumSel" onchange="modalSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
+        <select id="modalBolumSel" onchange="modalSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
           <option value="">Önce üniversite seç...</option>
         </select>
         <div id="modalProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.74rem;font-weight:700;color:var(--text)"></div>
@@ -9532,11 +9898,11 @@ function openCoachWhatsapp() {
 
       <!-- Kaydet butonu -->
       <button id="modalSaveBtn" onclick="saveOnboardingModal()" disabled
-        style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#fff;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;margin-bottom:10px">
+        style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#fff;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif;margin-bottom:10px">
         Kaydet
       </button>
       <button onclick="closeOnboardingModal(true)"
-        style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">
+        style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Sora',sans-serif">
         Eklemeden Devam Et
       </button>
     </div>
@@ -9550,7 +9916,7 @@ function openCoachWhatsapp() {
     <div class="day-modal-handle"></div>
     <div class="day-modal-header">
       <div>
-        <div class="day-modal-title">🔍 Derin Analiz</div>
+        <div class="day-modal-title">Derin Analiz</div>
         <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:2px" id="deepAnalysisSubtitle">AI Koçunun haftalık değerlendirmesi</div>
       </div>
       <button class="day-modal-close" onclick="closeDeepAnalysisModal()">✕</button>
@@ -9563,8 +9929,8 @@ function openCoachWhatsapp() {
           <div style="font-size:0.8rem;font-weight:900;color:var(--accent2)">Haftada 1 Kullanım Hakkı</div>
           <div id="deepHakBadge" style="font-size:0.65rem;font-weight:800;padding:3px 10px;border-radius:99px"></div>
         </div>
-        <button id="deepStartBtn" onclick="_startDeepAnalysis()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:0.9rem;cursor:pointer;transition:opacity 0.2s">
-          🔍 Derin Analizi Başlat
+        <button id="deepStartBtn" onclick="_startDeepAnalysis()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#fff;font-family:'Sora',sans-serif;font-weight:900;font-size:0.9rem;cursor:pointer;transition:opacity 0.2s">
+          Derin Analizi Başlat
         </button>
         <div id="deepHakInfo" style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-top:8px;text-align:center"></div>
       </div>
@@ -9604,12 +9970,12 @@ function openCoachWhatsapp() {
       <div id="guestLockDesc" style="font-size:0.8rem;color:var(--muted);font-weight:700;line-height:1.6;margin-bottom:22px">Bu özelliği kullanmak için kayıt ol.</div>
 
       <!-- Kayıt ol butonu -->
-      <button onclick="window.location.href='index.html'" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#fff;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 4px 20px rgba(56,189,248,0.25);margin-bottom:10px">
+      <button onclick="window.location.href='index.html'" style="width:100%;padding:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#fff;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif;box-shadow:0 4px 20px rgba(56,189,248,0.25);margin-bottom:10px">
         🚀 Ücretsiz Kayıt Ol
       </button>
 
       <!-- Devam et linki -->
-      <button onclick="closeGuestLockModal()" style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif">
+      <button onclick="closeGuestLockModal()" style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Sora',sans-serif">
         Misafir Olarak Devam Et
       </button>
 

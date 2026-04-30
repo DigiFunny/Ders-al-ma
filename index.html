@@ -22,321 +22,417 @@
 <meta name="twitter:title" content="Pugi Ders Koçu">
 <meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#080d18;--bg2:#0e1628;--bg3:#131e33;--card:#111827;--border:#1c2d47;--accent:#38bdf8;--accent2:#818cf8;--accent3:#34d399;--warn:#f472b6;--orange:#fb923c;--yellow:#fbbf24;--text:#e2e8f0;--muted:#4b6280;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html{overflow-x:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100dvh;overflow-x:hidden;}
+:root{
+  --bg:#060c18;--bg2:#0d1525;--bg3:#111827;
+  --card:#111d2e;--border:#1a2d45;
+  --accent:#38bdf8;--accent2:#818cf8;--accent3:#34d399;
+  --warn:#f472b6;--orange:#fb923c;--yellow:#fbbf24;
+  --text:#e8f0fe;--muted:#4b6280;--muted2:#64788c;
+  --fox:#fb923c;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulseGlow{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
 
-/* Orb arka plan */
-.bg-orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(90px);opacity:0.13;animation:orbFloat 10s ease-in-out infinite;}
-.bg-orb-1{width:360px;height:360px;background:#38bdf8;top:-110px;left:-80px;}
-.bg-orb-2{width:260px;height:260px;background:#818cf8;bottom:-60px;right:-60px;animation-delay:4s;}
-.bg-orb-3{width:150px;height:150px;background:#34d399;top:45%;left:58%;animation-delay:7s;}
-@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(16px,-16px) scale(1.05);}}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(56,189,248,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(56,189,248,0.022) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.15);border-radius:4px}
+input,select,textarea{color-scheme:dark}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 
-/* Loading */
-.loading-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.4s;}
-.loading-overlay.hidden{opacity:0;pointer-events:none;}
-.loading-spinner{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
-.loading-text{font-size:0.75rem;font-weight:800;color:var(--muted);letter-spacing:1.5px;}
-@keyframes spin{to{transform:rotate(360deg);}}
+/* ── BASE ── */
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Sora',sans-serif;min-height:100dvh;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(56,189,248,0.08),transparent),
+    radial-gradient(ellipse 50% 40% at 90% 60%,rgba(129,140,248,0.05),transparent),
+    radial-gradient(ellipse 60% 50% at 5% 80%,rgba(52,211,153,0.03),transparent);
+}
 
-/* Ekranlar */
-.screen{display:none;min-height:100dvh;position:relative;z-index:1;}
-.screen.active{display:flex;flex-direction:column;}
+/* ── LOADING ── */
+.loading-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.4s}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(56,189,248,0.15);border-top-color:#38bdf8;border-radius:50%;animation:spin 0.8s linear infinite}
+.loading-text{font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:2px}
 
-/* ══ LANDING ══ */
-#screenLanding{overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.landing-inner{max-width:430px;margin:0 auto;padding:48px 22px 48px;display:flex;flex-direction:column;min-height:100dvh;}
+/* ── SCREENS ── */
+.screen{display:none;min-height:100dvh}
+.screen.active{display:block}
 
-.landing-panel{display:none;flex-direction:column;flex:1;min-height:0;}
-.landing-panel.is-active{display:flex;animation:fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;}
+/* ── BG ORBS ── */
+.bg-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px)}
+.bg-orb-1{width:400px;height:400px;background:rgba(56,189,248,0.06);top:-100px;left:-100px}
+.bg-orb-2{width:300px;height:300px;background:rgba(129,140,248,0.05);bottom:0;right:-80px}
+.bg-orb-3{width:200px;height:200px;background:rgba(52,211,153,0.04);top:50%;left:50%;transform:translate(-50%,-50%)}
 
-.hero{text-align:center;margin-bottom:28px;animation:fadeDown 0.65s cubic-bezier(.4,0,.2,1) both;}
-.hero-logo-icon{width:88px;height:88px;background:linear-gradient(145deg,#38bdf8,#6366f1);border-radius:28px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:2.35rem;box-shadow:0 10px 40px rgba(56,189,248,0.28),0 4px 0 rgba(15,23,42,0.45),inset 0 2px 0 rgba(255,255,255,0.12);}
-.hero-logo-name{font-family:'Space Mono',monospace;font-size:2.5rem;font-weight:800;background:linear-gradient(135deg,#f8fafc,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-2px;margin-bottom:14px;}
-.welcome-title{font-size:1.18rem;font-weight:900;color:var(--text);line-height:1.35;margin-bottom:10px;letter-spacing:-0.3px;}
-.welcome-sub{font-size:0.84rem;font-weight:700;color:var(--muted);line-height:1.55;max-width:320px;margin:0 auto;}
+/* ══════════════════════════════════════════
+   SCREEN 1 — LANDING
+══════════════════════════════════════════ */
+#screenLanding{overflow-y:auto;position:relative}
+.landing-inner{position:relative;z-index:1;max-width:430px;margin:0 auto;min-height:100dvh}
+.landing-panel{display:none;flex-direction:column;min-height:100dvh;padding:0 0 40px}
+.landing-panel.is-active{display:flex}
 
-/* Duolingo-hissi: kalın ana buton, hafif 3D — marka mavileri */
+/* ── HERO ── */
+.hero{
+  padding:52px 24px 32px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+}
+
+/* Brand mark */
+.brand-mark{
+  position:relative;
+  width:72px;height:72px;
+  margin:0 auto 20px;
+  animation:float 4s ease-in-out infinite;
+}
+.brand-mark svg{width:72px;height:72px}
+
+.hero-logo-name{
+  font-size:2.8rem;font-weight:900;letter-spacing:-2px;line-height:1;
+  margin-bottom:18px;
+  background:linear-gradient(135deg,#e8f0fe 0%,#38bdf8 40%,#818cf8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.welcome-title{
+  font-size:1.05rem;font-weight:800;color:var(--text);
+  line-height:1.5;letter-spacing:-0.2px;
+  margin-bottom:10px;max-width:300px;
+}
+.welcome-sub{
+  font-size:0.8rem;font-weight:500;color:var(--muted2);
+  line-height:1.7;max-width:280px;margin:0 auto;
+}
+
+/* Feature pills below subtitle */
+.hero-pills{
+  display:flex;gap:6px;justify-content:center;flex-wrap:wrap;
+  margin-top:18px;
+}
+.hero-pill{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:99px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  font-size:0.68rem;font-weight:700;color:var(--muted2);
+  backdrop-filter:blur(8px);
+}
+.hero-pill svg{flex-shrink:0}
+
+/* CTA stack */
+.landing-cta-stack{padding:0 20px;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .btn-start{
-  width:100%;padding:17px 18px;border:none;border-radius:18px;
-  background:linear-gradient(180deg,#5ad4ff 0%,#38bdf8 45%,#0ea5e9 100%);
-  color:#0c1220;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:900;letter-spacing:0.02em;
-  cursor:pointer;transition:transform 0.15s, box-shadow 0.15s;
-  box-shadow:0 4px 0 #0369a1,0 10px 28px rgba(56,189,248,0.38);
-  animation:fadeUp 0.55s 0.12s cubic-bezier(.4,0,.2,1) both;
-  -webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:16px 20px;border:none;border-radius:16px;
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  color:#fff;font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:800;
+  letter-spacing:0.02em;cursor:pointer;
+  box-shadow:0 4px 32px rgba(56,189,248,0.3),0 2px 8px rgba(0,0,0,0.3);
+  transition:opacity 0.2s,transform 0.15s;
+  position:relative;overflow:hidden;
 }
-.btn-start:active{transform:translateY(3px);box-shadow:0 1px 0 #0369a1,0 4px 18px rgba(56,189,248,0.28);}
-
-.landing-cta-stack{display:flex;flex-direction:column;gap:26px;margin-top:6px;}
-
+.btn-start::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+  pointer-events:none;
+}
+.btn-start:active{opacity:0.85;transform:scale(0.99)}
 .btn-secondary-landing{
-  width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:16px;background:var(--card);
-  color:var(--text);font-family:'Nunito',sans-serif;font-size:0.92rem;font-weight:800;cursor:pointer;
-  transition:border-color 0.2s,background 0.2s;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04);
-  animation:fadeUp 0.55s 0.18s cubic-bezier(.4,0,.2,1) both;-webkit-tap-highlight-color:transparent;
+  width:100%;padding:14px 20px;border-radius:16px;
+  border:1.5px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.04);
+  color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:700;cursor:pointer;
+  transition:all 0.2s;backdrop-filter:blur(8px);
 }
-.btn-secondary-landing:active{transform:scale(0.98);}
+.btn-secondary-landing:active{border-color:rgba(56,189,248,0.4);background:rgba(56,189,248,0.06)}
 
-.login-link{text-align:center;margin-top:18px;font-size:0.8rem;font-weight:700;color:var(--muted);animation:fadeUp 0.55s 0.22s cubic-bezier(.4,0,.2,1) both;}
-.login-link span{color:var(--accent);cursor:pointer;font-weight:800;text-decoration:underline;text-underline-offset:3px;}
-
-.landing-footer{margin-top:22px;text-align:center;font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.75;animation:fadeUp 0.55s 0.24s cubic-bezier(.4,0,.2,1) both;}
-.landing-footer strong{color:var(--accent3);}
-
-/* Sınav Seçim Ekranı */
-.sinav-pick-card {
-  background: var(--card); border: 2px solid var(--border); border-radius: 20px;
-  padding: 20px 16px; cursor: pointer; text-align: center; position: relative;
-  overflow: hidden; transition: all 0.22s cubic-bezier(.4,0,.2,1);
-  -webkit-tap-highlight-color: transparent;
+/* Footer note */
+.landing-footer{
+  font-size:0.7rem;font-weight:600;color:var(--muted);
+  text-align:center;line-height:1.8;padding:0 24px;margin-bottom:24px;
 }
-.sinav-pick-card::before {
-  content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.22s; border-radius: 18px;
+.landing-footer strong{color:var(--accent3);font-weight:800}
+
+/* Divider */
+.landing-divider{
+  display:flex;align-items:center;gap:12px;
+  padding:0 24px;margin-bottom:22px;
 }
-.sinav-pick-card.yks::before { background: linear-gradient(135deg,rgba(56,189,248,0.1),rgba(129,140,248,0.1)); }
-.sinav-pick-card.kpss::before { background: linear-gradient(135deg,rgba(52,211,153,0.1),rgba(167,139,250,0.1)); }
-.sinav-pick-card.lgs::before { background: linear-gradient(135deg,rgba(251,146,60,0.08),rgba(251,191,36,0.06)); }
-.sinav-pick-card:active:not(.disabled) { transform: scale(0.96); }
-.sinav-pick-card.disabled { opacity: 0.5; cursor: default; }
-.sinav-pick-card.selected.yks  { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,0.15); }
-.sinav-pick-card.selected.kpss { border-color: #34d399;       box-shadow: 0 0 0 3px rgba(52,211,153,0.15); }
-.sinav-pick-card:hover:not(.disabled)::before { opacity: 1; }
-.sp-emoji { font-size: 2rem; display: block; margin-bottom: 8px; }
-.sp-label { font-size: 0.95rem; font-weight: 900; display: block; margin-bottom: 4px; }
-.sp-desc  { font-size: 0.62rem; font-weight: 700; color: var(--muted); line-height: 1.4; }
-.sp-badge { position:absolute;top:8px;right:8px;background:rgba(15,23,42,0.85);border:1px solid var(--border);border-radius:5px;font-size:0.48rem;font-weight:900;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;padding:2px 5px; }
+.landing-divider-line{flex:1;height:1px;background:rgba(255,255,255,0.06)}
+.landing-divider-text{font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:2px}
 
-/* KPSS kategori kartları */
-.kpss-kat-card {
-  background: var(--card); border: 2px solid var(--border); border-radius: 14px;
-  padding: 14px 12px; cursor: pointer; text-align: center; transition: all 0.2s;
-  -webkit-tap-highlight-color: transparent;
+/* Feature cards */
+.landing-features{padding:0 20px;display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.landing-feat-card{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;padding:14px 16px;
+  transition:border-color 0.2s;
+  backdrop-filter:blur(8px);
 }
-.kpss-kat-card.selected { border-color: #34d399; background: rgba(52,211,153,0.08); }
-.kpss-kat-card:active { transform: scale(0.96); }
+.landing-feat-card:active{border-color:rgba(56,189,248,0.3)}
+.feat-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.feat-icon.blue{background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.2)}
+.feat-icon.purple{background:rgba(129,140,248,0.12);border:1px solid rgba(129,140,248,0.2)}
+.feat-icon.green{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.2)}
+.feat-icon.orange{background:rgba(251,146,60,0.12);border:1px solid rgba(251,146,60,0.2)}
+.feat-text-title{font-size:0.85rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.feat-text-sub{font-size:0.7rem;font-weight:600;color:var(--muted2);line-height:1.4}
 
-/* Kaydır ipucu */
-
+/* Scroll reveal / intro */
 .scroll-reveal-hint{
-  display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:20px;padding:10px 8px 4px;
-  background:none;border:none;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.72rem;font-weight:800;
-  letter-spacing:0.4px;cursor:pointer;width:100%;transition:color 0.2s;-webkit-tap-highlight-color:transparent;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-family:'Sora',sans-serif;
+  font-size:0.65rem;font-weight:700;letter-spacing:1px;
+  padding:12px;transition:color 0.2s;
 }
-.scroll-reveal-hint:hover,.scroll-reveal-hint:focus-visible{color:var(--accent);}
-.scroll-reveal-hint .chev{font-size:0.85rem;animation:hintBounce 2s ease-in-out infinite;}
-@keyframes hintBounce{0%,100%{transform:translateY(0);opacity:0.7;}50%{transform:translateY(5px);opacity:1;}}
-@media(prefers-reduced-motion:reduce){.scroll-reveal-hint .chev{animation:none;}}
+.scroll-reveal-hint:active{color:var(--accent)}
+.chev{animation:float 2s ease-in-out infinite;font-size:0.75rem}
 
-/* Tanıtım — kaydırılabilir */
-.landing-intro{
-  margin-top:28px;padding-top:28px;padding-bottom:8px;
-  scroll-margin-top:16px;
-  border-top:1px solid rgba(56,189,248,0.12);
-  animation:fadeUp 0.6s 0.28s cubic-bezier(.4,0,.2,1) both;
-}
-.intro-kicker{font-size:0.65rem;font-weight:900;color:var(--accent);letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:10px;}
-.intro-title{font-size:1.05rem;font-weight:900;color:var(--text);text-align:center;line-height:1.3;margin-bottom:16px;letter-spacing:-0.2px;}
-.intro-lead{font-size:0.8rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.55;margin-bottom:18px;}
-
-.intro-feature-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:22px;}
+/* Landing intro section */
+.landing-intro{padding:24px 20px 0}
+.intro-kicker{font-size:0.6rem;font-weight:900;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;text-align:center;margin-bottom:8px}
+.intro-title{font-size:1rem;font-weight:900;color:var(--text);text-align:center;line-height:1.35;margin-bottom:10px;letter-spacing:-0.2px}
+.intro-lead{font-size:0.78rem;font-weight:500;color:var(--muted2);text-align:center;line-height:1.65;margin-bottom:18px;max-width:300px;margin-left:auto;margin-right:auto}
+.intro-feature-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
 .intro-feat{
-  background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px 8px;text-align:center;
-  transition:border-color 0.2s,transform 0.15s;
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;padding:14px 8px;text-align:center;
 }
-.intro-feat:active{transform:scale(0.97);}
-.intro-feat .if-emoji{font-size:1.35rem;display:block;margin-bottom:6px;}
-.intro-feat .if-t{font-size:0.62rem;font-weight:900;color:var(--text);line-height:1.25;display:block;}
-.intro-feat .if-d{font-size:0.58rem;font-weight:700;color:var(--muted);margin-top:4px;line-height:1.3;}
-
+.if-emoji{font-size:1.3rem;display:block;margin-bottom:6px}
+.if-t{font-size:0.72rem;font-weight:900;color:var(--text);display:block;margin-bottom:3px}
+.if-d{font-size:0.6rem;font-weight:600;color:var(--muted);line-height:1.35}
 .intro-details{
-  background:var(--card);border:1.5px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;margin-bottom:8px;overflow:hidden;
+}
+.intro-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;font-weight:700;font-size:0.8rem;color:var(--text)}
+.intro-details summary::-webkit-details-marker{display:none}
+.sum-chev{color:var(--muted);font-size:0.7rem;transition:transform 0.25s}
+.intro-details[open] summary .sum-chev{transform:rotate(180deg);color:var(--accent)}
+.intro-details-body{padding:0 16px 14px;font-size:0.76rem;font-weight:500;color:var(--muted2);line-height:1.65}
+.intro-foot{font-size:0.76rem;font-weight:600;color:var(--muted2);text-align:center;padding:18px 0 0;line-height:1.6}
+.intro-foot button{background:none;border:none;color:var(--accent);font-weight:800;font-size:0.76rem;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline}
+
+/* Float CTA */
+.landing-float-cta{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  color:#fff;border:none;border-radius:99px;
+  padding:14px 32px;font-family:'Sora',sans-serif;
+  font-size:0.9rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 24px rgba(56,189,248,0.4);
+  transition:transform 0.35s cubic-bezier(.34,1.56,.64,1),opacity 0.3s;
+  opacity:0;z-index:50;white-space:nowrap;
+}
+.landing-float-cta.is-visible{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Toast */
+.landing-toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--card);border:1px solid var(--border);border-radius:99px;
+  padding:10px 20px;font-size:0.8rem;font-weight:700;
+  opacity:0;transition:all 0.3s;z-index:100;white-space:nowrap;
+  pointer-events:none;
+}
+.landing-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── EXAM PICKER PANEL ── */
+.exam-picker-head{padding:20px 20px 16px;text-align:center}
+.landing-back-row{display:flex;margin-bottom:16px}
+.btn-landing-back{
+  width:40px;height:40px;border-radius:12px;
+  background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);
+  color:var(--muted2);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.btn-landing-back:active{border-color:rgba(56,189,248,0.4);color:var(--accent)}
+.exam-section-label{font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.3px}
+.exam-section-hint{font-size:0.78rem;font-weight:600;color:var(--muted2);line-height:1.55}
+.exam-section{padding:0 16px 20px}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.exam-card{
+  background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:18px;padding:20px 14px;text-align:center;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);
+  position:relative;overflow:hidden;
+}
+.exam-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
+.exam-card:active{transform:scale(0.97)}
+.exam-card.yks{border-color:rgba(56,189,248,0.25);background:rgba(56,189,248,0.05)}
+.exam-card.kpss{border-color:rgba(52,211,153,0.25);background:rgba(52,211,153,0.05)}
+.exam-card.coming-soon{opacity:0.5;cursor:default}
+.exam-card.coming-soon:active{transform:none}
+.coming-badge{position:absolute;top:8px;right:8px;background:rgba(251,146,60,0.2);border:1px solid rgba(251,146,60,0.3);border-radius:5px;font-size:0.5rem;font-weight:900;color:var(--orange);letter-spacing:0.5px;padding:2px 6px;text-transform:uppercase}
+.exam-emoji{font-size:2rem;display:block}
+.exam-label{font-size:1.1rem;font-weight:900;color:var(--text)}
+.exam-desc{font-size:0.62rem;font-weight:600;color:var(--muted2);line-height:1.5}
+
+/* ══════════════════════════════════════════
+   SCREEN 2 — AUTH
+══════════════════════════════════════════ */
+#screenAuth{overflow-y:auto}
+.auth-inner{max-width:430px;margin:0 auto;padding:28px 20px 50px;position:relative;z-index:1}
+
+/* Auth logo */
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.auth-logo-icon{
+  width:44px;height:44px;border-radius:14px;
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+  box-shadow:0 4px 20px rgba(56,189,248,0.3);
+}
+.auth-logo-name{font-size:1.5rem;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Step 1 */
+.step-title{font-size:1.2rem;font-weight:900;letter-spacing:-0.3px;margin-bottom:6px}
+.step-sub{font-size:0.78rem;font-weight:600;color:var(--muted2);margin-bottom:20px;line-height:1.55}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.type-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:18px;padding:20px 14px;text-align:center;cursor:pointer;
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);overflow:hidden;
+}
+.type-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
+.type-card:active{transform:scale(0.97)}
+.type-card.selected.student{border-color:#38bdf8;background:rgba(56,189,248,0.08);box-shadow:0 0 0 3px rgba(56,189,248,0.1)}
+.type-card.selected.coach{border-color:#818cf8;background:rgba(129,140,248,0.08);box-shadow:0 0 0 3px rgba(129,140,248,0.1)}
+.type-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.65rem;font-weight:900;display:none;align-items:center;justify-content:center;line-height:1}
+.type-card.selected .type-check{display:flex}
+.type-emoji{font-size:1.8rem}
+.type-label{font-size:0.9rem;font-weight:900;color:var(--text)}
+.type-desc{font-size:0.62rem;font-weight:600;color:var(--muted2);line-height:1.45}
+
+/* Step 2 — form */
+.auth-tabs{display:flex;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:4px;gap:4px;margin-bottom:20px}
+.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:var(--muted2);font-family:'Sora',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;border-radius:9px;transition:all 0.2s}
+.auth-tab.active{background:rgba(56,189,248,0.15);color:#38bdf8;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.form-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:20px;margin-bottom:14px}
+.form-title{font-size:0.6rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.input-wrap{position:relative;margin-bottom:12px;display:flex;align-items:center}
+.input-icon{position:absolute;left:14px;color:var(--muted);display:flex;align-items:center;font-size:0.85rem;font-weight:700;pointer-events:none}
+.form-input{
+  width:100%;padding:13px 14px 13px 42px;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:600;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.form-input:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px rgba(56,189,248,0.08)}
+.form-input::placeholder{color:var(--muted)}
+.pw-wrap{position:relative}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center}
+#forgotWrap{text-align:right;margin-bottom:14px;margin-top:-6px}
+#forgotWrap span{font-size:0.72rem;font-weight:700;color:var(--accent);cursor:pointer}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0}
+.divider-line{flex:1;height:1px;background:rgba(255,255,255,0.07)}
+.divider-text{font-size:0.6rem;color:var(--muted);font-weight:800;letter-spacing:1.5px}
+.btn-google{
+  width:100%;padding:12px;border-radius:12px;
+  border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);
+  color:var(--text);font-family:'Sora',sans-serif;font-weight:700;font-size:0.84rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all 0.2s;
+}
+.btn-google:active{border-color:#4285F4;background:rgba(66,133,244,0.08)}
+.error-msg{font-size:0.78rem;font-weight:700;padding:11px 14px;border-radius:12px;display:none}
+.error-msg.show{display:block}
+
+/* Shared btn-main */
+.btn-main{
+  width:100%;padding:15px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  color:#fff;font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:800;
+  cursor:pointer;letter-spacing:0.02em;
+  box-shadow:0 4px 20px rgba(56,189,248,0.25);
+  transition:opacity 0.2s,transform 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-main:disabled{opacity:0.35;cursor:not-allowed}
+.btn-main:not(:disabled):active{opacity:0.85;transform:scale(0.99)}
+.btn-main.coach-mode{background:linear-gradient(135deg,#818cf8,#f472b6)}
+.btn-back{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);color:var(--muted2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.btn-back:active{border-color:rgba(56,189,248,0.4);color:var(--accent)}
+.login-link{text-align:center;font-size:0.78rem;font-weight:700;color:var(--muted2)}
+.login-link span{color:var(--accent);cursor:pointer;font-weight:800}
+
+/* ── EXAM PICK & ONBOARDING ── */
+.sinav-pick-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:18px;padding:18px 12px;text-align:center;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);position:relative;overflow:hidden;
+}
+.sinav-pick-card:active{transform:scale(0.97)}
+.sinav-pick-card.selected.yks{border-color:#38bdf8;background:rgba(56,189,248,0.08);box-shadow:0 0 0 3px rgba(56,189,248,0.1)}
+.sinav-pick-card.selected.kpss{border-color:#34d399;background:rgba(52,211,153,0.08);box-shadow:0 0 0 3px rgba(52,211,153,0.1)}
+.sinav-pick-card.disabled{opacity:0.4;cursor:default}
+.sinav-pick-card.disabled:active{transform:none}
+.sp-badge{position:absolute;top:7px;right:7px;background:rgba(251,146,60,0.15);border:1px solid rgba(251,146,60,0.25);border-radius:5px;font-size:0.48rem;font-weight:900;color:var(--orange);padding:2px 5px;text-transform:uppercase;letter-spacing:0.5px}
+.sp-emoji{font-size:1.7rem}
+.sp-label{font-size:1rem;font-weight:900;display:block}
+.sp-desc{font-size:0.62rem;font-weight:600;color:var(--muted2);line-height:1.45}
+
+/* Dal / Sınıf cards */
+.ob-dal-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:16px;padding:16px;cursor:pointer;
+  transition:all 0.2s;text-align:center;
+}
+.ob-dal-card:active{transform:scale(0.97)}
+.ob-dal-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08)}
+.ob-sinif-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:14px;padding:14px 16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  font-weight:800;font-size:0.88rem;transition:all 0.2s;
+}
+.ob-sinif-card:active{transform:scale(0.98)}
+.ob-sinif-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08)}
+.kpss-kat-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:14px;cursor:pointer;transition:all 0.2s;
+}
+.kpss-kat-card:active{transform:scale(0.98)}
+.kpss-kat-card.selected{border-color:var(--accent2);background:rgba(129,140,248,0.08)}
+
+/* Select inputs */
+select{
+  width:100%;padding:13px 14px;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:600;outline:none;
+  -webkit-appearance:none;transition:border-color 0.2s;
+}
+select:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px rgba(56,189,248,0.08)}
+input[type=number]{
+  width:100%;padding:13px 14px;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:700;outline:none;
   transition:border-color 0.2s;
 }
-.intro-details[open]{border-color:rgba(56,189,248,0.25);}
-.intro-details summary{
-  list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:14px 14px;cursor:pointer;font-weight:800;font-size:0.82rem;color:var(--text);
-  -webkit-tap-highlight-color:transparent;
-}
-.intro-details summary::-webkit-details-marker{display:none;}
-.intro-details summary .sum-chev{color:var(--muted);font-size:0.75rem;transition:transform 0.25s;}
-.intro-details[open] summary .sum-chev{transform:rotate(180deg);color:var(--accent);}
-.intro-details-body{padding:0 14px 14px;font-size:0.78rem;font-weight:600;color:var(--muted);line-height:1.55;}
-.intro-details-body a{color:var(--accent);font-weight:800;}
-
-.intro-foot{
-  margin-top:18px;padding:14px;border-radius:14px;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.12);
-  font-size:0.74rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.5;
-}
-.intro-foot button{
-  margin-top:10px;padding:10px 18px;border-radius:12px;border:1.5px solid var(--accent);background:transparent;
-  color:var(--accent);font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:900;cursor:pointer;width:100%;
-  transition:background 0.2s,color 0.2s;
-}
-.intro-foot button:active{background:rgba(56,189,248,0.12);}
-
-/* Sınav seçim paneli */
-.exam-picker-head{margin-bottom:20px;}
-.landing-back-row{display:flex;align-items:center;margin-bottom:18px;}
-.btn-landing-back{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:14px;background:var(--card);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;transition:all 0.2s;margin-right:4px;-webkit-tap-highlight-color:transparent;}
-.btn-landing-back:hover{border-color:var(--accent);color:var(--text);}
-.exam-section-label{font-size:1.02rem;font-weight:900;color:var(--text);letter-spacing:-0.2px;margin-bottom:6px;}
-.exam-section-hint{font-size:0.78rem;font-weight:700;color:var(--muted);line-height:1.45;}
-
-.exam-section{margin-top:4px;margin-bottom:8px;animation:fadeUp 0.4s cubic-bezier(.4,0,.2,1) both;}
-.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
-.exam-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:18px 12px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.2s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
-.exam-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.2s;border-radius:18px;}
-.exam-card.yks::before{background:linear-gradient(135deg,rgba(56,189,248,0.14),rgba(129,140,248,0.12));}
-.exam-card.kpss::before{background:linear-gradient(135deg,rgba(52,211,153,0.12),rgba(251,191,36,0.1));}
-.exam-card.lgs::before{background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(251,146,60,0.1));}
-.exam-card.ales::before{background:linear-gradient(135deg,rgba(167,139,250,0.12),rgba(56,189,248,0.08));}
-.exam-card:active:not(.coming-soon){transform:scale(0.96);}
-.exam-card.yks:active{box-shadow:0 0 0 3px rgba(56,189,248,0.2);}
-.exam-card.coming-soon{cursor:default;opacity:0.58;}
-.exam-card.coming-soon:active{transform:none;}
-
-.coming-badge{position:absolute;top:9px;right:9px;background:rgba(15,23,42,0.85);border:1px solid var(--border);border-radius:6px;font-size:0.5rem;font-weight:900;color:var(--muted);letter-spacing:0.6px;text-transform:uppercase;padding:3px 6px;}
-.exam-emoji{font-size:1.85rem;display:block;margin-bottom:8px;}
-.exam-label{font-size:0.9rem;font-weight:900;display:block;margin-bottom:4px;color:var(--text);}
-.exam-desc{font-size:0.6rem;font-weight:700;color:var(--muted);line-height:1.45;}
-
-.landing-toast{
-  position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(120%);
-  background:var(--bg2);border:1.5px solid var(--border);border-radius:14px;padding:12px 20px;
-  font-size:0.82rem;font-weight:800;color:var(--text);box-shadow:0 12px 40px rgba(0,0,0,0.45);
-  z-index:800;opacity:0;transition:transform 0.35s cubic-bezier(.34,1.56,.64,1),opacity 0.25s;pointer-events:none;max-width:min(340px,92vw);text-align:center;
-}
-.landing-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-
-/* Kaydırınca sağ üst — Hemen Başla */
-.landing-float-cta{
-  position:fixed;
-  top:max(10px, env(safe-area-inset-top, 10px));
-  right:max(12px, env(safe-area-inset-right, 12px));
-  z-index:70;
-  padding:10px 16px;
-  border:none;
-  border-radius:999px;
-  font-family:'Nunito',sans-serif;
-  font-size:0.78rem;
-  font-weight:900;
-  letter-spacing:0.02em;
-  color:#0c1220;
-  background:linear-gradient(180deg,#5ad4ff 0%,#38bdf8 45%,#0ea5e9 100%);
-  box-shadow:0 3px 0 #0369a1, 0 8px 22px rgba(56,189,248,0.35);
-  cursor:pointer;
-  opacity:0;
-  pointer-events:none;
-  transform:translateY(-10px) scale(0.96);
-  transition:opacity 0.28s ease, transform 0.28s cubic-bezier(.34,1.56,.64,1);
-  -webkit-tap-highlight-color:transparent;
-}
-.landing-float-cta.is-visible{
-  opacity:1;
-  pointer-events:auto;
-  transform:translateY(0) scale(1);
-}
-.landing-float-cta:active{transform:translateY(2px) scale(0.98);box-shadow:0 1px 0 #0369a1, 0 4px 14px rgba(56,189,248,0.3);}
-@media(prefers-reduced-motion:reduce){
-  .landing-float-cta{transition:opacity 0.2s;}
-  .landing-float-cta.is-visible{transform:translateY(0) scale(1);}
-}
-
-/* ══ AUTH EKRANI ══ */
-#screenAuth{align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-.auth-inner{width:100%;max-width:420px;padding:24px 20px;}
-
-.auth-logo{text-align:center;margin-bottom:24px;animation:fadeDown 0.6s cubic-bezier(.4,0,.2,1) both;}
-.auth-logo-icon{width:54px;height:54px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:17px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:1.5rem;box-shadow:0 6px 22px rgba(56,189,248,0.22);}
-.auth-logo-name{font-family:'Space Mono',monospace;font-size:1.45rem;font-weight:700;color:var(--text);letter-spacing:-0.5px;}
-
-.btn-back{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:var(--card);border:1.5px solid var(--border);color:var(--muted);cursor:pointer;margin-bottom:16px;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
-.btn-back:hover{border-color:var(--accent);color:var(--text);}
-
-.step{animation:fadeUp 0.5s cubic-bezier(.4,0,.2,1) both;}
-.step-title{font-size:1rem;font-weight:900;text-align:center;margin-bottom:6px;}
-.step-sub{font-size:0.77rem;color:var(--muted);text-align:center;margin-bottom:20px;font-weight:600;}
-
-.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
-.type-card{background:var(--card);border:2px solid var(--border);border-radius:20px;padding:20px 14px;cursor:pointer;text-align:center;position:relative;overflow:hidden;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
-.type-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.22s;border-radius:18px;}
-.type-card.student::before{background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));}
-.type-card.coach::before{background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(251,191,36,0.08));}
-.type-card:hover::before,.type-card.selected::before{opacity:1;}
-.type-card.selected.student{border-color:var(--accent);box-shadow:0 0 0 3px rgba(56,189,248,0.14);}
-.type-card.selected.coach{border-color:var(--accent3);box-shadow:0 0 0 3px rgba(52,211,153,0.14);}
-.type-card:active{transform:scale(0.96);}
-.type-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;opacity:0;transition:opacity 0.2s;}
-.type-card.selected.student .type-check{background:var(--accent);opacity:1;}
-.type-card.selected.coach .type-check{background:var(--accent3);opacity:1;}
-.type-emoji{font-size:2.2rem;display:block;margin-bottom:10px;}
-.type-label{font-size:0.92rem;font-weight:900;display:block;margin-bottom:4px;}
-.type-card.student .type-label{color:var(--accent);}
-.type-card.coach .type-label{color:var(--accent3);}
-.type-desc{font-size:0.65rem;font-weight:700;color:var(--muted);line-height:1.4;display:block;}
-
-.form-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:20px;margin-bottom:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);}
-.form-title{font-size:0.78rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;}
-.input-wrap{position:relative;margin-bottom:12px;}
-.input-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:0.85rem;font-weight:800;}
-.form-input{width:100%;padding:13px 14px 13px 40px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s;-webkit-appearance:none;}
-.form-input::placeholder{color:var(--muted);}
-.form-input:focus{border-color:var(--accent);}
-.pw-wrap{position:relative;}
-.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;}
-
-.auth-tabs{display:flex;gap:6px;background:var(--bg2);border-radius:12px;padding:4px;margin-bottom:20px;}
-.auth-tab{flex:1;padding:9px;border:none;border-radius:9px;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
-.auth-tab.active{background:var(--card);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-
-.btn-main{width:100%;padding:15px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-family:'Nunito',sans-serif;font-size:0.95rem;font-weight:900;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 20px rgba(56,189,248,0.28);-webkit-tap-highlight-color:transparent;}
-.btn-main.coach-mode{background:linear-gradient(135deg,var(--accent3),#fbbf24);box-shadow:0 4px 20px rgba(52,211,153,0.28);}
-.btn-main:active{transform:scale(0.98);}
-.btn-main:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
-
-.btn-google{width:100%;padding:12px 8px;border:1.5px solid var(--border);border-radius:14px;background:var(--bg2);color:var(--text);font-family:'Nunito',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;}
-.btn-google:hover{border-color:#4285F4;background:rgba(66,133,244,0.06);}
-
-.divider{display:flex;align-items:center;gap:10px;margin:14px 0;}
-.divider-line{flex:1;height:1px;background:var(--border);}
-.divider-text{font-size:0.68rem;font-weight:800;color:var(--muted);}
-
-.error-msg{background:rgba(244,114,182,0.1);border:1px solid rgba(244,114,182,0.3);border-radius:10px;padding:10px 14px;font-size:0.78rem;font-weight:700;color:var(--warn);margin-top:12px;display:none;}
-.error-msg.show{display:block;}
-#forgotWrap{text-align:right;margin-top:-4px;margin-bottom:12px;}
-#forgotWrap span{font-size:0.72rem;color:var(--accent);cursor:pointer;font-weight:700;}
-
-@keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);}}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
-.fadeIn{animation:fadeUp 0.35s cubic-bezier(.4,0,.2,1) both;}
-#step1{display:block;}
-#step2{display:none;}
-.ob-dal-card{background:var(--card);border:1.5px solid var(--border);border-radius:18px;padding:18px 14px;cursor:pointer;text-align:center;transition:all 0.22s cubic-bezier(.4,0,.2,1);-webkit-tap-highlight-color:transparent;}
-.ob-dal-card:active{transform:scale(0.95);}
-.ob-dal-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);box-shadow:0 0 0 3px rgba(56,189,248,0.12);}
-.ob-sinif-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:0.9rem;transition:all 0.22s;-webkit-tap-highlight-color:transparent;}
-.ob-sinif-card:active{transform:scale(0.97);}
-.ob-sinif-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08);color:var(--accent);}
-
-@media(max-height:680px){
-  .landing-inner{padding:28px 18px 32px;}
-  .hero-logo-icon{width:72px;height:72px;font-size:2rem;}
-  .hero-logo-name{font-size:2.1rem;}
-  .welcome-title{font-size:1.05rem;}
-  .landing-cta-stack{gap:22px;}
-  .intro-feature-strip{gap:6px;}
-  .intro-feat{padding:10px 6px;}
-  .exam-card{padding:14px 10px;}
-  .exam-emoji{font-size:1.55rem;margin-bottom:5px;}
-}
+input[type=number]:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px rgba(56,189,248,0.08)}
+.fadeIn{animation:fadeUp 0.3s ease}
 </style>
 </head>
 <body>
@@ -357,20 +453,88 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
     <!-- Karşılama -->
     <div id="panelWelcome" class="landing-panel is-active">
       <div class="hero">
-        <div class="hero-logo-icon">&#x1F98A;</div>
+        <div class="brand-mark">
+      <img src="icon-512.png" alt="Pugi" style="width:72px;height:72px;object-fit:contain;display:block;">
+    </div>
         <div class="hero-logo-name">Pugi</div>
         <h1 class="welcome-title">Pugi Ders Koçu&#x2019;na<br>hoş geldin!</h1>
-        <p class="welcome-sub">Sınav hazırlığını planla, çalışmanı takip et, hedefe odaklan &mdash; tek yerden.</p>
+        <p class="welcome-sub">Sınav hazırlığını planla, çalışmanı takip et, hedefe odaklan — tek yerden.</p>
+      <div class="hero-pills">
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Zamanlayıcı
+        </div>
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          İstatistik
+        </div>
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/></svg>
+          AI Koç
+        </div>
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Koçlar
+        </div>
+      </div>
       </div>
 
       <div class="landing-cta-stack">
-        <button type="button" class="btn-start" onclick="openExamPicker()">Hemen Başla</button>
+        <button type="button" class="btn-start" onclick="openExamPicker()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Hemen Başla
+        </button>
         <button type="button" class="btn-secondary-landing" onclick="goToAuthScreen()">Giriş yap / Kayıt ol</button>
       </div>
 
       <div class="landing-footer">
-        Misafir olarak <strong>YKS</strong> ile hemen başlayabilirsin.<br>
+        Misafir olarak <strong>YKS</strong> ile hemen başlayabilirsin &mdash; kayıt gerekmez.<br>
         Daha fazlası için kayıt ol &mdash; <strong>temel özellikler ücretsiz</strong>.
+      </div>
+
+      <div class="landing-divider">
+        <div class="landing-divider-line"></div>
+        <div class="landing-divider-text">ÖZELLİKLER</div>
+        <div class="landing-divider-line"></div>
+      </div>
+
+      <div class="landing-features">
+        <div class="landing-feat-card">
+          <div class="feat-icon blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Pomodoro Zamanlayıcı</div>
+            <div class="feat-text-sub">Özelleştirilebilir odak seansları, mola hatırlatıcıları ve tam ekran mod</div>
+          </div>
+        </div>
+        <div class="landing-feat-card">
+          <div class="feat-icon purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><path d="M8 16h.01M12 16h.01M16 16h.01"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Kişisel AI Koç</div>
+            <div class="feat-text-sub">Çalışma verilerine göre günlük öneri ve haftalık derin analiz</div>
+          </div>
+        </div>
+        <div class="landing-feat-card">
+          <div class="feat-icon green">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Detaylı İstatistikler</div>
+            <div class="feat-text-sub">Günlük / haftalık / aylık grafikler, soru net takibi, konu haritası</div>
+          </div>
+        </div>
+        <div class="landing-feat-card">
+          <div class="feat-icon orange">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Koçlar</div>
+            <div class="feat-text-sub">Gerçek koçlarla bağlan, haftalık raporlarını paylaş</div>
+          </div>
+        </div>
       </div>
 
       <button type="button" class="scroll-reveal-hint" onclick="scrollToLandingIntro()" aria-controls="landingIntro">
@@ -385,17 +549,23 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
         <div class="intro-feature-strip">
           <div class="intro-feat">
-            <span class="if-emoji">⏱</span>
+            <span class="if-emoji">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
             <span class="if-t">Odak</span>
             <span class="if-d">Zamanlayıcı ile seans</span>
           </div>
           <div class="intro-feat">
-            <span class="if-emoji">📊</span>
+            <span class="if-emoji">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
             <span class="if-t">Netlik</span>
             <span class="if-d">Gün ve hafta özeti</span>
           </div>
           <div class="intro-feat">
-            <span class="if-emoji">🎯</span>
+            <span class="if-emoji">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </span>
             <span class="if-t">Hedef</span>
             <span class="if-d">Sıralama veya bölüm</span>
           </div>
@@ -486,7 +656,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
   <div class="auth-inner">
 
     <div class="auth-logo">
-      <div class="auth-logo-icon">&#x1F98A;</div>
+      <div class="auth-logo-icon" style="background:none;border-radius:0;box-shadow:none;width:40px;height:40px;">
+        <img src="icon-512.png" alt="Pugi" style="width:40px;height:40px;object-fit:contain;">
+      </div>
       <div class="auth-logo-name">Pugi</div>
     </div>
 
@@ -584,7 +756,9 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 <div class="screen" id="screenExamPick">
   <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
     <div class="auth-logo">
-      <div class="auth-logo-icon">🦊</div>
+      <div class="auth-logo-icon" style="background:none;border-radius:0;box-shadow:none;width:40px;height:40px;">
+        <img src="icon-512.png" alt="Pugi" style="width:40px;height:40px;object-fit:contain;">
+      </div>
       <div class="auth-logo-name">Pugi</div>
     </div>
     <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hangi sınava hazırlanıyorsun?</div>
@@ -708,7 +882,7 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
       <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedef Puanın Kaç?</div>
       <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-bottom:20px">Opsiyonel — istersen atla</div>
       <input type="number" id="kpssHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
-        style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px;transition:border-color 0.2s"
+        style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px;transition:border-color 0.2s"
         onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='var(--border)'">
       <div style="font-size:0.68rem;color:var(--muted);font-weight:600;margin-bottom:24px">Sınavda kaç puan almak istiyorsun?</div>
       <button class="btn-main" onclick="finishKpssOnboarding()" style="background:linear-gradient(135deg,#34d399,#a78bfa);margin-bottom:10px">🚀 KPSS Profilini Oluştur!</button>
@@ -776,15 +950,15 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
 
       <!-- Hedef türü seçimi -->
       <div style="display:flex;gap:8px;margin-bottom:16px">
-        <button id="hedefSiralamaBtn" onclick="selectHedefTur('siralama')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🏆 Sıralama</button>
-        <button id="hedefOkulBtn" onclick="selectHedefTur('okul')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">🎓 Okul/Bölüm</button>
+        <button id="hedefSiralamaBtn" onclick="selectHedefTur('siralama')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">🏆 Sıralama</button>
+        <button id="hedefOkulBtn" onclick="selectHedefTur('okul')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">🎓 Okul/Bölüm</button>
       </div>
 
       <!-- Sıralama hedefi -->
       <div id="hedefSiralamaWrap">
         <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
         <input type="number" id="hedefSiralamaInput" placeholder="örn: 10000" min="1" max="3000000"
-          style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px"
+          style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px"
           oninput="checkHedefValid(); _obOnSiralamaInput();">
         <div style="font-size:0.68rem;color:var(--muted);font-weight:600">İlk kaçıncı olmak istiyorsun?</div>
       </div>
@@ -794,25 +968,25 @@ body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(
         <!-- Öğrenim süresi -->
         <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Öğrenim Süresi</div>
         <div style="display:flex;gap:8px;margin-bottom:14px">
-          <button id="sure2Btn" onclick="selectSure(2)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">2 Yıllık</button>
-          <button id="sure4Btn" onclick="selectSure(4)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Nunito',sans-serif">4 Yıllık</button>
+          <button id="sure2Btn" onclick="selectSure(2)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">2 Yıllık</button>
+          <button id="sure4Btn" onclick="selectSure(4)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">4 Yıllık</button>
         </div>
 
         <!-- İl seçimi -->
         <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Şehir</div>
-        <select id="hedefIlSel" onchange="loadHedefUnis()" style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+        <select id="hedefIlSel" onchange="loadHedefUnis()" style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
           <option value="">Şehir seç...</option>
         </select>
 
         <!-- Üniversite seçimi -->
         <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Üniversite</div>
-        <select id="hedefUniSel" onchange="loadHedefBolumler()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+        <select id="hedefUniSel" onchange="loadHedefBolumler()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
           <option value="">Önce şehir seç...</option>
         </select>
 
         <!-- Bölüm seçimi -->
         <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Bölüm</div>
-        <select id="hedefBolumSel" onchange="selectHedefBolum()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+        <select id="hedefBolumSel" onchange="selectHedefBolum()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
           <option value="">Önce üniversite seç...</option>
         </select>
 
