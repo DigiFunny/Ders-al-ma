@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Profil — Pugi</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #080d18;
+  --bg2:     #0e1628;
+  --bg3:     #131e33;
+  --card:    #111827;
+  --card2:   #162035;
+  --border:  #1c2d47;
+  --accent:  #38bdf8;
+  --accent2: #818cf8;
+  --accent3: #34d399;
+  --orange:  #fb923c;
+  --yellow:  #fbbf24;
+  --warn:    #f87171;
+  --text:    #e2e8f0;
+  --muted:   #4b6280;
+  --r:       16px;
+}
+
+/* ── THEME OVERRIDES (applied via JS on load) ── */
+body.theme-purple   { --accent:#a78bfa; --accent2:#c084fc; --accent3:#818cf8; }
+body.theme-teal     { --accent:#2dd4bf; --accent2:#34d399; --accent3:#4ade80; }
+body.theme-red      { --accent:#f87171; --accent2:#fb923c; --accent3:#fbbf24; }
+body.theme-pink     { --accent:#f472b6; --accent2:#e879f9; --accent3:#fb7185; }
+body.theme-mono     { --bg:#0a0a0a; --bg2:#111; --bg3:#1a1a1a; --card:#141414; --card2:#1c1c1c; --border:#2a2a2a; --accent:#e2e8f0; --accent2:#94a3b8; --accent3:#64748b; }
+body.theme-midnight { --bg:#020617; --bg2:#0f172a; --bg3:#1e1b4b; --card:#0d1340; --card2:#111c52; --border:#1e2d6e; --accent:#6366f1; --accent2:#8b5cf6; --accent3:#06b6d4; }
+
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; }
+
+body {
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Sora',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── HEADER ── */
+.header {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px 12px;
+  background:rgba(8,13,24,0.85);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.header-back {
+  width:36px; height:36px; border-radius:10px;
+  background:var(--card); border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; flex-shrink:0; transition:all 0.15s;
+}
+.header-back:active { transform:scale(0.92); background:var(--bg3); }
+.header-title { font-size:0.95rem; font-weight:800; flex:1; }
+.header-shop-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:8px 14px; border-radius:10px;
+  background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,146,60,0.15));
+  border:1.5px solid rgba(251,191,36,0.3);
+  cursor:pointer; transition:all 0.2s;
+  font-size:0.75rem; font-weight:800; color:var(--yellow);
+}
+.header-shop-btn:active { transform:scale(0.94); }
+
+/* ── LOADING ── */
+.loading-wrap {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:60vh; gap:12px; color:var(--muted); font-size:0.82rem; font-weight:700;
+}
+.spin {
+  width:32px; height:32px; border-radius:50%;
+  border:3px solid var(--border); border-top-color:var(--accent);
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── HERO ── */
+.hero {
+  padding:24px 16px 20px;
+  display:flex; flex-direction:column; align-items:center; gap:0;
+  position:relative;
+}
+.hero-bg {
+  position:absolute; inset:0; overflow:hidden; border-radius:0;
+  background:linear-gradient(180deg, rgba(56,189,248,0.04) 0%, transparent 100%);
+  pointer-events:none;
+}
+
+/* ── AVATAR + FRAME ── */
+.avatar-wrap {
+  position:relative; width:90px; height:90px; margin-bottom:16px;
+  flex-shrink:0;
+}
+.avatar-img {
+  width:90px; height:90px; border-radius:50%;
+  object-fit:cover; display:block;
+  background:linear-gradient(135deg,var(--accent2),var(--accent3));
+}
+.avatar-initial {
+  width:90px; height:90px; border-radius:50%;
+  background:linear-gradient(135deg,var(--accent2),var(--accent3));
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.2rem; font-weight:900; color:#fff;
+}
+
+/* ── FRAMES ── */
+.avatar-img, .avatar-initial {
+  transition: box-shadow 0.3s, border 0.3s;
+}
+/* Simple (100 coin) */
+.frame-blue_simple   .avatar-img, .frame-blue_simple   .avatar-initial { box-shadow:0 0 0 3px #38bdf8, 0 0 10px rgba(56,189,248,0.25); }
+.frame-teal_simple   .avatar-img, .frame-teal_simple   .avatar-initial { box-shadow:0 0 0 3px #34d399, 0 0 10px rgba(52,211,153,0.25); }
+.frame-orange_simple .avatar-img, .frame-orange_simple .avatar-initial { box-shadow:0 0 0 3px #fb923c, 0 0 10px rgba(251,146,60,0.25); }
+/* Mid (400 coin) */
+.frame-purple_mid    .avatar-img, .frame-purple_mid    .avatar-initial { box-shadow:0 0 0 3px #818cf8, 0 0 14px rgba(129,140,248,0.4), 0 0 0 6px rgba(129,140,248,0.1); }
+.frame-pink_mid      .avatar-img, .frame-pink_mid      .avatar-initial { box-shadow:0 0 0 3px #f472b6, 0 0 14px rgba(244,114,182,0.4), 0 0 0 6px rgba(244,114,182,0.1); }
+.frame-gold_mid      .avatar-img, .frame-gold_mid      .avatar-initial { box-shadow:0 0 0 3px #fbbf24, 0 0 16px rgba(251,191,36,0.45), 0 0 0 6px rgba(251,191,36,0.1); }
+/* Rare (1600 coin) */
+.frame-diamond_rare  .avatar-img, .frame-diamond_rare  .avatar-initial { animation:diamond-pulse 2s ease-in-out infinite; }
+.frame-fire_rare     .avatar-img, .frame-fire_rare     .avatar-initial { animation:fire-glow 1.5s ease-in-out infinite; }
+.frame-rainbow_rare  .avatar-img, .frame-rainbow_rare  .avatar-initial { animation:rainbow-spin 3s linear infinite; }
+
+@keyframes diamond-pulse {
+  0%,100% { box-shadow:0 0 0 3px #67e8f9, 0 0 18px rgba(103,232,249,0.5), 0 0 0 6px rgba(186,230,253,0.12); }
+  50%      { box-shadow:0 0 0 3px #a5f3fc, 0 0 28px rgba(165,243,252,0.7), 0 0 0 8px rgba(186,230,253,0.2); }
+}
+@keyframes fire-glow {
+  0%,100% { box-shadow:0 0 0 3px #fb923c, 0 0 14px rgba(251,146,60,0.6), 0 0 28px rgba(239,68,68,0.3); }
+  50%      { box-shadow:0 0 0 3px #fbbf24, 0 0 22px rgba(251,191,36,0.7), 0 0 40px rgba(251,146,60,0.4); }
+}
+@keyframes rainbow-spin {
+  0%   { box-shadow:0 0 0 3px #f87171, 0 0 16px rgba(248,113,113,0.5); }
+  16%  { box-shadow:0 0 0 3px #fb923c, 0 0 16px rgba(251,146,60,0.5); }
+  33%  { box-shadow:0 0 0 3px #fbbf24, 0 0 16px rgba(251,191,36,0.5); }
+  50%  { box-shadow:0 0 0 3px #34d399, 0 0 16px rgba(52,211,153,0.5); }
+  66%  { box-shadow:0 0 0 3px #38bdf8, 0 0 16px rgba(56,189,248,0.5); }
+  83%  { box-shadow:0 0 0 3px #818cf8, 0 0 16px rgba(129,140,248,0.5); }
+  100% { box-shadow:0 0 0 3px #f87171, 0 0 16px rgba(248,113,113,0.5); }
+}
+
+/* Rare frame crown badge */
+.frame-badge {
+  position:absolute; bottom:-2px; right:-2px;
+  width:26px; height:26px; border-radius:50%;
+  background:var(--bg); border:2px solid var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.8rem; display:none;
+}
+.frame-diamond_rare .frame-badge,
+.frame-fire_rare    .frame-badge,
+.frame-rainbow_rare .frame-badge { display:flex; }
+
+/* ── NAME / USERNAME ── */
+.hero-name { font-size:1.25rem; font-weight:900; margin-bottom:3px; }
+.hero-uname { font-size:0.75rem; color:var(--muted); font-weight:700; margin-bottom:12px; }
+.hero-exam-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 14px; border-radius:99px;
+  background:var(--bg3); border:1.5px solid var(--border);
+  font-size:0.75rem; font-weight:800;
+}
+
+/* ── CONTENT ── */
+.content { padding:0 14px 100px; }
+
+/* ── SECTION LABEL ── */
+.sec {
+  font-size:0.65rem; font-weight:800; color:var(--muted);
+  letter-spacing:1.5px; text-transform:uppercase;
+  margin:20px 0 10px;
+}
+
+/* ── LEVEL CARD ── */
+.level-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:14px 16px; margin-bottom:10px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.level-row { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.level-icon { font-size:1.5rem; flex-shrink:0; }
+.level-info { flex:1; }
+.level-num  { font-family:'JetBrains Mono',monospace; font-size:1rem; font-weight:700; }
+.level-title-badge {
+  display:inline-block; padding:2px 9px; border-radius:99px;
+  background:rgba(251,191,36,0.12); border:1px solid rgba(251,191,36,0.3);
+  font-size:0.68rem; font-weight:800; color:var(--yellow); margin-left:6px;
+}
+.level-xp { font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--yellow); font-weight:700; }
+.xp-bar-bg { background:var(--bg3); border-radius:99px; height:7px; overflow:hidden; }
+.xp-bar-fill {
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg,var(--yellow),var(--orange));
+  transition:width 1s cubic-bezier(.4,0,.2,1);
+}
+.xp-bar-labels {
+  display:flex; justify-content:space-between;
+  font-size:0.6rem; color:var(--muted); font-weight:700; margin-top:4px;
+}
+
+/* ── STATS GRID ── */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+.stat-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:14px 12px; text-align:center;
+}
+.stat-label {
+  font-size:0.58rem; font-weight:800; color:var(--muted);
+  text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;
+}
+.stat-val {
+  font-family:'JetBrains Mono',monospace; font-size:1.1rem;
+  font-weight:700; color:var(--accent);
+}
+.stat-val.purple { color:var(--accent2); }
+.stat-sub { font-size:0.6rem; color:var(--muted); margin-top:3px; }
+
+/* ── TOP SUBJECT ── */
+.top-subject-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:var(--r); padding:14px 16px; margin-bottom:10px;
+  display:flex; align-items:center; gap:12px;
+}
+.top-subject-medal { font-size:1.4rem; flex-shrink:0; }
+.top-subject-name { font-size:0.9rem; font-weight:800; flex:1; }
+.top-subject-time { font-family:'JetBrains Mono',monospace; font-size:0.9rem; font-weight:700; color:var(--accent3); }
+
+/* ── BADGES ── */
+.badges-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px; }
+.badge-chip {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:12px; padding:10px 8px; text-align:center;
+}
+.badge-chip-icon { font-size:1.2rem; display:block; margin-bottom:4px; }
+.badge-chip-name { font-size:0.6rem; font-weight:800; color:var(--text); line-height:1.3; }
+
+/* ── COIN CARD (own only) ── */
+.coin-card {
+  background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(251,146,60,0.08));
+  border:1.5px solid rgba(251,191,36,0.25);
+  border-radius:var(--r); padding:16px; margin-bottom:10px;
+  display:flex; align-items:center; gap:14px;
+}
+.coin-icon-wrap {
+  width:48px; height:48px; border-radius:14px; flex-shrink:0;
+  background:linear-gradient(135deg,rgba(251,191,36,0.2),rgba(251,146,60,0.15));
+  border:1.5px solid rgba(251,191,36,0.3);
+  display:flex; align-items:center; justify-content:center; font-size:1.5rem;
+}
+.coin-info { flex:1; }
+.coin-label { font-size:0.65rem; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:3px; }
+.coin-amount { font-family:'JetBrains Mono',monospace; font-size:1.6rem; font-weight:700; color:var(--yellow); line-height:1; }
+.coin-sub { font-size:0.62rem; color:var(--muted); font-weight:700; margin-top:3px; }
+.coin-shop-btn {
+  padding:10px 16px; border-radius:12px;
+  background:linear-gradient(135deg,var(--yellow),var(--orange));
+  border:none; color:#000; font-family:'Sora',sans-serif;
+  font-size:0.75rem; font-weight:900; cursor:pointer; flex-shrink:0;
+  transition:all 0.15s;
+}
+.coin-shop-btn:active { transform:scale(0.94); }
+
+/* ── ACTION BUTTONS (friend only) ── */
+.action-btns { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+.btn-invite {
+  width:100%; padding:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none; border-radius:12px; color:#fff;
+  font-family:'Sora',sans-serif; font-size:0.9rem; font-weight:900;
+  cursor:pointer; transition:all 0.15s;
+}
+.btn-invite:active { transform:scale(0.98); opacity:0.9; }
+.btn-remove {
+  width:100%; padding:13px;
+  background:rgba(248,113,113,0.08); border:1.5px solid rgba(248,113,113,0.2);
+  border-radius:12px; color:var(--warn);
+  font-family:'Sora',sans-serif; font-size:0.85rem; font-weight:800;
+  cursor:pointer; transition:all 0.15s;
+}
+.btn-remove:active { transform:scale(0.98); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align:center; padding:28px 20px;
+  color:var(--muted); font-size:0.8rem; font-weight:700; line-height:1.7;
+}
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--card2); border:1.5px solid var(--border);
+  border-radius:12px; padding:10px 18px;
+  font-size:0.82rem; font-weight:800; color:var(--text);
+  opacity:0; transition:all 0.3s; pointer-events:none; white-space:nowrap;
+  z-index:9999;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── CONFIRM SHEET ── */
+.sheet-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px); z-index:500;
+  opacity:0; transition:opacity 0.25s; pointer-events:none;
+}
+.sheet-overlay.open { opacity:1; pointer-events:all; }
+.sheet {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%);
+  width:100%; max-width:480px;
+  background:var(--card); border-radius:20px 20px 0 0;
+  padding:20px 20px 36px; z-index:501;
+  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+.sheet.open { transform:translateX(-50%) translateY(0); }
+.sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 20px; }
+.sheet-icon { text-align:center; font-size:2.5rem; margin-bottom:10px; }
+.sheet-title { text-align:center; font-size:1rem; font-weight:900; margin-bottom:6px; }
+.sheet-desc { text-align:center; font-size:0.82rem; color:var(--muted); line-height:1.6; margin-bottom:22px; }
+.sheet-ok {
+  width:100%; padding:14px; border-radius:12px; border:none;
+  background:linear-gradient(135deg,#f87171,#ef4444);
+  color:#fff; font-family:'Sora',sans-serif; font-size:0.9rem;
+  font-weight:900; cursor:pointer; margin-bottom:8px;
+}
+.sheet-cancel {
+  width:100%; padding:13px; border-radius:12px;
+  border:1.5px solid var(--border); background:transparent;
+  color:var(--text); font-family:'Sora',sans-serif;
+  font-size:0.88rem; font-weight:800; cursor:pointer;
+}
+
+/* ── FADE IN ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+.fade-up { animation:fadeUp 0.35s ease both; }
+.fade-up-2 { animation:fadeUp 0.35s 0.08s ease both; }
+.fade-up-3 { animation:fadeUp 0.35s 0.16s ease both; }
+.fade-up-4 { animation:fadeUp 0.35s 0.24s ease both; }
+.fade-up-5 { animation:fadeUp 0.35s 0.32s ease both; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-back" onclick="goBack()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </div>
+  <div class="header-title" id="headerTitle">Profil</div>
+  <div id="headerShopBtn" class="header-shop-btn" onclick="goToShop()" style="display:none">
+    🪙 Mağaza
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="mainContent">
+  <div class="loading-wrap">
+    <div class="spin"></div>
+    <div>Yükleniyor...</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<!-- REMOVE CONFIRM SHEET -->
+<div id="sheetOverlay" class="sheet-overlay" onclick="closeSheet()"></div>
+<div id="confirmSheet" class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-icon">💔</div>
+  <div class="sheet-title" id="sheetTitle">Arkadaşlıktan Çıkar</div>
+  <div class="sheet-desc" id="sheetDesc">Bu kişiyi arkadaş listenden çıkarmak istediğine emin misin?</div>
+  <button class="sheet-ok" onclick="confirmRemoveFriend()">Evet, çıkar</button>
+  <button class="sheet-cancel" onclick="closeSheet()">Vazgeç</button>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+var firebaseConfig = {
+  apiKey:"AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
+  authDomain:"pugi-app-deeaa.firebaseapp.com",
+  projectId:"pugi-app-deeaa",
+  storageBucket:"pugi-app-deeaa.firebasestorage.app",
+  messagingSenderId:"219082394848",
+  appId:"1:219082394848:web:8780f59490374d6566d485"
+};
+
+var LEVELS = [
+  { min:0,    max:100,   title:'Başlangıç',     icon:'📖' },
+  { min:100,  max:300,   title:'Çalışkan',      icon:'✏️' },
+  { min:300,  max:600,   title:'Kararlı',       icon:'💪' },
+  { min:600,  max:1000,  title:'Azimli',        icon:'🔥' },
+  { min:1000, max:1500,  title:'Odaklı',        icon:'🎯' },
+  { min:1500, max:2200,  title:'Uzman',         icon:'⭐' },
+  { min:2200, max:3000,  title:'Elit',          icon:'🏆' },
+  { min:3000, max:4000,  title:'YKS Savaşçısı', icon:'⚔️' },
+  { min:4000, max:5500,  title:'Efsane',        icon:'👑' },
+  { min:5500, max:99999, title:'YKS Ustası',    icon:'🌟' },
+];
+
+// Kozmetik katalog
+var FRAME_META = {
+  none:           { label:'Varsayılan',    tier:'—' },
+  blue_simple:    { label:'Mavi',          tier:'Basit' },
+  teal_simple:    { label:'Yeşil',         tier:'Basit' },
+  orange_simple:  { label:'Turuncu',       tier:'Basit' },
+  purple_mid:     { label:'Mor Parıltı',   tier:'Orta'  },
+  pink_mid:       { label:'Pembe Işık',    tier:'Orta'  },
+  gold_mid:       { label:'Altın',         tier:'Orta'  },
+  diamond_rare:   { label:'Elmas',         tier:'Nadir' },
+  fire_rare:      { label:'Alev',          tier:'Nadir' },
+  rainbow_rare:   { label:'Gökkuşağı',     tier:'Nadir' },
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+var _db, _auth, _currentUid, _targetUid, _isSelf, _targetFriendData;
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+function loadScript(src, cb) {
+  var s = document.createElement('script'); s.src = src;
+  s.onload = cb; document.head.appendChild(s);
+}
+
+function initFirebase() {
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js', function() {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js', function() {
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js', function() {
+        var app = firebase.initializeApp(firebaseConfig);
+        _db   = firebase.firestore();
+        _auth = firebase.auth();
+        _auth.onAuthStateChanged(function(user) {
+          if (!user) { window.location.href = 'index.html'; return; }
+          _currentUid = user.uid;
+          // Admin kontrolü — sadece isAdmin:true olan kullanıcı erişebilir
+          _db.collection('users').doc(user.uid).get().then(function(doc) {
+            var isAdmin = doc.exists && doc.data().isAdmin === true;
+            if (!isAdmin) {
+              // Admin değil → geri dön, özellik henüz aktif değil
+              history.back();
+              return;
+            }
+            _targetUid = sessionStorage.getItem('pugi_profile_uid') || _currentUid;
+            _isSelf = (_targetUid === _currentUid);
+            loadProfile();
+          }).catch(function() { history.back(); });
+        });
+      });
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+// LOAD PROFILE
+// ══════════════════════════════════════════════
+function loadProfile() {
+  _db.collection('users').doc(_targetUid).get().then(function(doc) {
+    if (!doc.exists) { showError(); return; }
+    var d = doc.data();
+
+    // Tema uygula
+    var theme = d.cosmetics && d.cosmetics.theme ? d.cosmetics.theme : 'default';
+    if (theme !== 'default') document.body.classList.add('theme-' + theme);
+
+    // Header
+    document.getElementById('headerTitle').textContent = _isSelf ? 'Profilim' : (d.displayName || 'Profil');
+    if (_isSelf) document.getElementById('headerShopBtn').style.display = 'flex';
+
+    // Bu hafta istatistikleri (weekly_stats koleksiyonu)
+    var weekKey = getWeekKey();
+    _db.collection('weekly_stats').doc(_targetUid + '_' + weekKey).get().then(function(wDoc) {
+      var ws = wDoc.exists ? wDoc.data() : {};
+      renderProfile(d, ws);
+    }).catch(function() {
+      renderProfile(d, {});
+    });
+  }).catch(function() { showError(); });
+}
+
+// ══════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════
+function renderProfile(d, ws) {
+  var cosmetics   = d.cosmetics   || {};
+  var frame       = cosmetics.frame   || 'none';
+  var avatarId    = cosmetics.avatar  || 'default';
+
+  // Level hesapla
+  var xp       = d.xpTotal || 0;
+  var lvInfo   = getLevelInfo(xp);
+  var lvNum    = lvInfo.num;
+  var lvTitle  = lvInfo.title;
+  var lvIcon   = lvInfo.icon;
+  var xpForCur = lvInfo.xpForCurrent;
+  var xpNeeded = lvInfo.xpNeeded;
+  var xpPct    = xpNeeded > 0 ? Math.min(100, Math.round((xp - xpForCur) / xpNeeded * 100)) : 100;
+
+  // Bu hafta
+  var weekMins  = ws.totalMins  || 0;
+  var weekSoru  = ws.totalSoru  || 0;
+  var weekKonu  = ws.totalKonu  || 0;
+  var totalMins = d.totalMins   || 0;
+  var totalSoru = d.totalSoru   || 0;
+  var totalDeneme = d.totalDeneme || 0;
+
+  // Coins (sadece self)
+  var coins = d.coins || 0;
+
+  // Exam label
+  var examLabel = getExamLabel(d);
+
+  // Rozetler
+  var earnedBadges = d.badges || [];
+
+  // En çok çalışılan konu (bu hafta)
+  var topSubjects = ws.topSubjects || [];
+
+  // Avatar HTML
+  var avatarHTML = '';
+  if (avatarId && avatarId !== 'default') {
+    avatarHTML = '<img class="avatar-img" src="avatars/' + avatarId + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+                 '<div class="avatar-initial" style="display:none">' + getInitial(d.displayName) + '</div>';
+  } else {
+    avatarHTML = '<div class="avatar-initial">' + getInitial(d.displayName) + '</div>';
+  }
+
+  // Frame badge
+  var frameBadgeEmoji = frame.includes('diamond') ? '💎' : frame.includes('fire') ? '🔥' : frame.includes('rainbow') ? '🌈' : '';
+
+  // HTML oluştur
+  var html = '';
+
+  // ── HERO ──
+  html += '<div class="hero fade-up">' +
+    '<div class="hero-bg"></div>' +
+    '<div class="avatar-wrap frame-' + frame + '">' +
+      avatarHTML +
+      '<div class="frame-badge">' + frameBadgeEmoji + '</div>' +
+    '</div>' +
+    '<div class="hero-name">' + escHtml(d.displayName || 'Kullanıcı') + '</div>' +
+    '<div class="hero-uname">@' + escHtml(d.username || '') + '</div>' +
+    '<div class="hero-exam-badge">' + examLabel + '</div>' +
+  '</div>';
+
+  html += '<div class="content">';
+
+  // ── SEVİYE ──
+  html += '<div class="sec fade-up-2">Seviye & XP</div>';
+  html += '<div class="level-card fade-up-2">' +
+    '<div class="level-row">' +
+      '<div class="level-icon">' + lvIcon + '</div>' +
+      '<div class="level-info">' +
+        '<div class="level-num">Seviye ' + lvNum + '<span class="level-title-badge">' + lvTitle + '</span></div>' +
+        '<div class="level-xp">' + xp.toLocaleString('tr-TR') + ' XP' + (_isSelf ? '' : '') + '</div>' +
+      '</div>' +
+      '<div style="text-align:right;font-size:0.62rem;color:var(--muted);font-weight:700">' + totalDeneme + ' deneme</div>' +
+    '</div>' +
+    '<div class="xp-bar-bg"><div class="xp-bar-fill" style="width:' + xpPct + '%"></div></div>' +
+    '<div class="xp-bar-labels">' +
+      '<span>' + (xp - xpForCur).toLocaleString('tr-TR') + ' XP</span>' +
+      '<span>' + (xpNeeded > 0 ? xpNeeded.toLocaleString('tr-TR') + ' XP sonraki seviye' : 'MAX') + '</span>' +
+    '</div>' +
+  '</div>';
+
+  // ── İSTATİSTİKLER ──
+  html += '<div class="sec fade-up-3">İstatistikler</div>';
+  html += '<div class="stats-grid fade-up-3">' +
+    '<div class="stat-card">' +
+      '<div class="stat-label">Bu Hafta</div>' +
+      '<div class="stat-val">' + minsToStr(weekMins) + '</div>' +
+      '<div class="stat-sub">' + weekSoru + ' soru · ' + weekKonu + ' konu</div>' +
+    '</div>' +
+    '<div class="stat-card">' +
+      '<div class="stat-label">Toplam</div>' +
+      '<div class="stat-val purple">' + minsToStr(totalMins) + '</div>' +
+      '<div class="stat-sub">' + totalSoru + ' soru</div>' +
+    '</div>' +
+  '</div>';
+
+  // ── EN ÇOK ÇALIŞILAN KONU ──
+  if (topSubjects.length > 0) {
+    html += '<div class="sec fade-up-3">Bu Hafta En Çok</div>';
+    var top = topSubjects[0];
+    html += '<div class="top-subject-card fade-up-3">' +
+      '<div class="top-subject-medal">🥇</div>' +
+      '<div class="top-subject-name">' + escHtml(top.name || '') + '</div>' +
+      '<div class="top-subject-time">' + minsToStr(top.mins || 0) + '</div>' +
+    '</div>';
+  }
+
+  // ── ROZETLER ──
+  if (earnedBadges.length > 0) {
+    html += '<div class="sec fade-up-4">Rozetler ' + earnedBadges.length + '</div>';
+    html += '<div class="badges-grid fade-up-4">';
+    earnedBadges.forEach(function(b) {
+      html += '<div class="badge-chip">' +
+        '<span class="badge-chip-icon">' + (b.icon || '🏅') + '</span>' +
+        '<div class="badge-chip-name">' + escHtml(b.name || b.id || '') + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  // ── COIN (sadece self) ──
+  if (_isSelf) {
+    html += '<div class="sec fade-up-4">Coin</div>';
+    html += '<div class="coin-card fade-up-4">' +
+      '<div class="coin-icon-wrap">🪙</div>' +
+      '<div class="coin-info">' +
+        '<div class="coin-label">Bakiye</div>' +
+        '<div class="coin-amount">' + coins.toLocaleString('tr-TR') + '</div>' +
+        '<div class="coin-sub">Çalışarak coin kazan, kozmetik aç</div>' +
+      '</div>' +
+      '<button class="coin-shop-btn" onclick="goToShop()">Mağaza →</button>' +
+    '</div>';
+  }
+
+  // ── AKSIYONLAR ──
+  if (!_isSelf) {
+    _targetFriendData = d;
+    html += '<div class="action-btns fade-up-5">' +
+      '<button class="btn-invite" onclick="inviteFriend()">🔔 Derse Çağır</button>' +
+      '<button class="btn-remove" onclick="openRemoveSheet()">Arkadaşlıktan Çıkar</button>' +
+    '</div>';
+  }
+
+  html += '</div>'; // /content
+
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+function showError() {
+  document.getElementById('mainContent').innerHTML =
+    '<div class="empty-state">Profil yüklenemedi.<br>Kullanıcı bulunamadı.</div>';
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function getLevelInfo(xp) {
+  var num = 1, info = LEVELS[0];
+  for (var i = 0; i < LEVELS.length; i++) {
+    if (xp >= LEVELS[i].min) { num = i + 1; info = LEVELS[i]; }
+    else break;
+  }
+  var nextIdx = num < LEVELS.length ? num : LEVELS.length - 1;
+  var xpForCurrent = info.min;
+  var xpNeeded = LEVELS[nextIdx] ? (LEVELS[nextIdx].min - info.min) : 0;
+  return { num:num, title:info.title, icon:info.icon, xpForCurrent:xpForCurrent, xpNeeded:xpNeeded };
+}
+
+function minsToStr(m) {
+  if (!m) return '—';
+  var h = Math.floor(m / 60), min = m % 60;
+  return h > 0 ? (h + 's ' + min + 'dk') : (min + 'dk');
+}
+
+function getInitial(name) {
+  return name ? name.charAt(0).toUpperCase() : '?';
+}
+
+function getWeekKey() {
+  var now = new Date();
+  var day = now.getDay();
+  var monday = new Date(now);
+  monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1));
+  return monday.toISOString().slice(0, 10);
+}
+
+function getExamLabel(d) {
+  var exam = d.lastActiveExam || 'yks';
+  if (exam === 'kpss') return '🏛️ KPSS';
+  if (exam === 'lgs')  return '🎒 LGS';
+  var type = d.hedefProgram ? d.hedefProgram.type : null;
+  var typeMap = { AYT_SAY:'📐 YKS — Sayısal', AYT_SOZ:'📝 YKS — Sözel', AYT_EA:'📊 YKS — EA', TYT:'📚 YKS — TYT' };
+  return typeMap[type] || '📚 YKS';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════════════
+function goBack() {
+  sessionStorage.removeItem('pugi_profile_uid');
+  history.back();
+}
+
+function goToShop() {
+  window.location.href = 'shop.html';
+}
+
+function inviteFriend() {
+  // student.html'deki inviteFriend mantığı — push notification veya in-app
+  showToast('🔔 Derse çağrı gönderildi!');
+}
+
+function openRemoveSheet() {
+  var name = _targetFriendData ? (_targetFriendData.displayName || 'Bu kişi') : 'Bu kişi';
+  document.getElementById('sheetDesc').textContent = name + ' adlı kişiyi arkadaş listenden çıkarmak istediğine emin misin?';
+  document.getElementById('sheetOverlay').classList.add('open');
+  document.getElementById('confirmSheet').classList.add('open');
+}
+
+function closeSheet() {
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.getElementById('confirmSheet').classList.remove('open');
+}
+
+function confirmRemoveFriend() {
+  if (!_db || !_currentUid || !_targetUid) return;
+  closeSheet();
+  // Firestore'dan arkadaşlık kaydını sil
+  _db.collection('users').doc(_currentUid).collection('friends').doc(_targetUid).delete().then(function() {
+    _db.collection('users').doc(_targetUid).collection('friends').doc(_currentUid).delete();
+  });
+  showToast('Arkadaşlıktan çıkarıldı');
+  setTimeout(function() { goBack(); }, 1200);
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2400);
+}
+
+// ══════════════════════════════════════════════
+// START
+// ══════════════════════════════════════════════
+initFirebase();
+</script>
+</body>
+</html>

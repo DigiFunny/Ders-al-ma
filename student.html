@@ -1381,7 +1381,9 @@ body {
   <img src="icon-512.png" alt="Pugi" style="height:32px;width:auto;object-fit:contain;display:block;">
 </div>
     <div style="display:flex;gap:8px;align-items:center;">
-
+      <div id="profileIconBtn" onclick="openMyProfile()" style="display:none;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff;cursor:pointer;flex-shrink:0;transition:transform 0.15s;border:2px solid rgba(129,140,248,0.3)" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">
+        <span id="profileIconInitial">?</span>
+      </div>
     </div>
   </div>
 
@@ -4545,6 +4547,13 @@ function onUserLoggedIn(user) {
       ab.innerHTML = '⚡ ADMİN TEST MODU — <a href="admin.html" style="color:#000;text-decoration:underline">Panele Dön</a>';
       document.body.insertBefore(ab, document.body.firstChild);
     }
+    // Profil ikonu — sadece admin görür (test modunda)
+    if (data.isAdmin && adminTesting) {
+      var profBtn = document.getElementById('profileIconBtn');
+      var profInit = document.getElementById('profileIconInitial');
+      if (profBtn) { profBtn.style.display = 'flex'; }
+      if (profInit && displayName) { profInit.textContent = displayName.charAt(0).toUpperCase(); }
+    }
 
     // Kullanıcı profilini global state'e yükle
     _userProfil = {
@@ -7231,6 +7240,11 @@ function notifyBreakStarted() {
   var label = timerModes[timerMode] ? timerModes[timerMode].label : 'Mola';
   var mins = timerModes[timerMode] ? Math.round(timerModes[timerMode].s / 60) : 5;
   sendNotification('🎉 Çalışma bitti!', mins + ' dk ' + label + ' zamanı. Telefonu bırak 😌');
+}
+
+function openMyProfile() {
+  sessionStorage.removeItem('pugi_profile_uid');
+  window.location.href = 'profile.html';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
