@@ -299,8 +299,9 @@ body {
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* MODE PILLS */
-.mode-pills { display: flex; gap: 6px; margin-bottom: 12px; }
-.mode-pill { flex: 1; padding: 8px 4px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.72rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.mode-pills { display: flex; gap: 6px; margin-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 4px; cursor: grab; touch-action: pan-x; }
+.mode-pills::-webkit-scrollbar { display: none; }
+.mode-pill { flex-shrink: 0; padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.78rem; cursor: pointer; text-align: center; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
 .mode-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(52,211,153,0.08); }
 .mode-pill.break.active { border-color: var(--accent3); color: var(--accent3); background: rgba(52,211,153,0.08); }
 
@@ -1517,6 +1518,28 @@ body {
       <span style="font-size:0.9rem">⛶</span> Tam Ekran
     </button>
   </div>
+  <!-- Mola Süresi Seçici -->
+  <div id="breakPickerWrap" style="display:none;margin-bottom:12px;">
+    <div style="background:var(--card);border:1.5px solid var(--accent3);border-radius:var(--r);padding:14px;">
+      <div style="font-size:0.72rem;font-weight:800;color:var(--accent3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Mola Süresi</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        <button class="quick-btn" onclick="setBreakDur(3)"  style="border-color:var(--accent3);color:var(--accent3)">3 dk</button>
+        <button class="quick-btn" onclick="setBreakDur(5)"  style="border-color:var(--accent3);color:var(--accent3)">5 dk</button>
+        <button class="quick-btn" onclick="setBreakDur(10)" style="border-color:var(--accent3);color:var(--accent3)">10 dk</button>
+        <button class="quick-btn" onclick="setBreakDur(15)" style="border-color:var(--accent3);color:var(--accent3)">15 dk</button>
+        <button class="quick-btn" onclick="setBreakDur(20)" style="border-color:var(--accent3);color:var(--accent3)">20 dk</button>
+        <button class="quick-btn" onclick="setBreakDur(30)" style="border-color:var(--accent3);color:var(--accent3)">30 dk</button>
+        <button class="quick-btn" id="breakDigerBtn" onclick="toggleBreakCustom()" style="border-color:var(--accent3);color:var(--accent3)">Diğer</button>
+      </div>
+      <div id="breakCustomWrap" style="display:none;margin-top:10px;display:none">
+        <div style="display:flex;align-items:center;gap:8px">
+          <input type="number" id="breakCustomMin" placeholder="dk" min="1" max="120" style="width:70px;text-align:center;background:var(--bg3);border:1.5px solid var(--accent3);border-radius:10px;padding:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;outline:none">
+          <span style="font-size:0.8rem;color:var(--muted2);font-weight:600">dakika</span>
+          <button onclick="applyBreakCustom()" style="flex:1;padding:9px;background:linear-gradient(135deg,var(--accent3),#059669);border:none;border-radius:10px;color:#fff;font-weight:900;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">Uygula</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="customInputWrap" style="display:none;margin-bottom:12px;">
     <div style="background:var(--card);border:1.5px solid var(--accent2);border-radius:var(--r);padding:14px;">
       <div style="font-size:0.72rem;font-weight:800;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Özel Süre Ayarla</div>
@@ -1570,8 +1593,9 @@ body {
 
   </div><!-- /timer-section -->
   <!-- Kayıt Türü -->
+  <div id="entryFormSection">
   <div class="sec">Ne Kaydedelim?</div>
-  <div class="type-row">
+  <div class="type-row" id="typeSection">
     <button class="type-btn active-soru" id="typeKonu" onclick="setEntryType('konu',this)">📚 Konu<br>Çalışması</button>
     <button class="type-btn" id="typeSoru" onclick="setEntryType('soru',this)">✏️ Soru<br>Çözümü</button>
     <button class="type-btn" id="typeGenel" onclick="setEntryType('genel',this)">🎯 Genel<br>Çalışma</button>
@@ -1608,6 +1632,7 @@ body {
   <div id="yanlisgGroup" style="display:none"></div>
   <div id="netGroup" style="display:none"></div>
   <div id="sureGroup" style="display:none"></div>
+  </div><!-- /entryFormSection -->
 
   <div style="height:100px"></div>
 </div>
@@ -2578,6 +2603,58 @@ function setTimerMode(idx, el) {
   document.querySelectorAll('.mode-pill').forEach(p => p.classList.remove('active'));
   el.classList.add('active');
   updateTimerUI();
+  // Mola modunda kayıt bölümünü gizle
+  var isBreak = timerModes[idx].isBreak;
+  var ef = document.getElementById('entryFormSection');
+  if(ef) ef.style.display = isBreak ? 'none' : '';
+  // Break picker'ı kapat
+  if(!isBreak) {
+    var bp = document.getElementById('breakPickerWrap');
+    if(bp) bp.style.display = 'none';
+  }
+}
+
+function toggleBreakPicker(el) {
+  var wrap = document.getElementById('breakPickerWrap');
+  var customWrap = document.getElementById('customInputWrap');
+  var isOpen = wrap && wrap.style.display !== 'none';
+  if(customWrap) customWrap.style.display = 'none';
+  if(wrap) wrap.style.display = isOpen ? 'none' : 'block';
+  if(!isOpen) {
+    setTimerMode(2, el);
+    document.getElementById('molaPill').classList.add('active');
+  } else {
+    // Picker kapanıyorsa çalışma moduna dön (ilk pill)
+    var firstPill = document.querySelector('.mode-pill:not(.break)');
+    if(firstPill) setTimerMode(0, firstPill);
+  }
+}
+
+function setBreakDur(mins) {
+  timerModes[2].secs = mins * 60;
+  timerMode = 2;
+  timerTotal = timerModes[2].secs;
+  timerRemain = timerTotal;
+  stopTimer();
+  updateTimerUI();
+  var lbl = document.getElementById('molaPillLabel');
+  if(lbl) lbl.textContent = mins + ' dk Mola';
+  document.getElementById('breakPickerWrap').style.display = 'none';
+  var bcw = document.getElementById('breakCustomWrap');
+  if(bcw) bcw.style.display = 'none';
+  document.getElementById('molaPill').classList.add('active');
+}
+
+function toggleBreakCustom() {
+  var w = document.getElementById('breakCustomWrap');
+  if(!w) return;
+  w.style.display = (w.style.display === 'none' || w.style.display === '') ? 'block' : 'none';
+}
+
+function applyBreakCustom() {
+  var v = parseInt(document.getElementById('breakCustomMin').value) || 5;
+  v = Math.min(Math.max(v, 1), 240);
+  setBreakDur(v);
 }
 
 var _isFullscreen = false;
@@ -2644,7 +2721,7 @@ function updateTimerUI() {
       const FS_CIRC = 2 * Math.PI * 120;
       fsRing.setAttribute('stroke-dashoffset', (FS_CIRC * progress).toFixed(1));
     }
-    if (fsSub) fsSub.textContent = currentSubject ? (currentSubject + (currentTopic ? ' · ' + currentTopic : '')) : '';
+    if (fsSub) fsSub.textContent = timerModes[timerMode].isBreak ? '' : (currentSubject ? (currentSubject + (currentTopic ? ' · ' + currentTopic : '')) : '');
   }
 }
 
@@ -2683,6 +2760,7 @@ function startTimer() {
   localStorage.setItem('yks_timer_start', _timerStartedAt);
   localStorage.setItem('yks_timer_remain', _timerRemainAtStart);
   localStorage.setItem('yks_timer_running', '1');
+  localStorage.setItem('yks_timer_mode', timerMode);
 
   document.getElementById('playBtn').innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>`;
 
@@ -2711,6 +2789,7 @@ function stopTimer() {
   localStorage.removeItem('yks_timer_start');
   localStorage.removeItem('yks_timer_remain');
   localStorage.removeItem('yks_timer_running');
+  localStorage.removeItem('yks_timer_mode');
   _clearMilestoneTimers();
   _clearDocTitle();
   _clearBadge();
@@ -2720,29 +2799,112 @@ function stopTimer() {
 
 // Ekran tekrar açıldığında (Page Visibility API)
 document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'hidden') {
+    // Sayfa arka plana geçiyor — anlık durumu kaydet
+    if (timerRunning && _timerStartedAt) {
+      localStorage.setItem('yks_timer_start', _timerStartedAt);
+      localStorage.setItem('yks_timer_remain', _timerRemainAtStart);
+      localStorage.setItem('yks_timer_running', '1');
+      localStorage.setItem('yks_timer_mode', timerMode);
+    }
+    return;
+  }
   if (document.visibilityState === 'visible') {
-    // Sayfa tekrar görünür oldu — zamanlayıcı çalışıyorsa senkronize et
-    var savedStart = localStorage.getItem('yks_timer_start');
-    var savedRemain = localStorage.getItem('yks_timer_remain');
+    // Sayfa tekrar görünür — drift düzelt
+    var savedStart   = localStorage.getItem('yks_timer_start');
+    var savedRemain  = localStorage.getItem('yks_timer_remain');
     var savedRunning = localStorage.getItem('yks_timer_running');
-
-    if (savedRunning && savedStart && savedRemain && timerRunning) {
-      _timerStartedAt = parseInt(savedStart);
-      _timerRemainAtStart = parseInt(savedRemain);
-      timerRemain = Math.max(0, _timerRemainAtStart - Math.floor((Date.now() - _timerStartedAt) / 1000));
-
-      if (timerRemain <= 0) {
-        // Süre ekran kapalıyken dolmuş
-        timerRemain = 0;
-        updateTimerUI();
-        stopTimer();
-        timerDone();
-      } else {
-        updateTimerUI();
+    if (savedRunning && savedStart && savedRemain) {
+      var st = parseInt(savedStart);
+      var rm = parseInt(savedRemain);
+      var nowRemain = Math.max(0, rm - Math.floor((Date.now() - st) / 1000));
+      if (timerRunning) {
+        _timerStartedAt     = st;
+        _timerRemainAtStart = rm;
+        timerRemain = nowRemain;
+        if (timerRemain <= 0) { stopTimer(); timerDone(); }
+        else updateTimerUI();
+      } else if (!timerRunning && nowRemain > 0) {
+        // Sayfa tamamen yeniden yüklendi ama interval kaybedildi
+        restoreTimerOnLoad();
       }
     }
   }
 });
+
+
+// ═══════════════════════════════════════════════════════
+// TIMER PERSIST — Sayfa kapansa da zamanlayıcı devam eder
+// ═══════════════════════════════════════════════════════
+function restoreTimerOnLoad() {
+  var savedStart   = localStorage.getItem('yks_timer_start');
+  var savedRemain  = localStorage.getItem('yks_timer_remain');
+  var savedRunning = localStorage.getItem('yks_timer_running');
+  var savedMode    = localStorage.getItem('yks_timer_mode');
+
+  if (!savedRunning || !savedStart || !savedRemain) return;
+
+  var startedAt  = parseInt(savedStart);
+  var remainAtStart = parseInt(savedRemain);
+  var modeIdx    = parseInt(savedMode) || 0;
+
+  var elapsed    = Math.floor((Date.now() - startedAt) / 1000);
+  var remaining  = remainAtStart - elapsed;
+
+  // Mod bilgisini geri yükle
+  timerMode  = modeIdx;
+  timerTotal = timerModes[modeIdx].secs;
+
+  if (remaining <= 0) {
+    // Süre kapalıyken doldu
+    localStorage.removeItem('yks_timer_start');
+    localStorage.removeItem('yks_timer_remain');
+    localStorage.removeItem('yks_timer_running');
+    localStorage.removeItem('yks_timer_mode');
+    timerRemain  = 0;
+    timerRunning = false;
+
+    // Mode pill UI'ını güncelle
+    document.querySelectorAll('.mode-pill').forEach(function(p,i){ p.classList.toggle('active', i===modeIdx); });
+
+    updateTimerUI();
+
+    // Bildirim göster — süre doldu
+    showToast('⏰ Zamanlayıcı tamamlandı!');
+    if (!timerModes[modeIdx].isBreak) timerDone();
+    return;
+  }
+
+  // Süre hâlâ devam ediyor — devam ettir
+  timerRemain      = remaining;
+  timerRunning     = false; // önce durdur, sonra startTimer çağır
+  _timerStartedAt  = startedAt;
+  _timerRemainAtStart = remainAtStart;
+
+  // Mode pill göster
+  document.querySelectorAll('.mode-pill').forEach(function(p,i){ p.classList.toggle('active', i===modeIdx); });
+  if (timerModes[modeIdx].isBreak) {
+    var ef = document.getElementById('entryFormSection');
+    if(ef) ef.style.display = 'none';
+  }
+
+  updateTimerUI();
+
+  // Interval'ı yeniden başlat (startTimer'ı doğrudan değil, interval kur)
+  timerRunning = true;
+  timerInterval = setInterval(function() {
+    timerRemain = Math.max(0, _timerRemainAtStart - Math.floor((Date.now() - _timerStartedAt) / 1000));
+    updateTimerUI();
+    _updateDocTitle();
+    _updateBadge();
+    if (timerRemain <= 0) {
+      stopTimer();
+      timerDone();
+    }
+  }, 500);
+
+  showToast('▶ Zamanlayıcı devam ediyor');
+}
 
 function resetTimer() {
   stopTimer();
@@ -7034,6 +7196,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('page-ana').classList.add('active');
   updateYKS();
   setInterval(updateYKS, 60000);
+  restoreTimerOnLoad();
   updateTimerUI();
   renderSubjects();
   renderTopics();

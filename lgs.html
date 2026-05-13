@@ -6,31 +6,31 @@
 <script src="config.js"></script>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#080d18">
+<meta name="theme-color" content="#f5f7ff">
 <link rel="manifest" href="/manifest.json">
 
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Pugi">
-<meta name="description" content="Pugi — YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik, hedef takibi ve koç paneli ile sınava hazırlan.">
-<meta name="keywords" content="YKS çalışma takip, TYT hazırlık, AYT hazırlık, YKS uygulaması, sınav hazırlık, çalışma zamanlayıcı, öğrenci takip, Pugi">
+<meta name="description" content="Pugi — LGS sınavına hazırlanan 8. sınıf öğrencileri için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik, hedef takibi ve koç paneli ile sınava hazırlan.">
+<meta name="keywords" content="LGS çalışma takip, LGS hazırlık, liselere geçiş sınavı, 8. sınıf, çalışma zamanlayıcı, öğrenci takip, Pugi">
 <meta name="author" content="Pugi">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://pugiapp.com/student.html">
+<link rel="canonical" href="https://pugiapp.com/lgs.html">
 
 <!-- Open Graph -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://pugiapp.com/student.html">
-<meta property="og:title" content="Pugi — YKS Çalışma Takip Uygulaması">
-<meta property="og:description" content="YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik ve hedef takibi.">
+<meta property="og:url" content="https://pugiapp.com/lgs.html">
+<meta property="og:title" content="Pugi — LGS Çalışma Takip Uygulaması">
+<meta property="og:description" content="LGS sınavına hazırlanan 8. sınıf öğrencileri için ücretsiz çalışma takip uygulaması. Zamanlayıcı, istatistik ve hedef takibi.">
 <meta property="og:image" content="https://pugiapp.com/icon-512.png">
 <meta property="og:locale" content="tr_TR">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Pugi — YKS Çalışma Takip">
-<meta name="twitter:description" content="YKS, TYT ve AYT sınavına hazırlanan öğrenciler için ücretsiz çalışma takip uygulaması.">
+<meta name="twitter:title" content="Pugi — LGS Çalışma Takip">
+<meta name="twitter:description" content="LGS sınavına hazırlanan 8. sınıf öğrencileri için ücretsiz çalışma takip uygulaması.">
 <meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
-<title>YKS Takip 🎯</title>
+<title>LGS Takip 📚</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -40,10 +40,10 @@
   --card: #111827;
   --card2: #162035;
   --border: #1c2d47;
-  --accent: #38bdf8;
-  --accent2: #818cf8;
-  --accent3: #34d399;
-  --warn: #f472b6;
+  --accent: #34d399;
+  --accent2: #a78bfa;
+  --accent3: #38bdf8;
+  --warn: #fb923c;
   --orange: #fb923c;
   --yellow: #fbbf24;
   --text: #e2e8f0;
@@ -51,7 +51,7 @@
   --r: 16px;
   /* Cam / yarı saydam efekt değişkenleri */
   --glass-bg: rgba(11, 17, 32, 0.72);
-  --glass-border: rgba(56, 189, 248, 0.14);
+  --glass-border: rgba(52, 211, 153, 0.14);
   --glass-blur: blur(18px);
   --glass-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
 }
@@ -86,9 +86,9 @@ body {
 
 /* YKS COUNTDOWN */
 .yks-bar {
-  background: linear-gradient(135deg, rgba(56,189,248,0.1), rgba(129,140,248,0.1));
-  border: 1px solid rgba(56,189,248,0.18);
-  box-shadow: inset 0 1px 0 rgba(56,189,248,0.1), 0 2px 8px rgba(56,189,248,0.05);
+  background: linear-gradient(135deg, rgba(52,211,153,0.1), rgba(167,139,250,0.1));
+  border: 1px solid rgba(129,140,248,0.2);
+  box-shadow: inset 0 1px 0 rgba(52,211,153,0.1), 0 2px 8px rgba(52,211,153,0.05);
   border-radius: var(--r);
   padding: 10px 14px;
   margin-top: 10px;
@@ -116,7 +116,7 @@ body {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-shadow), 0 0 0 1px rgba(56,189,248,0.08);
+  box-shadow: var(--glass-shadow), 0 0 0 1px rgba(52,211,153,0.08);
 }
 .tab-btn {
   flex: 1; background: none; border: none; color: var(--muted);
@@ -177,19 +177,19 @@ body {
 /* SUBJECT SELECTOR */
 .exam-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
 .exam-tab { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.8rem; cursor: pointer; text-align: center; transition: all 0.2s; }
-.exam-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.08); }
+.exam-tab.active { border-color: var(--accent); color: var(--accent); background: rgba(52,211,153,0.08); }
 
 .subj-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; margin-bottom: 12px; }
 .subj-scroll::-webkit-scrollbar { display: none; }
 .subj-chip { flex-shrink: 0; padding: 9px 16px; border-radius: 99px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-weight: 800; font-size: 0.78rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-.subj-chip.active { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.12); box-shadow: 0 0 8px rgba(129,140,248,0.2); }
+.subj-chip.active { border-color: var(--accent2); color: var(--accent2); background: rgba(167,139,250,0.12); box-shadow: 0 0 8px rgba(167,139,250,0.2); }
 
 /* TOPIC LIST */
 .topic-list { max-height: 220px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--r); }
 .topic-item { padding: 11px 14px; font-size: 0.85rem; font-weight: 700; cursor: pointer; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; transition: background 0.15s; }
 .topic-item:last-child { border-bottom: none; }
 .topic-item:active { background: var(--bg3); }
-.topic-item.selected { background: rgba(129,140,248,0.1); color: var(--accent2); }
+.topic-item.selected { background: rgba(167,139,250,0.1); color: var(--accent2); }
 .topic-num { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--muted); min-width: 18px; }
 
 /* INPUT ROW */
@@ -203,7 +203,7 @@ body {
 /* TYPE BUTTONS */
 .type-row { display: flex; gap: 6px; margin-bottom: 12px; }
 .type-btn { flex: 1; padding: 10px 8px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.75rem; cursor: pointer; text-align: center; transition: all 0.2s; }
-.type-btn.active-soru { border-color: var(--accent3); color: var(--accent3); background: rgba(52,211,153,0.08); }
+.type-btn.active-soru { border-color: var(--accent); color: var(--accent); background: rgba(129,140,248,0.08); }
 .type-btn.active-sure { border-color: var(--orange); color: var(--orange); background: rgba(251,146,60,0.08); }
 .type-btn.active-genel { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.08); }
 
@@ -212,23 +212,23 @@ body {
 .ring-cont { position: relative; width: 180px; height: 180px; }
 .ring-svg { transform: rotate(-90deg); }
 .ring-bg { fill: none; stroke: var(--border); stroke-width: 10; }
-.ring-fill { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s linear; filter: drop-shadow(0 0 6px var(--accent)); }
+.ring-fill { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1s linear; filter: drop-shadow(0 0 8px rgba(52,211,153,0.7)); }
 .ring-fill.t-break { stroke: var(--accent3); filter: drop-shadow(0 0 6px var(--accent3)); }
 .ring-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
 .ring-time { font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; line-height: 1; }
 .ring-sublabel { font-size: 0.65rem; color: var(--muted); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 
 .timer-btns { display: flex; gap: 14px; align-items: center; }
-.btn-play { width: 62px; height: 62px; border-radius: 50%; border: none; background: linear-gradient(135deg, #38bdf8, #818cf8); color: white; font-size: 0; cursor: pointer; box-shadow: 0 4px 20px rgba(56,189,248,0.45); transition: transform 0.15s, background 0.25s, box-shadow 0.25s; display: flex; align-items: center; justify-content: center; }
-.btn-play.running { background: linear-gradient(135deg, #38bdf8, #818cf8); box-shadow: 0 4px 20px rgba(56,189,248,0.45); }
+.btn-play { width: 62px; height: 62px; border-radius: 50%; border: none; background: linear-gradient(135deg, #34d399, #a78bfa); color: white; font-size: 0; cursor: pointer; box-shadow: 0 4px 20px rgba(52,211,153,0.45); transition: transform 0.15s, background 0.25s, box-shadow 0.25s; display: flex; align-items: center; justify-content: center; }
+.btn-play.running { background: linear-gradient(135deg, #34d399, #a78bfa); box-shadow: 0 4px 20px rgba(52,211,153,0.45); }
 .btn-play:active { transform: scale(0.9); }
-.btn-sm { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgba(56,189,248,0.25); background: rgba(56,189,248,0.08); color: var(--accent); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.btn-sm:hover { background: rgba(56,189,248,0.15); border-color: rgba(56,189,248,0.5); }
+.btn-sm { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgba(52,211,153,0.25); background: rgba(52,211,153,0.08); color: var(--accent); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.btn-sm:hover { background: rgba(52,211,153,0.15); border-color: rgba(52,211,153,0.5); }
 .btn-sm:active { transform: scale(0.9); }
 
 /* BIG BUTTON */
-.btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Sora', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; letter-spacing: 0.3px; box-shadow: 0 4px 14px rgba(56,189,248,0.25); }
-.btn-save:hover { box-shadow: 0 6px 20px rgba(56,189,248,0.35); }
+.btn-save { width: 100%; padding: 14px; border-radius: var(--r); border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: white; font-family: 'Sora', sans-serif; font-weight: 900; font-size: 1rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s; letter-spacing: 0.3px; box-shadow: 0 4px 14px rgba(52,211,153,0.25); }
+.btn-save:hover { box-shadow: 0 6px 20px rgba(52,211,153,0.35); }
 .btn-save:active { opacity: 0.85; }
 .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
 
@@ -301,8 +301,8 @@ body {
 /* MODE PILLS */
 .mode-pills { display: flex; gap: 6px; margin-bottom: 10px; overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding-bottom: 4px; cursor: grab; touch-action: pan-x; }
 .mode-pills::-webkit-scrollbar { display: none; }
-.mode-pill { flex-shrink: 0; padding: 8px 14px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.78rem; cursor: pointer; text-align: center; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
-.mode-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.08); }
+.mode-pill { flex: 1; padding: 8px 4px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--card); color: var(--muted); font-family: 'Sora', sans-serif; font-weight: 800; font-size: 0.72rem; cursor: pointer; text-align: center; transition: all 0.2s; }
+.mode-pill.active { border-color: var(--accent); color: var(--accent); background: rgba(52,211,153,0.08); }
 .mode-pill.break.active { border-color: var(--accent3); color: var(--accent3); background: rgba(52,211,153,0.08); }
 
 /* STREAK */
@@ -323,7 +323,79 @@ body {
 .quick-btn:active, .quick-btn.qactive { border-color: var(--accent2); color: var(--accent2); background: rgba(129,140,248,0.12); }
 
 /* THEME */
-body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2:#f8fafc; --border:#cbd5e1; --text:#1e293b; --muted:#64748b; --glass-bg:rgba(240,244,248,0.75); --glass-border:rgba(56,189,248,0.18); --glass-shadow:0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8); }
+body.light {
+  color: #1e1b4b !important;
+  --bg:#f5f7ff; --bg2:#eef0ff; --bg3:#e4e7ff;
+  --card:#ffffff; --card2:#f8f9ff; --border:#d4d8f3;
+  --border-bright:rgba(129,140,248,0.25);
+  --accent:#6366f1; --accent2:#f59e0b; --accent3:#10b981;
+  --warn:#ef4444; --text:#1e1b4b; --muted:#6366a0; --muted2:#7c7fc0;
+  --glass-bg:rgba(245,247,255,0.88);
+  --glass-border:rgba(99,102,241,0.2);
+  --glass-shadow:0 8px 32px rgba(99,102,241,0.08),inset 0 1px 0 rgba(255,255,255,0.9);
+}
+body.light { color-scheme:light; }
+body.light .header { background:linear-gradient(180deg,rgba(245,247,255,0.97) 80%,transparent) !important; border-bottom:1px solid rgba(99,102,241,0.1) !important; }
+body.light .card { background:#ffffff !important; border-color:rgba(99,102,241,0.1) !important; box-shadow:0 2px 16px rgba(99,102,241,0.06),0 1px 3px rgba(0,0,0,0.04) !important; }
+body.light .today-card { background:#ffffff !important; border-color:rgba(99,102,241,0.1) !important; box-shadow:0 2px 12px rgba(99,102,241,0.06) !important; }
+body.light .tabs { background:rgba(245,247,255,0.96) !important; border-color:rgba(99,102,241,0.18) !important; box-shadow:0 -4px 24px rgba(99,102,241,0.08),0 8px 32px rgba(0,0,0,0.06) !important; }
+body.light .tab-btn { color:#6366a0; }
+body.light .tab-btn.active { color:#6366f1 !important; background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(99,102,241,0.05)) !important; box-shadow:inset 0 1px 0 rgba(99,102,241,0.2) !important; }
+body.light .yks-bar { background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(245,158,11,0.04)) !important; border-color:rgba(99,102,241,0.18) !important; }
+body.light .yks-days { color:#6366f1 !important; }
+body.light .yks-label { color:#6366a0 !important; }
+body.light .yks-progress-fill { background:linear-gradient(90deg,#6366f1,#f59e0b) !important; }
+body.light .mode-pill { background:#f0f2ff !important; border-color:rgba(99,102,241,0.15) !important; color:#6366a0 !important; }
+body.light .mode-pill.active { background:rgba(99,102,241,0.12) !important; border-color:rgba(99,102,241,0.45) !important; color:#6366f1 !important; box-shadow:0 0 12px rgba(99,102,241,0.15) !important; }
+body.light .mode-pill.break.active { background:rgba(16,185,129,0.1) !important; border-color:rgba(16,185,129,0.4) !important; color:#059669 !important; }
+body.light .subj-chip { background:#f0f2ff !important; border-color:rgba(99,102,241,0.15) !important; color:#6366a0 !important; }
+body.light .subj-chip.active { background:rgba(99,102,241,0.1) !important; border-color:#6366f1 !important; color:#6366f1 !important; transform:scale(1.05) !important; }
+body.light .topic-item { color:#1e1b4b !important; border-bottom-color:rgba(99,102,241,0.07) !important; }
+body.light .topic-item.selected { background:rgba(99,102,241,0.08) !important; color:#6366f1 !important; }
+body.light .type-btn { background:#f0f2ff !important; border-color:rgba(99,102,241,0.15) !important; color:#6366a0 !important; }
+body.light .type-btn.active-soru { background:rgba(99,102,241,0.1) !important; border-color:#6366f1 !important; color:#6366f1 !important; }
+body.light .type-btn.active-sure { background:rgba(245,158,11,0.1) !important; border-color:#f59e0b !important; color:#d97706 !important; }
+body.light .type-btn.active-genel { background:rgba(16,185,129,0.1) !important; border-color:#10b981 !important; color:#059669 !important; }
+body.light .num-input { background:#f0f2ff !important; border-color:rgba(99,102,241,0.2) !important; color:#1e1b4b !important; }
+body.light .num-input:focus { border-color:#6366f1 !important; box-shadow:0 0 0 3px rgba(99,102,241,0.1) !important; }
+body.light .btn-save, body.light .btn-add-entry { background:linear-gradient(135deg,#6366f1,#4f46e5) !important; color:#fff !important; box-shadow:0 6px 24px rgba(99,102,241,0.3) !important; }
+body.light .btn-play { background:linear-gradient(135deg,#6366f1,#4f46e5) !important; box-shadow:0 6px 28px rgba(99,102,241,0.4),0 0 0 5px rgba(99,102,241,0.1) !important; }
+body.light .btn-sm { border-color:rgba(99,102,241,0.2) !important; background:rgba(99,102,241,0.08) !important; color:#6366f1 !important; }
+body.light .ring-time { color:#1e1b4b !important; }
+body.light .ring-sublabel { color:#6366a0 !important; }
+body.light .xp-fill { background:linear-gradient(90deg,#6366f1,#f59e0b) !important; }
+body.light .xp-level { color:#6366f1 !important; }
+body.light .goal-fill { background:linear-gradient(90deg,#6366f1,#f59e0b) !important; }
+body.light .goal-track { background:rgba(99,102,241,0.1) !important; }
+body.light .motiv-card { background:linear-gradient(135deg,rgba(99,102,241,0.06),rgba(245,158,11,0.04)) !important; border-color:rgba(99,102,241,0.14) !important; }
+body.light .motiv-quote { color:#2d2d6e !important; font-style:italic !important; }
+body.light .motiv-author { color:#6366a0 !important; }
+body.light #aiCoachCard { background:linear-gradient(135deg,rgba(99,102,241,0.07),rgba(56,189,248,0.04)) !important; border-color:rgba(99,102,241,0.18) !important; }
+body.light .log-item { background:#fff !important; border-color:rgba(99,102,241,0.1) !important; }
+body.light .log-icon { background:rgba(99,102,241,0.08) !important; border-color:rgba(99,102,241,0.15) !important; }
+body.light .badge-item { background:#fff !important; border-color:rgba(99,102,241,0.12) !important; }
+body.light .badge-item.earned { background:rgba(99,102,241,0.06) !important; border-color:rgba(99,102,241,0.3) !important; }
+body.light .sec { color:#6366a0 !important; }
+body.light .sec::before { background:linear-gradient(180deg,#6366f1,#f59e0b) !important; }
+body.light .sec::after { background:linear-gradient(90deg,rgba(99,102,241,0.15),transparent) !important; }
+body.light .summary-item { background:#fff !important; border-color:rgba(99,102,241,0.1) !important; }
+body.light .chart-wrap { background:#fff !important; border-color:rgba(99,102,241,0.1) !important; }
+body.light .period-tab { background:#f0f2ff !important; border-color:rgba(99,102,241,0.15) !important; color:#6366a0 !important; }
+body.light .period-tab.active { background:rgba(99,102,241,0.1) !important; border-color:#6366f1 !important; color:#6366f1 !important; }
+body.light .soru-input-item { background:#f0f2ff !important; border-color:rgba(99,102,241,0.15) !important; }
+body.light .soru-net-display { background:rgba(99,102,241,0.06) !important; border-color:rgba(99,102,241,0.25) !important; }
+body.light .soru-net-val { color:#6366f1 !important; }
+body.light .quick-btn { background:#f0f2ff !important; border-color:rgba(99,102,241,0.15) !important; color:#6366a0 !important; }
+body.light #toast { background:#fff !important; color:#1e1b4b !important; border-color:rgba(99,102,241,0.2) !important; }
+body.light .day-modal-sheet, body.light .week-modal-sheet, body.light .soru-modal-sheet { background:#fff !important; }
+body.light .levelup-modal { background:#fff !important; border-color:#6366f1 !important; }
+body.light input, body.light textarea, body.light select { color-scheme:light; }
+
+#aiCoachLock { background: rgba(8,13,24,0.9); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+body.light #aiCoachLock { background: rgba(240,242,255,0.97) !important; }
+body.light #aiCoachLock > div { color: #1e1b4b !important; }
+body.light #aiCoachLock span { color: #1e1b4b !important; }
+
 
 /* THEME TOGGLE */
 .theme-btn { width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s; }
@@ -382,14 +454,14 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
   color: var(--text);
 }
 .greeting-name {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  background: linear-gradient(135deg, #818cf8, #f59e0b);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   font-weight: 800;
 }
 
-.motiv-card { background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1px solid rgba(56,189,248,0.18);border-radius:var(--r);padding:14px;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(56,189,248,0.1), 0 2px 10px rgba(56,189,248,0.04); }
+.motiv-card { background:linear-gradient(135deg,rgba(52,211,153,0.08),rgba(167,139,250,0.08));border:1px solid rgba(129,140,248,0.2);border-radius:var(--r);padding:14px;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:inset 0 1px 0 rgba(56,189,248,0.1), 0 2px 10px rgba(56,189,248,0.04); }
 .motiv-quote { font-size:0.88rem;font-weight:700;line-height:1.5;font-style:italic;margin-bottom:6px; }
 .motiv-author { font-size:0.7rem;color:var(--muted);font-weight:800; }
 .motiv-refresh { position:absolute;top:10px;right:10px;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer; }
@@ -786,7 +858,7 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .auth-pw-toggle svg { width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round; }
 
 /* USER BAR */
-.user-bar { display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(8,13,24,0.88);border-bottom:1px solid rgba(56,189,248,0.1);justify-content:space-between;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:sticky;top:0;z-index:60; }
+.user-bar { display:flex;align-items:center;gap:10px;padding:8px 16px;background:rgba(8,13,24,0.88);border-bottom:1px solid rgba(129,140,248,0.1);justify-content:space-between;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);position:sticky;top:0;z-index:60; }
 .user-bar-info { display:flex;align-items:center;gap:10px; }
 .user-avatar { width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.82rem;color:#fff;flex-shrink:0;letter-spacing:0; }
 .user-name { font-size:0.8rem;font-weight:800;color:var(--text); }
@@ -815,14 +887,19 @@ body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2
 .no-login-msg .nl-icon { font-size:2.5rem;margin-bottom:10px; }
 .no-login-msg p { font-size:0.82rem;color:var(--muted);margin-bottom:14px; }
 .no-login-btn { background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;padding:11px 24px;color:#fff;font-weight:800;font-size:0.85rem;cursor:pointer; }
-
 /* ═══════════════ PUGI UI ENHANCEMENTs ═══════════════ */
 
 /* Better body */
-body {
+body.light {
+  background: #f5f7ff !important;
+  background-image:
+    radial-gradient(ellipse 70% 50% at 20% 0%, rgba(99,102,241,0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 40% at 80% 100%, rgba(245,158,11,0.04) 0%, transparent 65%) !important;
+}
+body:not(.light) {
   background: #060c18 !important;
   background-image:
-    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(56,189,248,0.04) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 15% 0%, rgba(129,140,248,0.07) 0%, transparent 65%),
     radial-gradient(ellipse 50% 40% at 85% 100%, rgba(129,140,248,0.03) 0%, transparent 65%) !important;
 }
 
@@ -852,8 +929,8 @@ body {
 
 /* YKS countdown bar */
 .yks-bar {
-  background: linear-gradient(135deg, rgba(56,189,248,0.07), rgba(129,140,248,0.07)) !important;
-  border: 1px solid rgba(56,189,248,0.14) !important;
+  background: linear-gradient(135deg, rgba(129,140,248,0.07), rgba(245,158,11,0.05)) !important;
+  border: 1px solid rgba(129,140,248,0.18) !important;
   border-radius: 14px !important;
   box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(56,189,248,0.08) !important;
 }
@@ -876,7 +953,7 @@ body {
   display: inline-block;
   width: 3px;
   height: 12px;
-  background: linear-gradient(180deg, #38bdf8, #818cf8);
+  background: linear-gradient(180deg, #818cf8, #6366f1);
   border-radius: 2px;
   flex-shrink: 0;
 }
@@ -884,7 +961,7 @@ body {
   content: '';
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, rgba(56,189,248,0.12), transparent);
+  background: linear-gradient(90deg, rgba(129,140,248,0.15), transparent);
 }
 
 /* Cards — richer depth */
@@ -941,7 +1018,7 @@ body {
 
 /* Mode pills — sleeker */
 .mode-pill {
-  flex-shrink: 0;
+  flex-shrink: 0 !important;
   padding: 8px 14px !important;
   border-radius: 10px !important;
   border: 1.5px solid #1c2d47 !important;
@@ -974,15 +1051,15 @@ body {
   width: 64px !important;
   height: 64px !important;
   border-radius: 50% !important;
-  background: linear-gradient(135deg, #38bdf8, #818cf8) !important;
-  box-shadow: 0 4px 24px rgba(56,189,248,0.4), 0 0 0 4px rgba(56,189,248,0.1) !important;
+  background: linear-gradient(135deg, #818cf8, #6366f1) !important;
+  box-shadow: 0 4px 24px rgba(129,140,248,0.4), 0 0 0 4px rgba(129,140,248,0.12) !important;
 }
 .btn-sm {
   width: 46px !important;
   height: 46px !important;
   border-radius: 50% !important;
-  border: 1.5px solid rgba(56,189,248,0.2) !important;
-  background: rgba(56,189,248,0.07) !important;
+  border: 1.5px solid rgba(129,140,248,0.2) !important;
+  background: rgba(129,140,248,0.07) !important;
 }
 
 /* Save button */
@@ -996,12 +1073,12 @@ body {
   align-items: center !important;
   justify-content: center !important;
   gap: 8px !important;
-  box-shadow: 0 4px 18px rgba(56,189,248,0.25) !important;
+  box-shadow: 0 4px 18px rgba(129,140,248,0.2) !important;
 }
 
 /* Tabs nav */
 .tabs {
-  border: 1px solid rgba(56,189,248,0.12) !important;
+  border: 1px solid rgba(129,140,248,0.15) !important;
   border-radius: 28px !important;
   padding: 7px 6px !important;
   box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03) !important;
@@ -1015,8 +1092,9 @@ body {
   padding: 7px 4px !important;
 }
 .tab-btn.active {
-  background: linear-gradient(135deg, rgba(251,146,60,0.18), rgba(251,146,60,0.06)) !important;
-  box-shadow: inset 0 1px 0 rgba(251,146,60,0.15) !important;
+  color: #818cf8 !important;
+  background: linear-gradient(135deg, rgba(129,140,248,0.18), rgba(129,140,248,0.06)) !important;
+  box-shadow: inset 0 1px 0 rgba(129,140,248,0.2) !important;
 }
 
 /* Inputs */
@@ -1041,11 +1119,13 @@ body {
   border: 1.5px solid #1c2d47 !important;
   font-family: 'Sora', sans-serif !important;
 }
-.auth-input:focus { border-color: #38bdf8 !important; box-shadow: 0 0 0 3px rgba(56,189,248,0.1) !important; }
+.auth-input:focus { border-color: #818cf8 !important; box-shadow: 0 0 0 3px rgba(129,140,248,0.1) !important; }
 .auth-btn {
   border-radius: 12px !important;
   font-family: 'Sora', sans-serif !important;
   font-weight: 800 !important;
+  background: linear-gradient(135deg,#818cf8,#6366f1) !important;
+  color: #fff !important;
 }
 .google-btn { border-radius: 12px !important; font-family: 'Sora', sans-serif !important; }
 
@@ -1061,15 +1141,20 @@ body {
 
 /* XP bar */
 .xp-track { background: rgba(255,255,255,0.05) !important; border-radius: 99px !important; height: 6px !important; }
-.xp-fill { background: linear-gradient(90deg, #38bdf8, #818cf8) !important; }
+.xp-fill { background: linear-gradient(90deg, #818cf8, #f59e0b) !important; }
 
 /* Subj chips */
 .subj-chip { border-radius: 99px !important; font-family: 'Sora', sans-serif !important; font-weight: 700 !important; }
-.subj-chip.active { background: rgba(129,140,248,0.1) !important; box-shadow: 0 0 10px rgba(129,140,248,0.15) !important; }
+.subj-chip.active { border-color: var(--accent) !important; color: var(--accent) !important; background: rgba(129,140,248,0.1) !important; box-shadow: 0 0 10px rgba(129,140,248,0.12) !important; }
 .exam-tab { font-family: 'Sora', sans-serif !important; font-weight: 700 !important; border-radius: 12px !important; }
 
 /* User bar */
 .user-bar { border-bottom: 1px solid rgba(255,255,255,0.05) !important; }
+body.light .user-bar { background: rgba(245,247,255,0.97) !important; border-bottom: 1px solid rgba(99,102,241,0.12) !important; }
+body.light .user-name { color: #1e1b4b !important; }
+body.light .user-uname { color: #6366a0 !important; }
+body.light .user-avatar { box-shadow: 0 2px 10px rgba(99,102,241,0.25) !important; }
+body.light .user-logout { border-color: rgba(99,102,241,0.2) !important; color: #6366a0 !important; background: rgba(99,102,241,0.05) !important; }
 .user-avatar { border-radius: 10px !important; font-family: 'Sora', sans-serif !important; font-weight: 900 !important; }
 
 /* Summary items */
@@ -1097,7 +1182,7 @@ body {
 
 /* ══ AI COACH CARD ══ */
 #aiCoachCard {
-  background: linear-gradient(135deg, rgba(129,140,248,0.07), rgba(56,189,248,0.05)) !important;
+  background: linear-gradient(135deg, rgba(129,140,248,0.07), rgba(245,158,11,0.05)) !important;
   border: 1.5px solid rgba(129,140,248,0.2) !important;
   border-radius: 18px !important;
   box-shadow: 0 4px 24px rgba(129,140,248,0.08) !important;
@@ -1116,7 +1201,7 @@ body {
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 3px;
-  background: linear-gradient(180deg, #38bdf8, #818cf8);
+  background: linear-gradient(180deg, #818cf8, #f59e0b);
   border-radius: 3px 0 0 3px;
 }
 .motiv-quote { font-style: italic !important; line-height: 1.65 !important; font-size: 0.84rem !important; }
@@ -1127,12 +1212,455 @@ body {
 
 /* Badge items */
 .badge-item { border-radius: 16px !important; }
-.badge-item.earned { border-color: rgba(56,189,248,0.3) !important; background: rgba(56,189,248,0.04) !important; }
+.badge-item.earned { border-color: rgba(129,140,248,0.3) !important; background: rgba(129,140,248,0.05) !important; }
+
+
+/* ═══════════ LGS ÖZEL TEMA ═══════════ */
+
+/* Mode pill LGS renk */
+.mode-pill.active {
+  border-color: rgba(129,140,248,0.5) !important;
+  color: #818cf8 !important;
+  background: rgba(129,140,248,0.08) !important;
+  box-shadow: 0 0 10px rgba(129,140,248,0.1) !important;
+}
+.mode-pill.break.active {
+  border-color: rgba(56,189,248,0.5) !important;
+  color: #38bdf8 !important;
+  background: rgba(56,189,248,0.08) !important;
+}
+
+/* Soru modal üst çizgisi */
+.soru-modal-sheet {
+  border-top-color: rgba(129,140,248,0.4) !important;
+}
+
+/* Num input focus */
+.num-input:focus {
+  border-color: #818cf8 !important;
+  box-shadow: 0 0 0 3px rgba(129,140,248,0.1) !important;
+}
+
+/* Today stat alt border renkleri */
+.today-card:nth-child(1)::before { background: #818cf8 !important; }
+.today-card:nth-child(2)::before { background: #f59e0b !important; }
+.today-card:nth-child(3)::before { background: #38bdf8 !important; }
+
+/* YKS/LGS days rengi */
+.yks-days { color: #818cf8 !important; }
+.yks-progress-fill { background: linear-gradient(90deg, #818cf8, #f59e0b) !important; }
+
+/* AI robot icon bg */
+.ai-robot-icon { background: linear-gradient(135deg,#818cf8,#f59e0b) !important; }
+
+/* Scrollbar LGS */
+::-webkit-scrollbar-thumb { background: rgba(129,140,248,0.2) !important; }
+
+/* Period tab active */
+.period-tab.active { background: rgba(129,140,248,0.08) !important; border-color: rgba(129,140,248,0.4) !important; color: #818cf8 !important; }
+
+/* Goal fill */
+.goal-fill { background: linear-gradient(90deg,#818cf8,#f59e0b) !important; }
+
+/* Heat day hover */
+.heat-day:active .heat-box { filter: brightness(1.4) !important; }
+
+/* Card top shimmer line */
+.card::after { background: linear-gradient(90deg, transparent, rgba(129,140,248,0.1), transparent) !important; }
+
+/* Header border */
+.header { border-bottom-color: rgba(129,140,248,0.06) !important; }
+
+/* Logo LGS yeşil */
+.logo { background: linear-gradient(135deg, #818cf8, #6366f1) !important; -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important; background-clip: text !important; }
+
+
+/* ═══════════════════════════════════════════
+   LGS GENÇLİK TEMASI — 13-14 yaş
+═══════════════════════════════════════════ */
+
+/* Daha yuvarlak her şey */
+:root {
+  --r: 20px !important;
+  --r-sm: 14px !important;
+  --r-lg: 26px !important;
+  /* Renkli aksanlar */
+  --lgs-green:  #818cf8;
+  --lgs-amber:  #f59e0b;
+  --lgs-blue:   #38bdf8;
+  --lgs-purple: #a78bfa;
+  --lgs-pink:   #f472b6;
+}
+
+/* Body — hafif doku */
+body:not(.light) {
+  background-image:
+    radial-gradient(ellipse 80% 55% at 15% -5%, rgba(129,140,248,0.09), transparent),
+    radial-gradient(ellipse 60% 45% at 85% 100%, rgba(245,158,11,0.07), transparent),
+    radial-gradient(ellipse 40% 35% at 50% 50%, rgba(56,189,248,0.03), transparent) !important;
+}
+
+/* ── HEADER ── */
+.header {
+  padding: 12px 16px 10px !important;
+  border-bottom: 1px solid rgba(129,140,248,0.1) !important;
+}
+
+/* ── LGS SAYAÇ BARI ── */
+.yks-bar {
+  border-radius: 18px !important;
+  padding: 14px 16px !important;
+  background: linear-gradient(135deg,
+    rgba(129,140,248,0.1),
+    rgba(245,158,11,0.07)) !important;
+  border: 1.5px solid rgba(129,140,248,0.2) !important;
+  box-shadow: 0 4px 24px rgba(129,140,248,0.08), inset 0 1px 0 rgba(255,255,255,0.05) !important;
+}
+.yks-label {
+  font-size: 0.58rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  color: #5a72a0 !important;
+}
+.yks-days {
+  font-size: 1.9rem !important;
+  font-weight: 900 !important;
+  color: var(--lgs-green) !important;
+  letter-spacing: -2px !important;
+}
+.yks-progress-fill {
+  background: linear-gradient(90deg, #818cf8, #f59e0b) !important;
+  border-radius: 99px !important;
+  box-shadow: 0 0 8px rgba(129,140,248,0.3) !important;
+}
+
+/* ── SECTION TITLES ── */
+.sec {
+  font-size: 0.7rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.5px !important;
+  color: #5a72a0 !important;
+  margin-top: 20px !important;
+}
+.sec::before {
+  background: linear-gradient(180deg, #818cf8, #f59e0b) !important;
+  width: 4px !important;
+  border-radius: 4px !important;
+  height: 14px !important;
+}
+
+/* ── CARDS ── */
+body:not(.light) .card {
+  background: linear-gradient(160deg, #111e17, #0d1a13) !important;
+  border: 1.5px solid rgba(129,140,248,0.1) !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(129,140,248,0.06) !important;
+}
+.card { border-radius: 20px !important; }
+body:not(.light) .today-card {
+  background: linear-gradient(160deg, #111e17, #0d1a13) !important;
+  border: 1.5px solid rgba(129,140,248,0.1) !important;
+}
+.today-card {
+  border-radius: 18px !important;
+  transition: transform 0.2s, border-color 0.2s !important;
+}
+.today-card:active { transform: scale(0.95) !important; }
+
+/* ── BOTTOM TABS ── */
+.tabs {
+  border-radius: 30px !important;
+  padding: 8px 6px !important;
+  background: rgba(7,18,12,0.95) !important;
+  border: 1.5px solid rgba(129,140,248,0.18) !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(129,140,248,0.05) !important;
+}
+.tab-btn {
+  border-radius: 24px !important;
+  padding: 8px 4px !important;
+  font-size: 0.6rem !important;
+  font-weight: 800 !important;
+  gap: 4px !important;
+  letter-spacing: 0.3px !important;
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.tab-btn.active {
+  color: #818cf8 !important;
+  background: linear-gradient(135deg, rgba(129,140,248,0.22), rgba(129,140,248,0.08)) !important;
+  box-shadow: inset 0 1px 0 rgba(129,140,248,0.25), 0 0 14px rgba(129,140,248,0.1) !important;
+}
+.tab-btn.active .ti svg { transform: scale(1.2) !important; }
+
+/* ── PLAY BUTTON ── */
+.btn-play {
+  width: 68px !important;
+  height: 68px !important;
+  background: linear-gradient(135deg, #818cf8, #6366f1) !important;
+  box-shadow: 0 6px 28px rgba(129,140,248,0.45), 0 0 0 5px rgba(129,140,248,0.1) !important;
+  transition: transform 0.15s, box-shadow 0.2s !important;
+}
+.btn-play:active { transform: scale(0.91) !important; box-shadow: 0 2px 12px rgba(129,140,248,0.3) !important; }
+
+.btn-sm {
+  width: 48px !important; height: 48px !important;
+  border: 2px solid rgba(129,140,248,0.22) !important;
+  background: rgba(129,140,248,0.08) !important;
+  color: #818cf8 !important;
+}
+
+/* ── TIMER RING ── */
+.ring-cont {
+  filter: drop-shadow(0 0 22px rgba(129,140,248,0.18)) !important;
+}
+.ring-time {
+  font-size: 2.6rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -2px !important;
+  color: #e8eeff !important;
+}
+.ring-sublabel {
+  font-size: 0.68rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 2.5px !important;
+  color: #5a72a0 !important;
+}
+
+/* ── MODE PILLS ── */
+.mode-pill {
+  flex-shrink: 0 !important;
+  border-radius: 12px !important;
+  padding: 9px 14px !important;
+  font-weight: 800 !important;
+  font-size: 0.78rem !important;
+  border: 2px solid rgba(129,140,248,0.12) !important;
+  background: rgba(129,140,248,0.04) !important;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1) !important;
+  white-space: nowrap !important;
+}
+.mode-pill.active {
+  border-color: rgba(129,140,248,0.5) !important;
+  color: #818cf8 !important;
+  background: rgba(129,140,248,0.12) !important;
+  box-shadow: 0 0 14px rgba(129,140,248,0.15), 0 2px 8px rgba(0,0,0,0.2) !important;
+  transform: scale(1.04) !important;
+}
+.mode-pill.break.active {
+  border-color: rgba(56,189,248,0.5) !important;
+  color: #38bdf8 !important;
+  background: rgba(56,189,248,0.1) !important;
+  box-shadow: 0 0 14px rgba(56,189,248,0.15) !important;
+}
+
+/* ── TYPE BUTTONS ── */
+.type-btn {
+  border-radius: 16px !important;
+  padding: 12px 6px !important;
+  font-size: 0.73rem !important;
+  font-weight: 800 !important;
+  border: 2px solid rgba(129,140,248,0.1) !important;
+  background: rgba(129,140,248,0.03) !important;
+  line-height: 1.5 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 5px !important;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1) !important;
+}
+.type-btn:active { transform: scale(0.95) !important; }
+.type-btn.active-soru {
+  border-color: rgba(129,140,248,0.5) !important;
+  color: #818cf8 !important;
+  background: rgba(129,140,248,0.1) !important;
+  box-shadow: 0 0 12px rgba(129,140,248,0.12) !important;
+}
+.type-btn.active-sure {
+  border-color: rgba(245,158,11,0.5) !important;
+  color: #f59e0b !important;
+  background: rgba(245,158,11,0.1) !important;
+}
+.type-btn.active-genel {
+  border-color: rgba(56,189,248,0.5) !important;
+  color: #38bdf8 !important;
+  background: rgba(56,189,248,0.1) !important;
+}
+
+/* ── SUBJ CHIPS (Ders seç) ── */
+.subj-chip {
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  font-size: 0.8rem !important;
+  padding: 9px 16px !important;
+  border: 2px solid rgba(129,140,248,0.12) !important;
+  background: rgba(129,140,248,0.04) !important;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.subj-chip.active {
+  border-color: var(--lgs-green) !important;
+  color: var(--lgs-green) !important;
+  background: rgba(129,140,248,0.12) !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 0 12px rgba(129,140,248,0.15) !important;
+}
+
+/* ── TOPIC LIST ── */
+.topic-item {
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  padding: 12px 14px !important;
+  border-bottom: 1px solid rgba(129,140,248,0.08) !important;
+  transition: background 0.15s !important;
+}
+.topic-item.selected {
+  background: rgba(129,140,248,0.1) !important;
+  color: #818cf8 !important;
+}
+.topic-item:active { background: rgba(129,140,248,0.08) !important; }
+
+/* ── SAVE BUTTON ── */
+.btn-save, .btn-add-entry {
+  border-radius: 16px !important;
+  padding: 15px !important;
+  font-size: 0.95rem !important;
+  font-weight: 900 !important;
+  background: linear-gradient(135deg, #818cf8, #6366f1) !important;
+  color: #fff !important;
+  box-shadow: 0 6px 24px rgba(129,140,248,0.3) !important;
+  transition: transform 0.15s, box-shadow 0.2s !important;
+  letter-spacing: 0.3px !important;
+}
+.btn-save:active, .btn-add-entry:active {
+  transform: scale(0.98) !important;
+  box-shadow: 0 2px 12px rgba(129,140,248,0.2) !important;
+}
+
+/* ── XP BAR ── */
+.xp-bar-wrap {
+  background: rgba(129,140,248,0.06) !important;
+  border: 1.5px solid rgba(129,140,248,0.15) !important;
+  border-radius: 18px !important;
+  padding: 12px 16px !important;
+  margin-bottom: 12px !important;
+  box-shadow: 0 2px 12px rgba(129,140,248,0.06) !important;
+}
+.xp-track {
+  height: 8px !important;
+  background: rgba(129,140,248,0.1) !important;
+  border-radius: 99px !important;
+  overflow: hidden !important;
+}
+.xp-fill {
+  background: linear-gradient(90deg, #818cf8, #f59e0b) !important;
+  box-shadow: 0 0 8px rgba(129,140,248,0.4) !important;
+}
+.xp-level { color: #818cf8 !important; font-size: 0.88rem !important; font-weight: 900 !important; }
+
+/* ── STREAK BADGE ── */
+.streak-badge {
+  border-radius: 14px !important;
+  padding: 7px 12px !important;
+  font-size: 0.78rem !important;
+  background: linear-gradient(135deg, #f97316, #f59e0b) !important;
+  box-shadow: 0 3px 12px rgba(249,115,22,0.3) !important;
+  transition: transform 0.2s !important;
+}
+.streak-badge:active { transform: scale(0.92) !important; }
+
+/* ── MOTİVASYON KARTI ── */
+.motiv-card {
+  border-radius: 20px !important;
+  padding: 16px 16px 14px 20px !important;
+  background: linear-gradient(135deg, rgba(129,140,248,0.07), rgba(245,158,11,0.04)) !important;
+  border: 1.5px solid rgba(129,140,248,0.15) !important;
+  box-shadow: 0 4px 20px rgba(129,140,248,0.06) !important;
+}
+.motiv-quote {
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  line-height: 1.65 !important;
+  font-style: italic !important;
+  color: #e8eeff !important;
+}
+.motiv-author { color: #5a72a0 !important; font-weight: 800 !important; font-size: 0.68rem !important; }
+
+/* ── AI KOÇ KARTI ── */
+#aiCoachCard {
+  border-radius: 20px !important;
+  background: linear-gradient(135deg, rgba(129,140,248,0.07), rgba(56,189,248,0.05)) !important;
+  border: 1.5px solid rgba(129,140,248,0.2) !important;
+  box-shadow: 0 4px 20px rgba(129,140,248,0.07) !important;
+}
+
+/* ── GOAL TRACK ── */
+.goal-track { border-radius: 99px !important; height: 9px !important; background: rgba(129,140,248,0.1) !important; }
+.goal-fill { background: linear-gradient(90deg, #818cf8, #f59e0b) !important; box-shadow: 0 0 8px rgba(129,140,248,0.3) !important; }
+
+/* ── BADGE ITEMS ── */
+.badge-item { border-radius: 18px !important; transition: transform 0.2s, border-color 0.2s !important; }
+.badge-item:active { transform: scale(0.93) !important; }
+.badge-item.earned { border-color: rgba(129,140,248,0.35) !important; background: rgba(129,140,248,0.06) !important; }
+
+/* ── LEVEL UP MODAL ── */
+.levelup-modal {
+  border-radius: 28px !important;
+  border: 2.5px solid #818cf8 !important;
+  background: linear-gradient(160deg, #111e17, #0d1a13) !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 40px rgba(129,140,248,0.15) !important;
+  padding: 36px 28px !important;
+}
+.levelup-modal .lv-title { color: #818cf8 !important; font-size: 1.5rem !important; }
+
+/* ── LOG ITEMS ── */
+.log-item { border-radius: 16px !important; border: 1.5px solid rgba(129,140,248,0.1) !important; }
+.log-item:active { border-color: rgba(129,140,248,0.35) !important; }
+.log-icon { border-radius: 12px !important; background: rgba(129,140,248,0.1) !important; border: 1.5px solid rgba(129,140,248,0.15) !important; }
+
+/* ── NUM INPUT ── */
+.num-input { border-radius: 14px !important; border: 2px solid rgba(129,140,248,0.15) !important; background: rgba(129,140,248,0.04) !important; }
+.num-input:focus { border-color: #818cf8 !important; box-shadow: 0 0 0 3px rgba(129,140,248,0.12) !important; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar-thumb { background: rgba(129,140,248,0.25) !important; border-radius: 4px !important; }
+
+/* ── HEATMAP ── */
+.heat-day:active .heat-box { filter: brightness(1.6) saturate(1.3) !important; }
+
+/* ── PERIOD TABS ── */
+.period-tab { border-radius: 14px !important; font-weight: 800 !important; }
+.period-tab.active { background: rgba(129,140,248,0.1) !important; border-color: rgba(129,140,248,0.4) !important; color: #818cf8 !important; }
+
+/* ── WEEK/DAY MODAL ── */
+.day-modal-sheet, .week-modal-sheet, .soru-modal-sheet {
+  border-radius: 28px 28px 0 0 !important;
+}
+.soru-modal-sheet { border-top: 2.5px solid #818cf8 !important; }
+.week-modal-sheet { border-top: 2.5px solid #f59e0b !important; }
+
+/* ── QUICK BTNS ── */
+.quick-btn { border-radius: 12px !important; font-weight: 800 !important; border: 1.5px solid rgba(129,140,248,0.15) !important; background: rgba(129,140,248,0.04) !important; }
+.quick-btn:active { background: rgba(129,140,248,0.12) !important; color: #818cf8 !important; border-color: rgba(129,140,248,0.4) !important; }
+
+/* ── SORU INPUT GRID ── */
+.soru-input-item { border-radius: 16px !important; border: 2px solid rgba(129,140,248,0.12) !important; background: rgba(129,140,248,0.04) !important; }
+.soru-input-item:focus-within { border-color: #818cf8 !important; box-shadow: 0 0 0 3px rgba(129,140,248,0.1) !important; }
+.soru-net-display { border-radius: 16px !important; border-color: rgba(129,140,248,0.3) !important; background: rgba(129,140,248,0.06) !important; }
+.soru-net-val { color: #818cf8 !important; }
+
+/* ── TOAST ── */
+#toast { border-radius: 18px !important; font-weight: 800 !important; }
+
+/* ── AUTH ── */
+.auth-box { border-radius: 28px !important; border-color: rgba(129,140,248,0.2) !important; background: linear-gradient(160deg, #111e17, #0d1a13) !important; }
+.auth-input { border-radius: 14px !important; border-color: rgba(129,140,248,0.15) !important; background: rgba(129,140,248,0.04) !important; }
+.auth-input:focus { border-color: #818cf8 !important; box-shadow: 0 0 0 3px rgba(129,140,248,0.1) !important; }
+.auth-btn { background: linear-gradient(135deg, #818cf8, #6366f1) !important; border-radius: 14px !important; box-shadow: 0 4px 16px rgba(129,140,248,0.25) !important; }
+.google-btn { border-radius: 14px !important; border-color: rgba(129,140,248,0.15) !important; }
 
 </style>
 
 </head>
-<body>
+<body class="light">
 
 <!-- GÜN DETAY MODAL -->
 <div class="day-modal" id="dayModal">
@@ -1141,9 +1669,7 @@ body {
     <div class="day-modal-handle"></div>
     <div class="day-modal-header">
       <div class="day-modal-title" id="dayModalTitle">—</div>
-      <button class="day-modal-close" onclick="closeDayModal()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+      <button class="day-modal-close" onclick="closeDayModal()">✕</button>
     </div>
     <div class="day-modal-stats" id="dayModalStats"></div>
     <div class="day-modal-list" id="dayModalList"></div>
@@ -1156,13 +1682,8 @@ body {
   <div class="week-modal-sheet">
     <div class="week-modal-handle"></div>
     <div class="week-modal-header">
-      <div class="week-modal-title" style="display:flex;align-items:center;gap:8px">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Bu Haftanın Detayı
-    </div>
-      <button style="width:28px;height:28px;background:var(--card);border:1px solid var(--border);color:var(--muted);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;" onclick="closeWeekModal()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+      <div class="week-modal-title">📊 Bu Haftanın Detayı</div>
+      <button style="background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;" onclick="closeWeekModal()">✕</button>
     </div>
     <div id="weekModalContent"></div>
   </div>
@@ -1174,18 +1695,13 @@ body {
   <div class="soru-modal-sheet">
     <div class="soru-modal-handle"></div>
     <div class="soru-modal-header">
-      <div class="soru-modal-title" style="display:flex;align-items:center;gap:8px">
-      <div style="width:28px;height:28px;background:linear-gradient(135deg,#38bdf8,#818cf8);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      </div>
-      Soru Çözümü Tamamlandı
-    </div>
+      <div class="soru-modal-title">📝 Soru Çözümü Tamamlandı!</div>
       <div class="soru-modal-sub" id="soruModalSub">Sonuçları kaydetmek ister misin?</div>
     </div>
     <div class="soru-modal-body">
       <!-- Toplam soru — önce bu girilir -->
       <div style="margin-bottom:12px">
-        <div class="soru-lbl" style="color:#fbbf24;margin-bottom:6px;display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Toplam Soru</div>
+        <div class="soru-lbl" style="color:#fbbf24;margin-bottom:6px">📦 Toplam Soru Sayısı</div>
         <div class="soru-input-item" style="border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:10px">
           <input type="number" id="soruToplam" placeholder="Kaç soru çözdün?" min="0" max="999"
             style="flex:1;font-size:1.3rem"
@@ -1196,19 +1712,19 @@ body {
       <!-- D / Y / B grid -->
       <div class="soru-input-grid" style="margin-bottom:12px">
         <div class="soru-input-item">
-          <div class="soru-lbl" style="color:#34d399;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Doğru</div>
+          <div class="soru-lbl" style="color:#34d399">✅ Doğru</div>
           <input type="number" id="soruDogru" placeholder="0" min="0"
             oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*">
           <div id="soruDograErr" style="font-size:0.6rem;color:#f87171;margin-top:3px;min-height:12px"></div>
         </div>
         <div class="soru-input-item">
-          <div class="soru-lbl" style="color:#f87171;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Yanlış</div>
+          <div class="soru-lbl" style="color:#f87171">❌ Yanlış</div>
           <input type="number" id="soruYanlis" placeholder="0" min="0"
             oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*">
           <div id="soruYanlisErr" style="font-size:0.6rem;color:#f87171;margin-top:3px;min-height:12px"></div>
         </div>
         <div class="soru-input-item" style="grid-column:span 2">
-          <div class="soru-lbl" style="color:#94a3b8;display:flex;align-items:center;gap:4px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>Boş <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(otomatik hesaplanır)</span></div>
+          <div class="soru-lbl" style="color:#94a3b8">⬜ Boş <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(otomatik hesaplanır)</span></div>
           <input type="number" id="soruBos" placeholder="—" min="0"
             oninput="calcSoruNet()" inputmode="numeric" pattern="[0-9]*"
             style="color:var(--muted)">
@@ -1217,15 +1733,12 @@ body {
       <!-- Net -->
       <div class="soru-net-display" style="margin-bottom:12px">
         <div class="soru-net-val" id="soruNetVal">0.00</div>
-        <div class="soru-net-lbl">NET (D − Y÷4)</div>
+        <div class="soru-net-lbl">NET (D − Y÷3)</div>
       </div>
       <!-- Hata mesajı -->
       <div id="soruModalErr" style="font-size:0.75rem;color:#f87171;font-weight:700;text-align:center;min-height:18px;margin-bottom:8px"></div>
       <div class="soru-modal-btns">
-        <button class="btn-save" id="soruKaydetBtn" onclick="saveSoruModal()">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Kaydet
-      </button>
+        <button class="btn-save" id="soruKaydetBtn" onclick="saveSoruModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Kaydet</button>
         <button class="btn-skip" onclick="skipSoruModal()">Eklemeden Devam Et →</button>
       </div>
     </div>
@@ -1234,9 +1747,7 @@ body {
 
 <!-- FULLSCREEN TIMER OVERLAY -->
 <div class="fullscreen-timer" id="fullscreenTimer">
-  <button class="fs-close" onclick="toggleFullscreenTimer()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-  </button>
+  <button class="fs-close" onclick="toggleFullscreenTimer()">✕</button>
   <div class="fs-ring-cont" id="fsRingCont">
     <svg id="fsRingSvg" width="280" height="280" viewBox="0 0 280 280" style="width:min(280px,70vmin);height:min(280px,70vmin);">
       <circle cx="140" cy="140" r="120" fill="none" stroke="var(--border)" stroke-width="10"/>
@@ -1246,8 +1757,8 @@ body {
         style="transition:stroke-dashoffset 1s linear;transform:rotate(-90deg);transform-origin:50% 50%"/>
       <defs>
         <linearGradient id="fsGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#38bdf8"/>
-          <stop offset="100%" stop-color="#818cf8"/>
+          <stop offset="0%" stop-color="#818cf8"/>
+          <stop offset="100%" stop-color="#6366f1"/>
         </linearGradient>
       </defs>
     </svg>
@@ -1377,9 +1888,7 @@ body {
 <!-- HEADER -->
 <div class="header">
   <div class="header-row">
-    <div class="logo" style="-webkit-text-fill-color:initial;background:none;">
-  <img src="icon-512.png" alt="Pugi" style="height:32px;width:auto;object-fit:contain;display:block;">
-</div>
+    <div class="logo" style="-webkit-text-fill-color:initial;background:none;"><img src="icon-512.png" alt="Pugi" style="height:32px;width:auto;object-fit:contain;display:block" onerror="this.style.display='none';this.nextSibling.style.display='block'"><span style="display:none;font-family:'Sora',sans-serif;font-size:1.25rem;font-weight:900;background:linear-gradient(135deg,#818cf8,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Pugi</span></div>
     <div style="display:flex;gap:8px;align-items:center;">
 
     </div>
@@ -1387,19 +1896,19 @@ body {
 
   <div class="yks-bar">
     <div>
-      <div class="yks-label">YKS'ye Kalan</div>
+      <div class="yks-label" style="display:flex;align-items:center;gap:4px"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>LGS'YE KALAN</div>
       <div class="yks-days"><span id="yksGun">-</span> gün</div>
-      <div class="yks-date">20 Haziran 2026</div>
+      <div class="yks-date">7 Haziran 2026</div>
     </div>
     <div class="yks-progress-wrap">
       <div class="yks-progress-bg"><div class="yks-progress-fill" id="yksBar" style="width:0%"></div></div>
       <div style="font-size:0.62rem;color:var(--muted);margin-top:4px;text-align:center">%<span id="yksYuzde">0</span> tamamlandı</div>
     </div>
-    <div style="text-align:center;padding:0 4px">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.7">
-        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+    <div style="text-align:center">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.8;display:block;margin:0 auto 3px">
+        <path d="M12 2L8.5 8.5 2 9.27l5 4.87-1.18 6.88L12 17.77l6.18 3.25L17 14.14l5-4.87-6.5-.77z"/>
       </svg>
-      <div style="font-size:0.58rem;color:#4b6280;font-weight:800;margin-top:3px;letter-spacing:0.5px">SINAV</div>
+      <div style="font-size:0.6rem;color:#5a72a0;font-weight:900;letter-spacing:0.5px">HADI!</div>
     </div>
   </div>
 </div>
@@ -1430,18 +1939,14 @@ body {
   </div>
 
   <!-- AI KOÇ KARTI -->
-  <div id="aiCoachCard" style="background:linear-gradient(135deg,rgba(129,140,248,0.08),rgba(56,189,248,0.08));border:1.5px solid rgba(129,140,248,0.25);border-radius:18px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden">
+  <div id="aiCoachCard" style="background:linear-gradient(135deg,rgba(129,140,248,0.08),rgba(56,189,248,0.08));border:1.5px solid rgba(129,140,248,0.25);border-radius:18px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden;min-height:160px">
 
     <!-- Başlık -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:8px">
-        <div style="width:32px;height:32px;background:linear-gradient(135deg,#818cf8,#38bdf8);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(129,140,248,0.3)">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><path d="M8 16h.01M12 16h.01M16 16h.01"/>
-        </svg>
-      </div>
+        <div style="width:34px;height:34px;background:linear-gradient(135deg,#818cf8,#6366f1);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 12px rgba(129,140,248,0.35)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><path d="M8 16h.01M12 16h.01M16 16h.01"/></svg></div>
         <div>
-          <div style="font-size:0.8rem;font-weight:900;color:var(--text)">AI Koçun</div>
+          <div style="font-size:0.8rem;font-weight:900;color:var(--text)">Pugi Asistan</div>
           <div id="aiCoachDate" style="font-size:0.6rem;font-weight:700;color:var(--muted)">Bugünün önerisi</div>
         </div>
       </div>
@@ -1468,31 +1973,24 @@ body {
     </div>
 
     <!-- Misafir kilidi -->
-    <div id="aiCoachLock" style="display:none;position:absolute;inset:0;background:rgba(8,13,24,0.88);border-radius:17px;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer" onclick="_showGuestLockModal('AI Koç','Kişisel çalışma verilerine göre günlük öneri almak için kayıt ol.')">
-      <span style="font-size:1.8rem">🤖</span>
-      <span style="font-size:0.75rem;font-weight:800;color:var(--text)">AI Koçun seni bekliyor</span>
-      <span style="font-size:0.68rem;color:var(--muted);font-weight:700;text-align:center;max-width:200px">Günlük kişisel öneri almak için kayıt ol</span>
-      <div style="background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:10px;padding:8px 18px;color:#fff;font-size:0.78rem;font-weight:900;margin-top:4px">🚀 Ücretsiz Kayıt Ol</div>
+    <div id="aiCoachLock" style="display:none;position:absolute;inset:0;border-radius:17px;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px 20px;box-sizing:border-box;text-align:center" onclick="_showGuestLockModal('Pugi Asistan','Kişisel çalışma verilerine göre günlük öneri almak için kayıt ol.')">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#818cf8,#6366f1);border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(129,140,248,0.45)">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><path d="M8 16h.01M12 16h.01M16 16h.01"/></svg>
+      </div>
+      <div style="font-size:0.88rem;font-weight:900;">Pugi Asistan seni bekliyor</div>
+      <div style="font-size:0.74rem;font-weight:600;line-height:1.6;max-width:220px">Günlük kişisel öneri almak için ücretsiz kayıt ol</div>
+      <div style="background:linear-gradient(135deg,#818cf8,#6366f1);border-radius:12px;padding:12px 26px;color:#fff;font-size:0.84rem;font-weight:900;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(99,102,241,0.4);flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L8.5 8.5 2 9.27l5 4.87-1.18 6.88L12 17.77l6.18 3.25L17 14.14l5-4.87-6.5-.77z"/></svg>
+        Ücretsiz Kayıt Ol
+      </div>
     </div>
   </div>
 
   <div class="sec">Bugün</div>
   <div class="today-grid">
-    <div class="today-card">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px;opacity:0.7;display:block"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span class="today-val" id="todayMin" style="color:#38bdf8">0</span>
-      <div class="today-lbl">Dakika</div>
-    </div>
-    <div class="today-card">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px;opacity:0.7;display:block"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      <span class="today-val" id="todaySoru" style="color:#34d399">0</span>
-      <div class="today-lbl">Soru</div>
-    </div>
-    <div class="today-card">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 6px;opacity:0.7;display:block"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span class="today-val" id="todayKonu" style="color:#818cf8">0</span>
-      <div class="today-lbl">Konu</div>
-    </div>
+    <div class="today-card"><span class="today-val" id="todayMin" style="color:var(--accent)">0</span><div class="today-lbl">Dakika</div></div>
+    <div class="today-card"><span class="today-val" id="todaySoru" style="color:var(--accent3)">0</span><div class="today-lbl">Soru</div></div>
+    <div class="today-card"><span class="today-val" id="todayKonu" style="color:var(--accent2)">0</span><div class="today-lbl">Konu</div></div>
   </div>
 
   <div class="sec">Bu Haftaki Aktivite</div>
@@ -1505,7 +2003,7 @@ body {
   <div id="anaGoalsWrap">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
       <div class="sec" style="margin-bottom:0">Hedeflerim</div>
-      <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:rgba(56,189,248,0.08);border:1.5px solid rgba(56,189,248,0.3);border-radius:10px;padding:6px 12px;font-size:0.72rem;font-weight:800;color:#38bdf8;cursor:pointer;font-family:'Sora',sans-serif">
+      <button onclick="openGoalSetModal()" style="display:flex;align-items:center;gap:5px;background:var(--accent)18;border:1.5px solid var(--accent);border-radius:10px;padding:5px 11px;font-size:0.72rem;font-weight:800;color:var(--accent);cursor:pointer">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Hedef Seti
       </button>
@@ -1545,30 +2043,15 @@ body {
     </button>
   </div>
   <div class="mode-pills" id="modePills">
-    <div class="mode-pill active" onclick="setTimerMode(0,this)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    25 dk
-  </div>
-    <div class="mode-pill" onclick="setTimerMode(1,this)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-    15 dk
-  </div>
-    <div class="mode-pill break" id="molaPill" onclick="toggleBreakPicker(this)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
-    <span id="molaPillLabel">Mola</span>
-  </div>
-    <div class="mode-pill" onclick="setTimerMode(3,this)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-    45 dk
-  </div>
-    <div class="mode-pill" id="customPill" onclick="toggleCustomInput(this)">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-    Özel
-  </div>
+    <div class="mode-pill active" onclick="setTimerMode(0,this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 25 dk</div>
+    <div class="mode-pill" onclick="setTimerMode(1,this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 15 dk</div>
+    <div class="mode-pill break" onclick="setTimerMode(2,this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg> Mola</div>
+    <div class="mode-pill" onclick="setTimerMode(3,this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> 45 dk</div>
+    <div class="mode-pill" id="customPill" onclick="toggleCustomInput(this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Özel</div>
   </div>
   <div style="display:flex;justify-content:flex-end;margin-top:-4px;margin-bottom:6px;">
     <button class="expand-btn" id="expandBtn" onclick="toggleFullscreenTimer()" title="Tam ekran" style="display:flex;align-items:center;gap:5px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:5px 10px;font-size:0.72rem;font-weight:800;color:var(--muted);">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg> Tam Ekran
+      <span style="font-size:0.9rem">⛶</span> Tam Ekran
     </button>
   </div>
   <!-- Mola Süresi Seçici -->
@@ -1595,7 +2078,7 @@ body {
   </div>
   <div id="customInputWrap" style="display:none;margin-bottom:12px;">
     <div style="background:var(--card);border:1.5px solid var(--accent2);border-radius:var(--r);padding:14px;">
-      <div style="font-size:0.72rem;font-weight:800;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">Özel Süre Ayarla</div>
+      <div style="font-size:0.72rem;font-weight:800;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Özel Süre Ayarla</div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
         <button class="quick-btn" onclick="setCustomQuick(10)">10 dk</button>
         <button class="quick-btn" onclick="setCustomQuick(20)">20 dk</button>
@@ -1649,19 +2132,22 @@ body {
   <div id="entryFormSection">
   <div class="sec">Ne Kaydedelim?</div>
   <div class="type-row" id="typeSection">
-    <button class="type-btn active-soru" id="typeKonu" onclick="setEntryType('konu',this)">📚 Konu<br>Çalışması</button>
-    <button class="type-btn" id="typeSoru" onclick="setEntryType('soru',this)">✏️ Soru<br>Çözümü</button>
-    <button class="type-btn" id="typeGenel" onclick="setEntryType('genel',this)">🎯 Genel<br>Çalışma</button>
-    <button class="type-btn" id="typeDeneme" onclick="setEntryType('deneme',this)">📝 Deneme</button>
-  </div>
-
-  <!-- Sınav Seç -->
-  <div class="sec">Sınav Türü</div>
-  <div class="exam-tabs">
-    <div class="exam-tab active" id="etTYT" onclick="setExam('TYT',this)">TYT</div>
-    <div class="exam-tab" id="etAYT" onclick="setExam('AYT',this)">AYT Sayısal</div>
-    <div class="exam-tab" id="etSoz" onclick="setExam('SOZ',this)">AYT Sözel</div>
-    <div class="exam-tab" id="etEa" onclick="setExam('EA',this)">AYT EA</div>
+    <button class="type-btn active-soru" id="typeKonu" onclick="setEntryType('konu',this)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      Konu<br>Çalışması
+    </button>
+    <button class="type-btn" id="typeSoru" onclick="setEntryType('soru',this)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Soru<br>Çözümü
+    </button>
+    <button class="type-btn" id="typeGenel" onclick="setEntryType('genel',this)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      Genel<br>Çalışma
+    </button>
+    <button class="type-btn" id="typeDeneme" onclick="setEntryType('deneme',this)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Deneme
+    </button>
   </div>
 
   <!-- Ders Seç -->
@@ -1721,14 +2207,18 @@ body {
     <div style="font-size:0.65rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">📚 Bölüme Göre</div>
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
       <button onclick="setCoachSubject('')" class="coach-filter-chip active" id="csub-">Tümü</button>
-      <button onclick="setCoachSubject('Matematik')" class="coach-filter-chip" id="csub-Matematik">Matematik</button>
       <button onclick="setCoachSubject('Türkçe')" class="coach-filter-chip" id="csub-Türkçe">Türkçe</button>
-      <button onclick="setCoachSubject('Fizik')" class="coach-filter-chip" id="csub-Fizik">Fizik</button>
-      <button onclick="setCoachSubject('Kimya')" class="coach-filter-chip" id="csub-Kimya">Kimya</button>
-      <button onclick="setCoachSubject('Biyoloji')" class="coach-filter-chip" id="csub-Biyoloji">Biyoloji</button>
+      <button onclick="setCoachSubject('Matematik')" class="coach-filter-chip" id="csub-Matematik">Matematik</button>
+      <button onclick="setCoachSubject('Fen Bilimleri')" class="coach-filter-chip" id="csub-Fen">Fen Bil.</button>
+      <button onclick="setCoachSubject('İnkılap Tarihi')" class="coach-filter-chip" id="csub-Inkilap">İnkılap</button>
+      <button onclick="setCoachSubject('Din Kültürü')" class="coach-filter-chip" id="csub-Din">Din Kültürü</button>
+      <button onclick="setCoachSubject('İngilizce')" class="coach-filter-chip" id="csub-Ing">İngilizce</button>
       <button onclick="setCoachSubject('Tarih')" class="coach-filter-chip" id="csub-Tarih">Tarih</button>
       <button onclick="setCoachSubject('Coğrafya')" class="coach-filter-chip" id="csub-Coğrafya">Coğrafya</button>
-      <button onclick="setCoachSubject('İngilizce')" class="coach-filter-chip" id="csub-İngilizce">İngilizce</button>
+      <button onclick="setCoachSubject('TC Anayasası')" class="coach-filter-chip" id="csub-TC Anayasası">TC Anayasası</button>
+      <button onclick="setCoachSubject('Atatürk İlkeleri')" class="coach-filter-chip" id="csub-Atatürk İlkeleri">Atatürk İlkeleri</button>
+      <button onclick="setCoachSubject('Vatandaşlık')" class="coach-filter-chip" id="csub-Vatandaşlık">Vatandaşlık</button>
+      <button onclick="setCoachSubject('Eğitim Bilimleri')" class="coach-filter-chip" id="csub-Eğitim Bilimleri">Eğitim Bil.</button>
     </div>
 
     <!-- Sıralama -->
@@ -1771,7 +2261,7 @@ body {
 
     <!-- Koç Profil Header -->
     <div style="padding:16px 16px 0">
-      <div id="cpm-hero" style="background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(251,191,36,0.06));border:1.5px solid rgba(52,211,153,0.18);border-radius:18px;padding:18px 16px;margin-bottom:14px">
+      <div id="cpm-hero" style="background:linear-gradient(135deg,rgba(52,211,153,0.1),rgba(251,191,36,0.06));border:1.5px solid rgba(129,140,248,0.2);border-radius:18px;padding:18px 16px;margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
           <div id="cpm-avatar" style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#34d399,#fbbf24);display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;color:#000;flex-shrink:0;overflow:hidden"></div>
           <div style="flex:1;min-width:0">
@@ -2045,6 +2535,39 @@ body {
   </div>
 </div>
 
+<!-- HEDEF SETİ MODALI -->
+<div id="goalSetModal" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto">
+  <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-top:8px">
+      <button onclick="closeGoalSetModal()" style="width:38px;height:38px;border-radius:50%;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="font-size:1.1rem;font-weight:900">Hedef Seti</div>
+    </div>
+
+    <!-- Periyot -->
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+      <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">Periyot</div>
+      <div style="display:flex;gap:8px">
+        <button id="gsPeriodDaily" onclick="selectGsPeriod('daily')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:var(--accent)20;color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer">Günlük</button>
+        <button id="gsPeriodWeekly" onclick="selectGsPeriod('weekly')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer">Haftalık</button>
+      </div>
+      <div id="gsPeriodHint" style="font-size:0.7rem;color:#f59e0b;font-weight:700;margin-top:8px;min-height:16px"></div>
+    </div>
+
+    <!-- Hedef Kalemleri -->
+    <div style="font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Hedef Kalemleri</div>
+    <div id="gsItemsList" style="margin-bottom:10px"></div>
+    <button onclick="addGsItem()" style="width:100%;padding:11px;border-radius:12px;border:1.5px dashed var(--border);background:transparent;color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:16px;transition:border-color 0.2s" onmouseenter="this.style.borderColor='var(--accent)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Kalem Ekle
+    </button>
+
+    <button onclick="saveGoalSet()" style="width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:900;font-size:0.9rem;cursor:pointer;margin-bottom:10px">Hedefi Kaydet</button>
+    <button onclick="closeGoalSetModal()" style="width:100%;padding:12px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:800;font-size:0.85rem;cursor:pointer">Vazgeç</button>
+  </div>
+</div>
+
 <!-- AYARLAR SAYFASI (tam ekran modal) -->
 <div id="settingsPage" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto">
   <div style="max-width:480px;margin:0 auto;padding:16px 16px 100px">
@@ -2057,56 +2580,72 @@ body {
     <!-- Sınav Bilgilerim — açılır/kapanır kart -->
     <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
       <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('sinavBilgExpand','sinavBilgArrow')">
-        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">🎯</div>
+        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#34d399,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">🎯</div>
         <div style="flex:1">
           <div style="font-size:0.85rem;font-weight:900">Sınav Bilgilerim</div>
-          <div id="sinavBilgSubtitle" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Alan ve hedef sıralama</div>
+          <div id="sinavBilgSubtitle" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Hedef lise ve puan</div>
         </div>
         <span id="sinavBilgArrow" style="color:var(--muted);font-size:0.75rem;transition:transform 0.25s">&#9660;</span>
       </div>
       <div id="sinavBilgExpand" style="display:none;margin-top:14px">
 
-        <!-- Dal seçimi -->
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Alan</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-          <button id="settDalSay" onclick="settingSelectDal('sayisal')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">📐 Sayısal</button>
-          <button id="settDalSoz" onclick="settingSelectDal('sozel')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">📖 Sözel</button>
-          <button id="settDalEa" onclick="settingSelectDal('ea')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">⚖️ Eşit Ağırlık</button>
-          <button id="settDalDil" onclick="settingSelectDal('dil')" style="padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s">🌍 Dil</button>
+        <!-- LGS Hedef Lise -->
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">LGS Hedef Lise Türü</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+
+          <button id="settKpssLisansA" onclick="settingSelectKpssKat('lisans_a',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem;flex-shrink:0">⚖️</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Lisans — A Grubu / Kariyer</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Müfettiş, Uzman, Kontrolör, Denetmen</div>
+            </div>
+          </button>
+
+          <button id="settKpssLisansB" onclick="settingSelectKpssKat('lisans_b',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem;flex-shrink:0">🏛️</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Lisans — B Grubu / Memur</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Mevcut sınıfın: 8. Sınıf · LGS</div>
+            </div>
+          </button>
+
+          <button id="settKpssLisansE" onclick="settingSelectKpssKat('lisans_egitim',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem;flex-shrink:0">🏫</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Lisans — Eğitim (ÖABT)</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Öğretmenlik · Alan Bilgisi Testi</div>
+            </div>
+          </button>
+
+          <button id="settKpssOnLisans" onclick="settingSelectKpssKat('on_lisans',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem;flex-shrink:0">📋</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Ön Lisans</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">LGS sınavı — 8. sınıf</div>
+            </div>
+          </button>
+
+          <button id="settKpssLise" onclick="settingSelectKpssKat('lise',this)"
+            style="padding:12px 14px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.78rem;cursor:pointer;font-family:'Sora',sans-serif;transition:all 0.2s;text-align:left;display:flex;align-items:center;gap:10px">
+            <span style="font-size:1.2rem;flex-shrink:0">🎒</span>
+            <div>
+              <div style="font-size:0.82rem;font-weight:900">Ortaöğretim (Lise)</div>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">LGS sınavı — 8. sınıf</div>
+            </div>
+          </button>
+
         </div>
 
-        <!-- Hedef türü -->
-        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Türü</div>
-        <div style="display:flex;gap:8px;margin-bottom:14px">
-          <button id="settHedefSirBtn" onclick="settSelectHedefTur('siralama')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif">🏆 Sıralama</button>
-          <button id="settHedefOkulBtn" onclick="settSelectHedefTur('okul')" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Sora',sans-serif">🎓 Okul/Bölüm</button>
-        </div>
-
-        <!-- Sıralama hedefi -->
-        <div id="settSiralamaWrap" style="margin-bottom:14px">
-          <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
-          <input type="number" id="settHedefSiralama" placeholder="örn: 10000" min="1"
-            style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s"
-            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
-            oninput="this.style.borderColor='var(--accent)'; _settOnSiralamaInput();">
-        </div>
-
-        <!-- Okul hedefi -->
-        <div id="settOkulWrap" style="display:none;margin-bottom:14px">
-          <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Şehir</div>
-          <select id="settIlSel" onchange="settLoadUnis()" style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
-            <option value="">Şehir seç...</option>
-          </select>
-          <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Üniversite</div>
-          <select id="settUniSel" onchange="settLoadBolumler()" disabled style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
-            <option value="">Önce şehir seç...</option>
-          </select>
-          <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Bölüm</div>
-          <select id="settBolumSel" onchange="settSelectBolum()" disabled style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:10px;-webkit-appearance:none">
-            <option value="">Önce üniversite seç...</option>
-          </select>
-          <div id="settProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.75rem;font-weight:700;color:var(--text);margin-bottom:4px"></div>
-        </div>
+        <!-- Hedef Puan -->
+        <div style="font-size:0.68rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600;text-transform:none">(opsiyonel)</span></div>
+        <input type="number" id="settHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
+          style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;transition:border-color 0.2s;margin-bottom:14px"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+          oninput="_settOnSiralamaInput();">
 
         <button id="settProfilSaveBtn" onclick="saveSettingsProfil()"
           style="width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:'Sora',sans-serif;display:none">
@@ -2116,16 +2655,16 @@ body {
     </div>
 
         <!-- Tema -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
       <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>
-      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Tema</div><div id="themeModeLabel" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Karanlık mod</div></div>
+      <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Tema</div><div id="themeModeLabel" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Aydınlık mod aktif</div></div>
       <div onclick="toggleThemeSettings()" id="themeToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
         <div id="themeToggleThumb" style="width:20px;height:20px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left 0.25s;box-shadow:0 1px 3px rgba(0,0,0,0.3)"></div>
       </div>
     </div>
 
     <!-- Bildirim toggle -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px">
       <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
       <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Bildirimler</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Zamanlayıcı bitince uyar</div></div>
       <div onclick="toggleNotifSetting()" id="notifToggleWrap" style="width:46px;height:26px;border-radius:13px;background:var(--bg3);cursor:pointer;position:relative;transition:background 0.25s;flex-shrink:0">
@@ -2134,7 +2673,7 @@ body {
     </div>
 
     <!-- Kullanıcı adı -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('usernameExpand','usernameExpandArrow')">
         <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#6d28d9);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/></svg></div>
         <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Kullanıcı Adını Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Ayda bir kez değiştirilebilir</div></div>
@@ -2148,7 +2687,7 @@ body {
     </div>
 
     <!-- Şifre -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('passwordExpand','passwordExpandArrow')">
         <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#374151,#111827);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
         <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Şifremi Değiştir</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Yeni şifre belirle</div></div>
@@ -2173,7 +2712,7 @@ body {
     </div>
 
     <!-- Mail -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('emailExpand','emailExpandArrow')">
         <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0ea5e9,#0284c7);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
         <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Mail Adresimi Düzenle</div><div id="currentEmailDisplay" style="font-size:0.7rem;color:var(--muted);margin-top:2px">—</div></div>
@@ -2188,7 +2727,7 @@ body {
     </div>
 
     <!-- Geri bildirim -->
-    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px">
+    <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px">
       <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="toggleSettingExpand('feedbackExpand','feedbackExpandArrow')">
         <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
         <div style="flex:1"><div style="font-size:0.85rem;font-weight:900">Geri Bildirim Yolla</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Öneri, hata veya görüş bildir</div></div>
@@ -2204,28 +2743,22 @@ body {
     <div style="height:1px;background:var(--border);margin:16px 0"></div>
 
     <!-- Veri temizle -->
-    <div onclick="clearAllDataFromSettings()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer">
+    <div onclick="clearAllDataFromSettings()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer">
       <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
       <div style="flex:1"><div style="font-size:0.85rem;font-weight:900;color:var(--warn)">Verilerimi Temizle</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Tüm çalışma kayıtlarını sil</div></div>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
 
-    <!-- KPSS Geçişi -->
-    <div id="kpssSettingsCard" style="background:var(--card);border:1.5px solid rgba(52,211,153,0.2);border-radius:14px;padding:14px 16px;margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
-        <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#34d399,#a78bfa);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem">🏛️</div>
-        <div style="flex:1">
-          <div style="font-size:0.85rem;font-weight:900">KPSS</div>
-          <div id="kpssCardSubtitle" style="font-size:0.7rem;color:var(--muted);margin-top:2px">Kontrol ediliyor...</div>
-        </div>
-      </div>
-      <div id="kpssCardAction">
-        <!-- JS ile doldurulur -->
+    <!-- Sınav Geçişi -->
+    <div style="background:var(--card);border:1.5px solid rgba(56,189,248,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px">
+      <div style="font-size:0.72rem;font-weight:900;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">🔀 Sınav Geçişi</div>
+      <div id="yksProfileStatus">
+        <div style="text-align:center;padding:8px 0;font-size:0.75rem;color:var(--muted);font-weight:700">Yükleniyor...</div>
       </div>
     </div>
 
     <!-- Çıkış yap -->
-    <div onclick="logoutUser()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer">
+    <div onclick="logoutUser()" style="background:var(--card);border:1.5px solid rgba(248,113,113,0.25);border-radius:14px;padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer">
       <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#ef4444,#dc2626);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
       <div style="flex:1"><div style="font-size:0.85rem;font-weight:900;color:var(--warn)">Çıkış Yap</div><div style="font-size:0.7rem;color:var(--muted);margin-top:2px">Hesabından güvenli çıkış yap</div></div>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
@@ -2281,7 +2814,7 @@ body {
     <div class="day-modal-body">
       <div id="fdContent"></div>
       <div style="padding:4px 0 8px;display:flex;flex-direction:column;gap:8px">
-        <button id="fdInviteBtn" onclick="inviteFriendFromModal()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif"> Derse Çağır</button>
+        <button id="fdInviteBtn" onclick="inviteFriendFromModal()" style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:12px;color:#fff;font-size:0.9rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif">🔔 Derse Çağır</button>
         <button onclick="removeFriendFromModal()" style="width:100%;padding:12px;background:rgba(248,113,113,0.1);border:1.5px solid rgba(248,113,113,0.25);border-radius:12px;color:var(--warn);font-size:0.85rem;font-weight:800;cursor:pointer;font-family:'Sora',sans-serif">Arkadaşlıktan Çıkar</button>
       </div>
     </div>
@@ -2348,10 +2881,10 @@ body {
 <script>
 
 // ═══ TEMA (EN BAŞTA TANIMLANMALI) ═══
-var isDark = localStorage.getItem('yks_theme') !== 'light';
+var isDark = localStorage.getItem('lgs_theme') === 'dark';
 function applyTheme() {
   document.body.classList.toggle('light', !isDark);
-  localStorage.setItem('yks_theme', isDark ? 'dark' : 'light');
+  localStorage.setItem('lgs_theme', isDark ? 'dark' : 'light');
   // Settings toggle güncelle
   var wrap = document.getElementById('themeToggleWrap');
   var thumb = document.getElementById('themeToggleThumb');
@@ -2363,107 +2896,80 @@ function applyTheme() {
 function toggleTheme() { isDark = !isDark; applyTheme(); }
 function toggleThemeSettings() { toggleTheme(); }
 // Sayfa yüklenince hemen uygula
-// applyTheme init'te çağrılıyor
+applyTheme();
 
 // ════════════════════════════════════════════
 // DATA: TÜM KONULAR
 // ════════════════════════════════════════════
 var EXAM_DATA = {
-  TYT: {
-    "Türkçe": { emoji:"📖", color:"#f472b6", topics:["Sözcükte Anlam","Cümlede Anlam","Paragrafta Anlam","Anlatım Biçimleri","Ses Bilgisi","Yazım Kuralları","Noktalama İşaretleri","Sözcükte Yapı","Sözcük Türleri","Edat-Bağlaç-Ünlem","Fiiller","Ek Fiil","Filde Çatı","Fiilimsi","Cümlenin Öğeleri","Cümle Türleri","Anlatım Bozuklukları"] },
-    "Matematik": { emoji:"📐", color:"#38bdf8", topics:["Sayılar","Sayı Basamakları","Bölme ve Bölünebilme","OBEB-OKEK","Rasyonel Sayılar","Basit Eşitsizlikler","Mutlak Değer","Üslü Sayılar","Köklü Sayılar","Çarpanlara Ayırma","Oran Orantı","Denklem Çözme","Problemler","Kümeler","Fonksiyonlar","Permütasyon","Kombinasyon","Binom","Olasılık","İstatistik","2. Dereceden Denklemler","Karmaşık Sayılar","Polinomlar"] },
-    "Geometri": { emoji:"📏", color:"#818cf8", topics:["Doğruda ve Üçgende Açılar","Dik ve Özel Üçgenler","Dik Üçgende Trigonemetrik Bağıntılar","İkizkenar ve Eşkenar Üçgen","Üçgende Alanlar","Üçgende Açıortay Bağıntıları","Üçgende Kenarortay Bağıntıları","Üçgende Eşlik ve Benzerlik","Üçgende Açı-Kenar Bağıntıları","Çokgenler","Dörtgenler","Yamuk","Paralelkenar","Eşkenar Dörtgen-Deltoid","Dikdörtgen","Çemberde Açılar","Çemberde Uzunluk","Daire","Prizmalar","Piramitler","Küre","Koordinat Düzlemi","Vektörler-1","Doğrunun Analitiği","Tekrar Eden ve Dönen Şekiller"] },
-    "Tarih": { emoji:"📜", color:"#fb923c", topics:["Uygarlığın Doğuşu","İlk Türk Devletleri","İslam Tarihi ve Uygarlığı","Türk-İslam Devletleri","Türklerin İslamiyeti Kabulü","Türkiye Tarihi","Beylikten Devlete (1300-1453)","Dünya Gücü: Osmanlı","Osmanlı Duraklama","Gerileme Devri","Arayış Yılları","Avrupa ve Osmanlı","En Uzun Yüzyıl","20.Yüzyıl Başları","XIX.YY Osmanlı","1.Dünya Savaşı","Kurtuluş Savaşı Cepheleri","Türk İnkılabı","Atatürkçülük ve İlkeleri","Türk Dış Politikası"] },
-    "Coğrafya": { emoji:"🌍", color:"#34d399", topics:["İnsan ve Doğa","Dünyanın Şekli ve Hareketleri","Coğrafi Konum","Harita Bilgisi","Atmosfer ve Sıcaklık","İklimler","Basınç ve Rüzgarlar","Nem, Yağış ve Buharlaşma","İç ve Dış Kuvvetler","Su-Toprak ve Bitkiler","Nüfus-Göç-Yerleşme","Türkiye'nin Yer Şekilleri","Ekonomik Faaliyetler","Bölgeler ve Ülkeler","Uluslararası Ulaşım Hatları","Çevre ve Toplum","Doğal Afetler"] },
-    "Felsefe": { emoji:"🤔", color:"#c084fc", topics:["Bilgi Felsefesi","Bilim Felsefesi","Varlık Felsefesi","Ahlak Felsefesi","Siyaset Felsefesi","Sanat Felsefesi","Din Felsefesi"] },
-    "Kimya": { emoji:"🧪", color:"#fbbf24", topics:["Kimya Bilimi","Atom ve Yapısı","Periyodik Sistem","Kimyasal Türler Arası Etkileşimler","Asitler-Bazlar ve Tuzlar","Bileşikler","Kimyasal Tepkimeler","Kimyanın Temel Yasaları","Maddenin Halleri","Karışımlar","Endüstride ve Canlılarda Enerji","Kimya Her Yerde"] },
-    "Fizik": { emoji:"⚛️", color:"#38bdf8", topics:["Fizik Bilimine Giriş","Madde ve Özellikleri","Basınç ve Kaldırma Kuvveti","Isı ve Sıcaklık","Enerji","Elektrostatik","Kuvvet ve Hareket","Elektrik ve Manyetizma","Optik","Dalgalar","Dünya ve Uzay","Basit Makineler"] },
-    "Biyoloji": { emoji:"🧬", color:"#4ade80", topics:["Canlıların Ortak Özellikleri","Canlıların Temel Bileşenleri","Hücre ve Organelleri","Hücre Zarından Madde Geçişi","Canlıların Sınıflandırılması","Mitoz ve Eşeysiz Üreme","Mayoz ve Eşeyli Üreme","Kalıtım","Ekosistem Ekolojisi","Güncel Çevre Sorunları"] },
-    "Din Kültürü": { emoji:"☪️", color:"#94a3b8", topics:["İnsan ve Din (İnanç)","İbadet","Hz. Muhammed'in Hayatı","Vahiy ve Akıl","İslam Düşüncesi ve Yorumu","İslamda Değerler ve Sanat","Yaşayan Dinler"] }
-  },
-  AYT: {
-    "Matematik": { emoji:"📐", color:"#38bdf8", topics:["Sayılar","Sayı Basamakları","Bölünebilme","OBEB-OKEK","Rasyonel Sayılar","Basit Eşitsizlikler","Mutlak Değer","Üslü Sayılar","Köklü Sayılar","Çarpanlara Ayırma","Oran Orantı","Denklem Çözme","Kümeler","Fonksiyonlar","Permütasyon","Kombinasyon","Binom","Olasılık","İstatistik","İkinci Dereceden Denklemler","Karmaşık Sayılar","Parabol","Polinomlar","Mantık","Modüler Aritmetik","Eşitsizlikler","Logaritma","Diziler","Seriler","Limit ve Süreklilik","Türev","İntegral"] },
-    "Geometri": { emoji:"📏", color:"#818cf8", topics:["Doğruda ve Üçgende Açılar","Dik ve Özel Üçgenler","Dik Üçgende Trigonemetrik Bağıntılar","İkizkenar ve Eşkenar Üçgen","Üçgende Alanlar","Üçgende Açıortay Bağıntıları","Üçgende Kenarortay Bağıntıları","Üçgende Eşlik ve Benzerlik","Üçgende Açı-Kenar Bağıntıları","Çokgenler","Dörtgenler","Yamuk","Paralelkenar","Eşkenar Dörtgen-Deltoid","Dikdörtgen","Çemberde Açılar","Çemberde Uzunluk","Daire","Prizmalar","Piramitler","Küre","Koordinat Düzlemi","Doğrunun Analitiği","Tekrar Eden Şekiller","Dönüşümlerle Geometri","Trigonometri","Çemberin Analitiği","Genel Konik Tanımı"] },
-    "Fizik": { emoji:"⚛️", color:"#60a5fa", topics:["Fizik Bilimine Giriş","Madde ve Özellikleri","Hareket ve Kuvvet","Enerji","Isı ve Sıcaklık","Elektrostatik","Elektrik ve Manyetizma","Basınç ve Kaldırma Kuvveti","Dalgalar","Optik","Kuvvet ve Hareket","Çembersel Hareket","Basit Harmonik Hareket","Dalga Mekaniği","Atom Fiziğine Giriş ve Radyoaktivite","Modern Fizik","Modern Fiziğin Teknolojideki Uygulamaları"] },
-    "Kimya": { emoji:"🧪", color:"#fbbf24", topics:["Kimya Bilimi","Atom ve Periyodik Sistem","Modern Atom Teorisi","Kimyasal Türler Arası Tepkimeler","Kimyasal Hesaplamalar","Asit, Baz ve Tuz","Maddenin Halleri","Gazlar","Karışımlar","Sıvı Çözeltiler","Kimya ve Enerji","Tepkimelerde Hız ve Denge","Kimya ve Elektrik","Karbon Kimyasına Giriş","Organik Bileşikler","Endüstride ve Canlılarda Enerji","Kimya Her Yerde","Hayatımızdaki Kimya"] },
-    "Biyoloji": { emoji:"🧬", color:"#4ade80", topics:["Biyoloji Bilimi","Canlıların Yapısında Temel Bileşenler","Hücrenin Yapısı ve İşlevi","Canlıların Çeşitliliği ve Sınıflandırması","Üreme","İnsanda Üreme Sistemi","Kalıtım","Modern Genetik Uygulamaları","Ekosistem Ekolojisi","Dünyamız","Canlılarda Enerji Dönüşümü","Solunum","İnsan Fizyolojisi","Endokrin Sistemi","Duyu Organları","Destek ve Hareket Sistemi","Sindirim Sistemi","İnsanda Sinir Sistemi","Dolaşım Sistemi","Genden Proteine","Hayatın Başlangıcı ve Evrim","Bitkisel Dokular","Bitki Biyolojisi","Kominite ve Popülasyon Ekolojisi"] }
-  },
-  SOZ: {
-    "Türkçe": { emoji:"📖", color:"#f472b6", topics:["Sözcükte Anlam","Cümlede Anlam","Paragrafta Anlam","Anlatım Biçimleri","Ses Bilgisi","Yazım Kuralları","Noktalama İşaretleri","Sözcükte Yapı","Sözcük Türleri","Edat-Bağlaç-Ünlem","Fiiller","Ek Fiil","Filde Çatı","Fiilimsi","Cümlenin Öğeleri","Cümle Türleri","Anlatım Bozuklukları"] },
-    "Tarih": { emoji:"📜", color:"#fb923c", topics:["Uygarlığın Doğuşu","İlk Türk Devletleri","İslam Tarihi","Türk-İslam Devletleri","Beylikten Devlete","Osmanlı","Osmanlı Duraklama","Gerileme Devri","En Uzun Yüzyıl","1.Dünya Savaşı","Kurtuluş Savaşı","Türk İnkılabı","Atatürkçülük"] },
-    "Coğrafya": { emoji:"🌍", color:"#34d399", topics:["Harita Bilgisi","İklimler","Nüfus-Göç","Türkiye Yer Şekilleri","Ekonomik Faaliyetler","Doğal Afetler"] },
-    "Felsefe": { emoji:"🤔", color:"#c084fc", topics:["Bilgi Felsefesi","Bilim Felsefesi","Varlık Felsefesi","Ahlak Felsefesi","Siyaset Felsefesi","Sanat Felsefesi","Din Felsefesi"] }
-  },
-  EA: {
-    "Matematik": { emoji:"📐", color:"#38bdf8", topics:["Sayılar","Bölünebilme","OBEB-OKEK","Rasyonel Sayılar","Üslü Sayılar","Köklü Sayılar","Oran Orantı","Problemler","Kümeler","Fonksiyonlar","Permütasyon","Olasılık","İstatistik","2. Derece Denklemler","Polinomlar","Logaritma","Diziler","Limit","Türev","İntegral"] },
-    "Türkçe": { emoji:"📖", color:"#f472b6", topics:["Sözcükte Anlam","Cümlede Anlam","Paragrafta Anlam","Sözcük Türleri","Fiiller","Cümlenin Öğeleri","Cümle Türleri","Anlatım Bozuklukları"] },
-    "Tarih": { emoji:"📜", color:"#fb923c", topics:["Uygarlığın Doğuşu","Osmanlı Tarihi","Kurtuluş Savaşı","Türk İnkılabı","Atatürkçülük"] },
-    "Coğrafya": { emoji:"🌍", color:"#34d399", topics:["Harita Bilgisi","İklimler","Nüfus-Göç","Ekonomik Faaliyetler"] }
+  LGS: {
+    "Türkçe": { emoji:"📖", color:"#f472b6", topics:[
+      "Sözcükte Anlam","Cümlede Anlam","Paragraf Anlama","Sözcük Türleri",
+      "Ses Bilgisi","Yazım Kuralları","Noktalama İşaretleri","Sözcükte Yapı",
+      "Sözcük Grupları","Fiiller","Fiilimsi","Cümlenin Öğeleri","Cümle Türleri",
+      "Anlatım Biçimleri","Anlatım Bozuklukları","Şiir Bilgisi",
+      "Söz Sanatları","Metin Türleri","Okuma-Anlama Stratejileri","Dil Bilgisi Genel"
+    ]},
+    "Matematik": { emoji:"📐", color:"#38bdf8", topics:[
+      "Çarpanlar ve Katlar","Üslü İfadeler","Kareköklü İfadeler","Veri Analizi",
+      "Olasılık","Cebirsel İfadeler","Denklemler","Eşitsizlikler",
+      "Doğrusal Denklemler","Üçgenler","Dönüşüm Geometrisi","Eşlik ve Benzerlik",
+      "Geometrik Cisimler","Doğru ve Açı","Çokgenler","Çember ve Daire",
+      "Rasyonel Sayılar","Tam Sayılar","Kesirler","Problem Çözme"
+    ]},
+    "Fen Bilimleri": { emoji:"🔬", color:"#34d399", topics:[
+      "Mevsimler ve İklim","DNA ve Genetik Kod","Basit Makineler","Ses","Elektrik Yüklemleri",
+      "Maddenin Halleri ve Isı","Asitler ve Bazlar","Kimyasal Tepkimeler",
+      "Sürdürülebilir Kalkınma","Madde ve Değişim","Hücre Bölünmesi","Kalıtım",
+      "Enerji Dönüşümleri","Basınç","Işık","Göç ve İklim","Besin Zinciri",
+      "Boşaltım Sistemi","Sinir Sistemi","Canlılar ve Çevre"
+    ]},
+    "İnkılap Tarihi": { emoji:"🏛️", color:"#fbbf24", topics:[
+      "Osmanlı Devleti'nin Çöküşü","Kurtuluş Savaşı'na Hazırlık","TBMM'nin Açılması",
+      "Kurtuluş Savaşı Cepheleri","Mudanya Ateşkesi","Lozan Antlaşması",
+      "Cumhuriyetin İlanı","Halifeliğin Kaldırılması","Çok Partili Hayata Geçiş Denemeleri",
+      "Hukuk Devrimi","Eğitim ve Kültür Alanındaki Devrimler","Ekonomik Alanda Devrimler",
+      "Toplumsal Alanda Devrimler","Atatürk İlkeleri","Atatürk Dönemi Türk Dış Politikası",
+      "İkinci Dünya Savaşı ve Türkiye","Atatürk'ün Kişilik Özellikleri","Siyasi Alanda Devrimler"
+    ]},
+    "Din Kültürü": { emoji:"☪️", color:"#a78bfa", topics:[
+      "Kaza ve Kader","Kur'an'ı Anlıyorum","Hz. Muhammed'in Hayatı","İslam Düşüncesinde Yorumlar",
+      "Ahlakımızı İnşa Ediyoruz","Vatandaşlık ve Din","Yaşayan Dünya Dinleri",
+      "İslam'ın Doğuşu","Namaz İbadeti","Zekât ve Sadaka","Oruç İbadeti",
+      "Hac ve Kurban","Dua ve Zikir","Ahiret İnancı","Peygamberlere İman",
+      "Kitaplara İman","Meleklere İman","Tevhid İnancı"
+    ]},
+    "İngilizce": { emoji:"🌐", color:"#60a5fa", topics:[
+      "Friendship","Teen Life","Cooking","On the Phone",
+      "Adventures","Natural Forces","Tourism","Chores",
+      "Inventions","Television and Social Media","Reading Skills",
+      "Vocabulary Building","Grammar - Tenses","Grammar - Modals",
+      "Listening Skills","Writing Skills","Pronunciation","Idioms"
+    ]}
   }
 };
 
 var DENEME_FIELDS = {
-  TYT: [
-    { key:"turkce",    label:"Türkçe",     max:40 },
-    { key:"mat",       label:"Matematik",  max:40 },
-    { key:"fen",       label:"Fen",        max:20 },
-    { key:"sosyal",    label:"Sosyal",     max:20 }
-  ],
-  AYT_SAY: [
-    { key:"mat",    label:"Matematik", max:40 },
-    { key:"fizik",  label:"Fizik",     max:14 },
-    { key:"kimya",  label:"Kimya",     max:13 },
-    { key:"bio",    label:"Biyoloji",  max:13 }
-  ],
-  AYT_SOZ: [
-    { key:"edebiyat",   label:"Edebiyat",    max:24 },
-    { key:"tarih1",     label:"Tarih-1",     max:10 },
-    { key:"cografya1",  label:"Coğrafya-1",  max:6  },
-    { key:"tarih2",     label:"Tarih-2",     max:11 },
-    { key:"cografya2",  label:"Coğrafya-2",  max:11 },
-    { key:"felsefe",    label:"Felsefe",     max:12 }
-  ],
-  AYT_EA: [
-    { key:"mat",        label:"Matematik",  max:40 },
-    { key:"edebiyat",   label:"Edebiyat",   max:24 },
-    { key:"tarih1",     label:"Tarih-1",    max:10 },
-    { key:"cografya1",  label:"Coğrafya-1", max:6  }
+  LGS: [
+    { key:"turkce",   label:"Türkçe",          max:20 },
+    { key:"mat",      label:"Matematik",        max:20 },
+    { key:"fen",      label:"Fen Bilimleri",    max:20 },
+    { key:"inkılap",  label:"İnkılap Tarihi",   max:10 },
+    { key:"din",      label:"Din Kültürü",      max:10 },
+    { key:"ing",      label:"İngilizce",        max:10 }
   ]
 };
 
 var BRANS_FIELDS = {
-  TYT_TURKCE:  { label:'TYT Türkçe',    emoji:'📖', color:'#f472b6', fields:[{ key:'turkce',  label:'Türkçe',    max:40 }] },
-  TYT_MAT:     { label:'TYT Matematik', emoji:'📐', color:'#38bdf8', fields:[{ key:'mat',     label:'Matematik', max:40 }] },
-  TYT_FEN:     { label:'TYT Fen',       emoji:'🧪', color:'#fbbf24', fields:[
-    { key:'fizik', label:'Fizik',    max:7 },
-    { key:'kimya', label:'Kimya',    max:7 },
-    { key:'bio',   label:'Biyoloji', max:6 }
-  ]},
-  TYT_SOSYAL:  { label:'TYT Sosyal',    emoji:'🌍', color:'#34d399', fields:[
-    { key:'tarih',    label:'Tarih',       max:5 },
-    { key:'cografya', label:'Coğrafya',    max:5 },
-    { key:'felsefe',  label:'Felsefe',     max:5 },
-    { key:'din',      label:'Din Kültürü', max:5 }
-  ]},
-  AYT_MAT:     { label:'AYT Matematik', emoji:'📐', color:'#38bdf8', fields:[{ key:'mat', label:'Matematik', max:40 }] },
-  AYT_FEN:     { label:'AYT Fen',       emoji:'⚛️', color:'#60a5fa', fields:[
-    { key:'fizik', label:'Fizik',    max:14 },
-    { key:'kimya', label:'Kimya',    max:13 },
-    { key:'bio',   label:'Biyoloji', max:13 }
-  ]},
-  AYT_EDEBIYAT:{ label:'AYT Edebiyat',  emoji:'📚', color:'#c084fc', fields:[{ key:'edebiyat', label:'Edebiyat', max:24 }] },
-  AYT_TARIH:   { label:'AYT Tarih',     emoji:'📜', color:'#fb923c', fields:[
-    { key:'tarih1', label:'Tarih-1', max:10 },
-    { key:'tarih2', label:'Tarih-2', max:11 }
-  ]},
-  AYT_COG:     { label:'AYT Coğrafya',  emoji:'🗺️', color:'#34d399', fields:[
-    { key:'cografya1', label:'Coğrafya-1', max:6  },
-    { key:'cografya2', label:'Coğrafya-2', max:11 }
-  ]},
-  AYT_FELSEFE: { label:'AYT Felsefe',   emoji:'🤔', color:'#a78bfa', fields:[{ key:'felsefe', label:'Felsefe', max:12 }] }
+  LGS_TURKCE:  { label:'Türkçe',          emoji:'📖', color:'#f472b6', fields:[{ key:'turkce',  label:'Türkçe',         max:20 }] },
+  LGS_MAT:     { label:'Matematik',        emoji:'📐', color:'#38bdf8', fields:[{ key:'mat',     label:'Matematik',      max:20 }] },
+  LGS_FEN:     { label:'Fen Bilimleri',    emoji:'🔬', color:'#34d399', fields:[{ key:'fen',     label:'Fen Bilimleri',  max:20 }] },
+  LGS_INKILAP: { label:'İnkılap Tarihi',   emoji:'🏛️', color:'#fbbf24', fields:[{ key:'inkılap', label:'İnkılap Tarihi', max:10 }] },
+  LGS_DIN:     { label:'Din Kültürü',      emoji:'☪️', color:'#a78bfa', fields:[{ key:'din',     label:'Din Kültürü',    max:10 }] },
+  LGS_ING:     { label:'İngilizce',        emoji:'🌐', color:'#60a5fa', fields:[{ key:'ing',     label:'İngilizce',      max:10 }] }
 };
 
-var currentBransType = 'TYT_TURKCE';
+var currentBransType = 'LGS_TURKCE';
 var _denemeMode = 'tam'; // 'tam' | 'brans'
 
 // ════════════════════════════════════════════
@@ -2474,11 +2980,11 @@ var denemeler = [];
 var badges = []; // in-memory, localStorage'a yazılmaz
 var _loadedUid = null; // hangi UID için yüklendi
 
-var currentExam = 'TYT';
-var currentSubject = Object.keys(EXAM_DATA.TYT)[0];
+var currentExam = 'LGS';
+var currentSubject = Object.keys(EXAM_DATA.LGS)[0];
 var currentTopic = null;
 var currentEntryType = 'konu';
-var currentDenemeType = 'TYT';
+var currentDenemeType = 'LGS';
 
 var timerModes = [
   { label:"ÇALIŞMA", secs:25*60, isBreak:false },
@@ -2497,7 +3003,7 @@ var statPeriod = 'gun';
 // YKS COUNTDOWN
 // ════════════════════════════════════════════
 function updateYKS() {
-  const target = new Date('2026-06-20T09:00:00');
+  const target = new Date('2026-06-07T09:00:00');
   const now = new Date();
   const start = new Date('2025-09-01'); // ~300 gün başlangıç
   const total = (target - start) / 86400000;
@@ -2793,10 +3299,9 @@ function startTimer() {
   _timerRemainAtStart = timerRemain;
   requestWakeLock();
 
-  localStorage.setItem('yks_timer_start', _timerStartedAt);
-  localStorage.setItem('yks_timer_remain', _timerRemainAtStart);
-  localStorage.setItem('yks_timer_running', '1');
-  localStorage.setItem('yks_timer_mode', timerMode);
+  localStorage.setItem('lgs_timer_start', _timerStartedAt);
+  localStorage.setItem('lgs_timer_remain', _timerRemainAtStart);
+  localStorage.setItem('lgs_timer_running', '1');
 
   document.getElementById('playBtn').innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>`;
 
@@ -2822,10 +3327,9 @@ function stopTimer() {
   clearInterval(timerInterval);
   _timerStartedAt = null;
   releaseWakeLock();
-  localStorage.removeItem('yks_timer_start');
-  localStorage.removeItem('yks_timer_remain');
-  localStorage.removeItem('yks_timer_running');
-  localStorage.removeItem('yks_timer_mode');
+  localStorage.removeItem('lgs_timer_start');
+  localStorage.removeItem('lgs_timer_remain');
+  localStorage.removeItem('lgs_timer_running');
   _clearMilestoneTimers();
   _clearDocTitle();
   _clearBadge();
@@ -2835,34 +3339,25 @@ function stopTimer() {
 
 // Ekran tekrar açıldığında (Page Visibility API)
 document.addEventListener('visibilitychange', function() {
-  if (document.visibilityState === 'hidden') {
-    // Sayfa arka plana geçiyor — anlık durumu kaydet
-    if (timerRunning && _timerStartedAt) {
-      localStorage.setItem('yks_timer_start', _timerStartedAt);
-      localStorage.setItem('yks_timer_remain', _timerRemainAtStart);
-      localStorage.setItem('yks_timer_running', '1');
-      localStorage.setItem('yks_timer_mode', timerMode);
-    }
-    return;
-  }
   if (document.visibilityState === 'visible') {
-    // Sayfa tekrar görünür — drift düzelt
-    var savedStart   = localStorage.getItem('yks_timer_start');
-    var savedRemain  = localStorage.getItem('yks_timer_remain');
-    var savedRunning = localStorage.getItem('yks_timer_running');
-    if (savedRunning && savedStart && savedRemain) {
-      var st = parseInt(savedStart);
-      var rm = parseInt(savedRemain);
-      var nowRemain = Math.max(0, rm - Math.floor((Date.now() - st) / 1000));
-      if (timerRunning) {
-        _timerStartedAt     = st;
-        _timerRemainAtStart = rm;
-        timerRemain = nowRemain;
-        if (timerRemain <= 0) { stopTimer(); timerDone(); }
-        else updateTimerUI();
-      } else if (!timerRunning && nowRemain > 0) {
-        // Sayfa tamamen yeniden yüklendi ama interval kaybedildi
-        restoreTimerOnLoad();
+    // Sayfa tekrar görünür oldu — zamanlayıcı çalışıyorsa senkronize et
+    var savedStart = localStorage.getItem('lgs_timer_start');
+    var savedRemain = localStorage.getItem('lgs_timer_remain');
+    var savedRunning = localStorage.getItem('lgs_timer_running');
+
+    if (savedRunning && savedStart && savedRemain && timerRunning) {
+      _timerStartedAt = parseInt(savedStart);
+      _timerRemainAtStart = parseInt(savedRemain);
+      timerRemain = Math.max(0, _timerRemainAtStart - Math.floor((Date.now() - _timerStartedAt) / 1000));
+
+      if (timerRemain <= 0) {
+        // Süre ekran kapalıyken dolmuş
+        timerRemain = 0;
+        updateTimerUI();
+        stopTimer();
+        timerDone();
+      } else {
+        updateTimerUI();
       }
     }
   }
@@ -2873,10 +3368,10 @@ document.addEventListener('visibilitychange', function() {
 // TIMER PERSIST — Sayfa kapansa da zamanlayıcı devam eder
 // ═══════════════════════════════════════════════════════
 function restoreTimerOnLoad() {
-  var savedStart   = localStorage.getItem('yks_timer_start');
-  var savedRemain  = localStorage.getItem('yks_timer_remain');
-  var savedRunning = localStorage.getItem('yks_timer_running');
-  var savedMode    = localStorage.getItem('yks_timer_mode');
+  var savedStart   = localStorage.getItem('lgs_timer_start');
+  var savedRemain  = localStorage.getItem('lgs_timer_remain');
+  var savedRunning = localStorage.getItem('lgs_timer_running');
+  var savedMode    = localStorage.getItem('lgs_timer_mode');
 
   if (!savedRunning || !savedStart || !savedRemain) return;
 
@@ -2893,10 +3388,10 @@ function restoreTimerOnLoad() {
 
   if (remaining <= 0) {
     // Süre kapalıyken doldu
-    localStorage.removeItem('yks_timer_start');
-    localStorage.removeItem('yks_timer_remain');
-    localStorage.removeItem('yks_timer_running');
-    localStorage.removeItem('yks_timer_mode');
+    localStorage.removeItem('lgs_timer_start');
+    localStorage.removeItem('lgs_timer_remain');
+    localStorage.removeItem('lgs_timer_running');
+    localStorage.removeItem('lgs_timer_mode');
     timerRemain  = 0;
     timerRunning = false;
 
@@ -3197,10 +3692,7 @@ function skipSoruModal() {
 // SUBJECT / TOPIC
 // ════════════════════════════════════════════
 function getExamKey() {
-  if (currentExam === 'TYT') return 'TYT';
-  if (currentExam === 'AYT') return 'AYT';
-  if (currentExam === 'SOZ') return 'SOZ';
-  return 'EA';
+  return 'LGS';
 }
 
 function setExam(exam, el) {
@@ -3302,7 +3794,7 @@ function saveEntry() {
   const sure = parseInt(document.getElementById('inSure').value) || 0;
   const dogru = parseInt(document.getElementById('inDogru').value) || 0;
   const yanlis = parseInt(document.getElementById('inYanlis').value) || 0;
-  const net = parseFloat(document.getElementById('inNet').value) || (dogru - yanlis * 0.25);
+  const net = parseFloat(document.getElementById('inNet').value) || (dogru - yanlis * 0.333);
 
   if (sure === 0 && dogru === 0 && yanlis === 0) { showToast('⚠️ Süre veya soru sayısı gir!'); return; }
   if (currentEntryType !== 'genel' && currentEntryType !== 'deneme' && !currentTopic) { showToast('⚠️ Konu seçmeyi unutma!'); return; }
@@ -3520,12 +4012,12 @@ function saveDeneme() {
 
   // Deneme süre ve soru sayısını entries'e yansıt
   var _denemeType = (deneme.type || '').toUpperCase();
-  var _isTYT = _denemeType === 'TYT';
+  var _isGY = _denemeType === 'GY';
   // Branş denemesi için süre/soru eklenmez
   if (!deneme.brans) {
-    var _dSure = _isTYT ? 165 : 180;
-    var _dSoru = _isTYT ? 120 : 80;
-    var _dSubj = _isTYT ? 'TYT' : 'AYT';
+    var _dSure = (_denemeType === 'GY') ? 130 : 110;
+    var _dSoru = (_denemeType === 'GY') ? 60 : 60;
+    var _dSubj = _denemeType;
     // Gerçek dogru/yanlis toplamlarını hesapla
     var _totalD = 0, _totalY = 0;
     Object.values(deneme.results || {}).forEach(function(r) { _totalD += (r.d||0); _totalY += (r.y||0); });
@@ -3552,7 +4044,7 @@ function saveDeneme() {
       totalSoru: _dSoru,
       net: deneme.totalNet || 0,
       emoji: '📋',
-      color: _isTYT ? '#38bdf8' : '#818cf8',
+      color: '#38bdf8',
       fromDeneme: deneme.id
     };
     entries.unshift(_dEntry);
@@ -3765,30 +4257,9 @@ function renderGreeting() {
  * Sayısal seçen kullanıcı Sözel tab'ı görmez, vs.
  */
 function _applyDalFilter() {
-  if (!_userProfil || !_userProfil.dal) return;
-  var dal = _userProfil.dal;
-  // Her dal için hangi tab'lar görünür
-  var tabMap = {
-    'sayisal': ['etTYT','etAYT'],
-    'sozel':   ['etTYT','etSoz'],
-    'ea':      ['etTYT','etAYT','etEa'],
-    'dil':     ['etTYT']
-  };
-  var aktif = tabMap[dal] || ['etTYT','etAYT','etSoz','etEa'];
-  ['etTYT','etAYT','etSoz','etEa'].forEach(function(id){
-    var el = document.getElementById(id);
-    if(!el) return;
-    if(aktif.indexOf(id) > -1){
-      el.style.display = '';
-    } else {
-      el.style.display = 'none';
-      if(el.classList.contains('active')){
-        el.classList.remove('active');
-        var tyt = document.getElementById('etTYT');
-        if(tyt){ tyt.classList.add('active'); setExam('TYT', tyt); }
-      }
-    }
-  });
+  // LGS — tek sınav türü, dal filtresi yok
+  var lgs = document.getElementById('etLGS');
+  if (lgs) { lgs.classList.add('active'); setExam('LGS', lgs); }
 }
 
 function renderAna() {
@@ -4164,7 +4635,7 @@ function renderStat() {
 // PIE CHARTS
 // ════════════════════════════════════════════
 var SUBJECT_COLORS = {
-  'Türkçe':'#f472b6','Matematik':'#38bdf8','Fizik':'#60a5fa','Kimya':'#a78bfa',
+  'Türkçe':'#f472b6','Matematik':'#38bdf8','Fen Bilimleri':'#34d399','İnkılap Tarihi':'#fbbf24','Din Kültürü':'#a78bfa','İngilizce':'#60a5fa',
   'Biyoloji':'#34d399','Tarih':'#fb923c','Coğrafya':'#fbbf24','Edebiyat':'#c084fc',
   'Felsefe':'#818cf8','Geometri':'#f43f5e','Din Kültürü':'#4ade80','İngilizce':'#22d3ee'
 };
@@ -4432,12 +4903,12 @@ var _fbApp = null, _fbDb = null, _fbAuth = null;
 var _currentUser = null;
 var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif, onboardingDone }
 
-// ── AI Koç Sabitleri ──────────────────────────────────
+// ── Pugi Asistan Sabitleri ────────────────────────────
 var GEMINI_API_KEY = ''; // Artık gizli - Cloudflare Worker'da
 var GEMINI_MODEL   = 'gemini-1.5-flash';
 var GEMINI_URL     = 'https://pugi-ai-proxy.arifsenel48.workers.dev';
 
-// ── AI Koç State ─────────────────────────────────────
+// ── Pugi Asistan State ────────────────────────────────
 var _aiDailyCache    = null;  // { text, date } — günlük öneri cache'i
 var _aiDeepHakSayisi = 1;     // Haftada 1 derin analiz hakkı
 var _aiDeepLastWeek  = '';    // Son derin analiz haftası (YYYY-Www)
@@ -4445,7 +4916,7 @@ var _aiDeepLastWeek  = '';    // Son derin analiz haftası (YYYY-Www)
 // ── Misafir Modu ──────────────────────────────────────
 // sessionStorage'dan okunur, sayfa kapanınca silinir.
 var _isGuest = sessionStorage.getItem('pugi_guest') === 'true';
-var _guestSinav = sessionStorage.getItem('pugi_sinav') || 'yks';
+var _guestSinav = sessionStorage.getItem('pugi_sinav') || 'lgs';
 var _authMode = 'login'; // 'login' | 'register'
 
 function initFirebase() {
@@ -4518,7 +4989,7 @@ function onUserLoggedIn(user) {
   // Eski localStorage cache'ini temizle — tüm veri artık sadece cloud'dan gelir
   try {
     Object.keys(localStorage).forEach(function(k) {
-      if (k.startsWith('yks_') && !k.startsWith('yks_theme') && !k.startsWith('yks_timer')) {
+      if (k.startsWith('yks_') && !k.startsWith('lgs_theme') && !k.startsWith('yks_timer')) {
         localStorage.removeItem(k);
       }
     });
@@ -4551,9 +5022,12 @@ function onUserLoggedIn(user) {
       dal:                data.dal                || null,
       hedefTur:           data.hedefTur           || null,
       hedefSiralama:      data.hedefSiralama       || null,
+      hedefPuan:          data.hedefPuan           || null,
       hedefProgram:       data.hedefProgram        || null,
       sinif:              data.sinif               || null,
       onboardingDone:     data.onboardingDone      || false,
+      lastActiveExam:     data.lastActiveExam      || 'lgs',
+      kpssProfile:        data.kpssProfile         || null,
       _hiddenSuggestions: data.hiddenSuggestions   || []
     };
 
@@ -4568,18 +5042,16 @@ function onUserLoggedIn(user) {
     var heroCard = document.getElementById('profileHeroCard');
     if (heroCard) {
       heroCard.style.display = 'block';
-      var heroAvatar = document.getElementById('profileHeroAvatar');
-      var heroName   = document.getElementById('profileHeroName');
-      var heroUname  = document.getElementById('profileHeroUname');
-      if (heroAvatar) heroAvatar.textContent = displayName.charAt(0).toUpperCase();
-      if (heroName)   heroName.textContent   = displayName;
-      if (heroUname)  heroUname.textContent  = '@' + username;
+      var heroName = document.getElementById('profileHeroName');
+      var heroUname = document.getElementById('profileHeroUname');
+      if (heroName) heroName.textContent = displayName;
+      if (heroUname) heroUname.textContent = '@' + username;
     }
     var xbw2 = document.getElementById('xpBarWrap2');
     if (xbw2) xbw2.style.display = 'block';
 
-    // YKS dal + hedef badge'ini Profilim'de göster
-    _renderYksDalBadge(data);
+    // LGS rozetini Profilim'de göster
+    _renderKpssKategoriInProfil(data);
 
     // Login banner gizle
     var banner = document.getElementById('loginPromptBanner');
@@ -4617,55 +5089,56 @@ function onUserLoggedIn(user) {
 // ════════════════════════════════════════════
 
 /**
- * _renderYksDalBadge — Profilim kartına YKS dal + hedef bilgisini ekler.
- * Dal emoji/rengi ve hedef (sıralama veya okul) gösterilir.
+ * _renderKpssKategoriInProfil — Profilim kartına sınav tipi bilgisini ekler.
+ * LGS kullanıcısı ise LGS bilgisini gösterir.
  */
-function _renderYksDalBadge(data) {
-  // Önceki badge varsa kaldır
+function _renderKpssKategoriInProfil(data) {
+  // Mevcut bilgi bannerini varsa temizle
   var existing = document.getElementById('profilExamBadge');
   if (existing) existing.remove();
 
   var heroCard = document.getElementById('profileHeroCard');
   if (!heroCard) return;
 
-  var dalConfig = {
-    sayisal: { emoji: '📐', label: 'Sayısal (SAY)', color: '#38bdf8' },
-    sozel:   { emoji: '📖', label: 'Sözel (SÖZ)',   color: '#fb923c' },
-    ea:      { emoji: '⚖️', label: 'Eşit Ağırlık (EA)', color: '#34d399' },
-    dil:     { emoji: '🌍', label: 'Dil',            color: '#a78bfa' }
-  };
-
-  var dal    = data.dal || null;
-  var cfg    = dal ? (dalConfig[dal] || { emoji: '📚', label: dal, color: 'var(--accent)' }) : null;
-
-  // Hedef satırı
-  var hedefStr = '';
-  if (data.hedefTur === 'okul' && data.hedefProgram) {
-    hedefStr = (data.hedefProgram.bolum || '') + (data.hedefProgram.uni ? ' — ' + data.hedefProgram.uni : '');
-  } else if (data.hedefTur === 'siralama' && data.hedefSiralama) {
-    hedefStr = 'Hedef: ilk ' + parseInt(data.hedefSiralama).toLocaleString('tr-TR');
-  }
-
+  var lastExam = data.lastActiveExam || 'lgs';
   var badge = document.createElement('div');
   badge.id = 'profilExamBadge';
-  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:12px';
+  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:12px;flex-wrap:wrap;gap:8px';
 
-  if (cfg) {
+  if (lastExam === 'lgs') {
+    var katMap = {
+      lisans_a:      { label: 'Lisans — A Grubu / Kariyer', emoji: '⚖️', color: '#fb923c' },
+      lisans_b:      { label: 'Lisans — B Grubu / Memur',  emoji: '🏛️', color: '#34d399' },
+      lisans_egitim: { label: 'Lisans — Eğitim (ÖABT)',    emoji: '🏫', color: '#a78bfa' },
+      on_lisans:     { label: 'Ön Lisans',                  emoji: '📋', color: '#38bdf8' },
+      lise:          { label: 'Ortaöğretim (Lise)',         emoji: '🎒', color: '#fbbf24' },
+      // eski format uyumluluk
+      gy_gk:   { label: 'GY + GK (Lisans)',      emoji: '📝', color: '#34d399' },
+      egitim:  { label: 'Eğitim Bilimleri',      emoji: '🏫', color: '#a78bfa' },
+      a_grubu: { label: 'A Grubu Kadro',          emoji: '⚖️', color: '#fb923c' }
+    };
+    var kpssP = data.kpssProfile || {};
+    var kat   = katMap[kpssP.kategori] || { label: 'LGS', emoji: '📚', color: '#38bdf8' };
+    var puan  = data.hedefPuan || kpssP.hedefPuan || null;
     badge.innerHTML =
-      '<span style="font-size:1.2rem">' + cfg.emoji + '</span>' +
-      '<div style="flex:1;min-width:0">' +
-        '<div style="font-size:0.78rem;font-weight:900;color:' + cfg.color + '">YKS — ' + cfg.label + '</div>' +
-        (hedefStr ? '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + hedefStr + '</div>' : '') +
+      '<span style="font-size:1.2rem">' + kat.emoji + '</span>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:0.78rem;font-weight:900;color:' + kat.color + '">LGS — ' + kat.label + '</div>' +
+        (puan ? '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Hedef Puan: ' + puan + '</div>' : '') +
       '</div>';
   } else {
+    var dalMap = { sozel:'Sözel (SÖZ)', dil:'Dil', sayisal:'Sayısal (SAY)', ea:'Eşit Ağırlık (EA)' };
+    var dal = dalMap[data.dal] || 'YKS';
+    var sir = data.hedefSiralama || null;
+    badge.style.background = 'rgba(56,189,248,0.08)';
+    badge.style.borderColor = 'rgba(56,189,248,0.2)';
     badge.innerHTML =
       '<span style="font-size:1.2rem">📚</span>' +
       '<div style="flex:1">' +
-        '<div style="font-size:0.78rem;font-weight:900;color:var(--accent)">YKS</div>' +
-        '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Ayarlardan alan seçebilirsin</div>' +
+        '<div style="font-size:0.78rem;font-weight:900;color:var(--accent3)">YKS — ' + dal + '</div>' +
+        (sir ? '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Hedef Sıralama: ' + parseInt(sir).toLocaleString('tr-TR') + '</div>' : '') +
       '</div>';
   }
-
   heroCard.appendChild(badge);
 }
 
@@ -4800,7 +5273,7 @@ function _buildAiPrompt(isDeep) {
   var denemeStr='Deneme yok';
   if(tumDeneme.length>0){
     denemeStr=tumDeneme.map(function(d,i){
-      var tip=d.type||'TYT';
+      var tip=d.type||'GY';
       var tyt=parseFloat(d.tyt_net||d.net||0).toFixed(1);
       var ayt=d.ayt_net?' AYT:'+parseFloat(d.ayt_net).toFixed(1):'';
       return (i+1)+'. '+tip+' → TYT:'+tyt+ayt+(d.date?' ('+d.date+')':'');
@@ -4830,7 +5303,7 @@ function _buildAiPrompt(isDeep) {
     } catch(e){}
 
     var prompt=
-      'Sen Pugi YKS hazırlık uygulamasının kişisel AI koçusun.\n\n'+
+      'Sen Pugi LGS hazırlık uygulamasının kişisel AI koçusun.\n\n'+
       '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
       '=== HAFTALIK ÖZET ===\n'+
       haftaSatirlari.join('\n')+'\n\n'+
@@ -4884,12 +5357,12 @@ function _buildAiPrompt(isDeep) {
     ? tumDeneme10.map(function(d,i){
         var tyt=parseFloat(d.tyt_net||d.net||0).toFixed(1);
         var ayt=d.ayt_net?' AYT:'+parseFloat(d.ayt_net).toFixed(1):'';
-        return (i+1)+'. '+(d.type||'TYT')+' → TYT:'+tyt+ayt+(d.date?' ('+d.date+')':'');
+        return (i+1)+'. '+(d.type||'GY')+' → GY:'+tyt+ayt+(d.date?' ('+d.date+')':'');
       }).join('\n')
     : 'Deneme kaydı yok';
 
   var deepPrompt=
-    'Sen Pugi YKS hazırlık uygulamasının kişisel AI koçusun. Aşağıdaki verilere dayanarak kapsamlı DERİN ANALİZ yap.\n\n'+
+    'Sen Pugi LGS hazırlık uygulamasının kişisel AI koçusun. Aşağıdaki verilere dayanarak kapsamlı DERİN ANALİZ yap.\n\n'+
     '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
     '=== BU HAFTA (GÜN GÜN) ===\n'+haftaSatirlari.join('\n')+'\n'+
     'Hafta toplamı: '+weeklyGoalStr+'\n\n'+
@@ -4941,14 +5414,14 @@ function loadAiDailyCoach() {
   // Misafir modunda kilidi göster
   if (_isGuest) {
     var lockEl = document.getElementById('aiCoachLock');
-    if (lockEl) { lockEl.style.display = 'flex'; lockEl.style.flexDirection = 'column'; }
+    if (lockEl) { lockEl.style.display = 'flex'; }
     return;
   }
 
   // Giriş yapılmamışsa (Firebase henüz hazır değil) kilidi göster
   if (!_currentUser) {
     var lockEl2 = document.getElementById('aiCoachLock');
-    if (lockEl2) { lockEl2.style.display = 'flex'; lockEl2.style.flexDirection = 'column'; }
+    if (lockEl2) { lockEl2.style.display = 'flex'; }
     return;
   }
 
@@ -5008,7 +5481,6 @@ function loadAiDailyCoach() {
  * @param {boolean} isDeep - true: derin analiz, false: günlük kısa öneri
  */
 function _fetchAiSuggestion(isDeep) {
-  // isDeep=false için textEl kontrolü, isDeep=true için doğrudan modal kullan
   if (!isDeep) {
     var textEl = document.getElementById('aiCoachText');
     if (!textEl) return;
@@ -5017,7 +5489,6 @@ function _fetchAiSuggestion(isDeep) {
 
   var prompt = _buildAiPrompt(isDeep);
 
-  // 30 saniyelik timeout için AbortController
   var controller = new AbortController();
   var timeoutId = setTimeout(function() { controller.abort(); }, 30000);
 
@@ -5032,7 +5503,6 @@ function _fetchAiSuggestion(isDeep) {
   })
   .then(function(res) {
     clearTimeout(timeoutId);
-    // JSON olmayan yanıt gelse de patlama
     return res.text().then(function(raw) {
       try { return JSON.parse(raw); }
       catch(e) { return { error: { code: res.status, message: 'JSON parse hatası: ' + raw.slice(0, 80) } }; }
@@ -5178,7 +5648,7 @@ function openDeepAnalysisModal() {
     if (subtitle) subtitle.textContent = 'Önceki analizin aşağıda';
   } else {
     if (resultWrap) resultWrap.style.display = 'none';
-    if (subtitle) subtitle.textContent = 'AI Koçunun haftalık değerlendirmesi';
+    if (subtitle) subtitle.textContent = 'Pugi Asistanun haftalık değerlendirmesi';
   }
 }
 
@@ -5323,8 +5793,8 @@ function _updateDeepBtn() {
 }
 
 /**
- * requestDeepAnalysis — Kullanıcı derin analiz butonuna basınca çağrılır. (alias)
- */
+ * requestDeepAnalysis — Kullanıcı derin analiz butonuna basınca çağrılır.
+
 function onGuestMode() {
   // User bar: misafir göster
   var loggedInBar = document.getElementById('userBarLoggedIn');
@@ -5476,7 +5946,7 @@ function _applyGuestCalisLayout() {
   if (typeRow) typeRow.style.display = 'none';
   if (typeLabel && typeLabel.classList.contains('sec')) typeLabel.style.display = 'none';
 
-  // "Sınav Türü" bölümünü gizle
+  // "Ders" bölümünü görünür tut
   var examTabs = document.querySelector('.exam-tabs');
   var examLabel = examTabs ? examTabs.previousElementSibling : null;
   if (examTabs) examTabs.style.display = 'none';
@@ -5674,15 +6144,12 @@ function selectModalDal(dal, el) {
 
 function saveOnboardingModal() {
   if (!_modalDal || !_currentUser || !_fbDb) return;
-  var siralama = parseInt(document.getElementById('modalHedefSiralama').value) || null;
+  var puan = parseFloat(document.getElementById('modalHedefSiralama').value) || null;
   var update = { dal: _modalDal, onboardingDone: true };
-  if (_modalProgram) {
-    update.hedefTur = 'okul';
-    update.hedefProgram = _modalProgram;
+  if (puan) {
+    update.hedefTur = 'puan';
+    update.hedefPuan = puan;
     update.hedefSiralama = null;
-  } else if (siralama) {
-    update.hedefTur = 'siralama';
-    update.hedefSiralama = siralama;
     update.hedefProgram = null;
   }
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
@@ -5690,7 +6157,6 @@ function saveOnboardingModal() {
     _applyDalFilter();
     closeOnboardingModal(false);
     showToast('✅ Profil güncellendi!');
-    // AI öneriyi yenile (dal bilgisiyle)
     localStorage.removeItem('pugi_ai_date');
     loadAiDailyCoach();
   });
@@ -5918,7 +6384,7 @@ function syncWeeklyStats() {
   });
   var subjectProgress = Object.keys(allSubjectTopics).map(function(subj) {
     var examKey = null;
-    ['TYT','AYT','SOZ','EA'].forEach(function(ek) {
+    ['GY','GK','EGITIM'].forEach(function(ek) {
       if (EXAM_DATA[ek] && EXAM_DATA[ek][subj]) examKey = ek;
     });
     var total = examKey ? (EXAM_DATA[examKey][subj].topics || []).length : 0;
@@ -6137,7 +6603,7 @@ function openFriendDetail(friendUid, displayName, username, stats) {
   _openFriendUid = friendUid;
   _openFriendName = displayName;
 
-  var typeLabels = { TYT:'TYT', AYT_SAY:'Sayısal', AYT_SOZ:'Sözel', AYT_EA:'EA' };
+  var typeLabels = { GY:'GY', GK:'GK', GY_GK:'GY+GK', EGITIM:'Eğitim Bil.' };
   var typeColors = { TYT:'#38bdf8', AYT_SAY:'#818cf8', AYT_SOZ:'#f472b6', AYT_EA:'#fb923c' };
 
   document.getElementById('fdAvatar').textContent = displayName.charAt(0).toUpperCase();
@@ -6296,7 +6762,7 @@ function openFriendDetail(friendUid, displayName, username, stats) {
     var canInv = (now - lastSent) >= _INVITE_COOLDOWN_MS;
     var remMins = canInv ? 0 : Math.ceil((_INVITE_COOLDOWN_MS - (now - lastSent)) / 60000);
     if (canInv) {
-      btn.textContent = ' Derse Çağır';
+      btn.textContent = '🔔 Derse Çağır';
       btn.disabled = false;
       btn.style.opacity = '1';
       btn.style.cursor = 'pointer';
@@ -7072,7 +7538,7 @@ function handleNotifBtn() {
     return;
   }
   if (Notification.permission === 'granted') {
-    showToast(' Bildirimler zaten açık!');
+    showToast('🔔 Bildirimler zaten açık!');
     return;
   }
   requestNotificationPermission();
@@ -7105,7 +7571,7 @@ function requestNotificationPermission() {
   }
   Notification.requestPermission().then(function(perm) {
     if (perm === 'granted') {
-      showToast(' Bildirimler açık!');
+      showToast('🔔 Bildirimler açık!');
       updateNotifBtn();
       // Test bildirimi gönder
       sendNotification('🦊 Pugi hazır!', 'Zamanlayıcı bitince seni bilgilendireceğim.');
@@ -7349,9 +7815,9 @@ var QUOTES = [
   { q: "Bugün yaptığın fedakarlıklar, yarının başarılarını inşa eder.", a: "Warren Buffett" },
   { q: "İnsanlar düşündükleri şeylerdir; ne düşünüyorsan o olursun.", a: "Earl Nightingale" },
   { q: "Beyin bir kas gibidir: ne kadar kullanırsan o kadar güçlenir.", a: "Carl Sagan" },
-  { q: "Bir çalışma seansı yapmak, hiç yapmamaktan sonsuza kadar iyidir.", a: "YKS Ruhu" },
-  { q: "Yarın başlamak istemek, bugün başlamamak için en yaygın bahanedir.", a: "YKS Ruhu" },
-  { q: "Her konu çalıştığında, geleceğin için bir tuğla örüyorsun.", a: "YKS Ruhu" },
+  { q: "Bir çalışma seansı yapmak, hiç yapmamaktan sonsuza kadar iyidir.", a: "LGS Ruhu" },
+  { q: "Yarın başlamak istemek, bugün başlamamak için en yaygın bahanedir.", a: "LGS Ruhu" },
+  { q: "Her konu çalıştığında, geleceğin için bir tuğla örüyorsun.", a: "LGS Ruhu" },
   { q: "Başarıya kestirme yol yoktur; emek ve azim her zaman kazanır.", a: "Thomas Jefferson" },
   { q: "Sabır ve azim her zaman ödüllendirilir.", a: "Benjamin Franklin" },
   { q: "Eğitim, ruhu özgürleştiren tek kuvvettir.", a: "Socrates" },
@@ -7398,9 +7864,9 @@ var LEVELS = [
   { min:1000, max:1500,  title:'Odaklı',       icon:'🎯' },
   { min:1500, max:2200,  title:'Uzman',        icon:'⭐' },
   { min:2200, max:3000,  title:'Elit',         icon:'🏆' },
-  { min:3000, max:4000,  title:'YKS Savaşçısı',icon:'⚔️' },
+  { min:3000, max:4000,  title:'LGS Kahraman',  icon:'⚔️' },
   { min:4000, max:5500,  title:'Efsane',       icon:'👑' },
-  { min:5500, max:99999, title:'YKS Ustası',   icon:'🌟' },
+  { min:5500, max:99999, title:'LGS Efsanesi',  icon:'🏆' },
 ];
 
 function getTotalXP() {
@@ -7698,10 +8164,10 @@ function renderDenemeNetChart() {
   if (!wrap) return;
 
   var selectedType = window._denemeChartType || null;
-  var typeLabels = { TYT:'TYT', AYT_SAY:'Sayısal', AYT_SOZ:'Sözel', AYT_EA:'EA' };
+  var typeLabels = { GY:'GY', GK:'GK', GY_GK:'GY+GK', EGITIM:'Eğitim Bil.' };
   var typeColors = { TYT:'#38bdf8', AYT_SAY:'#818cf8', AYT_SOZ:'#f472b6', AYT_EA:'#fb923c' };
   // Tam denemeler
-  var existingTypes = ['TYT','AYT_SAY','AYT_SOZ','AYT_EA'].filter(function(t){
+  var existingTypes = ['GY','GK','GY_GK','EGITIM'].filter(function(t){
     return denemeler.some(function(d){ return d.type === t; });
   });
   // Branş denemelerini de ekle
@@ -7868,15 +8334,15 @@ function setDenemeChartType(type) {
 // ═══════════════════════════════════════════════
 // KONU HARİTASI
 // ═══════════════════════════════════════════════
-var _topicMapExam = 'TYT';
+var _topicMapExam = 'GY';
 
 function renderTopicMap(exam) {
   if (exam) _topicMapExam = exam;
   const wrap = document.getElementById('topicMapWrap');
   if (!wrap) return;
 
-  const examKeys = ['TYT', 'AYT', 'SOZ', 'EA'];
-  const examLabels = { TYT:'TYT', AYT:'AYT Sayısal', SOZ:'AYT Sözel', EA:'AYT EA' };
+  const examKeys = ['GY', 'GK', 'EGITIM'];
+  const examLabels = { GY:'Genel Yetenek', GK:'Genel Kültür', EGITIM:'Eğitim Bilimleri' };
 
   // Tabs
   let html = '<div class="topic-map-exam-tabs">';
@@ -7998,7 +8464,7 @@ function renderAnalysis() {
   });
   const topics = Object.entries(topicMap).map(([k, v]) => ({
     name: k,
-    net: v.dogru - v.yanlis * 0.25,
+    net: v.dogru - v.yanlis * 0.333,
     total: v.dogru + v.yanlis,
     pct: v.dogru + v.yanlis > 0 ? Math.round((v.dogru / (v.dogru + v.yanlis)) * 100) : 0
   })).filter(t => t.total >= 3);
@@ -8336,6 +8802,7 @@ var _notifEnabled = true; // default açık
 var _settDal = null;
 var _settHedefTur = 'siralama';
 var _settProgram = null;
+var _settKpssKat = null;
 
 // İl listesi (Firestore ile eşleşen)
 var SETT_IL_LISTESI = [
@@ -8371,76 +8838,74 @@ var SETT_IL_LISTESI = [
 function _populateSettingsProfil() {
   if (!_userProfil) return;
 
-  // ── İl dropdown doldu mu kontrol ──
-  var ilSel = document.getElementById('settIlSel');
-  if (ilSel && ilSel.options.length <= 1) {
-    SETT_IL_LISTESI.forEach(function(il){
-      var o = document.createElement('option');
-      o.value = il.v; o.textContent = il.l;
-      ilSel.appendChild(o);
-    });
-  }
+  var katMap = {
+    lisans_a:      'settKpssLisansA',
+    lisans_b:      'settKpssLisansB',
+    lisans_egitim: 'settKpssLisansE',
+    on_lisans:     'settKpssOnLisans',
+    lise:          'settKpssLise'
+  };
+  var katLabel = {
+    lisans_a:      'A Grubu / Kariyer',
+    lisans_b:      'B Grubu / Memur',
+    lisans_egitim: 'Eğitim (ÖABT)',
+    on_lisans:     'Ön Lisans',
+    lise:          'Ortaöğretim (Lise)',
+    // eski format
+    gy_gk:   'GY+GK',
+    egitim:  'Eğitim (ÖABT)',
+    a_grubu: 'A Grubu'
+  };
+  var legacyMap = { gy_gk:'lisans_b', egitim:'lisans_egitim', a_grubu:'lisans_a' };
 
-  // ── Dal butonları ──
-  _settDal = _userProfil.dal || null;
-  var dalIdMap = {sayisal:'settDalSay', sozel:'settDalSoz', ea:'settDalEa', dil:'settDalDil'};
-  var dalLabel = {sayisal:'Sayısal', sozel:'Sözel', ea:'Eşit Ağırlık', dil:'Dil'};
-  Object.keys(dalIdMap).forEach(function(dal){
-    var btn = document.getElementById(dalIdMap[dal]);
-    if (!btn) return;
-    var active = dal === _settDal;
-    btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
-    btn.style.background  = active ? 'rgba(56,189,248,0.1)' : 'transparent';
-    btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
+  var kpssKat = (_userProfil.kpssProfile && _userProfil.kpssProfile.kategori) || null;
+  if (kpssKat && legacyMap[kpssKat]) kpssKat = legacyMap[kpssKat];
+  _settKpssKat = kpssKat;
+
+  Object.keys(katMap).forEach(function(kat) {
+    var btn = document.getElementById(katMap[kat]);
+    if (btn) _applyKpssKatStyle(btn, kat === kpssKat);
   });
 
-  // ── Hedef türü ──
-  _settHedefTur = _userProfil.hedefTur || 'siralama';
-  settSelectHedefTur(_settHedefTur, true);
+  // Hedef Puan
+  var puanEl = document.getElementById('settHedefSiralama');
+  var puan = _userProfil.hedefPuan || (_userProfil.kpssProfile && _userProfil.kpssProfile.hedefPuan) || '';
+  if (puanEl) puanEl.value = puan;
 
-  // ── Sıralama değeri ──
-  var sirEl = document.getElementById('settHedefSiralama');
-  if (sirEl) sirEl.value = _userProfil.hedefSiralama || '';
-
-  // ── Okul hedefi ──
-  if (_userProfil.hedefTur === 'okul' && _userProfil.hedefProgram) {
-    _settProgram = _userProfil.hedefProgram;
-    var prev = document.getElementById('settProgramPreview');
-    if (prev) {
-      var hp = _userProfil.hedefProgram;
-      var detay = [];
-      if (hp.siralama_2024) detay.push('2024 Sıra: ' + parseInt(hp.siralama_2024).toLocaleString('tr-TR'));
-      if (hp.min_puan_2024) detay.push('Taban: ' + parseFloat(hp.min_puan_2024).toFixed(2));
-      prev.innerHTML =
-        '<strong>' + (hp.uni || '') + '</strong> — ' + (hp.bolum || '') +
-        (detay.length ? '<br><span style="color:var(--muted);font-size:0.68rem">' + detay.join(' | ') + '</span>' : '');
-      prev.style.display = 'block';
-    }
-  } else {
-    _settProgram = null;
-    var prev2 = document.getElementById('settProgramPreview');
-    if (prev2) prev2.style.display = 'none';
-  }
-
-  // ── Subtitle güncelle ──
+  // Subtitle güncelle
   var subtitle = document.getElementById('sinavBilgSubtitle');
   if (subtitle) {
     var parts = [];
-    if (_settDal) parts.push(dalLabel[_settDal] || _settDal);
-    if (_userProfil.hedefTur === 'okul' && _userProfil.hedefProgram) {
-      parts.push(_userProfil.hedefProgram.bolum || 'Okul hedefi');
-    } else if (_userProfil.hedefSiralama) {
-      parts.push('Hedef: ilk ' + parseInt(_userProfil.hedefSiralama).toLocaleString('tr-TR'));
-    }
-    subtitle.textContent = parts.length ? parts.join(' · ') : 'Alan ve hedef sıralama';
+    if (kpssKat) parts.push(katLabel[kpssKat] || kpssKat);
+    if (puan) parts.push('Hedef: ' + puan + ' puan');
+    subtitle.textContent = parts.length ? parts.join(' · ') : 'Kadro türü ve hedef puan';
   }
 
-  // ── Kaydet butonu ──
+  // Kaydet butonu
   var saveBtn = document.getElementById('settProfilSaveBtn');
-  if (saveBtn) {
-    var hedefVar = _userProfil.hedefTur || _userProfil.dal;
-    saveBtn.style.display = hedefVar ? 'none' : 'block';
-  }
+  if (saveBtn) saveBtn.style.display = (kpssKat || puan) ? 'none' : 'block';
+}
+
+function _applyKpssKatStyle(btn, active) {
+  btn.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+  btn.style.background  = active ? 'rgba(52,211,153,0.1)' : 'transparent';
+  btn.style.color       = active ? 'var(--accent)' : 'var(--muted)';
+}
+
+function settingSelectKpssKat(kat, el) {
+  _settKpssKat = kat;
+  _settMarkChanged();
+  var katMap = {
+    lisans_a:      'settKpssLisansA',
+    lisans_b:      'settKpssLisansB',
+    lisans_egitim: 'settKpssLisansE',
+    on_lisans:     'settKpssOnLisans',
+    lise:          'settKpssLise'
+  };
+  Object.keys(katMap).forEach(function(k) {
+    var btn = document.getElementById(katMap[k]);
+    if (btn) _applyKpssKatStyle(btn, k === kat);
+  });
 }
 
 function settSelectHedefTur(tur, silent) {
@@ -8598,42 +9063,31 @@ function settingSelectDal(dal) {
 
 function saveSettingsProfil() {
   if (!_currentUser || !_fbDb) return;
+  var puan = parseFloat(document.getElementById('settHedefSiralama').value) || null;
   var update = { onboardingDone: true };
-  if (_settDal) update.dal = _settDal;
 
-  var siralama = parseInt(document.getElementById('settHedefSiralama').value) || null;
-  var program  = _settProgram;
-
-  if (program && siralama) {
-    // İkisi de var — hangisi son değiştirildiyse o geçerli
-    // _settProgram null değilse okul seçimi daha yeni demektir
-    // (sıralama girilince _settProgram sıfırlanıyor zaten)
-    // Bu noktaya ikisi de doluysa okul öncelikli
-    update.hedefTur      = 'okul';
-    update.hedefProgram  = program;
+  // LGS kategori
+  if (_settKpssKat) {
+    update.kpssProfile = Object.assign({}, (_userProfil && _userProfil.kpssProfile) || {}, {
+      kategori: _settKpssKat
+    });
+  }
+  // Puan hedefi
+  if (puan) {
+    update.hedefPuan = puan;
+    update.hedefTur  = 'puan';
     update.hedefSiralama = null;
-  } else if (program) {
-    update.hedefTur      = 'okul';
-    update.hedefProgram  = program;
-    update.hedefSiralama = null;
-  } else if (siralama) {
-    update.hedefTur      = 'siralama';
-    update.hedefSiralama = siralama;
     update.hedefProgram  = null;
   }
+
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
-    // _userProfil'i tam güncelle
     if (!_userProfil) _userProfil = {};
     Object.keys(update).forEach(function(k){ _userProfil[k] = update[k]; });
-    _applyDalFilter();
     showToast('✅ Profil güncellendi!');
-    // Kaydet butonunu gizle
     var btn = document.getElementById('settProfilSaveBtn');
     if (btn) btn.style.display = 'none';
-    // Subtitle ve badge'i yenile
+    // Subtitle'ı güncelle
     _populateSettingsProfil();
-    _renderYksDalBadge(_userProfil);
-    // AI öneriyi yenile
     localStorage.removeItem('pugi_ai_date');
     loadAiDailyCoach();
   }).catch(function(e){ showToast('❌ Hata: ' + e.message); });
@@ -8649,13 +9103,16 @@ function openSettingsModal() {
           dal:                data.dal                || null,
           hedefTur:           data.hedefTur           || null,
           hedefSiralama:      data.hedefSiralama       || null,
+          hedefPuan:          data.hedefPuan           || null,
           hedefProgram:       data.hedefProgram        || null,
           sinif:              data.sinif               || null,
           onboardingDone:     data.onboardingDone      || false,
+          lastActiveExam:     data.lastActiveExam      || 'lgs',
+          kpssProfile:        data.kpssProfile         || null,
           _hiddenSuggestions: data.hiddenSuggestions   || []
         };
-        // Sınav geçişi kartını güncelle
-        _renderExamSwitchCard(data.kpssProfile || null);
+        // Sınav geçişi kartını güncelle — YKS profili var mı?
+        _renderYksSwitch(data.onboardingDone || false, data.dal || null);
       }
       _populateSettingsProfil();
       _openSettingsPage();
@@ -8679,128 +9136,42 @@ function _openSettingsPage() {
 }
 
 // ════════════════════════════════════════════
+// YKS GEÇİŞ KARTI (lgs.html)
 // ════════════════════════════════════════════
-// KPSS KART — ayarlar sayfası
-// ════════════════════════════════════════════
-function _kpssKatLabel(kat) {
-  var m = { gy_gk:'GY + GK', egitim:'Eğitim Bilimleri', a_grubu:'A Grubu' };
-  return m[kat] || 'Genel';
-}
+function _renderYksSwitch(yksOnboardingDone, dal) {
+  var wrap = document.getElementById('yksProfileStatus');
+  if (!wrap) return;
+  var dalLabel = { sayisal:'Sayısal', sozel:'Sözel', ea:'Eşit Ağırlık', dil:'Dil' };
+  wrap.innerHTML = '';
 
-function _renderExamSwitchCard(kpssProfile) {
-  var subtitle = document.getElementById('kpssCardSubtitle');
-  var action   = document.getElementById('kpssCardAction');
-  if (!action) return;
-
-  var hasKpss = kpssProfile && kpssProfile.onboardingDone;
-  action.innerHTML = '';
-
-  if (hasKpss) {
-    // Profil var → kategori göster + Geçiş Yap butonu
-    if (subtitle) subtitle.textContent = 'Kategori: ' + _kpssKatLabel(kpssProfile.kategori);
-
+  if (yksOnboardingDone) {
+    var row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;padding:4px 0';
+    row.innerHTML = '<span style="font-size:1.4rem">📚</span><div style="flex:1"><div style="font-size:0.85rem;font-weight:900">YKS Profilin Var</div><div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Alan: ' + (dalLabel[dal] || 'Belirtilmemiş') + '</div></div>';
     var btn = document.createElement('button');
-    btn.textContent = '🏛️ KPSS Sayfasına Geç';
-    btn.style.cssText = 'width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,#34d399,#a78bfa);color:#fff;font-weight:900;font-size:0.85rem;cursor:pointer';
-    btn.onclick = function() {
-      if (_currentUser && _fbDb) {
-        _fbDb.collection('users').doc(_currentUser.uid).set({ lastActiveExam:'kpss' }, {merge:true});
-      }
-      window.location.href = 'kpss.html';
-    };
-    action.appendChild(btn);
+    btn.textContent = 'Geçiş Yap →';
+    btn.style.cssText = 'padding:8px 14px;border-radius:10px;border:1.5px solid var(--accent3);background:rgba(56,189,248,0.1);color:var(--accent3);font-weight:800;font-size:0.78rem;cursor:pointer;white-space:nowrap';
+    btn.onclick = goToYks;
+    row.appendChild(btn);
+    wrap.appendChild(row);
   } else {
-    // Profil yok → Oluştur butonu
-    if (subtitle) subtitle.textContent = 'Henüz KPSS profili oluşturmadın';
-
+    var txt = document.createElement('div');
+    txt.style.cssText = 'font-size:0.75rem;color:var(--muted);font-weight:700;margin-bottom:10px';
+    txt.textContent = 'YKS için henüz profil oluşturmadın.';
     var btn2 = document.createElement('button');
-    btn2.textContent = '+ KPSS Profili Oluştur';
-    btn2.style.cssText = 'width:100%;padding:11px;border-radius:10px;border:1.5px solid #34d399;background:rgba(52,211,153,0.08);color:#34d399;font-weight:900;font-size:0.85rem;cursor:pointer';
-    btn2.onclick = _showKpssCreateModal;
-    action.appendChild(btn2);
+    btn2.textContent = '📚 YKS Profili Oluştur / Geç';
+    btn2.style.cssText = 'width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--accent3),var(--accent2));color:#fff;font-weight:900;font-size:0.82rem;cursor:pointer';
+    btn2.onclick = goToYks;
+    wrap.appendChild(txt);
+    wrap.appendChild(btn2);
   }
 }
 
-// Mini bottom-sheet modal: kategori seç → profil kaydet → kpss.html
-function _showKpssCreateModal() {
-  var existing = document.getElementById('kpssCreateModal');
-  if (existing) { existing.style.display = 'flex'; window._kpssKatSel = null; return; }
-
-  var overlay = document.createElement('div');
-  overlay.id = 'kpssCreateModal';
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:flex-end;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px)';
-
-  var sheet = document.createElement('div');
-  sheet.style.cssText = 'background:var(--bg2);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:20px 20px 36px;max-height:85dvh;overflow-y:auto';
-
-  var handle = document.createElement('div');
-  handle.style.cssText = 'width:40px;height:4px;border-radius:99px;background:var(--border);margin:0 auto 18px';
-
-  var title = document.createElement('div');
-  title.style.cssText = 'font-size:1rem;font-weight:900;margin-bottom:4px';
-  title.textContent = '🏛️ KPSS Profili Oluştur';
-
-  var sub = document.createElement('div');
-  sub.style.cssText = 'font-size:0.74rem;color:var(--muted);font-weight:700;margin-bottom:18px';
-  sub.textContent = 'Hangi KPSS kategorisine hazırlanıyorsun?';
-
-  var kats = [
-    { val:'gy_gk',   emoji:'📝', label:'GY + GK',         desc:'Türkçe · Mat · Tarih · Coğrafya · Anayasa', color:'#34d399' },
-    { val:'egitim',  emoji:'🏫', label:'Eğitim Bilimleri', desc:'Gelişim · Öğrenme · Program · Ölçme · Rehberlik', color:'#a78bfa' },
-    { val:'a_grubu', emoji:'⚖️', label:'A Grubu Kadro',    desc:'Hukuk · İktisat · Maliye · İdare', color:'#fb923c' }
-  ];
-
-  var list = document.createElement('div');
-  list.style.cssText = 'display:flex;flex-direction:column;gap:8px;margin-bottom:18px';
-
-  kats.forEach(function(k) {
-    var card = document.createElement('div');
-    card.dataset.val = k.val;
-    card.style.cssText = 'background:var(--card);border:2px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:border-color 0.2s';
-    card.innerHTML = '<span style="font-size:1.4rem">' + k.emoji + '</span><div><div style="font-size:0.85rem;font-weight:900;color:' + k.color + '">' + k.label + '</div><div style="font-size:0.62rem;color:var(--muted);font-weight:700">' + k.desc + '</div></div>';
-    card.onclick = function() {
-      list.querySelectorAll('[data-val]').forEach(function(c) { c.style.borderColor = 'var(--border)'; });
-      card.style.borderColor = k.color;
-      window._kpssKatSel = k.val;
-      saveBtn.disabled = false;
-      saveBtn.style.opacity = '1';
-    };
-    list.appendChild(card);
-  });
-
-  var saveBtn = document.createElement('button');
-  saveBtn.textContent = '🏛️ KPSS Profilini Oluştur ve Geç';
-  saveBtn.disabled = true;
-  saveBtn.style.cssText = 'width:100%;padding:13px;border:none;border-radius:14px;background:linear-gradient(135deg,#34d399,#a78bfa);color:#fff;font-weight:900;font-size:0.92rem;cursor:pointer;margin-bottom:10px;opacity:0.5;transition:opacity 0.2s';
-  saveBtn.onclick = _saveKpssProfileFromModal;
-
-  var cancelBtn = document.createElement('button');
-  cancelBtn.textContent = 'İptal';
-  cancelBtn.style.cssText = 'width:100%;padding:12px;border:1.5px solid var(--border);border-radius:14px;background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer';
-  cancelBtn.onclick = function() { overlay.style.display = 'none'; };
-
-  sheet.appendChild(handle);
-  sheet.appendChild(title);
-  sheet.appendChild(sub);
-  sheet.appendChild(list);
-  sheet.appendChild(saveBtn);
-  sheet.appendChild(cancelBtn);
-  overlay.appendChild(sheet);
-  document.body.appendChild(overlay);
-  window._kpssKatSel = null;
-}
-
-function _saveKpssProfileFromModal() {
-  if (!_currentUser || !_fbDb) { window.location.href = 'kpss.html'; return; }
-  var kat = window._kpssKatSel || null;
-  var modal = document.getElementById('kpssCreateModal');
-  if (modal) modal.style.display = 'none';
-  _fbDb.collection('users').doc(_currentUser.uid).set({
-    kpssProfile: { kategori: kat, onboardingDone: true, createdAt: new Date().toISOString() },
-    lastActiveExam: 'kpss'
-  }, {merge:true}).then(function() {
-    window.location.href = 'kpss.html';
-  }).catch(function() { window.location.href = 'kpss.html'; });
+function goToYks() {
+  if (_currentUser && _fbDb) {
+    _fbDb.collection('users').doc(_currentUser.uid).set({ lastActiveExam: 'yks' }, {merge:true});
+  }
+  window.location.href = 'student.html';
 }
 
 function closeSettingsModal() {
@@ -8857,7 +9228,7 @@ function toggleNotifSetting() {
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().then(function(p) {
         if (p === 'granted') {
-          showToast(' Bildirimler açıldı!');
+          showToast('🔔 Bildirimler açıldı!');
           sendNotification('🦊 Pugi', 'Bildirimler açık!');
         } else {
           _notifEnabled = false;
@@ -8868,7 +9239,7 @@ function toggleNotifSetting() {
         updateNotifBtn();
       });
     } else {
-      showToast(' Bildirimler açıldı!');
+      showToast('🔔 Bildirimler açıldı!');
     }
   } else {
     showToast('🔕 Bildirimler kapatıldı.');
@@ -9047,7 +9418,7 @@ function selectGsPeriod(p) {
 }
 
 function addGsItem() {
-  _gsItems.push({ id: Date.now().toString(), metric:'time', examType:'TYT', subject:'', topic:'', target:60 });
+  _gsItems.push({ id: Date.now().toString(), metric:'time', examType:'GY', subject:'', topic:'', target:60 });
   renderGsItems();
 }
 
@@ -9061,16 +9432,15 @@ function renderGsItems() {
   }
 
   var EXAM_TABS = [
-    { key:'TYT',  label:'TYT' },
-    { key:'AYT',  label:'AYT Sayısal' },
-    { key:'SOZ',  label:'AYT Sözel' },
-    { key:'EA',   label:'AYT EA' }
+    { key:'GY',     label:'Genel Yetenek' },
+    { key:'GK',     label:'Genel Kültür' },
+    { key:'EGITIM', label:'Eğitim Bil.' }
   ];
 
   _gsItems.forEach(function(item, idx) {
     var color = GOAL_COLORS[idx % GOAL_COLORS.length];
-    var examKey = item.examType || 'TYT';
-    var examData = EXAM_DATA[examKey] || EXAM_DATA['TYT'];
+    var examKey = item.examType || 'GY';
+    var examData = EXAM_DATA[examKey] || EXAM_DATA['GY'];
     var subjects = Object.keys(examData);
 
     var card = document.createElement('div');
@@ -9294,7 +9664,7 @@ function renderAnaGoals() {
       var pct = Math.min(100,Math.round((done/item.target)*100));
       var isDone = pct>=100;
       var unit = item.metric==='time'?'dk':item.metric==='deneme'?'deneme':'soru';
-      var examPrefix = item.examType && item.examType!=='TYT' ? item.examType+' ' : (item.examType==='TYT'?'TYT ':'');
+      var examPrefix = item.examType ? item.examType+' ' : 'GY ';
       var label = (item.subject ? examPrefix+item.subject : 'Genel')+(item.topic?' · '+item.topic:'');
       return '<div style="margin-bottom:8px">' +
         '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">' +
@@ -9471,7 +9841,7 @@ function loadCoachSuggestionsForStudent() {
             list.innerHTML = '';
             docs.forEach(function(doc) {
               var d = doc.data();
-              var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : 'Konu Çalışması';
+              var typeLabel = d.type === 'test' ? '✏️ Test / Soru' : d.type === 'deneme' ? '📝 Deneme Sınavı' : '📖 Konu Çalışması';
               var typeColor = d.type === 'test' ? '#f59e0b' : d.type === 'deneme' ? '#8b5cf6' : 'var(--accent)';
               var isDone = !!d.done;
               var dateStr = d.createdAt ? d.createdAt.slice(0,10).split('-').reverse().join('.') : '';
@@ -10006,23 +10376,13 @@ function openCoachWhatsapp() {
     </div>
     <div class="day-modal-body">
 
-      <!-- Dal seçimi -->
+      <!-- LGS — dal seçimi yok -->
       <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Hangi alanda çalışıyorsun?</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-        <div class="ob-modal-dal" id="mdSay" onclick="selectModalDal('sayisal',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">📐</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--accent)">Sayısal</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Mat·Fiz·Kim·Bio</div>
-        </div>
         <div class="ob-modal-dal" id="mdSoz" onclick="selectModalDal('sozel',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
           <div style="font-size:1.3rem;margin-bottom:4px">📖</div>
           <div style="font-size:0.82rem;font-weight:900;color:var(--warn)">Sözel</div>
           <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Ede·Tar·Coğ·Fel</div>
-        </div>
-        <div class="ob-modal-dal" id="mdEa" onclick="selectModalDal('ea',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">⚖️</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--accent3)">Eşit Ağırlık</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Mat·Ede·Tar·Coğ</div>
         </div>
         <div class="ob-modal-dal" id="mdDil" onclick="selectModalDal('dil',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
           <div style="font-size:1.3rem;margin-bottom:4px">🌍</div>
@@ -10031,37 +10391,19 @@ function openCoachWhatsapp() {
         </div>
       </div>
 
-      <!-- Hedef türü -->
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button id="modalHedefSirBtn" onclick="modalSelectHedefTur('siralama')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-family:'Sora',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🏆 Sıralama</button>
-        <button id="modalHedefOkulBtn" onclick="modalSelectHedefTur('okul')" style="flex:1;padding:9px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Sora',sans-serif;font-weight:800;font-size:0.75rem;cursor:pointer">🎓 Okul/Bölüm</button>
-      </div>
+      <!-- Puan hedefi -->
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
 
-      <!-- Sıralama -->
+      <!-- Sıralama (puan) -->
       <div id="modalSiralamaWrap" style="margin-bottom:12px">
-        <input type="number" id="modalHedefSiralama" placeholder="örn: 10000" min="1" max="3000000"
+        <input type="number" id="modalHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
           style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
           oninput="this.style.borderColor='var(--accent)'; _modalOnSiralamaInput();">
       </div>
 
-      <!-- Okul -->
-      <div id="modalOkulWrap" style="display:none;margin-bottom:12px">
-        <select id="modalIlSel" onchange="modalLoadUnis()" style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
-          <option value="">Şehir seç...</option>
-        </select>
-        <select id="modalUniSel" onchange="modalLoadBolumler()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
-          <option value="">Önce şehir seç...</option>
-        </select>
-        <select id="modalBolumSel" onchange="modalSelectBolum()" disabled style="width:100%;padding:11px;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.82rem;font-weight:700;outline:none;margin-bottom:8px;-webkit-appearance:none">
-          <option value="">Önce üniversite seç...</option>
-        </select>
-        <div id="modalProgramPreview" style="display:none;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);border-radius:10px;padding:10px;font-size:0.74rem;font-weight:700;color:var(--text)"></div>
-      </div>
-
       <!-- Kaydet butonu -->
       <button id="modalSaveBtn" onclick="saveOnboardingModal()" disabled
-        style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#fff;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif;margin-bottom:10px">
+        style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#0a1a0f;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif;margin-bottom:10px">
         Kaydet
       </button>
       <button onclick="closeOnboardingModal(true)"
@@ -10080,7 +10422,7 @@ function openCoachWhatsapp() {
     <div class="day-modal-header">
       <div>
         <div class="day-modal-title">Derin Analiz</div>
-        <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:2px" id="deepAnalysisSubtitle">AI Koçunun haftalık değerlendirmesi</div>
+        <div style="font-size:0.7rem;color:var(--muted);font-weight:600;margin-top:2px" id="deepAnalysisSubtitle">Pugi Asistanun haftalık değerlendirmesi</div>
       </div>
       <button class="day-modal-close" onclick="closeDeepAnalysisModal()">✕</button>
     </div>

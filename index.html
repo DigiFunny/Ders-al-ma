@@ -581,7 +581,7 @@ input[type=number]:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px 
         <details class="intro-details">
           <summary>Hangi sınavlar var? <span class="sum-chev">▼</span></summary>
           <div class="intro-details-body">
-            Şu an <strong>YKS</strong> ve <strong>KPSS</strong> tam destekli. <strong>LGS, ALES</strong> için çalışmalar sürüyor; açıldığında aynı uygulama içinden seçebileceksin.
+            Şu an <strong>YKS</strong>, <strong>KPSS</strong> ve <strong>LGS</strong> tam destekli. <strong>ALES</strong> için çalışmalar sürüyor; açıldığında aynı uygulama içinden seçebileceksin.
           </div>
         </details>
 
@@ -608,7 +608,7 @@ input[type=number]:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px 
           </button>
         </div>
         <div class="exam-section-label">Hangi sınava hazırlanıyorsun?</div>
-        <p class="exam-section-hint">Birini seç; şu an <strong style="color:var(--accent)">YKS</strong> ve <strong style="color:#34d399">KPSS</strong> ile devam edebilirsin.</p>
+        <p class="exam-section-hint">Birini seç; şu an <strong style="color:var(--accent)">YKS</strong>, <strong style="color:#34d399">KPSS</strong> ve <strong style="color:var(--orange)">LGS</strong> ile devam edebilirsin.</p>
       </div>
 
       <div class="exam-section">
@@ -619,8 +619,7 @@ input[type=number]:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px 
             <span class="exam-desc">TYT &middot; AYT<br>Sayısal / Sözel / EA / Dil</span>
           </div>
 
-          <div class="exam-card lgs coming-soon" onclick="showComingSoon()">
-            <span class="coming-badge">Yakında</span>
+          <div class="exam-card lgs" onclick="guestEnterExam('lgs')">
             <span class="exam-emoji">&#x1F392;</span>
             <span class="exam-label">LGS</span>
             <span class="exam-desc">Liseye geçiş sınavı</span>
@@ -775,8 +774,7 @@ input[type=number]:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px 
         <span class="sp-label" style="color:#34d399">KPSS</span>
         <span class="sp-desc">GY · GK · Eğitim Bil.</span>
       </div>
-      <div class="sinav-pick-card lgs disabled" onclick="">
-        <span class="sp-badge">Yakında</span>
+      <div class="sinav-pick-card lgs" id="spLgs" onclick="pickExam('lgs',this)">
         <span class="sp-emoji">🎒</span>
         <span class="sp-label" style="color:var(--orange)">LGS</span>
         <span class="sp-desc">Liseye Geçiş Sınavı</span>
@@ -1123,10 +1121,12 @@ function scrollToLandingIntro(){
 }
 
 function guestEnterExam(exam){
-  if(exam!=='yks'&&exam!=='kpss')return;
+  if(exam!=='yks'&&exam!=='kpss'&&exam!=='lgs')return;
   sessionStorage.setItem('pugi_sinav',exam);
   sessionStorage.setItem('pugi_guest','true');
-  window.location.href=(exam==='kpss')?'kpss.html':'student.html';
+  if(exam==='kpss') window.location.href='kpss.html';
+  else if(exam==='lgs') window.location.href='lgs.html';
+  else window.location.href='student.html';
 }
 function showComingSoon(){
   var t=document.getElementById('landingToast');
@@ -1185,7 +1185,9 @@ function checkAccountTypeAndRedirect(user){
     }
     // lastActiveExam'a göre yönlendir (varsayılan: yks)
     var last=d.lastActiveExam||'yks';
-    window.location.href=(last==='kpss')?'kpss.html':'student.html';
+    if(last==='kpss') window.location.href='kpss.html';
+    else if(last==='lgs') window.location.href='lgs.html';
+    else window.location.href='student.html';
   }).catch(function(){hideLoading();});
 }
 
@@ -1578,6 +1580,11 @@ function confirmExamPick() {
     document.getElementById('kpssObStep2').style.display = 'none';
     document.getElementById('kpssOb2Bar').style.background = 'var(--border)';
     showScreen('screenKpssOnboarding');
+  } else if(_obExam === 'lgs') {
+    if(_obUid && _fbDb) {
+      _fbDb.collection('users').doc(_obUid).set({lastActiveExam:'lgs',onboardingDone:true},{merge:true});
+    }
+    window.location.href = 'lgs.html';
   }
 }
 
