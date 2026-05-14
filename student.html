@@ -364,6 +364,37 @@ body {
 
 /* THEME */
 body.light { --bg:#f0f4f8; --bg2:#e2e8f0; --bg3:#d1dce8; --card:#ffffff; --card2:#f8fafc; --border:#cbd5e1; --text:#1e293b; --muted:#64748b; --glass-bg:rgba(240,244,248,0.75); --glass-border:rgba(56,189,248,0.18); --glass-shadow:0 8px 32px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.8); }
+/* ── AÇIK MOD + KOZMETIK TEMA KOMBİNASYONLARI ── */
+body.light.theme-purple {
+  --bg:#f5f3ff; --bg2:#ede9fe; --bg3:#ddd6fe; --card:#ffffff; --card2:#faf8ff; --border:#c4b5fd;
+  --accent:#7c3aed; --accent2:#9333ea; --accent3:#6366f1; --text:#1e1b4b; --muted:#6b7280;
+  --glass-bg:rgba(245,243,255,0.8); --glass-border:rgba(124,58,237,0.2);
+}
+body.light.theme-teal {
+  --bg:#f0fdfa; --bg2:#ccfbf1; --bg3:#99f6e4; --card:#ffffff; --card2:#f0fffc; --border:#5eead4;
+  --accent:#0d9488; --accent2:#059669; --accent3:#10b981; --text:#042f2e; --muted:#6b7280;
+  --glass-bg:rgba(240,253,250,0.8); --glass-border:rgba(13,148,136,0.2);
+}
+body.light.theme-red {
+  --bg:#fff1f2; --bg2:#ffe4e6; --bg3:#fecdd3; --card:#ffffff; --card2:#fff5f5; --border:#fca5a5;
+  --accent:#dc2626; --accent2:#ea580c; --accent3:#d97706; --text:#450a0a; --muted:#6b7280;
+  --glass-bg:rgba(255,241,242,0.8); --glass-border:rgba(220,38,38,0.2);
+}
+body.light.theme-pink {
+  --bg:#fdf2f8; --bg2:#fce7f3; --bg3:#fbcfe8; --card:#ffffff; --card2:#fef9ff; --border:#f9a8d4;
+  --accent:#db2777; --accent2:#c026d3; --accent3:#f43f5e; --text:#500724; --muted:#6b7280;
+  --glass-bg:rgba(253,242,248,0.8); --glass-border:rgba(219,39,119,0.2);
+}
+body.light.theme-mono {
+  --bg:#f8fafc; --bg2:#f1f5f9; --bg3:#e2e8f0; --card:#ffffff; --card2:#f8fafc; --border:#cbd5e1;
+  --accent:#1e293b; --accent2:#475569; --accent3:#64748b; --text:#0f172a; --muted:#94a3b8;
+  --glass-bg:rgba(248,250,252,0.8); --glass-border:rgba(30,41,59,0.15);
+}
+body.light.theme-midnight {
+  --bg:#eef2ff; --bg2:#e0e7ff; --bg3:#c7d2fe; --card:#ffffff; --card2:#f5f7ff; --border:#a5b4fc;
+  --accent:#4f46e5; --accent2:#7c3aed; --accent3:#0891b2; --text:#1e1b4b; --muted:#6b7280;
+  --glass-bg:rgba(238,242,255,0.8); --glass-border:rgba(79,70,229,0.2);
+}
 
 /* THEME TOGGLE */
 .theme-btn { width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s; }
@@ -2401,6 +2432,8 @@ function applyTheme() {
   if (wrap) wrap.style.background = isDark ? 'var(--accent)' : 'var(--bg3)';
   if (thumb) thumb.style.left = isDark ? '23px' : '3px';
   if (label) label.textContent = isDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif';
+  // Kozmetik temayı yeniden uygula (açık/koyu değişince renk kombinasyonu güncellenir)
+  if (typeof refreshCosmetics === 'function') refreshCosmetics();
 }
 function toggleTheme() { isDark = !isDark; applyTheme(); }
 function toggleThemeSettings() { toggleTheme(); }
