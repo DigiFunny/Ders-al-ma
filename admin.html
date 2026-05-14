@@ -506,15 +506,19 @@ function switchToLgsView() {
 }
 
 function setAdminCoins() {
-  if (!_db || !_auth || !_auth.currentUser) {
-    alert('Firebase bağlantısı yok, sayfayı yenile.');
+  if (!_db || !_adminUser) {
+    alert('Oturum bulunamadı, sayfayı yenile.');
     return;
   }
-  var uid = _auth.currentUser.uid;
-  _db.collection('users').doc(uid).update({ coins: 99999 }).then(function() {
+  _db.collection('users').doc(_adminUser.uid).update({ coins: 99999 }).then(function() {
     showToast('🪙 99.999 coin yüklendi!');
   }).catch(function(e) {
-    alert('Hata: ' + e.message);
+    // update() field yoksa set ile dene
+    _db.collection('users').doc(_adminUser.uid).set({ coins: 99999 }, { merge: true }).then(function() {
+      showToast('🪙 99.999 coin yüklendi!');
+    }).catch(function(e2) {
+      alert('Hata: ' + e2.message);
+    });
   });
 }
 
