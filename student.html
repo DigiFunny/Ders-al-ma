@@ -91,9 +91,20 @@ body.theme-midnight {
 @keyframes prof-fire    { 0%,100%{box-shadow:0 0 0 2.5px #fb923c,0 0 10px rgba(251,146,60,0.7)} 50%{box-shadow:0 0 0 2.5px #fbbf24,0 0 16px rgba(251,191,36,0.8)} }
 @keyframes prof-diamond { 0%,100%{box-shadow:0 0 0 2.5px #67e8f9,0 0 12px rgba(103,232,249,0.6)} 50%{box-shadow:0 0 0 2.5px #a5f3fc,0 0 20px rgba(165,243,252,0.8)} }
 @keyframes prof-rainbow { 0%{box-shadow:0 0 0 2.5px #f87171} 16%{box-shadow:0 0 0 2.5px #fb923c} 33%{box-shadow:0 0 0 2.5px #fbbf24} 50%{box-shadow:0 0 0 2.5px #34d399} 66%{box-shadow:0 0 0 2.5px #38bdf8} 83%{box-shadow:0 0 0 2.5px #818cf8} 100%{box-shadow:0 0 0 2.5px #f87171} }
+@keyframes prof-aurora  { 0%{box-shadow:0 0 0 3px #818cf8,0 0 18px rgba(129,140,248,0.5)} 33%{box-shadow:0 0 0 3px #2dd4bf,0 0 18px rgba(45,212,191,0.5)} 66%{box-shadow:0 0 0 3px #f472b6,0 0 18px rgba(244,114,182,0.5)} 100%{box-shadow:0 0 0 3px #818cf8,0 0 18px rgba(129,140,248,0.5)} }
 #profileIconBtn.pf-fire_rare     { animation:prof-fire    1.5s ease-in-out infinite !important; border:none !important; }
 #profileIconBtn.pf-diamond_rare  { animation:prof-diamond 2s ease-in-out infinite !important;   border:none !important; }
 #profileIconBtn.pf-rainbow_rare  { animation:prof-rainbow 3s linear infinite !important;        border:none !important; }
+#profileIconBtn.pf-aurora_rare   { animation:prof-aurora  4s ease-in-out infinite !important;   border:none !important; }
+/* Profil hero avatar animasyonlu çerçeveler */
+#profileHeroAvatar.ph-frame-fire_rare    { animation:ph-fire    1.5s ease-in-out infinite; }
+#profileHeroAvatar.ph-frame-diamond_rare { animation:ph-diamond 2s ease-in-out infinite; }
+#profileHeroAvatar.ph-frame-rainbow_rare { animation:ph-rainbow 3s linear infinite; }
+#profileHeroAvatar.ph-frame-aurora_rare  { animation:ph-aurora  4s ease-in-out infinite; }
+@keyframes ph-fire    { 0%,100%{box-shadow:0 0 0 3px #fb923c,0 0 14px rgba(251,146,60,0.7)} 50%{box-shadow:0 0 0 3px #fbbf24,0 0 22px rgba(251,191,36,0.8)} }
+@keyframes ph-diamond { 0%,100%{box-shadow:0 0 0 3px #67e8f9,0 0 16px rgba(103,232,249,0.6)} 50%{box-shadow:0 0 0 3px #a5f3fc,0 0 28px rgba(165,243,252,0.8)} }
+@keyframes ph-rainbow { 0%{box-shadow:0 0 0 3px #f87171} 16%{box-shadow:0 0 0 3px #fb923c} 33%{box-shadow:0 0 0 3px #fbbf24} 50%{box-shadow:0 0 0 3px #34d399} 66%{box-shadow:0 0 0 3px #38bdf8} 83%{box-shadow:0 0 0 3px #818cf8} 100%{box-shadow:0 0 0 3px #f87171} }
+@keyframes ph-aurora  { 0%{box-shadow:0 0 0 3px #818cf8,0 0 20px rgba(129,140,248,0.5)} 33%{box-shadow:0 0 0 3px #2dd4bf,0 0 20px rgba(45,212,191,0.5)} 66%{box-shadow:0 0 0 3px #f472b6,0 0 20px rgba(244,114,182,0.5)} 100%{box-shadow:0 0 0 3px #818cf8,0 0 20px rgba(129,140,248,0.5)} }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
 html, body { height: 100%; }
@@ -2020,28 +2031,57 @@ body {
   <!-- PROFİL PANELİ -->
   <div id="profilPanel">
 
-    <!-- Profil Kartı -->
-    <div id="profileHeroCard" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1.5px solid rgba(56,189,248,0.15);border-radius:20px;padding:20px 18px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div id="profileHeroAvatar" style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;color:#fff;flex-shrink:0">?</div>
+    <!-- ── YENİ PROFİL HERO KARTI ── -->
+    <div id="profileHeroCard" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.07),rgba(129,140,248,0.07));border:1.5px solid rgba(56,189,248,0.15);border-radius:20px;padding:18px 16px;margin-bottom:14px">
+
+      <!-- Üst satır: avatar + bilgi + aksiyonlar -->
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
+
+        <!-- Avatar + çerçeve -->
+        <div id="profileHeroAvatarWrap" style="position:relative;width:64px;height:64px;flex-shrink:0">
+          <div id="profileHeroAvatar" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.6rem;color:#fff;transition:box-shadow 0.3s;overflow:hidden">?</div>
+        </div>
+
+        <!-- İsim + kullanıcı adı + level -->
         <div style="flex:1;min-width:0">
-          <div id="profileHeroName" style="font-size:1rem;font-weight:900;margin-bottom:2px">—</div>
-          <div id="profileHeroUname" style="font-size:0.72rem;color:var(--muted);font-weight:700">@—</div>
+          <div id="profileHeroName" style="font-size:1.05rem;font-weight:900;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
+          <div id="profileHeroUname" style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:7px">@—</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span id="xpLevel2" style="font-size:0.72rem;font-weight:900">Seviye 1</span>
+            <span id="xpTitle2" style="font-size:0.68rem;color:var(--accent);font-weight:800;background:rgba(56,189,248,0.12);padding:2px 9px;border-radius:6px">Başlangıç</span>
+          </div>
+        </div>
+
+        <!-- Aksiyon butonları: Mağaza + Ayarlar -->
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+          <button onclick="window.location.href='shop.html'" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,146,60,0.12));border:1.5px solid rgba(251,191,36,0.3);color:var(--yellow);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">🛍️</button>
+          <button onclick="openSettingsModal()" style="width:36px;height:36px;border-radius:10px;background:var(--card2);border:1.5px solid var(--border);color:var(--muted);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">⚙️</button>
         </div>
       </div>
-      <!-- XP Bar -->
-      <div id="xpBarWrap2" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="xp-level" style="font-size:0.78rem;font-weight:900">Seviye <span id="xpLevel2">1</span></span>
-            <span class="xp-title" id="xpTitle2" style="font-size:0.72rem;color:var(--accent);font-weight:800;background:rgba(56,189,248,0.12);padding:2px 8px;border-radius:6px">Başlangıç</span>
-          </div>
-          <span style="font-size:0.72rem;color:var(--yellow);font-weight:800"><span id="xpTotal2">0</span> XP</span>
+
+      <!-- XP bar -->
+      <div id="xpBarWrap2" style="display:none;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpCurrent2">0</span> XP</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--yellow);font-weight:700"><span id="xpTotal2">0</span> XP</span>
+          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpNext2">100</span> XP sonraki</span>
         </div>
         <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
-        <div style="display:flex;justify-content:space-between;margin-top:4px">
-          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpCurrent2">0</span> XP</span>
-          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpNext2">100</span> XP sonraki seviye</span>
+      </div>
+
+      <!-- Hızlı istatistikler: coin · arkadaş · rozet -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px">
+        <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:8px 6px;text-align:center">
+          <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">COİN</div>
+          <div id="profileCoinCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--yellow)">—</div>
+        </div>
+        <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);border-radius:10px;padding:8px 6px;text-align:center">
+          <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">ARKADAŞ</div>
+          <div id="profileFriendCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent)">—</div>
+        </div>
+        <div style="background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);border-radius:10px;padding:8px 6px;text-align:center">
+          <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">ROZET</div>
+          <div id="profileBadgeCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent2)">—</div>
         </div>
       </div>
     </div>
@@ -4656,9 +4696,32 @@ function onUserLoggedIn(user) {
       var heroAvatar = document.getElementById('profileHeroAvatar');
       var heroName   = document.getElementById('profileHeroName');
       var heroUname  = document.getElementById('profileHeroUname');
-      if (heroAvatar) heroAvatar.textContent = displayName.charAt(0).toUpperCase();
-      if (heroName)   heroName.textContent   = displayName;
-      if (heroUname)  heroUname.textContent  = '@' + username;
+      if (heroName)   heroName.textContent  = displayName;
+      if (heroUname)  heroUname.textContent = '@' + username;
+      // Avatar + çerçeve kozmetik uygula
+      if (heroAvatar) {
+        var cos = data.cosmetics || {};
+        // Avatar resmi
+        if (cos.avatar && cos.avatar !== 'default') {
+          var avImg = heroAvatar.querySelector('img.ph-av-img');
+          if (!avImg) {
+            avImg = document.createElement('img');
+            avImg.className = 'ph-av-img';
+            avImg.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+            heroAvatar.innerHTML = '';
+            heroAvatar.appendChild(avImg);
+          }
+          avImg.src = 'avatars/' + cos.avatar + '.png';
+          avImg.onerror = function(){ heroAvatar.innerHTML = displayName.charAt(0).toUpperCase(); };
+        } else {
+          heroAvatar.innerHTML = displayName.charAt(0).toUpperCase();
+        }
+        // Çerçeve uygula
+        _applyHeroFrame(heroAvatar, cos.frame || 'none');
+      }
+      // Coin sayısı
+      var coinEl = document.getElementById('profileCoinCount');
+      if (coinEl) coinEl.textContent = (data.coins || 0).toLocaleString('tr-TR');
     }
     var xbw2 = document.getElementById('xpBarWrap2');
     if (xbw2) xbw2.style.display = 'block';
@@ -6225,9 +6288,33 @@ function openFriendDetail(friendUid, displayName, username, stats) {
   var typeLabels = { TYT:'TYT', AYT_SAY:'Sayısal', AYT_SOZ:'Sözel', AYT_EA:'EA' };
   var typeColors = { TYT:'#38bdf8', AYT_SAY:'#818cf8', AYT_SOZ:'#f472b6', AYT_EA:'#fb923c' };
 
-  document.getElementById('fdAvatar').textContent = displayName.charAt(0).toUpperCase();
+  var fdAv = document.getElementById('fdAvatar');
+  if (fdAv) {
+    fdAv.style.boxShadow = '';
+    fdAv.style.animation = '';
+    fdAv.classList.remove('pf-fire_rare','pf-diamond_rare','pf-rainbow_rare','pf-aurora_rare');
+    fdAv.innerHTML = displayName.charAt(0).toUpperCase();
+  }
   document.getElementById('fdName').textContent = displayName;
   document.getElementById('fdUname').textContent = '@' + username;
+  // Arkadaşın kozmetiklerini Firestore'dan çek
+  if (_fbDb && friendUid && fdAv) {
+    _fbDb.collection('users').doc(friendUid).get().then(function(doc) {
+      if (!doc.exists) return;
+      var cos = doc.data().cosmetics || {};
+      // Avatar
+      if (cos.avatar && cos.avatar !== 'default') {
+        var img = document.createElement('img');
+        img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
+        img.src = 'avatars/' + cos.avatar + '.png';
+        img.onerror = function(){ fdAv.innerHTML = displayName.charAt(0).toUpperCase(); };
+        fdAv.innerHTML = '';
+        fdAv.appendChild(img);
+      }
+      // Çerçeve
+      _applyHeroFrame(fdAv, cos.frame || 'none');
+    }).catch(function(){});
+  }
 
   var totalMins   = stats ? (stats.totalMins   || 0) : 0;
   var totalSoru   = stats ? (stats.totalSoru   || 0) : 0;
@@ -7316,6 +7403,48 @@ function notifyBreakStarted() {
   var label = timerModes[timerMode] ? timerModes[timerMode].label : 'Mola';
   var mins = timerModes[timerMode] ? Math.round(timerModes[timerMode].s / 60) : 5;
   sendNotification('🎉 Çalışma bitti!', mins + ' dk ' + label + ' zamanı. Telefonu bırak 😌');
+}
+
+// Profil hero avatar çerçevesi uygula
+function _applyHeroFrame(el, frame) {
+  if (!el) return;
+  var SHADOWS = {
+    'blue_simple':   '0 0 0 3px #38bdf8, 0 0 10px rgba(56,189,248,0.3)',
+    'teal_simple':   '0 0 0 3px #34d399, 0 0 10px rgba(52,211,153,0.3)',
+    'orange_simple': '0 0 0 3px #fb923c, 0 0 10px rgba(251,146,60,0.3)',
+    'red_simple':    '0 0 0 3px #f87171, 0 0 10px rgba(248,113,113,0.3)',
+    'white_simple':  '0 0 0 3px #e2e8f0, 0 0 10px rgba(226,232,240,0.3)',
+    'purple_mid':    '0 0 0 3px #818cf8, 0 0 14px rgba(129,140,248,0.5)',
+    'pink_mid':      '0 0 0 3px #f472b6, 0 0 14px rgba(244,114,182,0.5)',
+    'gold_mid':      '0 0 0 3px #fbbf24, 0 0 14px rgba(251,191,36,0.5)',
+    'cyan_mid':      '0 0 0 3px #22d3ee, 0 0 14px rgba(34,211,238,0.5)',
+    'green_mid':     '0 0 0 3px #4ade80, 0 0 14px rgba(74,222,128,0.5)',
+  };
+  var ANIM = ['diamond_rare','fire_rare','rainbow_rare','aurora_rare'];
+  ANIM.forEach(function(f){ el.classList.remove('ph-frame-'+f); });
+  el.style.animation = '';
+  if (ANIM.indexOf(frame) !== -1) {
+    el.classList.add('ph-frame-'+frame);
+    el.style.boxShadow = '';
+  } else if (SHADOWS[frame]) {
+    el.style.boxShadow = SHADOWS[frame];
+  } else {
+    el.style.boxShadow = '';
+  }
+}
+
+// Arkadaş ve rozet sayısını profil kartında güncelle
+function _updateProfileCounts() {
+  var friendEl = document.getElementById('profileFriendCount');
+  var badgeEl  = document.getElementById('profileBadgeCount');
+  if (friendEl) {
+    var friendCards = document.querySelectorAll('#friendsWrap .friend-card');
+    friendEl.textContent = friendCards.length || '0';
+  }
+  if (badgeEl) {
+    var badges = document.querySelectorAll('#badgesGrid .badge-item.earned');
+    badgeEl.textContent = badges.length || '0';
+  }
 }
 
 function applyCosmetics(cosmetics) {

@@ -179,9 +179,15 @@ body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; m
 .fp-purple_mid     { box-shadow:0 0 0 3px #818cf8, 0 0 10px rgba(129,140,248,0.4); }
 .fp-pink_mid       { box-shadow:0 0 0 3px #f472b6, 0 0 10px rgba(244,114,182,0.4); }
 .fp-gold_mid       { box-shadow:0 0 0 3px #fbbf24, 0 0 12px rgba(251,191,36,0.45); }
+.fp-red_simple     { box-shadow:0 0 0 3px #f87171; }
+.fp-white_simple   { box-shadow:0 0 0 3px #e2e8f0; }
+.fp-cyan_mid       { box-shadow:0 0 0 3px #22d3ee, 0 0 10px rgba(34,211,238,0.4); }
+.fp-green_mid      { box-shadow:0 0 0 3px #4ade80, 0 0 10px rgba(74,222,128,0.4); }
 .fp-diamond_rare   { animation:diamond-p 2s ease-in-out infinite; }
 .fp-fire_rare      { animation:fire-p 1.5s ease-in-out infinite; }
 .fp-rainbow_rare   { animation:rainbow-p 3s linear infinite; }
+.fp-aurora_rare    { animation:aurora-p 4s ease-in-out infinite; }
+@keyframes aurora-p { 0%{box-shadow:0 0 0 3px #818cf8,0 0 14px rgba(129,140,248,0.5)} 33%{box-shadow:0 0 0 3px #2dd4bf,0 0 14px rgba(45,212,191,0.5)} 66%{box-shadow:0 0 0 3px #f472b6,0 0 14px rgba(244,114,182,0.5)} 100%{box-shadow:0 0 0 3px #818cf8,0 0 14px rgba(129,140,248,0.5)} }
 @keyframes diamond-p {
   0%,100% { box-shadow:0 0 0 3px #67e8f9, 0 0 16px rgba(103,232,249,0.5); }
   50%      { box-shadow:0 0 0 3px #a5f3fc, 0 0 24px rgba(165,243,252,0.7); }
@@ -360,6 +366,10 @@ var CATALOG = {
       preview:'<div class="frame-preview-circle fp-teal_simple">S</div>' },
     { id:'orange_simple', name:'Turuncu',     tier:'Basit', price:100,  tierClass:'tier-basic',
       preview:'<div class="frame-preview-circle fp-orange_simple">S</div>' },
+    { id:'red_simple',    name:'Kırmızı',     tier:'Basit', price:100,  tierClass:'tier-basic',
+      preview:'<div class="frame-preview-circle fp-red_simple">S</div>' },
+    { id:'white_simple',  name:'Beyaz',       tier:'Basit', price:100,  tierClass:'tier-basic',
+      preview:'<div class="frame-preview-circle fp-white_simple">S</div>' },
     // Orta — 400 coin
     { id:'purple_mid',    name:'Mor Parıltı', tier:'Orta',  price:400,  tierClass:'tier-mid',
       preview:'<div class="frame-preview-circle fp-purple_mid">S</div>' },
@@ -367,6 +377,10 @@ var CATALOG = {
       preview:'<div class="frame-preview-circle fp-pink_mid">S</div>' },
     { id:'gold_mid',      name:'Altın',       tier:'Orta',  price:400,  tierClass:'tier-mid',
       preview:'<div class="frame-preview-circle fp-gold_mid">S</div>' },
+    { id:'cyan_mid',      name:'Siyan',       tier:'Orta',  price:400,  tierClass:'tier-mid',
+      preview:'<div class="frame-preview-circle fp-cyan_mid">S</div>' },
+    { id:'green_mid',     name:'Zümrüt',      tier:'Orta',  price:400,  tierClass:'tier-mid',
+      preview:'<div class="frame-preview-circle fp-green_mid">S</div>' },
     // Nadir — 1600 coin
     { id:'diamond_rare',  name:'Elmas',       tier:'Nadir', price:1600, tierClass:'tier-rare',
       preview:'<div class="frame-preview-circle fp-diamond_rare">S</div>' },
@@ -374,31 +388,36 @@ var CATALOG = {
       preview:'<div class="frame-preview-circle fp-fire_rare">S</div>' },
     { id:'rainbow_rare',  name:'Gökkuşağı',   tier:'Nadir', price:1600, tierClass:'tier-rare',
       preview:'<div class="frame-preview-circle fp-rainbow_rare">S</div>' },
+    { id:'aurora_rare',   name:'Aurora',      tier:'Nadir', price:1600, tierClass:'tier-rare',
+      preview:'<div class="frame-preview-circle fp-aurora_rare">S</div>' },
   ],
   avatars: [
     // Standart — 250 coin
-    { id:'av_fox',      name:'Tilki',      tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/fox.png" onerror="this.parentNode.innerHTML=\'🦊\'"></div>' },
-    { id:'av_owl',      name:'Baykuş',     tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/owl.png" onerror="this.parentNode.innerHTML=\'🦉\'"></div>' },
-    { id:'av_cat',      name:'Kedi',       tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/cat.png" onerror="this.parentNode.innerHTML=\'🐱\'"></div>' },
-    { id:'av_wolf',     name:'Kurt',       tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/wolf.png" onerror="this.parentNode.innerHTML=\'🐺\'"></div>' },
-    { id:'av_bear',     name:'Ayı',        tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/bear.png" onerror="this.parentNode.innerHTML=\'🐻\'"></div>' },
+    { id:'1', name:'Avatar 1', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/1.png" onerror="this.parentNode.innerHTML=\'1\'"></div>' },
+    { id:'2', name:'Avatar 2', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/2.png" onerror="this.parentNode.innerHTML=\'2\'"></div>' },
+    { id:'3', name:'Avatar 3', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/3.png" onerror="this.parentNode.innerHTML=\'3\'"></div>' },
+    { id:'4', name:'Avatar 4', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/4.png" onerror="this.parentNode.innerHTML=\'4\'"></div>' },
+    { id:'5', name:'Avatar 5', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/5.png" onerror="this.parentNode.innerHTML=\'5\'"></div>' },
     // Özel — 400 coin
-    { id:'av_dragon',   name:'Ejder',      tier:'Özel',     price:400, tierClass:'tier-mid',
-      preview:'<div class="av-circle"><img src="avatars/dragon.png" onerror="this.parentNode.innerHTML=\'🐉\'"></div>' },
-    { id:'av_phoenix',  name:'Anka',       tier:'Özel',     price:400, tierClass:'tier-mid',
-      preview:'<div class="av-circle"><img src="avatars/phoenix.png" onerror="this.parentNode.innerHTML=\'🔥\'"></div>' },
-    { id:'av_astronaut',name:'Astronot',   tier:'Özel',     price:400, tierClass:'tier-mid',
-      preview:'<div class="av-circle"><img src="avatars/astronaut.png" onerror="this.parentNode.innerHTML=\'🧑‍🚀\'"></div>' },
+    { id:'6', name:'Avatar 6', tier:'Özel', price:400, tierClass:'tier-mid',
+      preview:'<div class="av-circle"><img src="avatars/6.png" onerror="this.parentNode.innerHTML=\'6\'"></div>' },
+    { id:'7', name:'Avatar 7', tier:'Özel', price:400, tierClass:'tier-mid',
+      preview:'<div class="av-circle"><img src="avatars/7.png" onerror="this.parentNode.innerHTML=\'7\'"></div>' },
+    { id:'8', name:'Avatar 8', tier:'Özel', price:400, tierClass:'tier-mid',
+      preview:'<div class="av-circle"><img src="avatars/8.png" onerror="this.parentNode.innerHTML=\'8\'"></div>' },
     // Efsane — 1600 coin
-    { id:'av_legend',   name:'Efsane',     tier:'Efsane',   price:1600,tierClass:'tier-rare',
-      preview:'<div class="av-circle"><img src="avatars/legend.png" onerror="this.parentNode.innerHTML=\'👑\'"></div>' },
+    { id:'9', name:'Avatar 9', tier:'Efsane', price:1600, tierClass:'tier-rare',
+      preview:'<div class="av-circle"><img src="avatars/9.png" onerror="this.parentNode.innerHTML=\'9\'"></div>' },
   ],
   themes: [
+    // Varsayılan — Ücretsiz
+    { id:'default', name:'Varsayılan', tier:'Ücretsiz', price:0, tierClass:'tier-basic',
+      preview:'<div class="theme-preview" style="background:#080d18"><div class="theme-dot-row"><div class="theme-dot" style="background:#38bdf8"></div><div class="theme-dot" style="background:#818cf8"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#111827;flex:2"></div></div></div>' },
     // Basit — 300 coin
     { id:'purple',   name:'Mor Tema',       tier:'Basit', price:300, tierClass:'tier-basic',
       preview:'<div class="theme-preview" style="background:#0d0820"><div class="theme-dot-row"><div class="theme-dot" style="background:#a78bfa"></div><div class="theme-dot" style="background:#c084fc"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#1e1040;flex:2"></div></div></div>' },
@@ -548,6 +567,8 @@ function openSheet(tab, itemId) {
 
   var canAfford = _coins >= item.price;
   var buyBtn    = document.getElementById('sheetBuyBtn');
+  if (item.price === 0) { buyBtn.textContent = '✨ Ücretsiz Edin'; buyBtn.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+  else { buyBtn.textContent = 'Satın Al'; buyBtn.style.background = 'linear-gradient(135deg,var(--yellow),var(--orange))'; }
   var equipBtn  = document.getElementById('sheetEquipBtn');
   var insuf     = document.getElementById('insufficientMsg');
 
@@ -589,7 +610,7 @@ function confirmBuy() {
   var item = _selectedItem.item;
   if (_coins < item.price) return;
 
-  var newCoins = _coins - item.price;
+  var newCoins = item.price === 0 ? _coins : (_coins - item.price);
   var newOwned = _owned.concat([item.id]);
 
   // Otomatik kuşan (satın alınca direkt takılsın)
