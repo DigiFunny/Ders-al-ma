@@ -506,12 +506,12 @@ function switchToLgsView() {
 }
 
 function setAdminCoins() {
-  if (!_fbDb || !_fbAuth || !_fbAuth.currentUser) {
+  if (!_db || !_auth || !_auth.currentUser) {
     alert('Firebase bağlantısı yok, sayfayı yenile.');
     return;
   }
-  var uid = _fbAuth.currentUser.uid;
-  _fbDb.collection('users').doc(uid).update({ coins: 99999 }).then(function() {
+  var uid = _auth.currentUser.uid;
+  _db.collection('users').doc(uid).update({ coins: 99999 }).then(function() {
     showToast('🪙 99.999 coin yüklendi!');
   }).catch(function(e) {
     alert('Hata: ' + e.message);
