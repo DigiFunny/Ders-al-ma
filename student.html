@@ -55,6 +55,22 @@
   --glass-blur: blur(18px);
   --glass-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
 }
+/* ── TEMA OVERRIDE'LARI ── */
+body.theme-purple   { --accent:#a78bfa; --accent2:#c084fc; --accent3:#818cf8; }
+body.theme-teal     { --accent:#2dd4bf; --accent2:#34d399; --accent3:#4ade80; }
+body.theme-red      { --accent:#f87171; --accent2:#fb923c; --accent3:#fbbf24; }
+body.theme-pink     { --accent:#f472b6; --accent2:#e879f9; --accent3:#fb7185; }
+body.theme-mono     { --bg:#0a0a0a; --bg2:#111; --bg3:#1a1a1a; --card:#141414; --card2:#1c1c1c; --border:#2a2a2a; --accent:#e2e8f0; --accent2:#94a3b8; --accent3:#64748b; }
+body.theme-midnight { --bg:#020617; --bg2:#0f172a; --bg3:#1e1b4b; --card:#0d1340; --card2:#111c52; --border:#1e2d6e; --accent:#6366f1; --accent2:#8b5cf6; --accent3:#06b6d4; }
+
+/* ── PROFİL İKONU FRAME ANİMASYONLARI ── */
+@keyframes prof-fire    { 0%,100%{box-shadow:0 0 0 2.5px #fb923c,0 0 10px rgba(251,146,60,0.7)} 50%{box-shadow:0 0 0 2.5px #fbbf24,0 0 16px rgba(251,191,36,0.8)} }
+@keyframes prof-diamond { 0%,100%{box-shadow:0 0 0 2.5px #67e8f9,0 0 12px rgba(103,232,249,0.6)} 50%{box-shadow:0 0 0 2.5px #a5f3fc,0 0 20px rgba(165,243,252,0.8)} }
+@keyframes prof-rainbow { 0%{box-shadow:0 0 0 2.5px #f87171} 16%{box-shadow:0 0 0 2.5px #fb923c} 33%{box-shadow:0 0 0 2.5px #fbbf24} 50%{box-shadow:0 0 0 2.5px #34d399} 66%{box-shadow:0 0 0 2.5px #38bdf8} 83%{box-shadow:0 0 0 2.5px #818cf8} 100%{box-shadow:0 0 0 2.5px #f87171} }
+#profileIconBtn.pf-fire_rare     { animation:prof-fire    1.5s ease-in-out infinite !important; border:none !important; }
+#profileIconBtn.pf-diamond_rare  { animation:prof-diamond 2s ease-in-out infinite !important;   border:none !important; }
+#profileIconBtn.pf-rainbow_rare  { animation:prof-rainbow 3s linear infinite !important;        border:none !important; }
+
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
 html, body { height: 100%; }
 html { overflow-x: hidden; }
@@ -4554,6 +4570,8 @@ function onUserLoggedIn(user) {
       if (profBtn) { profBtn.style.display = 'flex'; }
       if (profInit && displayName) { profInit.textContent = displayName.charAt(0).toUpperCase(); }
     }
+    // Kozmetikleri tüm kullanıcılara uygula (tema, çerçeve, avatar)
+    applyCosmetics(data.cosmetics || {});
 
     // Kullanıcı profilini global state'e yükle
     _userProfil = {
@@ -7240,6 +7258,63 @@ function notifyBreakStarted() {
   var label = timerModes[timerMode] ? timerModes[timerMode].label : 'Mola';
   var mins = timerModes[timerMode] ? Math.round(timerModes[timerMode].s / 60) : 5;
   sendNotification('🎉 Çalışma bitti!', mins + ' dk ' + label + ' zamanı. Telefonu bırak 😌');
+}
+
+function applyCosmetics(cosmetics) {
+  if (!cosmetics) return;
+
+  // Tema
+  var theme = cosmetics.theme || 'default';
+  document.body.classList.remove('theme-purple','theme-teal','theme-red','theme-pink','theme-mono','theme-midnight');
+  if (theme !== 'default') document.body.classList.add('theme-' + theme);
+
+  // Profil ikonu — frame + avatar
+  var profBtn = document.getElementById('profileIconBtn');
+  if (!profBtn) return;
+
+  // Frame — statik box-shadow
+  var frame = cosmetics.frame || 'none';
+  var FRAME_SHADOWS = {
+    'blue_simple':   '0 0 0 2.5px #38bdf8, 0 0 8px rgba(56,189,248,0.4)',
+    'teal_simple':   '0 0 0 2.5px #34d399, 0 0 8px rgba(52,211,153,0.4)',
+    'orange_simple': '0 0 0 2.5px #fb923c, 0 0 8px rgba(251,146,60,0.4)',
+    'purple_mid':    '0 0 0 2.5px #818cf8, 0 0 10px rgba(129,140,248,0.5)',
+    'pink_mid':      '0 0 0 2.5px #f472b6, 0 0 10px rgba(244,114,182,0.5)',
+    'gold_mid':      '0 0 0 2.5px #fbbf24, 0 0 12px rgba(251,191,36,0.5)',
+  };
+  // Animasyonlu frameler CSS class ile
+  var ANIM_FRAMES = ['fire_rare','diamond_rare','rainbow_rare'];
+  // Eski frame class'larını temizle
+  ANIM_FRAMES.forEach(function(f){ profBtn.classList.remove('pf-' + f); });
+  profBtn.style.border = '';
+
+  if (ANIM_FRAMES.indexOf(frame) !== -1) {
+    profBtn.classList.add('pf-' + frame);
+    profBtn.style.boxShadow = '';
+  } else if (FRAME_SHADOWS[frame]) {
+    profBtn.style.boxShadow = FRAME_SHADOWS[frame];
+    profBtn.style.border = 'none';
+  } else {
+    profBtn.style.boxShadow = '';
+  }
+
+  // Avatar
+  var avatarId = cosmetics.avatar || 'default';
+  var profInit = document.getElementById('profileIconInitial');
+  if (avatarId !== 'default') {
+    var img = profBtn.querySelector('img.prof-av-img');
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'prof-av-img';
+      img.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;position:absolute;inset:0;';
+      profBtn.style.position = 'relative';
+      profBtn.style.overflow = 'hidden';
+      profBtn.insertBefore(img, profBtn.firstChild);
+    }
+    img.src = 'avatars/' + avatarId + '.png';
+    img.onerror = function(){ this.style.display = 'none'; if(profInit) profInit.style.display = 'block'; };
+    if (profInit) profInit.style.display = 'none';
+  }
 }
 
 function openMyProfile() {
