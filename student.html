@@ -2432,8 +2432,8 @@ function applyTheme() {
   if (wrap) wrap.style.background = isDark ? 'var(--accent)' : 'var(--bg3)';
   if (thumb) thumb.style.left = isDark ? '23px' : '3px';
   if (label) label.textContent = isDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif';
-  // Kozmetik temayı yeniden uygula (açık/koyu değişince renk kombinasyonu güncellenir)
-  if (typeof refreshCosmetics === 'function') refreshCosmetics();
+  // Kozmetik temayı senkron olarak yeniden uygula (açık/koyu değişince anında güncellenir)
+  if (Object.keys(_cachedCosmetics).length > 0) applyCosmetics(_cachedCosmetics);
 }
 function toggleTheme() { isDark = !isDark; applyTheme(); }
 function toggleThemeSettings() { toggleTheme(); }
@@ -4505,6 +4505,7 @@ var firebaseConfig = {
 
 var _fbApp = null, _fbDb = null, _fbAuth = null;
 var _currentUser = null;
+var _cachedCosmetics = {}; // son yüklenen kozmetikleri saklar
 var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif, onboardingDone }
 
 // ── AI Koç Sabitleri ──────────────────────────────────
@@ -7319,6 +7320,7 @@ function notifyBreakStarted() {
 
 function applyCosmetics(cosmetics) {
   if (!cosmetics) return;
+  _cachedCosmetics = cosmetics; // cache'e kaydet
 
   // Tema
   var theme = cosmetics.theme || 'default';
@@ -7377,6 +7379,11 @@ function applyCosmetics(cosmetics) {
 }
 
 function refreshCosmetics() {
+  // Önce cache ile senkron uygula (tema geçişlerinde gecikme olmaz)
+  if (Object.keys(_cachedCosmetics).length > 0) {
+    applyCosmetics(_cachedCosmetics);
+  }
+  // Sonra Firestore'dan taze veriyle güncelle (mağazadan dönünce)
   if (!_fbDb || !_currentUser) return;
   _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
     if (doc.exists) applyCosmetics(doc.data().cosmetics || {});
@@ -7385,7 +7392,7 @@ function refreshCosmetics() {
 
 // Mağazadan geri dönünce veya sekme aktif olunca kozmetikleri yenile
 window.addEventListener('pageshow', function(e) {
-  if (e.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
+  if (e.persisted || (performance.getEntriesByType('navigation')[0] && performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
     refreshCosmetics();
   }
 });
