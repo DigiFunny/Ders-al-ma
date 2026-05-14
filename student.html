@@ -7291,11 +7291,13 @@ function applyCosmetics(cosmetics) {
   if (ANIM_FRAMES.indexOf(frame) !== -1) {
     profBtn.classList.add('pf-' + frame);
     profBtn.style.boxShadow = '';
+    profBtn.style.border = 'none';
   } else if (FRAME_SHADOWS[frame]) {
     profBtn.style.boxShadow = FRAME_SHADOWS[frame];
     profBtn.style.border = 'none';
   } else {
-    profBtn.style.boxShadow = '';
+    profBtn.style.boxShadow = 'none';
+    profBtn.style.border = '2px solid rgba(129,140,248,0.3)';
   }
 
   // Avatar
@@ -7316,6 +7318,23 @@ function applyCosmetics(cosmetics) {
     if (profInit) profInit.style.display = 'none';
   }
 }
+
+function refreshCosmetics() {
+  if (!_fbDb || !_currentUser) return;
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (doc.exists) applyCosmetics(doc.data().cosmetics || {});
+  }).catch(function(){});
+}
+
+// Mağazadan geri dönünce veya sekme aktif olunca kozmetikleri yenile
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted || performance.getEntriesByType('navigation')[0]?.type === 'back_forward') {
+    refreshCosmetics();
+  }
+});
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') refreshCosmetics();
+});
 
 function openMyProfile() {
   sessionStorage.removeItem('pugi_profile_uid');
