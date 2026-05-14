@@ -189,6 +189,15 @@ input:focus { border-color: var(--admin); }
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
   </div>
 
+  <div class="switch-btn" onclick="setAdminCoins()" style="border-color:rgba(251,191,36,0.3)">
+    <div class="switch-btn-icon" style="background:rgba(251,191,36,0.15)">🪙</div>
+    <div style="flex:1">
+      <div style="font-size:0.88rem;font-weight:900">Mağaza Coini Doldur</div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:2px">Admin hesabına 99.999 coin yükle</div>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted)"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+
   <div class="sec" style="margin-top:16px">Kullanıcı Ara</div>
   <div style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px">
     <input type="text" id="switchUserInput" placeholder="@kullaniciadı" style="width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:700;padding:11px 12px;outline:none;margin-bottom:10px">
@@ -494,6 +503,19 @@ function switchToKpssView() {
 function switchToLgsView() {
   sessionStorage.setItem('pugi_admin_testing', 'student');
   window.location.href = 'lgs.html';
+}
+
+function setAdminCoins() {
+  if (!_fbDb || !_fbAuth || !_fbAuth.currentUser) {
+    alert('Firebase bağlantısı yok, sayfayı yenile.');
+    return;
+  }
+  var uid = _fbAuth.currentUser.uid;
+  _fbDb.collection('users').doc(uid).update({ coins: 99999 }).then(function() {
+    showToast('🪙 99.999 coin yüklendi!');
+  }).catch(function(e) {
+    alert('Hata: ' + e.message);
+  });
 }
 
 function findAndSwitchUser() {
