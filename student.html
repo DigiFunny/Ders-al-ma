@@ -2370,6 +2370,22 @@ body {
 </div>
 
 <!-- FRIEND DETAIL MODAL -->
+<!-- ── ARKADAŞLAR BOTTOM SHEET ── -->
+<div id="friendsSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeFriendsSheet()"></div>
+<div id="friendsSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:62vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);display:flex;flex-direction:column">
+  <!-- Handle -->
+  <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 0;flex-shrink:0"></div>
+  <!-- Header -->
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">👥 Arkadaşlarım <span id="friendsSheetCount" style="font-size:0.72rem;color:var(--muted);font-weight:700"></span></div>
+    <button onclick="openAddFriendModal()" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;background:rgba(56,189,248,0.12);border:1.5px solid rgba(56,189,248,0.25);color:var(--accent);font-family:'Sora',sans-serif;font-size:0.75rem;font-weight:800;cursor:pointer">+ Ekle</button>
+  </div>
+  <!-- Scrollable list -->
+  <div id="friendsSheetList" style="flex:1;overflow-y:auto;padding:12px 14px 24px;-webkit-overflow-scrolling:touch">
+    <div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Yükleniyor...</div>
+  </div>
+</div>
+
 <div class="day-modal" id="friendDetailModal">
   <div class="day-modal-overlay" onclick="closeFriendModal()"></div>
   <div class="day-modal-sheet" style="max-height:85vh">
@@ -7526,17 +7542,140 @@ document.addEventListener('visibilitychange', function() {
 });
 
 function toggleProfileFriends() {
-  var body = document.getElementById('friendsBody');
-  if (!body) return;
-  var isOpen = body.style.display !== 'none';
-  body.style.display = isOpen ? 'none' : 'block';
-  // Arkadaş listesi açılırken yüklenmemişse yükle
-  if (!isOpen && document.getElementById('friendsWrap').innerHTML === '') {
-    renderFriends();
-  }
-  // Profil kartındaki ARKADAŞ kutusuna açık/kapalı feedback
-  var card = document.querySelector('[onclick="toggleProfileFriends()"]');
-  if (card) card.style.background = isOpen ? 'rgba(56,189,248,0.08)' : 'rgba(56,189,248,0.16)';
+  openFriendsSheet();
+}
+
+function openFriendsSheet() {
+  var overlay = document.getElementById('friendsSheetOverlay');
+  var sheet   = document.getElementById('friendsSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.display = 'block';
+  sheet.style.display   = 'flex';
+  // Animasyon için bir tick bekle
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      overlay.style.opacity = '1';
+      sheet.style.transform = 'translateX(-50%) translateY(0)';
+    });
+  });
+  loadFriendsInSheet();
+}
+
+function closeFriendsSheet() {
+  var overlay = document.getElementById('friendsSheetOverlay');
+  var sheet   = document.getElementById('friendsSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.opacity = '0';
+  sheet.style.transform = 'translateX(-50%) translateY(100%)';
+  setTimeout(function() {
+    overlay.style.display = 'none';
+    sheet.style.display   = 'none';
+  }, 350);
+}
+
+function loadFriendsInSheet() {
+  var listEl = document.getElementById('friendsSheetList');
+  var cntEl  = document.getElementById('friendsSheetCount');
+  if (!listEl || !_currentUser || !_fbDb) return;
+
+  listEl.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Yükleniyor...</div>';
+
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(userDoc) {
+    if (userDoc.exists) {
+      var ud = userDoc.data();
+      _perFriendStreak  = ud.perFriendStreak  || {};
+      _lastInviteTimes  = ud.lastInviteTimes  || {};
+    }
+    return _fbDb.collection('friends').doc(_currentUser.uid).collection('list').get();
+  }).then(function(snap) {
+    if (cntEl) cntEl.textContent = snap.size > 0 ? snap.size + ' arkadaş' : '';
+
+    if (snap.empty) {
+      listEl.innerHTML =
+        '<div style="text-align:center;padding:32px 20px">' +
+          '<div style="font-size:2.5rem;margin-bottom:12px">👥</div>' +
+          '<div style="font-size:0.88rem;font-weight:800;margin-bottom:8px">Henüz arkadaşın yok</div>' +
+          '<div style="font-size:0.78rem;color:var(--muted);font-weight:700;margin-bottom:16px">Arkadaşlarını ekle, birlikte çalışın!</div>' +
+          '<button onclick="openAddFriendModal()" style="padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:0.82rem;font-weight:800;cursor:pointer">+ Arkadaş Ekle</button>' +
+        '</div>';
+      return;
+    }
+
+    listEl.innerHTML = '';
+
+    snap.forEach(function(doc) {
+      var friendUid  = doc.id;
+      var username   = doc.data().username    || '';
+      var storedName = doc.data().displayName || username;
+
+      Promise.all([
+        _fbDb.collection('weeklyStats').doc(friendUid).get(),
+        _fbDb.collection('users').doc(friendUid).get()
+      ]).then(function(results) {
+        var statsDoc = results[0];
+        var userDoc2 = results[1];
+        var displayName = userDoc2.exists ? (userDoc2.data().displayName || storedName) : storedName;
+        var cos         = userDoc2.exists ? (userDoc2.data().cosmetics || {}) : {};
+        var stats       = statsDoc.exists ? statsDoc.data() : null;
+
+        var totalMins = stats ? (stats.totalMins || 0) : 0;
+        var topSub    = stats && stats.topSubjects && stats.topSubjects[0] ? stats.topSubjects[0].name : null;
+        var lvNum     = stats ? (stats.level || 1) : 1;
+        var lvTitle   = stats ? (stats.levelTitle || '') : '';
+        var fStreak   = _perFriendStreak[friendUid] || 0;
+        var h = Math.floor(totalMins/60), m = totalMins%60;
+        var timeStr = h > 0 ? h+'s '+m+'dk' : (totalMins > 0 ? m+'dk' : '—');
+
+        var card = document.createElement('div');
+        card.style.cssText = 'display:flex;align-items:center;gap:14px;padding:13px 14px;background:var(--bg3);border:1.5px solid var(--border);border-radius:16px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s,background 0.2s;-webkit-tap-highlight-color:transparent';
+        card.ontouchstart = function(){ this.style.background='var(--card2)'; };
+        card.ontouchend   = function(){ this.style.background='var(--bg3)'; };
+
+        // Avatar
+        var avDiv = document.createElement('div');
+        avDiv.style.cssText = 'width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;color:#fff;flex-shrink:0;overflow:hidden;transition:box-shadow 0.3s';
+        if (cos.avatar && cos.avatar !== 'default') {
+          var img = document.createElement('img');
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%';
+          img.src = 'avatars/' + cos.avatar + '.png';
+          img.onerror = function(){ avDiv.innerHTML = displayName.charAt(0).toUpperCase(); };
+          avDiv.appendChild(img);
+        } else {
+          avDiv.textContent = displayName.charAt(0).toUpperCase();
+        }
+        _applyHeroFrame(avDiv, cos.frame || 'none');
+
+        card.appendChild(avDiv);
+
+        // Info
+        var info = document.createElement('div');
+        info.style.cssText = 'flex:1;min-width:0';
+        info.innerHTML =
+          '<div style="font-size:0.88rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + displayName +
+            '<span style="color:var(--muted);font-size:0.65rem;font-weight:600;margin-left:5px">@' + username + '</span>' +
+          '</div>' +
+          '<div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap">' +
+            '<span style="font-size:0.68rem;font-weight:800;color:var(--muted)">Lv.' + lvNum + ' ' + lvTitle + '</span>' +
+            '<span style="font-size:0.68rem;font-weight:700;color:var(--accent)">⏱ ' + timeStr + '</span>' +
+            (topSub ? '<span style="font-size:0.68rem;font-weight:700;color:var(--accent2)">📚 ' + topSub + '</span>' : '') +
+            (fStreak > 0 ? '<span style="font-size:0.68rem;font-weight:700;color:#f472b6">🔥 ' + fStreak + 'g</span>' : '') +
+          '</div>';
+        card.appendChild(info);
+
+        // Chevron
+        card.innerHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>';
+
+        card.onclick = function() {
+          closeFriendsSheet();
+          setTimeout(function() { openFriendDetail(friendUid, displayName, username, stats); }, 200);
+        };
+
+        listEl.appendChild(card);
+      });
+    });
+  }).catch(function() {
+    if (listEl) listEl.innerHTML = '<div style="color:var(--muted);font-size:0.78rem;padding:16px;text-align:center">Yüklenemedi.</div>';
+  });
 }
 
 function openMyProfile() {
