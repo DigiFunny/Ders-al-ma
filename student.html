@@ -2367,8 +2367,10 @@ body {
 <!-- ── ROZETLER BOTTOM SHEET ── -->
 <div id="badgesSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeBadgesSheet()"></div>
 <div id="badgesSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:65vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
-  <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 0;flex-shrink:0"></div>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
     <div style="font-size:1rem;font-weight:900">🏅 Başarımlarım <span id="badgesSheetCount" style="font-size:0.72rem;color:var(--muted);font-weight:700"></span></div>
     <div onclick="closeBadgesSheet()" style="width:28px;height:28px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:0.8rem">✕</div>
   </div>
@@ -2378,10 +2380,12 @@ body {
 <!-- ── ARKADAŞLAR BOTTOM SHEET ── -->
 <div id="friendsSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeFriendsSheet()"></div>
 <div id="friendsSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:62vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);display:flex;flex-direction:column">
-  <!-- Handle -->
-  <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 0;flex-shrink:0"></div>
+  <!-- Handle — sürüklenebilir alan -->
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div>
+  </div>
   <!-- Header -->
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
     <div style="font-size:1rem;font-weight:900">👥 Arkadaşlarım <span id="friendsSheetCount" style="font-size:0.72rem;color:var(--muted);font-weight:700"></span></div>
     <button onclick="openAddFriendModal()" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;background:rgba(56,189,248,0.12);border:1.5px solid rgba(56,189,248,0.25);color:var(--accent);font-family:'Sora',sans-serif;font-size:0.75rem;font-weight:800;cursor:pointer">+ Ekle</button>
   </div>
@@ -7544,6 +7548,75 @@ document.addEventListener('visibilitychange', function() {
   if (document.visibilityState === 'visible') refreshCosmetics();
 });
 
+// ═══════════════════════════════════════════
+// DRAGGABLE BOTTOM SHEET — ortak sürükleme
+// ═══════════════════════════════════════════
+function makeSheetDraggable(sheetId, closeFn) {
+  var sheet     = document.getElementById(sheetId);
+  if (!sheet) return;
+
+  var handle    = sheet.querySelector('.sheet-drag-handle');
+  if (!handle) return;
+
+  var startY    = 0;
+  var startH    = 0;
+  var currentH  = 0;
+  var isDragging = false;
+  var SNAP_CLOSE = 100;   // px aşağı → kapat
+  var SNAP_FULL  = 80;    // px yukarı → tam ekran
+
+  function getSheetH() {
+    return sheet.getBoundingClientRect().height;
+  }
+
+  function onStart(e) {
+    isDragging = true;
+    startY    = (e.touches ? e.touches[0].clientY : e.clientY);
+    startH    = getSheetH();
+    currentH  = startH;
+    sheet.style.transition = 'none';
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    e.preventDefault();
+    var y    = (e.touches ? e.touches[0].clientY : e.clientY);
+    var diff = y - startY;          // pozitif = aşağı sürükleme
+    var newH = Math.max(20, startH - diff);
+    var maxH = window.innerHeight * 0.95;
+    newH     = Math.min(newH, maxH);
+    sheet.style.height = newH + 'px';
+    currentH = newH;
+  }
+
+  function onEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    sheet.style.transition = 'transform 0.35s cubic-bezier(.34,1.2,.64,1), height 0.35s cubic-bezier(.34,1.2,.64,1)';
+
+    var diff = startH - currentH;  // pozitif = küçüldü (aşağı sürüklendi)
+
+    if (diff > SNAP_CLOSE) {
+      // Kapat
+      sheet.style.height = startH + 'px'; // geri koy ki animasyon doğru görünsün
+      closeFn();
+    } else if (diff < -SNAP_FULL) {
+      // Tam ekran
+      sheet.style.height = (window.innerHeight * 0.95) + 'px';
+    } else {
+      // Başlangıç yüksekliğine geri döndür
+      sheet.style.height = startH + 'px';
+    }
+  }
+
+  handle.addEventListener('touchstart',  onStart, { passive: true });
+  handle.addEventListener('touchmove',   onMove,  { passive: false });
+  handle.addEventListener('touchend',    onEnd);
+  handle.addEventListener('mousedown',   onStart);
+  window.addEventListener('mousemove',   onMove);
+  window.addEventListener('mouseup',     onEnd);
+}
+
 function openBadgesSheet() {
   var overlay = document.getElementById('badgesSheetOverlay');
   var sheet   = document.getElementById('badgesSheet');
@@ -7554,6 +7627,7 @@ function openBadgesSheet() {
     requestAnimationFrame(function() {
       overlay.style.opacity = '1';
       sheet.style.transform = 'translateX(-50%) translateY(0)';
+      makeSheetDraggable('badgesSheet', closeBadgesSheet);
     });
   });
   // badgesGrid içeriğini sheet'e klonla
@@ -7601,6 +7675,7 @@ function openFriendsSheet() {
     requestAnimationFrame(function() {
       overlay.style.opacity = '1';
       sheet.style.transform = 'translateX(-50%) translateY(0)';
+      makeSheetDraggable('friendsSheet', closeFriendsSheet);
     });
   });
   loadFriendsInSheet();
