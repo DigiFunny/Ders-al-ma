@@ -2077,7 +2077,7 @@ body {
           <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">ARKADAŞ</div>
           <div id="profileFriendCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent)">—</div>
         </div>
-        <div style="background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);border-radius:10px;padding:8px 6px;text-align:center">
+        <div onclick="openBadgesSheet()" style="background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:background 0.2s">
           <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">ROZET</div>
           <div id="profileBadgeCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent2)">—</div>
         </div>
@@ -2104,14 +2104,8 @@ body {
       <div id="inviteStreakBanner" style="display:none"><span id="inviteStreakNum">0</span></div>
     </div>
 
-    <!-- Başarımlar -->
-    <div onclick="toggleCollapse('badgesBody','badgesArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-      <div class="sec" style="margin-bottom:0">Başarımlarım</div>
-      <svg id="badgesArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div id="badgesBody">
-      <div class="badges-grid" id="badgesGrid"></div>
-    </div>
+    <!-- badgesGrid gizli sakla, rozet sheet'i buradan okur -->
+    <div style="display:none"><div class="badges-grid" id="badgesGrid"></div></div>
 
   </div>
 
@@ -2370,6 +2364,17 @@ body {
 </div>
 
 <!-- FRIEND DETAIL MODAL -->
+<!-- ── ROZETLER BOTTOM SHEET ── -->
+<div id="badgesSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeBadgesSheet()"></div>
+<div id="badgesSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:65vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
+  <div style="width:40px;height:4px;background:var(--border);border-radius:2px;margin:14px auto 0;flex-shrink:0"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">🏅 Başarımlarım <span id="badgesSheetCount" style="font-size:0.72rem;color:var(--muted);font-weight:700"></span></div>
+    <div onclick="closeBadgesSheet()" style="width:28px;height:28px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:0.8rem">✕</div>
+  </div>
+  <div id="badgesSheetInner" style="flex:1;overflow-y:auto;padding:16px 14px 28px;-webkit-overflow-scrolling:touch"></div>
+</div>
+
 <!-- ── ARKADAŞLAR BOTTOM SHEET ── -->
 <div id="friendsSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeFriendsSheet()"></div>
 <div id="friendsSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:62vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);display:flex;flex-direction:column">
@@ -5549,9 +5554,7 @@ function _applyGuestProfilLayout() {
     'Arkadaşlarım',
     'Arkadaşlarını ekle, birlikte çalış ve sıralamanda nasıl ilerlediğini gör.');
 
-  _addGuestSectionLock('badgesBody', 'badgesArrow',
-    'Başarımlarım',
-    'Çalıştıkça rozetler kazan, seviye atla ve başarılarını takip et.');
+  // Rozet lock kaldırıldı — sheet sistemi kullanılıyor
 
   // Koç ekle bölümü — ayrı bir kilitli kart ekle
   _addGuestCoachCard();
@@ -7541,6 +7544,48 @@ document.addEventListener('visibilitychange', function() {
   if (document.visibilityState === 'visible') refreshCosmetics();
 });
 
+function openBadgesSheet() {
+  var overlay = document.getElementById('badgesSheetOverlay');
+  var sheet   = document.getElementById('badgesSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.display = 'block';
+  sheet.style.display   = 'flex';
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      overlay.style.opacity = '1';
+      sheet.style.transform = 'translateX(-50%) translateY(0)';
+    });
+  });
+  // badgesGrid içeriğini sheet'e klonla
+  var inner  = document.getElementById('badgesSheetInner');
+  var source = document.getElementById('badgesGrid');
+  if (inner && source) {
+    if (source.innerHTML.trim() === '') {
+      inner.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Rozetler henüz yüklenmedi.</div>';
+    } else {
+      // Stilleri koruyarak klonla
+      inner.innerHTML = '';
+      var grid = document.createElement('div');
+      grid.className = 'badges-grid';
+      grid.style.cssText = 'display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px 0';
+      grid.innerHTML = source.innerHTML;
+      inner.appendChild(grid);
+    }
+  }
+}
+
+function closeBadgesSheet() {
+  var overlay = document.getElementById('badgesSheetOverlay');
+  var sheet   = document.getElementById('badgesSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.opacity = '0';
+  sheet.style.transform = 'translateX(-50%) translateY(100%)';
+  setTimeout(function() {
+    overlay.style.display = 'none';
+    sheet.style.display   = 'none';
+  }, 350);
+}
+
 function toggleProfileFriends() {
   openFriendsSheet();
 }
@@ -8057,6 +8102,12 @@ function renderBadges() {
   document.getElementById('xpCurrent2').textContent = info.current;
   document.getElementById('xpNext2').textContent = info.next;
   document.getElementById('xpTotal2').textContent = xp;
+
+  // Profil kartı rozet sayacını güncelle
+  var pbCount = document.getElementById('profileBadgeCount');
+  if (pbCount) pbCount.textContent = earned.length;
+  var bsCount = document.getElementById('badgesSheetCount');
+  if (bsCount) bsCount.textContent = earned.length + '/' + BADGES.length + ' kazanıldı';
 
   document.getElementById('rozetStats').innerHTML =
     '<div class="summary-card"><span class="summary-val" style="color:var(--yellow)">' + earned.length + '/' + BADGES.length + '</span><div class="summary-lbl">Kazanılan Rozet</div></div>' +
