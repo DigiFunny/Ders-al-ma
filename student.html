@@ -2067,19 +2067,23 @@ body {
         <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
       </div>
 
-      <!-- Hızlı istatistikler: coin · arkadaş · rozet -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px">
-        <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:8px 6px;text-align:center">
-          <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">COİN</div>
-          <div id="profileCoinCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--yellow)">—</div>
+      <!-- Hızlı istatistikler 2x2: coin · arkadaş · başarım · koç -->
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px">
+        <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:9px 8px;text-align:center">
+          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">COİN</div>
+          <div id="profileCoinCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--yellow)">—</div>
         </div>
-        <div onclick="toggleProfileFriends()" style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:background 0.2s;active:background:rgba(56,189,248,0.15)">
-          <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">ARKADAŞ</div>
-          <div id="profileFriendCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent)">—</div>
+        <div onclick="toggleProfileFriends()" style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;transition:background 0.2s">
+          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">ARKADAŞ</div>
+          <div id="profileFriendCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent)">—</div>
         </div>
-        <div onclick="openBadgesSheet()" style="background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;transition:background 0.2s">
-          <div style="font-size:0.7rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:2px">ROZET</div>
-          <div id="profileBadgeCount" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:var(--accent2)">—</div>
+        <div onclick="openBadgesSheet()" style="background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;transition:background 0.2s">
+          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">BAŞARIM</div>
+          <div id="profileBadgeCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)">—</div>
+        </div>
+        <div onclick="openCoachSheet()" style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.15);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;transition:background 0.2s">
+          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">KOÇLARIM</div>
+          <div id="profileCoachCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent3)">—</div>
         </div>
       </div>
     </div>
@@ -2087,13 +2091,9 @@ body {
     <!-- Stats grid -->
     <div class="summary-grid" id="rozetStats" style="display:none;margin-bottom:14px"></div>
 
-    <!-- Koç İsteklerim -->
-    <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
-      <div onclick="toggleCollapse('coachReqBody','coachReqArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-        <div class="sec" style="margin-bottom:0">Koçlarım</div>
-        <svg id="coachReqArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div id="coachReqBody" style="display:none">
+    <!-- Koç listesi gizli (sheet sistemi kullanıyor) -->
+    <div id="coachRequestsWrap" style="display:none">
+      <div id="coachReqBody">
         <div id="coachRequestsList"></div>
       </div>
     </div>
@@ -2364,6 +2364,34 @@ body {
 </div>
 
 <!-- FRIEND DETAIL MODAL -->
+<!-- ── KOÇLARIM BOTTOM SHEET ── -->
+<div id="coachSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeCoachSheet()"></div>
+<div id="coachSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:60vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">🎓 Koçlarım</div>
+    <button onclick="switchTab('koclar');closeCoachSheet();" style="padding:7px 12px;border-radius:10px;background:rgba(52,211,153,0.12);border:1.5px solid rgba(52,211,153,0.25);color:var(--accent3);font-size:0.75rem;font-weight:800;cursor:pointer">Koç Bul</button>
+  </div>
+  <div id="coachSheetInner" style="flex:1;overflow-y:auto;padding:14px 14px 28px;-webkit-overflow-scrolling:touch">
+    <div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Yükleniyor...</div>
+  </div>
+</div>
+
+<!-- ── SINAV / HEDEF BOTTOM SHEET ── -->
+<div id="examSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeExamSheet()"></div>
+<div id="examSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:auto;max-height:80vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none">
+    <div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">📋 Sınav & Hedef</div>
+    <button onclick="openSettingsModal();closeExamSheet();" style="padding:7px 12px;border-radius:10px;background:rgba(56,189,248,0.12);border:1.5px solid rgba(56,189,248,0.25);color:var(--accent);font-size:0.75rem;font-weight:800;cursor:pointer">✏️ Düzenle</button>
+  </div>
+  <div id="examSheetInner" style="overflow-y:auto;padding:18px 18px 36px;-webkit-overflow-scrolling:touch"></div>
+</div>
+
 <!-- ── ROZETLER BOTTOM SHEET ── -->
 <div id="badgesSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeBadgesSheet()"></div>
 <div id="badgesSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:65vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
@@ -4814,7 +4842,8 @@ function _renderYksDalBadge(data) {
 
   var badge = document.createElement('div');
   badge.id = 'profilExamBadge';
-  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:12px';
+  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:12px;cursor:pointer;transition:background 0.2s';
+  badge.onclick = function(){ openExamSheet(); };
 
   if (cfg) {
     badge.innerHTML =
@@ -4829,7 +4858,8 @@ function _renderYksDalBadge(data) {
       '<div style="flex:1">' +
         '<div style="font-size:0.78rem;font-weight:900;color:var(--accent)">YKS</div>' +
         '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Ayarlardan alan seçebilirsin</div>' +
-      '</div>';
+      '</div>' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>';
   }
 
   heroCard.appendChild(badge);
@@ -7114,6 +7144,14 @@ function loadCoachRequests() {
   var wrap = document.getElementById('coachRequestsWrap');
   var list = document.getElementById('coachRequestsList');
   var body = document.getElementById('coachReqBody'); if(body) body.style.display='block';
+  // Profil kartı koç sayacını güncelle (async olarak)
+  setTimeout(function() {
+    var cc = document.getElementById('profileCoachCount');
+    if (cc && list) {
+      var cards = list.querySelectorAll('.coach-req-card, [class*="coach"]');
+      cc.textContent = cards.length || '0';
+    }
+  }, 500);
   if (!wrap || !list) return;
 
   _fbDb.collection('coachRequests')
@@ -7617,7 +7655,109 @@ function makeSheetDraggable(sheetId, closeFn) {
   window.addEventListener('mouseup',     onEnd);
 }
 
+// ── SHEET HEIGHT RESET (her açılışta yarım ekrandan başlasın) ──
+function _resetSheetHeight(sheetId, defaultH) {
+  var s = document.getElementById(sheetId);
+  if (s) s.style.height = defaultH;
+}
+
+// ── COACH SHEET ──
+function openCoachSheet() {
+  _resetSheetHeight('coachSheet', '60vh');
+  var overlay = document.getElementById('coachSheetOverlay');
+  var sheet   = document.getElementById('coachSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.display = 'block';
+  sheet.style.display   = 'flex';
+  requestAnimationFrame(function() { requestAnimationFrame(function() {
+    overlay.style.opacity = '1';
+    sheet.style.transform = 'translateX(-50%) translateY(0)';
+    makeSheetDraggable('coachSheet', closeCoachSheet);
+  }); });
+  // Koç listesini klonla
+  var inner = document.getElementById('coachSheetInner');
+  var src   = document.getElementById('coachRequestsList');
+  if (inner && src) {
+    if (src.innerHTML.trim() === '') {
+      inner.innerHTML = '<div style="text-align:center;padding:40px 20px"><div style="font-size:2.5rem;margin-bottom:12px">🎓</div><div style="font-size:0.88rem;font-weight:800;margin-bottom:8px">Henüz koçun yok</div><div style="font-size:0.78rem;color:var(--muted);font-weight:700">Koçlar sekmesinden koç ekleyebilirsin.</div></div>';
+    } else {
+      inner.innerHTML = src.innerHTML;
+    }
+  }
+}
+function closeCoachSheet() {
+  var overlay = document.getElementById('coachSheetOverlay');
+  var sheet   = document.getElementById('coachSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.opacity = '0';
+  sheet.style.transform = 'translateX(-50%) translateY(100%)';
+  setTimeout(function() { overlay.style.display='none'; sheet.style.display='none'; _resetSheetHeight('coachSheet','60vh'); }, 350);
+}
+
+// ── EXAM / HEDEF SHEET ──
+function openExamSheet() {
+  var overlay = document.getElementById('examSheetOverlay');
+  var sheet   = document.getElementById('examSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.display = 'block';
+  sheet.style.display   = 'flex';
+  requestAnimationFrame(function() { requestAnimationFrame(function() {
+    overlay.style.opacity = '1';
+    sheet.style.transform = 'translateX(-50%) translateY(0)';
+    makeSheetDraggable('examSheet', closeExamSheet);
+  }); });
+  _renderExamSheetContent();
+}
+function closeExamSheet() {
+  var overlay = document.getElementById('examSheetOverlay');
+  var sheet   = document.getElementById('examSheet');
+  if (!overlay || !sheet) return;
+  overlay.style.opacity = '0';
+  sheet.style.transform = 'translateX(-50%) translateY(100%)';
+  setTimeout(function() { overlay.style.display='none'; sheet.style.display='none'; }, 350);
+}
+function _renderExamSheetContent() {
+  var inner = document.getElementById('examSheetInner');
+  if (!inner || !_userProfil) return;
+  var p = _userProfil;
+  var dalConfig = {
+    sayisal: { emoji:'📐', label:'Sayısal (SAY)', color:'#38bdf8' },
+    sozel:   { emoji:'📖', label:'Sözel (SÖZ)',   color:'#fb923c' },
+    ea:      { emoji:'⚖️', label:'Eşit Ağırlık (EA)', color:'#34d399' },
+    dil:     { emoji:'🌍', label:'Dil',            color:'#a78bfa' }
+  };
+  var dal = p.dal ? (dalConfig[p.dal] || { emoji:'📚', label:p.dal, color:'var(--accent)' }) : null;
+  var examName = (p.lastActiveExam === 'kpss') ? 'KPSS' : (p.lastActiveExam === 'lgs') ? 'LGS' : 'YKS';
+
+  var rows = '';
+  rows += _examRow('🎯', 'Sınav', examName);
+  if (dal) rows += _examRow(dal.emoji, 'Alan', '<span style="color:'+dal.color+';font-weight:900">'+dal.label+'</span>');
+  if (p.sinif) rows += _examRow('📅', 'Sınıf', p.sinif + '. sınıf');
+
+  if (p.hedefTur === 'okul' && p.hedefProgram) {
+    var hp = p.hedefProgram;
+    rows += _examRow('🏛️', 'Hedef Bölüm', hp.bolum || '—');
+    rows += _examRow('🎓', 'Hedef Üniversite', hp.uni || '—');
+    if (hp.puan) rows += _examRow('📊', 'Hedef Puan Türü', hp.puan);
+  } else if (p.hedefTur === 'siralama' && p.hedefSiralama) {
+    rows += _examRow('🏆', 'Hedef Sıralama', 'İlk ' + parseInt(p.hedefSiralama).toLocaleString('tr-TR'));
+  }
+
+  inner.innerHTML = rows ||
+    '<div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Hedef bilgisi girilmemiş.<br>Ayarlardan düzenleyebilirsin.</div>';
+}
+function _examRow(emoji, label, value) {
+  return '<div style="display:flex;align-items:center;gap:14px;padding:13px 4px;border-bottom:1px solid var(--border)">' +
+    '<span style="font-size:1.3rem;flex-shrink:0">' + emoji + '</span>' +
+    '<div style="flex:1;min-width:0">' +
+      '<div style="font-size:0.65rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">' + label + '</div>' +
+      '<div style="font-size:0.88rem;font-weight:800">' + value + '</div>' +
+    '</div>' +
+  '</div>';
+}
+
 function openBadgesSheet() {
+  _resetSheetHeight('badgesSheet', '65vh');
   var overlay = document.getElementById('badgesSheetOverlay');
   var sheet   = document.getElementById('badgesSheet');
   if (!overlay || !sheet) return;
@@ -7657,6 +7797,7 @@ function closeBadgesSheet() {
   setTimeout(function() {
     overlay.style.display = 'none';
     sheet.style.display   = 'none';
+    _resetSheetHeight('badgesSheet', '65vh');
   }, 350);
 }
 
@@ -7665,6 +7806,7 @@ function toggleProfileFriends() {
 }
 
 function openFriendsSheet() {
+  _resetSheetHeight('friendsSheet', '62vh');
   var overlay = document.getElementById('friendsSheetOverlay');
   var sheet   = document.getElementById('friendsSheet');
   if (!overlay || !sheet) return;
@@ -7690,6 +7832,7 @@ function closeFriendsSheet() {
   setTimeout(function() {
     overlay.style.display = 'none';
     sheet.style.display   = 'none';
+    _resetSheetHeight('friendsSheet', '62vh');
   }, 350);
 }
 
