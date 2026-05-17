@@ -2067,12 +2067,8 @@ body {
         <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
       </div>
 
-      <!-- Hızlı istatistikler 2x2: coin · arkadaş · başarım · koç -->
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px">
-        <div style="background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:9px 8px;text-align:center">
-          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">COİN</div>
-          <div id="profileCoinCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--yellow)">—</div>
-        </div>
+      <!-- Hızlı istatistikler: arkadaş · başarım · koç -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px">
         <div onclick="toggleProfileFriends()" style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;transition:background 0.2s">
           <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">ARKADAŞ</div>
           <div id="profileFriendCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent)">—</div>
@@ -4765,9 +4761,7 @@ function onUserLoggedIn(user) {
         // Çerçeve uygula
         _applyHeroFrame(heroAvatar, cos.frame || 'none');
       }
-      // Coin sayısı
-      var coinEl = document.getElementById('profileCoinCount');
-      if (coinEl) coinEl.textContent = (data.coins || 0).toLocaleString('tr-TR');
+      // Coin sadece mağazada gösteriliyor
     }
     var xbw2 = document.getElementById('xpBarWrap2');
     if (xbw2) xbw2.style.display = 'block';
@@ -7143,22 +7137,17 @@ function loadCoachRequests() {
   if (!_currentUser) return;
   var wrap = document.getElementById('coachRequestsWrap');
   var list = document.getElementById('coachRequestsList');
-  var body = document.getElementById('coachReqBody'); if(body) body.style.display='block';
-  // Profil kartı koç sayacını güncelle (async olarak)
-  setTimeout(function() {
-    var cc = document.getElementById('profileCoachCount');
-    if (cc && list) {
-      var cards = list.querySelectorAll('.coach-req-card, [class*="coach"]');
-      cc.textContent = cards.length || '0';
-    }
-  }, 500);
-  if (!wrap || !list) return;
+  // wrap her zaman gizli — sheet sistemi kullanıyor
+  if (wrap) wrap.style.display = 'none';
+  if (!list) return;
 
   _fbDb.collection('coachRequests')
     .where('studentUid', '==', _currentUser.uid)
     .get().then(function(snap) {
-      if (snap.empty) { wrap.style.display = 'none'; return; }
-      wrap.style.display = 'block';
+      // Koç sayısını doğrudan snap'ten güncelle
+      var cc = document.getElementById('profileCoachCount');
+      if (cc) cc.textContent = snap.size;
+      if (snap.empty) { list.innerHTML = ''; return; }
       list.innerHTML = '';
       snap.forEach(function(docSnap) {
         var req = docSnap.data();
@@ -7727,7 +7716,10 @@ function _renderExamSheetContent() {
     dil:     { emoji:'🌍', label:'Dil',            color:'#a78bfa' }
   };
   var dal = p.dal ? (dalConfig[p.dal] || { emoji:'📚', label:p.dal, color:'var(--accent)' }) : null;
-  var examName = (p.lastActiveExam === 'kpss') ? 'KPSS' : (p.lastActiveExam === 'lgs') ? 'LGS' : 'YKS';
+  // lastActiveExam _userProfil'de yok, Firestore'daki data'dan oku
+  var exam = (typeof _lastActiveExam !== 'undefined' && _lastActiveExam) ? _lastActiveExam :
+             (sessionStorage.getItem('pugi_sinav') || 'yks');
+  var examName = exam === 'kpss' ? 'KPSS' : exam === 'lgs' ? 'LGS' : 'YKS';
 
   var rows = '';
   rows += _examRow('🎯', 'Sınav', examName);
