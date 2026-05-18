@@ -2058,6 +2058,51 @@ body:not(.light) .today-card {
   <div style="height:100px"></div>
 </div>
 
+<!-- ── KOÇLARIM BOTTOM SHEET ── -->
+<div id="coachSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeCoachSheet()"></div>
+<div id="coachSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:60vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none"><div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">🎓 Koçlarım</div>
+    <button onclick="switchTab('koclar');closeCoachSheet();" style="padding:7px 12px;border-radius:10px;background:rgba(52,211,153,0.12);border:1.5px solid rgba(52,211,153,0.25);color:var(--accent3);font-size:0.75rem;font-weight:800;cursor:pointer">Koç Bul</button>
+  </div>
+  <div id="coachSheetInner" style="flex:1;overflow-y:auto;padding:14px 14px 28px;-webkit-overflow-scrolling:touch"><div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Yükleniyor...</div></div>
+</div>
+
+<!-- ── SINAV / HEDEF BOTTOM SHEET ── -->
+<div id="examSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeExamSheet()"></div>
+<div id="examSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:auto;max-height:80vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none"><div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">📋 Sınav & Hedef</div>
+    <button onclick="openSettingsModal();closeExamSheet();" style="padding:7px 12px;border-radius:10px;background:rgba(56,189,248,0.12);border:1.5px solid rgba(56,189,248,0.25);color:var(--accent);font-size:0.75rem;font-weight:800;cursor:pointer">✏️ Düzenle</button>
+  </div>
+  <div id="examSheetInner" style="overflow-y:auto;padding:18px 18px 36px;-webkit-overflow-scrolling:touch"></div>
+</div>
+
+<!-- ── ROZETLER BOTTOM SHEET ── -->
+<div id="badgesSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeBadgesSheet()"></div>
+<div id="badgesSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:65vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none"><div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">🏅 Başarımlarım <span id="badgesSheetCount" style="font-size:0.72rem;color:var(--muted);font-weight:700"></span></div>
+    <div onclick="closeBadgesSheet()" style="width:28px;height:28px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:0.8rem">✕</div>
+  </div>
+  <div id="badgesSheetInner" style="flex:1;overflow-y:auto;padding:16px 14px 28px;-webkit-overflow-scrolling:touch"></div>
+</div>
+
+<!-- ── ARKADAŞLAR BOTTOM SHEET ── -->
+<div id="friendsSheetOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);z-index:300;opacity:0;transition:opacity 0.25s" onclick="closeFriendsSheet()"></div>
+<div id="friendsSheet" style="display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;height:62vh;background:var(--card);border-radius:22px 22px 0 0;z-index:301;transition:transform 0.35s cubic-bezier(.34,1.2,.64,1);flex-direction:column">
+  <div class="sheet-drag-handle" style="width:100%;padding:14px 0 10px;cursor:grab;display:flex;justify-content:center;flex-shrink:0;touch-action:none"><div style="width:40px;height:4px;background:var(--border);border-radius:2px"></div></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px;flex-shrink:0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1rem;font-weight:900">👥 Arkadaşlarım <span id="friendsSheetCount" style="font-size:0.72rem;color:var(--muted);font-weight:700"></span></div>
+    <button onclick="openAddFriendModal()" style="display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;background:rgba(56,189,248,0.12);border:1.5px solid rgba(56,189,248,0.25);color:var(--accent);font-size:0.75rem;font-weight:800;cursor:pointer">+ Ekle</button>
+  </div>
+  <div id="friendsSheetList" style="flex:1;overflow-y:auto;padding:12px 14px 24px;-webkit-overflow-scrolling:touch"><div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Yükleniyor...</div></div>
+</div>
+
+
 <!-- PAGE: CALIS -->
 <div class="app-wrap" id="appWrap"><div class="page" id="page-calis">
   <div class="timer-section">
@@ -2463,65 +2508,57 @@ body:not(.light) .today-card {
   <!-- PROFİL PANELİ -->
   <div id="profilPanel">
 
-    <!-- Profil Kartı -->
-    <div id="profileHeroCard" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1.5px solid rgba(56,189,248,0.15);border-radius:20px;padding:20px 18px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div id="profileHeroAvatar" style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.3rem;color:#fff;flex-shrink:0">?</div>
+    <!-- ── PROFİL HERO KARTI ── -->
+    <div id="profileHeroCard" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.07),rgba(129,140,248,0.07));border:1.5px solid rgba(56,189,248,0.15);border-radius:20px;padding:18px 16px;margin-bottom:14px">
+
+      <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
+        <div id="profileHeroAvatarWrap" style="position:relative;width:64px;height:64px;flex-shrink:0">
+          <div id="profileHeroAvatar" style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.6rem;color:#fff;transition:box-shadow 0.3s;overflow:hidden">?</div>
+        </div>
         <div style="flex:1;min-width:0">
-          <div id="profileHeroName" style="font-size:1rem;font-weight:900;margin-bottom:2px">—</div>
-          <div id="profileHeroUname" style="font-size:0.72rem;color:var(--muted);font-weight:700">@—</div>
+          <div id="profileHeroName" style="font-size:1.05rem;font-weight:900;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
+          <div id="profileHeroUname" style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:7px">@—</div>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+            <span id="xpLevel2" style="font-size:0.72rem;font-weight:900">Seviye 1</span>
+            <span id="xpTitle2" style="font-size:0.68rem;color:var(--accent);font-weight:800;background:rgba(56,189,248,0.12);padding:2px 9px;border-radius:6px">Başlangıç</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+          <button onclick="window.location.href='shop.html'" style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,146,60,0.12));border:1.5px solid rgba(251,191,36,0.3);color:var(--yellow);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">🛍️</button>
+          <button onclick="openSettingsModal()" style="width:36px;height:36px;border-radius:10px;background:var(--card2);border:1.5px solid var(--border);color:var(--muted);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform 0.15s" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">⚙️</button>
         </div>
       </div>
-      <!-- XP Bar -->
-      <div id="xpBarWrap2" style="display:none">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="xp-level" style="font-size:0.78rem;font-weight:900">Seviye <span id="xpLevel2">1</span></span>
-            <span class="xp-title" id="xpTitle2" style="font-size:0.72rem;color:var(--accent);font-weight:800;background:rgba(56,189,248,0.12);padding:2px 8px;border-radius:6px">Başlangıç</span>
-          </div>
-          <span style="font-size:0.72rem;color:var(--yellow);font-weight:800"><span id="xpTotal2">0</span> XP</span>
+
+      <div id="xpBarWrap2" style="display:none;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpCurrent2">0</span> XP</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--yellow);font-weight:700"><span id="xpTotal2">0</span> XP</span>
+          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpNext2">100</span> XP sonraki</span>
         </div>
         <div class="xp-track"><div class="xp-fill" id="xpFill2" style="width:0%"></div></div>
-        <div style="display:flex;justify-content:space-between;margin-top:4px">
-          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpCurrent2">0</span> XP</span>
-          <span style="font-size:0.62rem;color:var(--muted);font-weight:700"><span id="xpNext2">100</span> XP sonraki seviye</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px">
+        <div onclick="toggleProfileFriends()" style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;transition:background 0.2s">
+          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">ARKADAŞ</div>
+          <div id="profileFriendCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent)">—</div>
+        </div>
+        <div onclick="openBadgesSheet()" style="background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;transition:background 0.2s">
+          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">BAŞARIM</div>
+          <div id="profileBadgeCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)">—</div>
+        </div>
+        <div onclick="openCoachSheet()" style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.15);border-radius:10px;padding:9px 8px;text-align:center;cursor:pointer;transition:background 0.2s">
+          <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">KOÇLARIM</div>
+          <div id="profileCoachCount" style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent3)">—</div>
         </div>
       </div>
     </div>
 
-    <!-- Stats grid -->
+    <!-- Gizli yardımcı elementler (JS erişimi için) -->
+    <div style="display:none"><div class="badges-grid" id="badgesGrid"></div></div>
+    <div id="coachRequestsWrap" style="display:none"><div id="coachReqBody"><div id="coachRequestsList"></div></div></div>
+    <div id="friendsBody" style="display:none"><div id="friendsWrap"></div><div id="inviteStreakBanner" style="display:none"><span id="inviteStreakNum">0</span></div></div>
     <div class="summary-grid" id="rozetStats" style="display:none;margin-bottom:14px"></div>
-
-    <!-- Koç İsteklerim -->
-    <div id="coachRequestsWrap" style="display:none;margin-bottom:4px">
-      <div onclick="toggleCollapse('coachReqBody','coachReqArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-        <div class="sec" style="margin-bottom:0">Koçlarım</div>
-        <svg id="coachReqArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div id="coachReqBody" style="display:none">
-        <div id="coachRequestsList"></div>
-      </div>
-    </div>
-
-    <!-- Arkadaşlar -->
-    <div onclick="toggleCollapse('friendsBody','friendsArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-      <div class="sec" style="margin-bottom:0">Arkadaşlar</div>
-      <svg id="friendsArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px;transform:rotate(-90deg)"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div id="friendsBody" style="display:none">
-      <div id="friendsWrap"></div>
-      <!-- Davet Serisi Banner — arkadaş kartına taşındı, burada gizli -->
-      <div id="inviteStreakBanner" style="display:none"><span id="inviteStreakNum">0</span></div>
-    </div>
-
-    <!-- Başarımlar -->
-    <div onclick="toggleCollapse('badgesBody','badgesArrow')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;margin-bottom:8px">
-      <div class="sec" style="margin-bottom:0">Başarımlarım</div>
-      <svg id="badgesArrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);transition:transform 0.25s;flex-shrink:0;margin-right:2px"><polyline points="6 9 12 15 18 9"/></svg>
-    </div>
-    <div id="badgesBody">
-      <div class="badges-grid" id="badgesGrid"></div>
-    </div>
 
   </div>
 
@@ -5013,6 +5050,154 @@ function refreshCosmetics() {
   }).catch(function(){});
 }
 
+
+// ══════════════════════════════════════════════
+// SHEET SİSTEMİ — Profil, Arkadaşlar, Rozetler, Koçlar, Sınav
+// ══════════════════════════════════════════════
+
+function _resetSheetHeight(id, h) { var s=document.getElementById(id); if(s) s.style.height=h; }
+
+function _applyHeroFrame(el, frame) {
+  if (!el) return;
+  var S={
+    'blue_simple':  '0 0 0 3px #38bdf8,0 0 10px rgba(56,189,248,0.3)',
+    'teal_simple':  '0 0 0 3px #34d399,0 0 10px rgba(52,211,153,0.3)',
+    'orange_simple':'0 0 0 3px #fb923c,0 0 10px rgba(251,146,60,0.3)',
+    'red_simple':   '0 0 0 3px #f87171,0 0 10px rgba(248,113,113,0.3)',
+    'white_simple': '0 0 0 3px #e2e8f0,0 0 10px rgba(226,232,240,0.3)',
+    'purple_mid':   '0 0 0 3px #818cf8,0 0 14px rgba(129,140,248,0.5)',
+    'pink_mid':     '0 0 0 3px #f472b6,0 0 14px rgba(244,114,182,0.5)',
+    'gold_mid':     '0 0 0 3px #fbbf24,0 0 14px rgba(251,191,36,0.5)',
+    'cyan_mid':     '0 0 0 3px #22d3ee,0 0 14px rgba(34,211,238,0.5)',
+    'green_mid':    '0 0 0 3px #4ade80,0 0 14px rgba(74,222,128,0.5)',
+  };
+  var A=['diamond_rare','fire_rare','rainbow_rare','aurora_rare'];
+  A.forEach(function(f){ el.classList.remove('ph-frame-'+f); });
+  el.style.animation='';
+  if(A.indexOf(frame)!==-1){ el.classList.add('ph-frame-'+frame); el.style.boxShadow=''; }
+  else if(S[frame]){ el.style.boxShadow=S[frame]; }
+  else { el.style.boxShadow=''; }
+}
+
+function makeSheetDraggable(sheetId, closeFn) {
+  var sheet=document.getElementById(sheetId);
+  if(!sheet) return;
+  var handle=sheet.querySelector('.sheet-drag-handle');
+  if(!handle) return;
+  var startY=0,startH=0,currentH=0,dragging=false;
+  function onStart(e){ dragging=true; startY=(e.touches?e.touches[0].clientY:e.clientY); startH=sheet.getBoundingClientRect().height; currentH=startH; sheet.style.transition='none'; }
+  function onMove(e){ if(!dragging) return; e.preventDefault(); var y=(e.touches?e.touches[0].clientY:e.clientY); var newH=Math.min(window.innerHeight*0.95,Math.max(20,startH-(y-startY))); sheet.style.height=newH+'px'; currentH=newH; }
+  function onEnd(){ if(!dragging) return; dragging=false; sheet.style.transition='transform 0.35s cubic-bezier(.34,1.2,.64,1),height 0.35s cubic-bezier(.34,1.2,.64,1)'; var diff=startH-currentH; if(diff>100){ sheet.style.height=startH+'px'; closeFn(); } else if(diff<-80){ sheet.style.height=(window.innerHeight*0.95)+'px'; } else { sheet.style.height=startH+'px'; } }
+  handle.addEventListener('touchstart',onStart,{passive:true}); handle.addEventListener('touchmove',onMove,{passive:false}); handle.addEventListener('touchend',onEnd);
+  handle.addEventListener('mousedown',onStart); window.addEventListener('mousemove',onMove); window.addEventListener('mouseup',onEnd);
+}
+
+// — ARKADAŞLAR —
+function toggleProfileFriends(){ openFriendsSheet(); }
+function openFriendsSheet(){
+  _resetSheetHeight('friendsSheet','62vh');
+  var o=document.getElementById('friendsSheetOverlay'),s=document.getElementById('friendsSheet'); if(!o||!s) return;
+  o.style.display='block'; s.style.display='flex';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ o.style.opacity='1'; s.style.transform='translateX(-50%) translateY(0)'; makeSheetDraggable('friendsSheet',closeFriendsSheet); }); });
+  loadFriendsInSheet();
+}
+function closeFriendsSheet(){
+  var o=document.getElementById('friendsSheetOverlay'),s=document.getElementById('friendsSheet'); if(!o||!s) return;
+  o.style.opacity='0'; s.style.transform='translateX(-50%) translateY(100%)';
+  setTimeout(function(){ o.style.display='none'; s.style.display='none'; _resetSheetHeight('friendsSheet','62vh'); },350);
+}
+function loadFriendsInSheet(){
+  var listEl=document.getElementById('friendsSheetList'),cntEl=document.getElementById('friendsSheetCount');
+  if(!listEl||!_currentUser||!_fbDb) return;
+  listEl.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Yükleniyor...</div>';
+  _fbDb.collection('friends').doc(_currentUser.uid).collection('list').get().then(function(snap){
+    if(cntEl) cntEl.textContent=snap.size>0?snap.size+' arkadaş':'';
+    if(snap.empty){ listEl.innerHTML='<div style="text-align:center;padding:32px 20px"><div style="font-size:2.5rem;margin-bottom:12px">👥</div><div style="font-size:0.88rem;font-weight:800;margin-bottom:8px">Henüz arkadaşın yok</div><div style="font-size:0.78rem;color:var(--muted);font-weight:700;margin-bottom:16px">Arkadaşlarını ekle!</div><button onclick="openAddFriendModal()" style="padding:10px 20px;border-radius:10px;background:var(--accent);border:none;color:#fff;font-size:0.82rem;font-weight:800;cursor:pointer">+ Arkadaş Ekle</button></div>'; return; }
+    listEl.innerHTML='';
+    snap.forEach(function(doc){
+      var fUid=doc.id,username=doc.data().username||'',storedName=doc.data().displayName||username;
+      Promise.all([_fbDb.collection('weeklyStats').doc(fUid).get(),_fbDb.collection('users').doc(fUid).get()]).then(function(r){
+        var dn=r[1].exists?(r[1].data().displayName||storedName):storedName, cos=r[1].exists?(r[1].data().cosmetics||{}):{};
+        var st=r[0].exists?r[0].data():null, tm=st?(st.totalMins||0):0, h=Math.floor(tm/60),m=tm%60;
+        var ts=h>0?h+'s '+m+'dk':(tm>0?m+'dk':'—');
+        var top=st&&st.topSubjects&&st.topSubjects[0]?st.topSubjects[0].name:null;
+        var card=document.createElement('div');
+        card.style.cssText='display:flex;align-items:center;gap:14px;padding:13px 14px;background:var(--bg3);border:1.5px solid var(--border);border-radius:16px;margin-bottom:8px;cursor:pointer;transition:background 0.2s;-webkit-tap-highlight-color:transparent';
+        card.ontouchstart=function(){this.style.background='var(--card2)';}; card.ontouchend=function(){this.style.background='var(--bg3)';};
+        var avDiv=document.createElement('div');
+        avDiv.style.cssText='width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;color:#fff;flex-shrink:0;overflow:hidden;transition:box-shadow 0.3s';
+        if(cos.avatar&&cos.avatar!='default'){var img=document.createElement('img');img.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%';img.src='avatars/'+cos.avatar+'.png';img.onerror=function(){avDiv.innerHTML=dn.charAt(0).toUpperCase();};avDiv.appendChild(img);}
+        else{avDiv.textContent=dn.charAt(0).toUpperCase();}
+        _applyHeroFrame(avDiv,cos.frame||'none');
+        card.appendChild(avDiv);
+        var info=document.createElement('div'); info.style.cssText='flex:1;min-width:0';
+        info.innerHTML='<div style="font-size:0.88rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+dn+'<span style="color:var(--muted);font-size:0.65rem;margin-left:5px">@'+username+'</span></div><div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap"><span style="font-size:0.68rem;font-weight:700;color:var(--accent)">⏱ '+ts+'</span>'+(top?'<span style="font-size:0.68rem;font-weight:700;color:var(--accent2)">📚 '+top+'</span>':'')+'</div>';
+        card.appendChild(info);
+        card.innerHTML+='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted);flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>';
+        card.onclick=function(){ closeFriendsSheet(); setTimeout(function(){ openFriendDetail(fUid,dn,username,st); },200); };
+        listEl.appendChild(card);
+      });
+    });
+  }).catch(function(){ if(listEl) listEl.innerHTML='<div style="color:var(--muted);font-size:0.78rem;padding:16px;text-align:center">Yüklenemedi.</div>'; });
+}
+
+// — ROZETLER —
+function openBadgesSheet(){
+  _resetSheetHeight('badgesSheet','65vh');
+  var o=document.getElementById('badgesSheetOverlay'),s=document.getElementById('badgesSheet'); if(!o||!s) return;
+  o.style.display='block'; s.style.display='flex';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ o.style.opacity='1'; s.style.transform='translateX(-50%) translateY(0)'; makeSheetDraggable('badgesSheet',closeBadgesSheet); }); });
+  var inner=document.getElementById('badgesSheetInner'),src=document.getElementById('badgesGrid');
+  if(inner&&src){ if(!src.innerHTML.trim()){ inner.innerHTML='<div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Rozetler yüklenmedi.</div>'; } else { inner.innerHTML=''; var g=document.createElement('div'); g.className='badges-grid'; g.style.cssText='display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px 0'; g.innerHTML=src.innerHTML; inner.appendChild(g); } }
+}
+function closeBadgesSheet(){
+  var o=document.getElementById('badgesSheetOverlay'),s=document.getElementById('badgesSheet'); if(!o||!s) return;
+  o.style.opacity='0'; s.style.transform='translateX(-50%) translateY(100%)';
+  setTimeout(function(){ o.style.display='none'; s.style.display='none'; _resetSheetHeight('badgesSheet','65vh'); },350);
+}
+
+// — KOÇLARIM —
+function openCoachSheet(){
+  _resetSheetHeight('coachSheet','60vh');
+  var o=document.getElementById('coachSheetOverlay'),s=document.getElementById('coachSheet'); if(!o||!s) return;
+  o.style.display='block'; s.style.display='flex';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ o.style.opacity='1'; s.style.transform='translateX(-50%) translateY(0)'; makeSheetDraggable('coachSheet',closeCoachSheet); }); });
+  var inner=document.getElementById('coachSheetInner'),src=document.getElementById('coachRequestsList');
+  if(inner&&src){ inner.innerHTML=src.innerHTML.trim()||'<div style="text-align:center;padding:40px 20px"><div style="font-size:2.5rem;margin-bottom:12px">🎓</div><div style="font-size:0.88rem;font-weight:800;margin-bottom:8px">Henüz koçun yok</div><div style="font-size:0.78rem;color:var(--muted);font-weight:700">Koçlar sekmesinden koç ekleyebilirsin.</div></div>'; }
+}
+function closeCoachSheet(){
+  var o=document.getElementById('coachSheetOverlay'),s=document.getElementById('coachSheet'); if(!o||!s) return;
+  o.style.opacity='0'; s.style.transform='translateX(-50%) translateY(100%)';
+  setTimeout(function(){ o.style.display='none'; s.style.display='none'; _resetSheetHeight('coachSheet','60vh'); },350);
+}
+
+// — SINAV/HEDEF —
+function openExamSheet(){
+  var o=document.getElementById('examSheetOverlay'),s=document.getElementById('examSheet'); if(!o||!s) return;
+  o.style.display='block'; s.style.display='flex';
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ o.style.opacity='1'; s.style.transform='translateX(-50%) translateY(0)'; makeSheetDraggable('examSheet',closeExamSheet); }); });
+  _renderExamSheetContent();
+}
+function closeExamSheet(){
+  var o=document.getElementById('examSheetOverlay'),s=document.getElementById('examSheet'); if(!o||!s) return;
+  o.style.opacity='0'; s.style.transform='translateX(-50%) translateY(100%)';
+  setTimeout(function(){ o.style.display='none'; s.style.display='none'; },350);
+}
+function _examRow(emoji,label,value){ return '<div style="display:flex;align-items:center;gap:14px;padding:13px 4px;border-bottom:1px solid var(--border)"><span style="font-size:1.3rem;flex-shrink:0">'+emoji+'</span><div style="flex:1"><div style="font-size:0.65rem;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">'+label+'</div><div style="font-size:0.88rem;font-weight:800">'+value+'</div></div></div>'; }
+function _renderExamSheetContent(){
+  var inner=document.getElementById('examSheetInner'); if(!inner||!_userProfil) return;
+  var p=_userProfil, exam=sessionStorage.getItem('pugi_sinav')||'kpss';
+  var examName=exam==='kpss'?'KPSS':exam==='lgs'?'LGS':'YKS';
+  var rows='';
+  rows+=_examRow('🎯','Sınav',examName);
+  if(p.kpssKategori){ var kMap={'lisans_a':'Lisans A Grubu','lisans_b':'Lisans B Grubu','lisans_egitim':'Lisans Eğitim','on_lisans':'Ön Lisans','lise':'Ortaöğretim','gy_gk':'GY+GK','egitim':'Eğitim Bilimleri'}; rows+=_examRow('📋','Kategori',kMap[p.kpssKategori]||p.kpssKategori); }
+  if(p.hedefPuan) rows+=_examRow('🏆','Hedef Puan',p.hedefPuan);
+  if(p.sinif) rows+=_examRow('📅','Sınıf',p.sinif+'. sınıf');
+  if(p.hedefTur==='okul'&&p.hedefProgram){ var hp=p.hedefProgram; if(hp.bolum) rows+=_examRow('🏛️','Hedef Bölüm',hp.bolum); if(hp.uni) rows+=_examRow('🎓','Hedef Üniversite',hp.uni); }
+  else if(p.hedefTur==='siralama'&&p.hedefSiralama){ rows+=_examRow('🏆','Hedef Sıralama','İlk '+parseInt(p.hedefSiralama).toLocaleString('tr-TR')); }
+  inner.innerHTML=rows||'<div style="text-align:center;padding:32px;color:var(--muted);font-size:0.82rem;font-weight:700">Hedef bilgisi girilmemiş.<br>Ayarlardan düzenleyebilirsin.</div>';
+}
+
 function openMyProfile() {
   sessionStorage.removeItem('pugi_profile_uid');
   window.location.href = 'profile.html';
@@ -5153,10 +5338,23 @@ function onUserLoggedIn(user) {
     var heroCard = document.getElementById('profileHeroCard');
     if (heroCard) {
       heroCard.style.display = 'block';
-      var heroName = document.getElementById('profileHeroName');
-      var heroUname = document.getElementById('profileHeroUname');
-      if (heroName) heroName.textContent = displayName;
+      var heroAvatar = document.getElementById('profileHeroAvatar');
+      var heroName   = document.getElementById('profileHeroName');
+      var heroUname  = document.getElementById('profileHeroUname');
+      if (heroName)  heroName.textContent  = displayName;
       if (heroUname) heroUname.textContent = '@' + username;
+      if (heroAvatar) {
+        var cos = data.cosmetics || {};
+        if (cos.avatar && cos.avatar !== 'default') {
+          var avImg = heroAvatar.querySelector('img.ph-av-img');
+          if (!avImg) { avImg=document.createElement('img'); avImg.className='ph-av-img'; avImg.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%;'; heroAvatar.innerHTML=''; heroAvatar.appendChild(avImg); }
+          avImg.src = 'avatars/' + cos.avatar + '.png';
+          avImg.onerror = function(){ heroAvatar.innerHTML = displayName.charAt(0).toUpperCase(); };
+        } else {
+          heroAvatar.innerHTML = displayName.charAt(0).toUpperCase();
+        }
+        _applyHeroFrame(heroAvatar, cos.frame || 'none');
+      }
     }
     var xbw2 = document.getElementById('xpBarWrap2');
     if (xbw2) xbw2.style.display = 'block';
@@ -5214,7 +5412,8 @@ function _renderKpssKategoriInProfil(data) {
   var lastExam = data.lastActiveExam || 'lgs';
   var badge = document.createElement('div');
   badge.id = 'profilExamBadge';
-  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:12px;flex-wrap:wrap;gap:8px';
+  badge.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:12px;cursor:pointer;transition:background 0.2s';
+  badge.onclick = function(){ openExamSheet(); };
 
   if (lastExam === 'lgs') {
     var katMap = {
@@ -5973,9 +6172,7 @@ function _applyGuestProfilLayout() {
     'Arkadaşlarım',
     'Arkadaşlarını ekle, birlikte çalış ve sıralamanda nasıl ilerlediğini gör.');
 
-  _addGuestSectionLock('badgesBody', 'badgesArrow',
-    'Başarımlarım',
-    'Çalıştıkça rozetler kazan, seviye atla ve başarılarını takip et.');
+  // Rozet lock kaldırıldı — sheet sistemi kullanılıyor
 
   // Koç ekle bölümü — ayrı bir kilitli kart ekle
   _addGuestCoachCard();
@@ -7502,14 +7699,15 @@ function loadCoachRequests() {
   if (!_currentUser) return;
   var wrap = document.getElementById('coachRequestsWrap');
   var list = document.getElementById('coachRequestsList');
-  var body = document.getElementById('coachReqBody'); if(body) body.style.display='block';
-  if (!wrap || !list) return;
+  if (wrap) wrap.style.display = 'none';
+  if (!list) return;
 
   _fbDb.collection('coachRequests')
     .where('studentUid', '==', _currentUser.uid)
     .get().then(function(snap) {
-      if (snap.empty) { wrap.style.display = 'none'; return; }
-      wrap.style.display = 'block';
+      var cc = document.getElementById('profileCoachCount');
+      if (cc) cc.textContent = snap.size;
+      if (snap.empty) { list.innerHTML = ''; return; }
       list.innerHTML = '';
       snap.forEach(function(docSnap) {
         var req = docSnap.data();
@@ -7579,6 +7777,8 @@ function loadFriends() {
 
     if (listEl) listEl.innerHTML = '';
     _friendCount = snap.size;
+    var pfc = document.getElementById('profileFriendCount');
+    if (pfc) pfc.textContent = snap.size;
 
     snap.forEach(function(doc) {
       var friendUid = doc.id;
@@ -8185,6 +8385,8 @@ function renderBadges() {
   document.getElementById('xpNext2').textContent = info.next;
   document.getElementById('xpTotal2').textContent = xp;
 
+  var _pb=document.getElementById('profileBadgeCount'); if(_pb) _pb.textContent=earned.length;
+  var _bs=document.getElementById('badgesSheetCount'); if(_bs) _bs.textContent=earned.length+'/'+BADGES.length+' kazanıldı';
   document.getElementById('rozetStats').innerHTML =
     '<div class="summary-card"><span class="summary-val" style="color:var(--yellow)">' + earned.length + '/' + BADGES.length + '</span><div class="summary-lbl">Kazanılan Rozet</div></div>' +
     '<div class="summary-card"><span class="summary-val" style="color:var(--accent)">' + info.lvNum + '</span><div class="summary-lbl">Mevcut Seviye</div></div>' +
