@@ -335,6 +335,32 @@ body.light {
   --glass-shadow:0 8px 32px rgba(99,102,241,0.08),inset 0 1px 0 rgba(255,255,255,0.9);
 }
 body.light { color-scheme:light; }
+/* ── KOZMETIK TEMA OVERRIDE'LARI ── */
+body.theme-purple   { --bg:#0d0814; --bg2:#130c1e; --bg3:#1a1028; --card:#160e22; --card2:#1e1530; --border:#2d1f4a; --accent:#a78bfa; --accent2:#c084fc; --accent3:#818cf8; }
+body.theme-teal     { --bg:#061110; --bg2:#0a1918; --bg3:#0e201e; --card:#0c1b19; --card2:#112521; --border:#1a3a34; --accent:#2dd4bf; --accent2:#34d399; --accent3:#4ade80; }
+body.theme-red      { --bg:#130808; --bg2:#1c0d0d; --bg3:#241111; --card:#1e0f0f; --card2:#281515; --border:#3d1b1b; --accent:#f87171; --accent2:#fb923c; --accent3:#fbbf24; }
+body.theme-pink     { --bg:#130810; --bg2:#1c0c18; --bg3:#241020; --card:#1e0e1c; --card2:#281424; --border:#3d1a38; --accent:#f472b6; --accent2:#e879f9; --accent3:#fb7185; }
+body.theme-mono     { --bg:#0a0a0a; --bg2:#111111; --bg3:#1a1a1a; --card:#141414; --card2:#1c1c1c; --border:#2a2a2a; --accent:#e2e8f0; --accent2:#94a3b8; --accent3:#64748b; }
+body.theme-midnight { --bg:#020617; --bg2:#0f172a; --bg3:#1e1b4b; --card:#0d1340; --card2:#111c52; --border:#1e2d6e; --accent:#6366f1; --accent2:#8b5cf6; --accent3:#06b6d4; }
+
+/* ── AÇIK MOD + KOZMETIK TEMA KOMBİNASYONLARI ── */
+body.light.theme-purple  { --bg:#f5f3ff; --bg2:#ede9fe; --bg3:#ddd6fe; --card:#ffffff; --card2:#faf8ff; --border:#c4b5fd; --accent:#7c3aed; --accent2:#9333ea; --accent3:#6366f1; --text:#1e1b4b; --muted:#6b7280; }
+body.light.theme-teal    { --bg:#f0fdfa; --bg2:#ccfbf1; --bg3:#99f6e4; --card:#ffffff; --card2:#f0fffc; --border:#5eead4; --accent:#0d9488; --accent2:#059669; --accent3:#10b981; --text:#042f2e; --muted:#6b7280; }
+body.light.theme-red     { --bg:#fff1f2; --bg2:#ffe4e6; --bg3:#fecdd3; --card:#ffffff; --card2:#fff5f5; --border:#fca5a5; --accent:#dc2626; --accent2:#ea580c; --accent3:#d97706; --text:#450a0a; --muted:#6b7280; }
+body.light.theme-pink    { --bg:#fdf2f8; --bg2:#fce7f3; --bg3:#fbcfe8; --card:#ffffff; --card2:#fef9ff; --border:#f9a8d4; --accent:#db2777; --accent2:#c026d3; --accent3:#f43f5e; --text:#500724; --muted:#6b7280; }
+body.light.theme-mono    { --bg:#f8fafc; --bg2:#f1f5f9; --bg3:#e2e8f0; --card:#ffffff; --card2:#f8fafc; --border:#cbd5e1; --accent:#1e293b; --accent2:#475569; --accent3:#64748b; --text:#0f172a; --muted:#94a3b8; }
+body.light.theme-midnight{ --bg:#eef2ff; --bg2:#e0e7ff; --bg3:#c7d2fe; --card:#ffffff; --card2:#f5f7ff; --border:#a5b4fc; --accent:#4f46e5; --accent2:#7c3aed; --accent3:#0891b2; --text:#1e1b4b; --muted:#6b7280; }
+
+/* ── HEADER PROFİL AVATAR FRAME ANİMASYONLARI ── */
+@keyframes pf-fire    { 0%,100%{box-shadow:0 0 0 2.5px #fb923c,0 0 10px rgba(251,146,60,0.7)} 50%{box-shadow:0 0 0 2.5px #fbbf24,0 0 16px rgba(251,191,36,0.8)} }
+@keyframes pf-diamond { 0%,100%{box-shadow:0 0 0 2.5px #67e8f9,0 0 12px rgba(103,232,249,0.6)} 50%{box-shadow:0 0 0 2.5px #a5f3fc,0 0 20px rgba(165,243,252,0.8)} }
+@keyframes pf-rainbow { 0%{box-shadow:0 0 0 2.5px #f87171} 16%{box-shadow:0 0 0 2.5px #fb923c} 33%{box-shadow:0 0 0 2.5px #fbbf24} 50%{box-shadow:0 0 0 2.5px #34d399} 66%{box-shadow:0 0 0 2.5px #38bdf8} 83%{box-shadow:0 0 0 2.5px #818cf8} 100%{box-shadow:0 0 0 2.5px #f87171} }
+@keyframes pf-aurora  { 0%{box-shadow:0 0 0 2.5px #818cf8,0 0 10px rgba(129,140,248,0.5)} 33%{box-shadow:0 0 0 2.5px #2dd4bf,0 0 10px rgba(45,212,191,0.5)} 66%{box-shadow:0 0 0 2.5px #f472b6,0 0 10px rgba(244,114,182,0.5)} 100%{box-shadow:0 0 0 2.5px #818cf8,0 0 10px rgba(129,140,248,0.5)} }
+#userAvatarBar.pf-fire_rare    { animation:pf-fire    1.5s ease-in-out infinite !important; }
+#userAvatarBar.pf-diamond_rare { animation:pf-diamond 2s ease-in-out infinite !important; }
+#userAvatarBar.pf-rainbow_rare { animation:pf-rainbow 3s linear infinite !important; }
+#userAvatarBar.pf-aurora_rare  { animation:pf-aurora  4s ease-in-out infinite !important; }
+
 body.light .header { background:linear-gradient(180deg,rgba(245,247,255,0.97) 80%,transparent) !important; border-bottom:1px solid rgba(99,102,241,0.1) !important; }
 body.light .card { background:#ffffff !important; border-color:rgba(99,102,241,0.1) !important; box-shadow:0 2px 16px rgba(99,102,241,0.06),0 1px 3px rgba(0,0,0,0.04) !important; }
 body.light .today-card { background:#ffffff !important; border-color:rgba(99,102,241,0.1) !important; box-shadow:0 2px 12px rgba(99,102,241,0.06) !important; }
@@ -897,7 +923,7 @@ body.light {
     radial-gradient(ellipse 50% 40% at 80% 100%, rgba(245,158,11,0.04) 0%, transparent 65%) !important;
 }
 body:not(.light) {
-  background: #060c18 !important;
+  background: var(--bg) !important;
   background-image:
     radial-gradient(ellipse 70% 50% at 15% 0%, rgba(129,140,248,0.07) 0%, transparent 65%),
     radial-gradient(ellipse 50% 40% at 85% 100%, rgba(129,140,248,0.03) 0%, transparent 65%) !important;
@@ -1820,7 +1846,7 @@ body:not(.light) .today-card {
   <!-- Giriş yapılmış hali -->
   <div id="userBarLoggedIn" style="display:none;width:100%;display:none;align-items:center;justify-content:space-between;gap:10px">
     <div class="user-bar-info">
-      <div class="user-avatar" id="userAvatarBar">?</div>
+      <div class="user-avatar" id="userAvatarBar" onclick="openMyProfile()" style="cursor:pointer;transition:box-shadow 0.3s,transform 0.15s;overflow:hidden" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">?</div>
       <div>
         <div class="user-name" id="userNameBar">—</div>
         <div class="user-uname" id="userUnameBar">@—</div>
@@ -2893,7 +2919,7 @@ function applyTheme() {
   if (thumb) thumb.style.left = isDark ? '23px' : '3px';
   if (label) label.textContent = isDark ? 'Karanlık mod aktif' : 'Aydınlık mod aktif';
 }
-function toggleTheme() { isDark = !isDark; applyTheme(); }
+function toggleTheme() { isDark = !isDark; applyTheme(); if (Object.keys(_cachedCosmetics).length > 0) applyCosmetics(_cachedCosmetics); }
 function toggleThemeSettings() { toggleTheme(); }
 // Sayfa yüklenince hemen uygula
 applyTheme();
@@ -4919,6 +4945,88 @@ var _isGuest = sessionStorage.getItem('pugi_guest') === 'true';
 var _guestSinav = sessionStorage.getItem('pugi_sinav') || 'lgs';
 var _authMode = 'login'; // 'login' | 'register'
 
+
+// ════════════════════════════════════════
+// KOZMETIK SİSTEMİ
+// ════════════════════════════════════════
+var _cachedCosmetics = {};
+
+function applyCosmetics(cosmetics) {
+  if (!cosmetics) return;
+  _cachedCosmetics = cosmetics;
+
+  // Tema
+  var theme = cosmetics.theme || 'default';
+  document.body.classList.remove('theme-purple','theme-teal','theme-red','theme-pink','theme-mono','theme-midnight');
+  if (theme !== 'default') document.body.classList.add('theme-' + theme);
+
+  // userAvatarBar — frame + avatar
+  var av = document.getElementById('userAvatarBar');
+  if (!av) return;
+
+  var frame = cosmetics.frame || 'none';
+  var SHADOWS = {
+    'blue_simple':  '0 0 0 2.5px #38bdf8,0 0 8px rgba(56,189,248,0.4)',
+    'teal_simple':  '0 0 0 2.5px #34d399,0 0 8px rgba(52,211,153,0.4)',
+    'orange_simple':'0 0 0 2.5px #fb923c,0 0 8px rgba(251,146,60,0.4)',
+    'red_simple':   '0 0 0 2.5px #f87171,0 0 8px rgba(248,113,113,0.4)',
+    'white_simple': '0 0 0 2.5px #e2e8f0,0 0 8px rgba(226,232,240,0.3)',
+    'purple_mid':   '0 0 0 2.5px #818cf8,0 0 10px rgba(129,140,248,0.5)',
+    'pink_mid':     '0 0 0 2.5px #f472b6,0 0 10px rgba(244,114,182,0.5)',
+    'gold_mid':     '0 0 0 2.5px #fbbf24,0 0 12px rgba(251,191,36,0.5)',
+    'cyan_mid':     '0 0 0 2.5px #22d3ee,0 0 10px rgba(34,211,238,0.5)',
+    'green_mid':    '0 0 0 2.5px #4ade80,0 0 10px rgba(74,222,128,0.5)',
+  };
+  var ANIMS = ['fire_rare','diamond_rare','rainbow_rare','aurora_rare'];
+  ANIMS.forEach(function(f){ av.classList.remove('pf-'+f); });
+  if (ANIMS.indexOf(frame) !== -1) {
+    av.classList.add('pf-'+frame);
+    av.style.boxShadow = '';
+  } else if (SHADOWS[frame]) {
+    av.style.boxShadow = SHADOWS[frame];
+  } else {
+    av.style.boxShadow = '';
+  }
+
+  // Avatar resmi
+  var avatarId = cosmetics.avatar || 'default';
+  if (avatarId !== 'default') {
+    var img = av.querySelector('img.cos-av');
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'cos-av';
+      img.style.cssText = 'width:100%;height:100%;border-radius:inherit;object-fit:cover;position:absolute;inset:0;';
+      av.style.position = 'relative';
+      av.style.overflow = 'hidden';
+      av.insertBefore(img, av.firstChild);
+    }
+    img.src = 'avatars/' + avatarId + '.png';
+    img.onerror = function(){ this.style.display='none'; };
+  }
+}
+
+function refreshCosmetics() {
+  if (Object.keys(_cachedCosmetics).length > 0) applyCosmetics(_cachedCosmetics);
+  if (!_fbDb || !_currentUser) return;
+  _fbDb.collection('users').doc(_currentUser.uid).get().then(function(doc) {
+    if (doc.exists) applyCosmetics(doc.data().cosmetics || {});
+  }).catch(function(){});
+}
+
+function openMyProfile() {
+  sessionStorage.removeItem('pugi_profile_uid');
+  window.location.href = 'profile.html';
+}
+
+window.addEventListener('pageshow', function(e) {
+  if (e.persisted || (performance.getEntriesByType('navigation')[0] && performance.getEntriesByType('navigation')[0].type === 'back_forward')) {
+    refreshCosmetics();
+  }
+});
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible') refreshCosmetics();
+});
+
 function initFirebase() {
   // Dynamically load Firebase SDK
   function loadScript(src, cb) {
@@ -5016,6 +5124,9 @@ function onUserLoggedIn(user) {
       ab.innerHTML = '⚡ ADMİN TEST MODU — <a href="admin.html" style="color:#000;text-decoration:underline">Panele Dön</a>';
       document.body.insertBefore(ab, document.body.firstChild);
     }
+
+    // Kozmetikleri uygula
+    applyCosmetics(data.cosmetics || {});
 
     // Kullanıcı profilini global state'e yükle
     _userProfil = {
