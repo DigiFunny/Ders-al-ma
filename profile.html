@@ -492,18 +492,9 @@ function initFirebase() {
         _auth.onAuthStateChanged(function(user) {
           if (!user) { window.location.href = 'index.html'; return; }
           _currentUid = user.uid;
-          // Admin kontrolü — sadece isAdmin:true olan kullanıcı erişebilir
-          _db.collection('users').doc(user.uid).get().then(function(doc) {
-            var isAdmin = doc.exists && doc.data().isAdmin === true;
-            if (!isAdmin) {
-              // Admin değil → geri dön, özellik henüz aktif değil
-              history.back();
-              return;
-            }
-            _targetUid = sessionStorage.getItem('pugi_profile_uid') || _currentUid;
-            _isSelf = (_targetUid === _currentUid);
-            loadProfile();
-          }).catch(function() { history.back(); });
+          _targetUid = sessionStorage.getItem('pugi_profile_uid') || _currentUid;
+          _isSelf = (_targetUid === _currentUid);
+          loadProfile();
         });
       });
     });
