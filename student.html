@@ -92,10 +92,10 @@ body.theme-midnight {
 @keyframes prof-diamond { 0%,100%{box-shadow:0 0 0 2.5px #67e8f9,0 0 12px rgba(103,232,249,0.6)} 50%{box-shadow:0 0 0 2.5px #a5f3fc,0 0 20px rgba(165,243,252,0.8)} }
 @keyframes prof-rainbow { 0%{box-shadow:0 0 0 2.5px #f87171} 16%{box-shadow:0 0 0 2.5px #fb923c} 33%{box-shadow:0 0 0 2.5px #fbbf24} 50%{box-shadow:0 0 0 2.5px #34d399} 66%{box-shadow:0 0 0 2.5px #38bdf8} 83%{box-shadow:0 0 0 2.5px #818cf8} 100%{box-shadow:0 0 0 2.5px #f87171} }
 @keyframes prof-aurora  { 0%{box-shadow:0 0 0 3px #818cf8,0 0 18px rgba(129,140,248,0.5)} 33%{box-shadow:0 0 0 3px #2dd4bf,0 0 18px rgba(45,212,191,0.5)} 66%{box-shadow:0 0 0 3px #f472b6,0 0 18px rgba(244,114,182,0.5)} 100%{box-shadow:0 0 0 3px #818cf8,0 0 18px rgba(129,140,248,0.5)} }
-#profileIconBtn.pf-fire_rare     { animation:prof-fire    1.5s ease-in-out infinite !important; border:none !important; }
-#profileIconBtn.pf-diamond_rare  { animation:prof-diamond 2s ease-in-out infinite !important;   border:none !important; }
-#profileIconBtn.pf-rainbow_rare  { animation:prof-rainbow 3s linear infinite !important;        border:none !important; }
-#profileIconBtn.pf-aurora_rare   { animation:prof-aurora  4s ease-in-out infinite !important;   border:none !important; }
+#userAvatarBar.pf-fire_rare     { animation:prof-fire    1.5s ease-in-out infinite !important; border:none !important; }
+#userAvatarBar.pf-diamond_rare  { animation:prof-diamond 2s ease-in-out infinite !important;   border:none !important; }
+#userAvatarBar.pf-rainbow_rare  { animation:prof-rainbow 3s linear infinite !important;        border:none !important; }
+#userAvatarBar.pf-aurora_rare   { animation:prof-aurora  4s ease-in-out infinite !important;   border:none !important; }
 /* Profil hero avatar animasyonlu çerçeveler */
 #profileHeroAvatar.ph-frame-fire_rare    { animation:ph-fire    1.5s ease-in-out infinite; }
 #profileHeroAvatar.ph-frame-diamond_rare { animation:ph-diamond 2s ease-in-out infinite; }
@@ -1391,7 +1391,7 @@ body {
   <!-- Giriş yapılmış hali -->
   <div id="userBarLoggedIn" style="display:none;width:100%;display:none;align-items:center;justify-content:space-between;gap:10px">
     <div class="user-bar-info">
-      <div class="user-avatar" id="userAvatarBar">?</div>
+      <div class="user-avatar" id="userAvatarBar" onclick="openMyProfile()" style="cursor:pointer;transition:box-shadow 0.3s,transform 0.15s;overflow:hidden" ontouchstart="this.style.transform='scale(0.92)'" ontouchend="this.style.transform='scale(1)'">?</div>
       <div>
         <div class="user-name" id="userNameBar">—</div>
         <div class="user-uname" id="userUnameBar">@—</div>
@@ -1461,9 +1461,7 @@ body {
   <img src="icon-512.png" alt="Pugi" style="height:32px;width:auto;object-fit:contain;display:block;">
 </div>
     <div style="display:flex;gap:8px;align-items:center;">
-      <div id="profileIconBtn" onclick="openMyProfile()" style="display:none;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent3));align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff;cursor:pointer;flex-shrink:0;transition:transform 0.15s;border:2px solid rgba(129,140,248,0.3)" ontouchstart="this.style.transform='scale(0.9)'" ontouchend="this.style.transform='scale(1)'">
-        <span id="profileIconInitial">?</span>
-      </div>
+
     </div>
   </div>
 
@@ -4703,13 +4701,7 @@ function onUserLoggedIn(user) {
       ab.innerHTML = '⚡ ADMİN TEST MODU — <a href="admin.html" style="color:#000;text-decoration:underline">Panele Dön</a>';
       document.body.insertBefore(ab, document.body.firstChild);
     }
-    // Profil ikonu — sadece admin görür (test modunda)
-    if (data.isAdmin && adminTesting) {
-      var profBtn = document.getElementById('profileIconBtn');
-      var profInit = document.getElementById('profileIconInitial');
-      if (profBtn) { profBtn.style.display = 'flex'; }
-      if (profInit && displayName) { profInit.textContent = displayName.charAt(0).toUpperCase(); }
-    }
+    // Profil ikonu userAvatarBar'a taşındı — her zaman görünür
     // Kozmetikleri tüm kullanıcılara uygula (tema, çerçeve, avatar)
     applyCosmetics(data.cosmetics || {});
 
@@ -7502,41 +7494,35 @@ function applyCosmetics(cosmetics) {
   document.body.classList.remove('theme-purple','theme-teal','theme-red','theme-pink','theme-mono','theme-midnight');
   if (theme !== 'default') document.body.classList.add('theme-' + theme);
 
-  // Profil ikonu — frame + avatar
-  var profBtn = document.getElementById('profileIconBtn');
+  // Profil ikonu — userAvatarBar üzerine frame + avatar uygula
+  var profBtn = document.getElementById('userAvatarBar');
   if (!profBtn) return;
 
-  // Frame — statik box-shadow
   var frame = cosmetics.frame || 'none';
   var FRAME_SHADOWS = {
     'blue_simple':   '0 0 0 2.5px #38bdf8, 0 0 8px rgba(56,189,248,0.4)',
     'teal_simple':   '0 0 0 2.5px #34d399, 0 0 8px rgba(52,211,153,0.4)',
     'orange_simple': '0 0 0 2.5px #fb923c, 0 0 8px rgba(251,146,60,0.4)',
+    'red_simple':    '0 0 0 2.5px #f87171, 0 0 8px rgba(248,113,113,0.4)',
+    'white_simple':  '0 0 0 2.5px #e2e8f0, 0 0 8px rgba(226,232,240,0.3)',
     'purple_mid':    '0 0 0 2.5px #818cf8, 0 0 10px rgba(129,140,248,0.5)',
     'pink_mid':      '0 0 0 2.5px #f472b6, 0 0 10px rgba(244,114,182,0.5)',
     'gold_mid':      '0 0 0 2.5px #fbbf24, 0 0 12px rgba(251,191,36,0.5)',
+    'cyan_mid':      '0 0 0 2.5px #22d3ee, 0 0 10px rgba(34,211,238,0.5)',
+    'green_mid':     '0 0 0 2.5px #4ade80, 0 0 10px rgba(74,222,128,0.5)',
   };
-  // Animasyonlu frameler CSS class ile
-  var ANIM_FRAMES = ['fire_rare','diamond_rare','rainbow_rare'];
-  // Eski frame class'larını temizle
+  var ANIM_FRAMES = ['fire_rare','diamond_rare','rainbow_rare','aurora_rare'];
   ANIM_FRAMES.forEach(function(f){ profBtn.classList.remove('pf-' + f); });
-  profBtn.style.border = '';
-
   if (ANIM_FRAMES.indexOf(frame) !== -1) {
     profBtn.classList.add('pf-' + frame);
     profBtn.style.boxShadow = '';
-    profBtn.style.border = 'none';
   } else if (FRAME_SHADOWS[frame]) {
     profBtn.style.boxShadow = FRAME_SHADOWS[frame];
-    profBtn.style.border = 'none';
   } else {
-    profBtn.style.boxShadow = 'none';
-    profBtn.style.border = '2px solid rgba(129,140,248,0.3)';
+    profBtn.style.boxShadow = '';
   }
 
-  // Avatar
   var avatarId = cosmetics.avatar || 'default';
-  var profInit = document.getElementById('profileIconInitial');
   if (avatarId !== 'default') {
     var img = profBtn.querySelector('img.prof-av-img');
     if (!img) {
@@ -7544,12 +7530,10 @@ function applyCosmetics(cosmetics) {
       img.className = 'prof-av-img';
       img.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;position:absolute;inset:0;';
       profBtn.style.position = 'relative';
-      profBtn.style.overflow = 'hidden';
       profBtn.insertBefore(img, profBtn.firstChild);
     }
     img.src = 'avatars/' + avatarId + '.png';
-    img.onerror = function(){ this.style.display = 'none'; if(profInit) profInit.style.display = 'block'; };
-    if (profInit) profInit.style.display = 'none';
+    img.onerror = function(){ this.style.display='none'; };
   }
 }
 
