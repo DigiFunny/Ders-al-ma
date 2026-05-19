@@ -1,23 +1,673 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mağaza — Pugi</title>
-  <style>
-    body { background: #080d18; color: #e2e8f0; font-family: system-ui, sans-serif; padding: 16px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Mağaza — Pugi</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080d18; --bg2:#0e1628; --bg3:#131e33;
+  --card:#111827; --card2:#162035; --border:#1c2d47;
+  --accent:#38bdf8; --accent2:#818cf8; --accent3:#34d399;
+  --orange:#fb923c; --yellow:#fbbf24; --warn:#f87171;
+  --text:#e2e8f0; --muted:#4b6280; --r:16px;
+}
+/* ── TEMA OVERRIDE'LARI ── */
+body.theme-purple   {
+  --bg:#0d0814; --bg2:#130c1e; --bg3:#1a1028; --card:#160e22; --card2:#1e1530; --border:#2d1f4a;
+  --accent:#a78bfa; --accent2:#c084fc; --accent3:#818cf8;
+}
+body.theme-teal     {
+  --bg:#061110; --bg2:#0a1918; --bg3:#0e201e; --card:#0c1b19; --card2:#112521; --border:#1a3a34;
+  --accent:#2dd4bf; --accent2:#34d399; --accent3:#4ade80;
+}
+body.theme-red      {
+  --bg:#130808; --bg2:#1c0d0d; --bg3:#241111; --card:#1e0f0f; --card2:#281515; --border:#3d1b1b;
+  --accent:#f87171; --accent2:#fb923c; --accent3:#fbbf24;
+}
+body.theme-pink     {
+  --bg:#130810; --bg2:#1c0c18; --bg3:#241020; --card:#1e0e1c; --card2:#281424; --border:#3d1a38;
+  --accent:#f472b6; --accent2:#e879f9; --accent3:#fb7185;
+}
+body.theme-mono     {
+  --bg:#0a0a0a; --bg2:#111111; --bg3:#1a1a1a; --card:#141414; --card2:#1c1c1c; --border:#2a2a2a;
+  --accent:#e2e8f0; --accent2:#94a3b8; --accent3:#64748b;
+}
+body.theme-midnight {
+  --bg:#020617; --bg2:#0f172a; --bg3:#1e1b4b; --card:#0d1340; --card2:#111c52; --border:#1e2d6e;
+  --accent:#6366f1; --accent2:#8b5cf6; --accent3:#06b6d4;
+}
+
+/* ── AÇIK MOD + KOZMETIK TEMA KOMBİNASYONLARI ── */
+body.light.theme-purple {
+  --bg:#f5f3ff; --bg2:#ede9fe; --bg3:#ddd6fe; --card:#ffffff; --card2:#faf8ff; --border:#c4b5fd;
+  --accent:#7c3aed; --accent2:#9333ea; --accent3:#6366f1; --text:#1e1b4b; --muted:#6b7280;
+  --glass-bg:rgba(245,243,255,0.8); --glass-border:rgba(124,58,237,0.2);
+}
+body.light.theme-teal {
+  --bg:#f0fdfa; --bg2:#ccfbf1; --bg3:#99f6e4; --card:#ffffff; --card2:#f0fffc; --border:#5eead4;
+  --accent:#0d9488; --accent2:#059669; --accent3:#10b981; --text:#042f2e; --muted:#6b7280;
+  --glass-bg:rgba(240,253,250,0.8); --glass-border:rgba(13,148,136,0.2);
+}
+body.light.theme-red {
+  --bg:#fff1f2; --bg2:#ffe4e6; --bg3:#fecdd3; --card:#ffffff; --card2:#fff5f5; --border:#fca5a5;
+  --accent:#dc2626; --accent2:#ea580c; --accent3:#d97706; --text:#450a0a; --muted:#6b7280;
+  --glass-bg:rgba(255,241,242,0.8); --glass-border:rgba(220,38,38,0.2);
+}
+body.light.theme-pink {
+  --bg:#fdf2f8; --bg2:#fce7f3; --bg3:#fbcfe8; --card:#ffffff; --card2:#fef9ff; --border:#f9a8d4;
+  --accent:#db2777; --accent2:#c026d3; --accent3:#f43f5e; --text:#500724; --muted:#6b7280;
+  --glass-bg:rgba(253,242,248,0.8); --glass-border:rgba(219,39,119,0.2);
+}
+body.light.theme-mono {
+  --bg:#f8fafc; --bg2:#f1f5f9; --bg3:#e2e8f0; --card:#ffffff; --card2:#f8fafc; --border:#cbd5e1;
+  --accent:#1e293b; --accent2:#475569; --accent3:#64748b; --text:#0f172a; --muted:#94a3b8;
+  --glass-bg:rgba(248,250,252,0.8); --glass-border:rgba(30,41,59,0.15);
+}
+body.light.theme-midnight {
+  --bg:#eef2ff; --bg2:#e0e7ff; --bg3:#c7d2fe; --card:#ffffff; --card2:#f5f7ff; --border:#a5b4fc;
+  --accent:#4f46e5; --accent2:#7c3aed; --accent3:#0891b2; --text:#1e1b4b; --muted:#6b7280;
+  --glass-bg:rgba(238,242,255,0.8); --glass-border:rgba(79,70,229,0.2);
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; user-select:none; }
+body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; min-height:100vh; }
+
+/* ── HEADER ── */
+.header {
+  position:sticky; top:0; z-index:100;
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px 12px;
+  background:rgba(8,13,24,0.9); backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--border);
+}
+.header-back {
+  width:36px; height:36px; border-radius:10px;
+  background:var(--card); border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  flex-shrink:0; transition:all 0.15s;
+}
+.header-back:active { transform:scale(0.92); }
+.header-title { font-size:0.95rem; font-weight:800; flex:1; }
+.coin-pill {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 12px; border-radius:99px;
+  background:rgba(251,191,36,0.1); border:1.5px solid rgba(251,191,36,0.25);
+  font-family:'JetBrains Mono',monospace; font-size:0.82rem; font-weight:700; color:var(--yellow);
+}
+
+/* ── TABS ── */
+.shop-tabs {
+  display:flex; gap:6px; padding:12px 16px 0; overflow-x:auto;
+  scrollbar-width:none;
+}
+.shop-tabs::-webkit-scrollbar { display:none; }
+.shop-tab {
+  flex-shrink:0; padding:8px 16px; border-radius:99px;
+  border:1.5px solid var(--border); background:var(--card);
+  color:var(--muted); font-family:'Sora',sans-serif;
+  font-size:0.78rem; font-weight:800; cursor:pointer; transition:all 0.2s;
+  white-space:nowrap;
+}
+.shop-tab.active {
+  border-color:var(--accent2); color:var(--accent2);
+  background:rgba(129,140,248,0.1);
+}
+
+/* ── CONTENT ── */
+.content { padding:16px 14px 100px; }
+.sec {
+  font-size:0.65rem; font-weight:800; color:var(--muted);
+  letter-spacing:1.5px; text-transform:uppercase; margin:20px 0 10px;
+}
+
+/* ── GRID ── */
+.items-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.item-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:14px; padding:14px 10px 12px;
+  text-align:center; cursor:pointer; transition:all 0.2s;
+  position:relative; overflow:hidden;
+}
+.item-card:active { transform:scale(0.95); }
+.item-card.owned { border-color:rgba(52,211,153,0.4); }
+.item-card.equipped { border-color:var(--accent2); background:rgba(129,140,248,0.06); }
+.item-card.rare-item { border-color:rgba(251,191,36,0.3); }
+
+/* Tier badge */
+.tier-badge {
+  position:absolute; top:7px; left:7px;
+  padding:2px 7px; border-radius:99px;
+  font-size:0.52rem; font-weight:900; letter-spacing:0.5px; text-transform:uppercase;
+}
+.tier-basic  { background:rgba(56,189,248,0.15);  color:var(--accent);  }
+.tier-mid    { background:rgba(129,140,248,0.15); color:var(--accent2); }
+.tier-rare   { background:rgba(251,191,36,0.15);  color:var(--yellow);  }
+
+/* Equipped badge */
+.equipped-badge {
+  position:absolute; top:7px; right:7px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--accent2); display:none;
+  align-items:center; justify-content:center; font-size:0.6rem;
+}
+.item-card.equipped .equipped-badge { display:flex; }
+
+/* Preview area */
+.item-preview { height:64px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+
+/* Avatar preview */
+.av-circle {
+  width:52px; height:52px; border-radius:50%;
+  background:linear-gradient(135deg,var(--accent2),var(--accent3));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; font-weight:900; color:#fff; overflow:hidden;
+}
+.av-circle img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+
+/* Frame preview — small circle with frame applied */
+.frame-preview-circle {
+  width:52px; height:52px; border-radius:50%;
+  background:linear-gradient(135deg,var(--accent2),var(--accent3));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.2rem; font-weight:900; color:#fff;
+  transition:box-shadow 0.3s;
+}
+.fp-blue_simple    { box-shadow:0 0 0 3px #38bdf8; }
+.fp-teal_simple    { box-shadow:0 0 0 3px #34d399; }
+.fp-orange_simple  { box-shadow:0 0 0 3px #fb923c; }
+.fp-purple_mid     { box-shadow:0 0 0 3px #818cf8, 0 0 10px rgba(129,140,248,0.4); }
+.fp-pink_mid       { box-shadow:0 0 0 3px #f472b6, 0 0 10px rgba(244,114,182,0.4); }
+.fp-gold_mid       { box-shadow:0 0 0 3px #fbbf24, 0 0 12px rgba(251,191,36,0.45); }
+.fp-red_simple     { box-shadow:0 0 0 3px #f87171; }
+.fp-white_simple   { box-shadow:0 0 0 3px #e2e8f0; }
+.fp-cyan_mid       { box-shadow:0 0 0 3px #22d3ee, 0 0 10px rgba(34,211,238,0.4); }
+.fp-green_mid      { box-shadow:0 0 0 3px #4ade80, 0 0 10px rgba(74,222,128,0.4); }
+.fp-diamond_rare   { animation:diamond-p 2s ease-in-out infinite; }
+.fp-fire_rare      { animation:fire-p 1.5s ease-in-out infinite; }
+.fp-rainbow_rare   { animation:rainbow-p 3s linear infinite; }
+.fp-aurora_rare    { animation:aurora-p 4s ease-in-out infinite; }
+@keyframes aurora-p { 0%{box-shadow:0 0 0 3px #818cf8,0 0 14px rgba(129,140,248,0.5)} 33%{box-shadow:0 0 0 3px #2dd4bf,0 0 14px rgba(45,212,191,0.5)} 66%{box-shadow:0 0 0 3px #f472b6,0 0 14px rgba(244,114,182,0.5)} 100%{box-shadow:0 0 0 3px #818cf8,0 0 14px rgba(129,140,248,0.5)} }
+@keyframes diamond-p {
+  0%,100% { box-shadow:0 0 0 3px #67e8f9, 0 0 16px rgba(103,232,249,0.5); }
+  50%      { box-shadow:0 0 0 3px #a5f3fc, 0 0 24px rgba(165,243,252,0.7); }
+}
+@keyframes fire-p {
+  0%,100% { box-shadow:0 0 0 3px #fb923c, 0 0 12px rgba(251,146,60,0.6); }
+  50%      { box-shadow:0 0 0 3px #fbbf24, 0 0 20px rgba(251,191,36,0.7); }
+}
+@keyframes rainbow-p {
+  0%   { box-shadow:0 0 0 3px #f87171; }
+  16%  { box-shadow:0 0 0 3px #fb923c; }
+  33%  { box-shadow:0 0 0 3px #fbbf24; }
+  50%  { box-shadow:0 0 0 3px #34d399; }
+  66%  { box-shadow:0 0 0 3px #38bdf8; }
+  83%  { box-shadow:0 0 0 3px #818cf8; }
+  100% { box-shadow:0 0 0 3px #f87171; }
+}
+
+/* Theme preview */
+.theme-preview {
+  width:52px; height:36px; border-radius:8px; overflow:hidden;
+  border:1.5px solid var(--border); display:flex; flex-direction:column; gap:3px; padding:5px;
+}
+.theme-dot-row { display:flex; gap:3px; }
+.theme-dot { flex:1; height:6px; border-radius:3px; }
+
+/* Item info */
+.item-name { font-size:0.72rem; font-weight:800; margin-bottom:4px; line-height:1.3; }
+.item-price {
+  display:inline-flex; align-items:center; gap:3px;
+  font-family:'JetBrains Mono',monospace; font-size:0.72rem; font-weight:700; color:var(--yellow);
+}
+.item-price.owned-price { color:var(--accent3); font-family:'Sora',sans-serif; font-size:0.68rem; }
+.item-price.equipped-price { color:var(--accent2); font-family:'Sora',sans-serif; font-size:0.68rem; }
+
+/* ── BUY SHEET ── */
+.sheet-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.6);
+  backdrop-filter:blur(4px); z-index:500;
+  opacity:0; transition:opacity 0.25s; pointer-events:none;
+}
+.sheet-overlay.open { opacity:1; pointer-events:all; }
+.sheet {
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%) translateY(100%);
+  width:100%; max-width:480px; background:var(--card);
+  border-radius:20px 20px 0 0; padding:20px 20px 40px; z-index:501;
+  transition:transform 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+.sheet.open { transform:translateX(-50%) translateY(0); }
+.sheet-handle { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 20px; }
+.sheet-preview { display:flex; justify-content:center; margin-bottom:16px; }
+.sheet-item-name { text-align:center; font-size:1.1rem; font-weight:900; margin-bottom:4px; }
+.sheet-item-tier { text-align:center; font-size:0.7rem; font-weight:800; color:var(--muted); margin-bottom:16px; letter-spacing:1px; text-transform:uppercase; }
+.sheet-price-row {
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--bg3); border-radius:12px; padding:12px 16px; margin-bottom:16px;
+}
+.sheet-price-label { font-size:0.72rem; font-weight:800; color:var(--muted); }
+.sheet-price-val {
+  display:flex; align-items:center; gap:5px;
+  font-family:'JetBrains Mono',monospace; font-size:1.1rem; font-weight:700; color:var(--yellow);
+}
+.sheet-balance-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 4px; margin-bottom:20px;
+}
+.sheet-balance-label { font-size:0.72rem; font-weight:800; color:var(--muted); }
+.sheet-balance-val {
+  font-family:'JetBrains Mono',monospace; font-size:0.88rem; font-weight:700; color:var(--text);
+}
+.sheet-balance-after { color:var(--accent3); }
+.btn-buy {
+  width:100%; padding:15px; border-radius:14px; border:none;
+  background:linear-gradient(135deg,var(--yellow),var(--orange));
+  color:#000; font-family:'Sora',sans-serif;
+  font-size:0.95rem; font-weight:900; cursor:pointer; margin-bottom:8px;
+  transition:all 0.15s;
+}
+.btn-buy:active { transform:scale(0.98); }
+.btn-buy:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+.btn-equip {
+  width:100%; padding:14px; border-radius:14px; border:none;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff; font-family:'Sora',sans-serif;
+  font-size:0.92rem; font-weight:900; cursor:pointer; margin-bottom:8px;
+  transition:all 0.15s;
+}
+.btn-equip:active { transform:scale(0.98); }
+.btn-cancel {
+  width:100%; padding:13px; border-radius:12px;
+  border:1.5px solid var(--border); background:transparent;
+  color:var(--text); font-family:'Sora',sans-serif;
+  font-size:0.88rem; font-weight:800; cursor:pointer;
+}
+.insufficient { font-size:0.75rem; color:var(--warn); text-align:center; font-weight:800; margin-bottom:12px; display:none; }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--card2); border:1.5px solid var(--border);
+  border-radius:12px; padding:10px 18px;
+  font-size:0.82rem; font-weight:800; color:var(--text);
+  opacity:0; transition:all 0.3s; pointer-events:none; white-space:nowrap; z-index:9999;
+}
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ── LOADING ── */
+.loading-wrap {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  min-height:60vh; gap:12px; color:var(--muted); font-size:0.82rem; font-weight:700;
+}
+.spin { width:32px; height:32px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--accent); animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
+.fade-up { animation:fadeUp 0.3s ease both; }
+</style>
 </head>
 <body>
-  <script>
-    (function() {
-      try {
-        var savedTheme = localStorage.getItem('pugi_active_theme');
-        if (savedTheme) { document.body.className = 'theme-' + savedTheme; }
-      } catch (e) { console.error(e); }
-    })();
-  </script>
-  <h2>Mağaza</h2>
-  <p>Pugi mağaza ve kozmetik sayfası.</p>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-back" onclick="goBack()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </div>
+  <div class="header-title">🛍️ Mağaza</div>
+  <div class="coin-pill">🪙 <span id="coinBal">—</span></div>
+</div>
+
+<!-- TABS -->
+<div class="shop-tabs">
+  <div class="shop-tab active" onclick="switchTab('frames',this)">🖼️ Çerçeveler</div>
+  <div class="shop-tab" onclick="switchTab('avatars',this)">👤 Avatarlar</div>
+  <div class="shop-tab" onclick="switchTab('themes',this)">🎨 Temalar</div>
+</div>
+
+<!-- CONTENT -->
+<div id="shopContent" class="content">
+  <div class="loading-wrap"><div class="spin"></div><div>Yükleniyor...</div></div>
+</div>
+
+<!-- BUY SHEET -->
+<div id="sheetOverlay" class="sheet-overlay" onclick="closeSheet()"></div>
+<div id="buySheet" class="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-preview" id="sheetPreview"></div>
+  <div class="sheet-item-name" id="sheetName"></div>
+  <div class="sheet-item-tier" id="sheetTier"></div>
+  <div class="sheet-price-row">
+    <div class="sheet-price-label">Fiyat</div>
+    <div class="sheet-price-val">🪙 <span id="sheetPrice"></span></div>
+  </div>
+  <div class="sheet-balance-row">
+    <div class="sheet-balance-label">Bakiyen</div>
+    <div class="sheet-balance-val"><span id="sheetBal"></span> → <span id="sheetBalAfter" class="sheet-balance-after"></span></div>
+  </div>
+  <div class="insufficient" id="insufficientMsg">⚠️ Yeterli coin yok</div>
+  <button class="btn-buy" id="sheetBuyBtn" onclick="confirmBuy()">Satın Al</button>
+  <button class="btn-equip" id="sheetEquipBtn" onclick="confirmEquip()" style="display:none">✓ Kuşan</button>
+  <button class="btn-cancel" onclick="closeSheet()">Vazgeç</button>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// CATALOG
+// ══════════════════════════════════════════════
+var CATALOG = {
+  frames: [
+    // Basit — 100 coin
+    { id:'blue_simple',   name:'Mavi',        tier:'Basit', price:100,  tierClass:'tier-basic',
+      preview:'<div class="frame-preview-circle fp-blue_simple">S</div>' },
+    { id:'teal_simple',   name:'Yeşil',       tier:'Basit', price:100,  tierClass:'tier-basic',
+      preview:'<div class="frame-preview-circle fp-teal_simple">S</div>' },
+    { id:'orange_simple', name:'Turuncu',     tier:'Basit', price:100,  tierClass:'tier-basic',
+      preview:'<div class="frame-preview-circle fp-orange_simple">S</div>' },
+    { id:'red_simple',    name:'Kırmızı',     tier:'Basit', price:100,  tierClass:'tier-basic',
+      preview:'<div class="frame-preview-circle fp-red_simple">S</div>' },
+    { id:'white_simple',  name:'Beyaz',       tier:'Basit', price:100,  tierClass:'tier-basic',
+      preview:'<div class="frame-preview-circle fp-white_simple">S</div>' },
+    // Orta — 400 coin
+    { id:'purple_mid',    name:'Mor Parıltı', tier:'Orta',  price:400,  tierClass:'tier-mid',
+      preview:'<div class="frame-preview-circle fp-purple_mid">S</div>' },
+    { id:'pink_mid',      name:'Pembe Işık',  tier:'Orta',  price:400,  tierClass:'tier-mid',
+      preview:'<div class="frame-preview-circle fp-pink_mid">S</div>' },
+    { id:'gold_mid',      name:'Altın',       tier:'Orta',  price:400,  tierClass:'tier-mid',
+      preview:'<div class="frame-preview-circle fp-gold_mid">S</div>' },
+    { id:'cyan_mid',      name:'Siyan',       tier:'Orta',  price:400,  tierClass:'tier-mid',
+      preview:'<div class="frame-preview-circle fp-cyan_mid">S</div>' },
+    { id:'green_mid',     name:'Zümrüt',      tier:'Orta',  price:400,  tierClass:'tier-mid',
+      preview:'<div class="frame-preview-circle fp-green_mid">S</div>' },
+    // Nadir — 1600 coin
+    { id:'diamond_rare',  name:'Elmas',       tier:'Nadir', price:1600, tierClass:'tier-rare',
+      preview:'<div class="frame-preview-circle fp-diamond_rare">S</div>' },
+    { id:'fire_rare',     name:'Alev',        tier:'Nadir', price:1600, tierClass:'tier-rare',
+      preview:'<div class="frame-preview-circle fp-fire_rare">S</div>' },
+    { id:'rainbow_rare',  name:'Gökkuşağı',   tier:'Nadir', price:1600, tierClass:'tier-rare',
+      preview:'<div class="frame-preview-circle fp-rainbow_rare">S</div>' },
+    { id:'aurora_rare',   name:'Aurora',      tier:'Nadir', price:1600, tierClass:'tier-rare',
+      preview:'<div class="frame-preview-circle fp-aurora_rare">S</div>' },
+  ],
+  avatars: [
+    // Standart — 250 coin
+    { id:'1', name:'Avatar 1', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/1.png" onerror="this.parentNode.innerHTML=\'1\'"></div>' },
+    { id:'2', name:'Avatar 2', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/2.png" onerror="this.parentNode.innerHTML=\'2\'"></div>' },
+    { id:'3', name:'Avatar 3', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/3.png" onerror="this.parentNode.innerHTML=\'3\'"></div>' },
+    { id:'4', name:'Avatar 4', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/4.png" onerror="this.parentNode.innerHTML=\'4\'"></div>' },
+    { id:'5', name:'Avatar 5', tier:'Standart', price:250, tierClass:'tier-basic',
+      preview:'<div class="av-circle"><img src="avatars/5.png" onerror="this.parentNode.innerHTML=\'5\'"></div>' },
+    // Özel — 400 coin
+    { id:'6', name:'Avatar 6', tier:'Özel', price:400, tierClass:'tier-mid',
+      preview:'<div class="av-circle"><img src="avatars/6.png" onerror="this.parentNode.innerHTML=\'6\'"></div>' },
+    { id:'7', name:'Avatar 7', tier:'Özel', price:400, tierClass:'tier-mid',
+      preview:'<div class="av-circle"><img src="avatars/7.png" onerror="this.parentNode.innerHTML=\'7\'"></div>' },
+    { id:'8', name:'Avatar 8', tier:'Özel', price:400, tierClass:'tier-mid',
+      preview:'<div class="av-circle"><img src="avatars/8.png" onerror="this.parentNode.innerHTML=\'8\'"></div>' },
+    // Efsane — 1600 coin
+    { id:'9', name:'Avatar 9', tier:'Efsane', price:1600, tierClass:'tier-rare',
+      preview:'<div class="av-circle"><img src="avatars/9.png" onerror="this.parentNode.innerHTML=\'9\'"></div>' },
+  ],
+  themes: [
+    // Varsayılan — Ücretsiz
+    { id:'default', name:'Varsayılan', tier:'Ücretsiz', price:0, tierClass:'tier-basic',
+      preview:'<div class="theme-preview" style="background:#080d18"><div class="theme-dot-row"><div class="theme-dot" style="background:#38bdf8"></div><div class="theme-dot" style="background:#818cf8"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#111827;flex:2"></div></div></div>' },
+    // Basit — 300 coin
+    { id:'purple',   name:'Mor Tema',       tier:'Basit', price:300, tierClass:'tier-basic',
+      preview:'<div class="theme-preview" style="background:#0d0820"><div class="theme-dot-row"><div class="theme-dot" style="background:#a78bfa"></div><div class="theme-dot" style="background:#c084fc"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#1e1040;flex:2"></div></div></div>' },
+    { id:'teal',     name:'Okyanus',        tier:'Basit', price:300, tierClass:'tier-basic',
+      preview:'<div class="theme-preview" style="background:#071820"><div class="theme-dot-row"><div class="theme-dot" style="background:#2dd4bf"></div><div class="theme-dot" style="background:#34d399"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#0d2c2a;flex:2"></div></div></div>' },
+    { id:'red',      name:'Kor',            tier:'Basit', price:300, tierClass:'tier-basic',
+      preview:'<div class="theme-preview" style="background:#180808"><div class="theme-dot-row"><div class="theme-dot" style="background:#f87171"></div><div class="theme-dot" style="background:#fb923c"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#2c1010;flex:2"></div></div></div>' },
+    { id:'pink',     name:'Pembe',          tier:'Basit', price:300, tierClass:'tier-basic',
+      preview:'<div class="theme-preview" style="background:#180810"><div class="theme-dot-row"><div class="theme-dot" style="background:#f472b6"></div><div class="theme-dot" style="background:#e879f9"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#2c1020;flex:2"></div></div></div>' },
+    // Nadir — 600 coin
+    { id:'mono',     name:'Siyah & Beyaz',  tier:'Nadir', price:600, tierClass:'tier-rare',
+      preview:'<div class="theme-preview" style="background:#0a0a0a"><div class="theme-dot-row"><div class="theme-dot" style="background:#e2e8f0"></div><div class="theme-dot" style="background:#94a3b8"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#1a1a1a;flex:2"></div></div></div>' },
+    { id:'midnight', name:'Gece Yarısı',    tier:'Nadir', price:600, tierClass:'tier-rare',
+      preview:'<div class="theme-preview" style="background:#020617"><div class="theme-dot-row"><div class="theme-dot" style="background:#6366f1"></div><div class="theme-dot" style="background:#8b5cf6"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#0f172a;flex:2"></div></div></div>' },
+  ]
+};
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+var _db, _auth, _uid;
+var _coins = 0;
+var _owned = [];        // sahip olunan item id'leri
+var _cosmetics = {};    // { frame, avatar, theme }
+var _activeTab = 'frames';
+var _selectedItem = null;
+var firebaseConfig = {
+  apiKey:"AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
+  authDomain:"pugi-app-deeaa.firebaseapp.com",
+  projectId:"pugi-app-deeaa",
+  storageBucket:"pugi-app-deeaa.firebasestorage.app",
+  messagingSenderId:"219082394848",
+  appId:"1:219082394848:web:8780f59490374d6566d485"
+};
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+function loadScript(src, cb) {
+  var s = document.createElement('script'); s.src = src; s.onload = cb; document.head.appendChild(s);
+}
+function initFirebase() {
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js', function() {
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js', function() {
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js', function() {
+        firebase.initializeApp(firebaseConfig);
+        _db   = firebase.firestore();
+        _auth = firebase.auth();
+        _auth.onAuthStateChanged(function(user) {
+          if (!user) { window.location.href = 'index.html'; return; }
+          _uid = user.uid;
+          _db.collection('users').doc(_uid).get().then(function(doc) {
+            if (!doc.exists) { window.location.href='index.html'; return; }
+            var d = doc.data();
+            _coins     = d.coins     || 0;
+            _owned     = d.ownedItems  || [];
+            _cosmetics = d.cosmetics   || {};
+            document.getElementById('coinBal').textContent = _coins.toLocaleString('tr-TR');
+            renderTab(_activeTab);
+          });
+        });
+      });
+    });
+  });
+}
+
+// ══════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════
+function switchTab(tab, el) {
+  _activeTab = tab;
+  document.querySelectorAll('.shop-tab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  renderTab(tab);
+}
+
+function renderTab(tab) {
+  var items = CATALOG[tab];
+  var equippedKey = tab === 'frames' ? 'frame' : tab === 'avatars' ? 'avatar' : 'theme';
+  var equippedId  = _cosmetics[equippedKey] || 'none';
+
+  // Tier grupları
+  var groups = {};
+  items.forEach(function(item) {
+    if (!groups[item.tier]) groups[item.tier] = [];
+    groups[item.tier].push(item);
+  });
+
+  var html = '';
+  Object.keys(groups).forEach(function(tier) {
+    html += '<div class="sec">' + tier + '</div>';
+    html += '<div class="items-grid">';
+    groups[tier].forEach(function(item) {
+      var isOwned    = _owned.indexOf(item.id) !== -1;
+      var isEquipped = equippedId === item.id;
+      var cardClass  = 'item-card' +
+        (isEquipped ? ' equipped' : isOwned ? ' owned' : '') +
+        (item.tier === 'Nadir' || item.tier === 'Efsane' ? ' rare-item' : '');
+
+      var priceHTML = isEquipped
+        ? '<span class="item-price equipped-price">✓ Takılı</span>'
+        : isOwned
+          ? '<span class="item-price owned-price">✓ Sahipsin</span>'
+          : '<span class="item-price">🪙 ' + item.price.toLocaleString('tr-TR') + '</span>';
+
+      html += '<div class="' + cardClass + '" onclick="openSheet(\'' + tab + '\',\'' + item.id + '\')">' +
+        '<span class="tier-badge ' + item.tierClass + '">' + item.tier + '</span>' +
+        '<span class="equipped-badge">✓</span>' +
+        '<div class="item-preview">' + item.preview + '</div>' +
+        '<div class="item-name">' + item.name + '</div>' +
+        priceHTML +
+      '</div>';
+    });
+    html += '</div>';
+  });
+
+  var wrap = document.getElementById('shopContent');
+  wrap.innerHTML = '<div class="fade-up">' + html + '</div>';
+}
+
+// ══════════════════════════════════════════════
+// SHEET
+// ══════════════════════════════════════════════
+function openSheet(tab, itemId) {
+  var items = CATALOG[tab];
+  var item  = items.find(function(i){ return i.id === itemId; });
+  if (!item) return;
+
+  _selectedItem = { tab:tab, item:item };
+
+  var equippedKey = tab === 'frames' ? 'frame' : tab === 'avatars' ? 'avatar' : 'theme';
+  var isOwned    = _owned.indexOf(item.id) !== -1;
+  var isEquipped = (_cosmetics[equippedKey] || 'none') === item.id;
+
+  // Preview (büyütülmüş)
+  var bigPreview = item.preview.replace('52px','72px').replace('52px','72px')
+    .replace('frame-preview-circle','frame-preview-circle')
+    .replace('av-circle','av-circle');
+  document.getElementById('sheetPreview').innerHTML = '<div style="transform:scale(1.2);transform-origin:center">' + item.preview + '</div>';
+  document.getElementById('sheetName').textContent  = item.name;
+  document.getElementById('sheetTier').textContent  = item.tier + ' · ' + tab.charAt(0).toUpperCase() + tab.slice(1,-1);
+
+  document.getElementById('sheetPrice').textContent    = item.price.toLocaleString('tr-TR');
+  document.getElementById('sheetBal').textContent      = _coins.toLocaleString('tr-TR');
+  document.getElementById('sheetBalAfter').textContent = isOwned ? _coins.toLocaleString('tr-TR') : Math.max(0, _coins - item.price).toLocaleString('tr-TR');
+
+  var canAfford = _coins >= item.price;
+  var buyBtn    = document.getElementById('sheetBuyBtn');
+  if (item.price === 0) { buyBtn.textContent = '✨ Ücretsiz Edin'; buyBtn.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
+  else { buyBtn.textContent = 'Satın Al'; buyBtn.style.background = 'linear-gradient(135deg,var(--yellow),var(--orange))'; }
+  var equipBtn  = document.getElementById('sheetEquipBtn');
+  var insuf     = document.getElementById('insufficientMsg');
+
+  if (isEquipped) {
+    buyBtn.style.display   = 'none';
+    equipBtn.style.display = 'none';
+    equipBtn.textContent   = '✓ Zaten Takılı';
+    equipBtn.style.display = 'block';
+    equipBtn.disabled = true;
+    insuf.style.display = 'none';
+  } else if (isOwned) {
+    buyBtn.style.display   = 'none';
+    equipBtn.style.display = 'block';
+    equipBtn.textContent   = '✓ Kuşan';
+    equipBtn.disabled = false;
+    insuf.style.display    = 'none';
+  } else {
+    buyBtn.style.display   = 'block';
+    equipBtn.style.display = 'none';
+    buyBtn.disabled        = !canAfford;
+    insuf.style.display    = canAfford ? 'none' : 'block';
+  }
+
+  document.getElementById('sheetOverlay').classList.add('open');
+  document.getElementById('buySheet').classList.add('open');
+}
+
+function closeSheet() {
+  document.getElementById('sheetOverlay').classList.remove('open');
+  document.getElementById('buySheet').classList.remove('open');
+  _selectedItem = null;
+}
+
+// ══════════════════════════════════════════════
+// BUY & EQUIP
+// ══════════════════════════════════════════════
+function confirmBuy() {
+  if (!_selectedItem || !_db) return;
+  var item = _selectedItem.item;
+  if (_coins < item.price) return;
+
+  var newCoins = item.price === 0 ? _coins : (_coins - item.price);
+  var newOwned = _owned.concat([item.id]);
+
+  // Otomatik kuşan (satın alınca direkt takılsın)
+  var equippedKey = _selectedItem.tab === 'frames' ? 'frame'
+                  : _selectedItem.tab === 'avatars' ? 'avatar' : 'theme';
+  var newCosmetics = Object.assign({}, _cosmetics);
+  newCosmetics[equippedKey] = item.id;
+
+  _db.collection('users').doc(_uid).update({
+    coins:      newCoins,
+    ownedItems: newOwned,
+    cosmetics:  newCosmetics
+  }).then(function() {
+    _coins     = newCoins;
+    _owned     = newOwned;
+    _cosmetics = newCosmetics;
+    document.getElementById('coinBal').textContent = _coins.toLocaleString('tr-TR');
+    closeSheet();
+    renderTab(_activeTab);
+    showToast('✅ Satın alındı ve kuşanıldı!');
+  }).catch(function(e) {
+    showToast('❌ Hata: ' + e.message);
+  });
+}
+
+function confirmEquip() {
+  if (!_selectedItem || !_db) return;
+  var item = _selectedItem.item;
+  var equippedKey = _selectedItem.tab === 'frames' ? 'frame'
+                  : _selectedItem.tab === 'avatars' ? 'avatar' : 'theme';
+
+  var newCosmetics = Object.assign({}, _cosmetics);
+  newCosmetics[equippedKey] = item.id;
+
+  _db.collection('users').doc(_uid).update({ cosmetics: newCosmetics }).then(function() {
+    _cosmetics = newCosmetics;
+    closeSheet();
+    renderTab(_activeTab);
+    showToast('✓ ' + item.name + ' kuşanıldı!');
+  }).catch(function(e) {
+    showToast('❌ Hata: ' + e.message);
+  });
+}
+
+// ══════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════
+function goBack() { history.back(); }
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+
+initFirebase();
+</script>
 </body>
 </html>
