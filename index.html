@@ -1,23 +1,1663 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pugi — Ana Sayfa</title>
-  <style>
-    body { background: #080d18; color: #e2e8f0; font-family: system-ui, sans-serif; padding: 16px; }
-  </style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3LHMZF6983"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-3LHMZF6983');</script>
+<link rel="manifest" href="/manifest.json">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Pugi Ders Koçu — Sınav hazırlığı &amp; çalışma takibi</title>
+<meta name="description" content="Pugi Ders Koçu — YKS ve diğer sınavlara hazırlıkta akıllı çalışma arkadaşın. Zamanlayıcı, hedef takibi, AI koç. Ücretsiz başla.">
+<meta name="keywords" content="YKS çalışma takip,TYT hazırlık,AYT hazırlık,YKS uygulaması,Pugi">
+<meta name="author" content="Pugi">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://pugiapp.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pugiapp.com/">
+<meta property="og:title" content="Pugi Ders Koçu — Sınav hazırlığı">
+<meta property="og:description" content="Sınav hazırlığında akıllı çalışma arkadaşın. Ücretsiz başla, YKS ile dene.">
+<meta property="og:image" content="https://pugiapp.com/icon-512.png">
+<meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pugi Ders Koçu">
+<meta name="twitter:image" content="https://pugiapp.com/icon-512.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060c18;--bg2:#0d1525;--bg3:#111827;
+  --card:#111d2e;--border:#1a2d45;
+  --accent:#38bdf8;--accent2:#818cf8;--accent3:#34d399;
+  --warn:#f472b6;--orange:#fb923c;--yellow:#fbbf24;
+  --text:#e8f0fe;--muted:#4b6280;--muted2:#64788c;
+  --fox:#fb923c;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulseGlow{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes gradShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(56,189,248,0.15);border-radius:4px}
+input,select,textarea{color-scheme:dark}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+
+/* ── BASE ── */
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Sora',sans-serif;min-height:100dvh;
+  overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(56,189,248,0.08),transparent),
+    radial-gradient(ellipse 50% 40% at 90% 60%,rgba(129,140,248,0.05),transparent),
+    radial-gradient(ellipse 60% 50% at 5% 80%,rgba(52,211,153,0.03),transparent);
+}
+
+/* ── LOADING ── */
+.loading-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 0.4s}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.loading-spinner{width:40px;height:40px;border:3px solid rgba(56,189,248,0.15);border-top-color:#38bdf8;border-radius:50%;animation:spin 0.8s linear infinite}
+.loading-text{font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:2px}
+
+/* ── SCREENS ── */
+.screen{display:none;min-height:100dvh}
+.screen.active{display:block}
+
+/* ── BG ORBS ── */
+.bg-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px)}
+.bg-orb-1{width:400px;height:400px;background:rgba(56,189,248,0.06);top:-100px;left:-100px}
+.bg-orb-2{width:300px;height:300px;background:rgba(129,140,248,0.05);bottom:0;right:-80px}
+.bg-orb-3{width:200px;height:200px;background:rgba(52,211,153,0.04);top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* ══════════════════════════════════════════
+   SCREEN 1 — LANDING
+══════════════════════════════════════════ */
+#screenLanding{overflow-y:auto;position:relative}
+.landing-inner{position:relative;z-index:1;max-width:430px;margin:0 auto;min-height:100dvh}
+.landing-panel{display:none;flex-direction:column;min-height:100dvh;padding:0 0 40px}
+.landing-panel.is-active{display:flex}
+
+/* ── HERO ── */
+.hero{
+  padding:52px 24px 32px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+}
+
+/* Brand mark */
+.brand-mark{
+  position:relative;
+  width:72px;height:72px;
+  margin:0 auto 20px;
+  animation:float 4s ease-in-out infinite;
+}
+.brand-mark svg{width:72px;height:72px}
+
+.hero-logo-name{
+  font-size:2.8rem;font-weight:900;letter-spacing:-2px;line-height:1;
+  margin-bottom:18px;
+  background:linear-gradient(135deg,#e8f0fe 0%,#38bdf8 40%,#818cf8 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+.welcome-title{
+  font-size:1.05rem;font-weight:800;color:var(--text);
+  line-height:1.5;letter-spacing:-0.2px;
+  margin-bottom:10px;max-width:300px;
+}
+.welcome-sub{
+  font-size:0.8rem;font-weight:500;color:var(--muted2);
+  line-height:1.7;max-width:280px;margin:0 auto;
+}
+
+/* Feature pills below subtitle */
+.hero-pills{
+  display:flex;gap:6px;justify-content:center;flex-wrap:wrap;
+  margin-top:18px;
+}
+.hero-pill{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:99px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.04);
+  font-size:0.68rem;font-weight:700;color:var(--muted2);
+  backdrop-filter:blur(8px);
+}
+.hero-pill svg{flex-shrink:0}
+
+/* CTA stack */
+.landing-cta-stack{padding:0 20px;display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.btn-start{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;padding:16px 20px;border:none;border-radius:16px;
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  color:#fff;font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:800;
+  letter-spacing:0.02em;cursor:pointer;
+  box-shadow:0 4px 32px rgba(56,189,248,0.3),0 2px 8px rgba(0,0,0,0.3);
+  transition:opacity 0.2s,transform 0.15s;
+  position:relative;overflow:hidden;
+}
+.btn-start::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent);
+  pointer-events:none;
+}
+.btn-start:active{opacity:0.85;transform:scale(0.99)}
+.btn-secondary-landing{
+  width:100%;padding:14px 20px;border-radius:16px;
+  border:1.5px solid rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.04);
+  color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:700;cursor:pointer;
+  transition:all 0.2s;backdrop-filter:blur(8px);
+}
+.btn-secondary-landing:active{border-color:rgba(56,189,248,0.4);background:rgba(56,189,248,0.06)}
+
+/* Footer note */
+.landing-footer{
+  font-size:0.7rem;font-weight:600;color:var(--muted);
+  text-align:center;line-height:1.8;padding:0 24px;margin-bottom:24px;
+}
+.landing-footer strong{color:var(--accent3);font-weight:800}
+
+/* Divider */
+.landing-divider{
+  display:flex;align-items:center;gap:12px;
+  padding:0 24px;margin-bottom:22px;
+}
+.landing-divider-line{flex:1;height:1px;background:rgba(255,255,255,0.06)}
+.landing-divider-text{font-size:0.6rem;font-weight:800;color:var(--muted);letter-spacing:2px}
+
+/* Feature cards */
+.landing-features{padding:0 20px;display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.landing-feat-card{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;padding:14px 16px;
+  transition:border-color 0.2s;
+  backdrop-filter:blur(8px);
+}
+.landing-feat-card:active{border-color:rgba(56,189,248,0.3)}
+.feat-icon{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.feat-icon.blue{background:rgba(56,189,248,0.12);border:1px solid rgba(56,189,248,0.2)}
+.feat-icon.purple{background:rgba(129,140,248,0.12);border:1px solid rgba(129,140,248,0.2)}
+.feat-icon.green{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.2)}
+.feat-icon.orange{background:rgba(251,146,60,0.12);border:1px solid rgba(251,146,60,0.2)}
+.feat-text-title{font-size:0.85rem;font-weight:800;color:var(--text);margin-bottom:2px}
+.feat-text-sub{font-size:0.7rem;font-weight:600;color:var(--muted2);line-height:1.4}
+
+/* Scroll reveal / intro */
+.scroll-reveal-hint{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-family:'Sora',sans-serif;
+  font-size:0.65rem;font-weight:700;letter-spacing:1px;
+  padding:12px;transition:color 0.2s;
+}
+.scroll-reveal-hint:active{color:var(--accent)}
+.chev{animation:float 2s ease-in-out infinite;font-size:0.75rem}
+
+/* Landing intro section */
+.landing-intro{padding:24px 20px 0}
+.intro-kicker{font-size:0.6rem;font-weight:900;color:var(--accent);letter-spacing:2.5px;text-transform:uppercase;text-align:center;margin-bottom:8px}
+.intro-title{font-size:1rem;font-weight:900;color:var(--text);text-align:center;line-height:1.35;margin-bottom:10px;letter-spacing:-0.2px}
+.intro-lead{font-size:0.78rem;font-weight:500;color:var(--muted2);text-align:center;line-height:1.65;margin-bottom:18px;max-width:300px;margin-left:auto;margin-right:auto}
+.intro-feature-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.intro-feat{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;padding:14px 8px;text-align:center;
+}
+.if-emoji{font-size:1.3rem;display:block;margin-bottom:6px}
+.if-t{font-size:0.72rem;font-weight:900;color:var(--text);display:block;margin-bottom:3px}
+.if-d{font-size:0.6rem;font-weight:600;color:var(--muted);line-height:1.35}
+.intro-details{
+  background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.07);
+  border-radius:14px;margin-bottom:8px;overflow:hidden;
+}
+.intro-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;cursor:pointer;font-weight:700;font-size:0.8rem;color:var(--text)}
+.intro-details summary::-webkit-details-marker{display:none}
+.sum-chev{color:var(--muted);font-size:0.7rem;transition:transform 0.25s}
+.intro-details[open] summary .sum-chev{transform:rotate(180deg);color:var(--accent)}
+.intro-details-body{padding:0 16px 14px;font-size:0.76rem;font-weight:500;color:var(--muted2);line-height:1.65}
+.intro-foot{font-size:0.76rem;font-weight:600;color:var(--muted2);text-align:center;padding:18px 0 0;line-height:1.6}
+.intro-foot button{background:none;border:none;color:var(--accent);font-weight:800;font-size:0.76rem;cursor:pointer;font-family:'Sora',sans-serif;text-decoration:underline}
+
+/* Float CTA */
+.landing-float-cta{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  color:#fff;border:none;border-radius:99px;
+  padding:14px 32px;font-family:'Sora',sans-serif;
+  font-size:0.9rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 24px rgba(56,189,248,0.4);
+  transition:transform 0.35s cubic-bezier(.34,1.56,.64,1),opacity 0.3s;
+  opacity:0;z-index:50;white-space:nowrap;
+}
+.landing-float-cta.is-visible{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Toast */
+.landing-toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--card);border:1px solid var(--border);border-radius:99px;
+  padding:10px 20px;font-size:0.8rem;font-weight:700;
+  opacity:0;transition:all 0.3s;z-index:100;white-space:nowrap;
+  pointer-events:none;
+}
+.landing-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ── EXAM PICKER PANEL ── */
+.exam-picker-head{padding:20px 20px 16px;text-align:center}
+.landing-back-row{display:flex;margin-bottom:16px}
+.btn-landing-back{
+  width:40px;height:40px;border-radius:12px;
+  background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);
+  color:var(--muted2);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.btn-landing-back:active{border-color:rgba(56,189,248,0.4);color:var(--accent)}
+.exam-section-label{font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:6px;letter-spacing:-0.3px}
+.exam-section-hint{font-size:0.78rem;font-weight:600;color:var(--muted2);line-height:1.55}
+.exam-section{padding:0 16px 20px}
+.exam-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.exam-card{
+  background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:18px;padding:20px 14px;text-align:center;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);
+  position:relative;overflow:hidden;
+}
+.exam-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
+.exam-card:active{transform:scale(0.97)}
+.exam-card.yks{border-color:rgba(56,189,248,0.25);background:rgba(56,189,248,0.05)}
+.exam-card.kpss{border-color:rgba(52,211,153,0.25);background:rgba(52,211,153,0.05)}
+.exam-card.coming-soon{opacity:0.5;cursor:default}
+.exam-card.coming-soon:active{transform:none}
+.coming-badge{position:absolute;top:8px;right:8px;background:rgba(251,146,60,0.2);border:1px solid rgba(251,146,60,0.3);border-radius:5px;font-size:0.5rem;font-weight:900;color:var(--orange);letter-spacing:0.5px;padding:2px 6px;text-transform:uppercase}
+.exam-emoji{font-size:2rem;display:block}
+.exam-label{font-size:1.1rem;font-weight:900;color:var(--text)}
+.exam-desc{font-size:0.62rem;font-weight:600;color:var(--muted2);line-height:1.5}
+
+/* ══════════════════════════════════════════
+   SCREEN 2 — AUTH
+══════════════════════════════════════════ */
+#screenAuth{overflow-y:auto}
+.auth-inner{max-width:430px;margin:0 auto;padding:28px 20px 50px;position:relative;z-index:1}
+
+/* Auth logo */
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.auth-logo-icon{
+  width:44px;height:44px;border-radius:14px;
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+  box-shadow:0 4px 20px rgba(56,189,248,0.3);
+}
+.auth-logo-name{font-size:1.5rem;font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,#38bdf8,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* Step 1 */
+.step-title{font-size:1.2rem;font-weight:900;letter-spacing:-0.3px;margin-bottom:6px}
+.step-sub{font-size:0.78rem;font-weight:600;color:var(--muted2);margin-bottom:20px;line-height:1.55}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.type-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:18px;padding:20px 14px;text-align:center;cursor:pointer;
+  position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);overflow:hidden;
+}
+.type-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
+.type-card:active{transform:scale(0.97)}
+.type-card.selected.student{border-color:#38bdf8;background:rgba(56,189,248,0.08);box-shadow:0 0 0 3px rgba(56,189,248,0.1)}
+.type-card.selected.coach{border-color:#818cf8;background:rgba(129,140,248,0.08);box-shadow:0 0 0 3px rgba(129,140,248,0.1)}
+.type-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.65rem;font-weight:900;display:none;align-items:center;justify-content:center;line-height:1}
+.type-card.selected .type-check{display:flex}
+.type-emoji{font-size:1.8rem}
+.type-label{font-size:0.9rem;font-weight:900;color:var(--text)}
+.type-desc{font-size:0.62rem;font-weight:600;color:var(--muted2);line-height:1.45}
+
+/* Step 2 — form */
+.auth-tabs{display:flex;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:4px;gap:4px;margin-bottom:20px}
+.auth-tab{flex:1;padding:9px;border:none;background:transparent;color:var(--muted2);font-family:'Sora',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;border-radius:9px;transition:all 0.2s}
+.auth-tab.active{background:rgba(56,189,248,0.15);color:#38bdf8;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.form-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:20px;margin-bottom:14px}
+.form-title{font-size:0.6rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.input-wrap{position:relative;margin-bottom:12px;display:flex;align-items:center}
+.input-icon{position:absolute;left:14px;color:var(--muted);display:flex;align-items:center;font-size:0.85rem;font-weight:700;pointer-events:none}
+.form-input{
+  width:100%;padding:13px 14px 13px 42px;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:600;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.form-input:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px rgba(56,189,248,0.08)}
+.form-input::placeholder{color:var(--muted)}
+.pw-wrap{position:relative}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center}
+#forgotWrap{text-align:right;margin-bottom:14px;margin-top:-6px}
+#forgotWrap span{font-size:0.72rem;font-weight:700;color:var(--accent);cursor:pointer}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0}
+.divider-line{flex:1;height:1px;background:rgba(255,255,255,0.07)}
+.divider-text{font-size:0.6rem;color:var(--muted);font-weight:800;letter-spacing:1.5px}
+.btn-google{
+  width:100%;padding:12px;border-radius:12px;
+  border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);
+  color:var(--text);font-family:'Sora',sans-serif;font-weight:700;font-size:0.84rem;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all 0.2s;
+}
+.btn-google:active{border-color:#4285F4;background:rgba(66,133,244,0.08)}
+.error-msg{font-size:0.78rem;font-weight:700;padding:11px 14px;border-radius:12px;display:none}
+.error-msg.show{display:block}
+
+/* Shared btn-main */
+.btn-main{
+  width:100%;padding:15px;border:none;border-radius:14px;
+  background:linear-gradient(135deg,#38bdf8,#818cf8);
+  color:#fff;font-family:'Sora',sans-serif;font-size:0.92rem;font-weight:800;
+  cursor:pointer;letter-spacing:0.02em;
+  box-shadow:0 4px 20px rgba(56,189,248,0.25);
+  transition:opacity 0.2s,transform 0.15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-main:disabled{opacity:0.35;cursor:not-allowed}
+.btn-main:not(:disabled):active{opacity:0.85;transform:scale(0.99)}
+.btn-main.coach-mode{background:linear-gradient(135deg,#818cf8,#f472b6)}
+.btn-back{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);color:var(--muted2);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.btn-back:active{border-color:rgba(56,189,248,0.4);color:var(--accent)}
+.login-link{text-align:center;font-size:0.78rem;font-weight:700;color:var(--muted2)}
+.login-link span{color:var(--accent);cursor:pointer;font-weight:800}
+
+/* ── EXAM PICK & ONBOARDING ── */
+.sinav-pick-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:18px;padding:18px 12px;text-align:center;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  transition:all 0.25s cubic-bezier(0.22,1,0.36,1);position:relative;overflow:hidden;
+}
+.sinav-pick-card:active{transform:scale(0.97)}
+.sinav-pick-card.selected.yks{border-color:#38bdf8;background:rgba(56,189,248,0.08);box-shadow:0 0 0 3px rgba(56,189,248,0.1)}
+.sinav-pick-card.selected.kpss{border-color:#34d399;background:rgba(52,211,153,0.08);box-shadow:0 0 0 3px rgba(52,211,153,0.1)}
+.sinav-pick-card.disabled{opacity:0.4;cursor:default}
+.sinav-pick-card.disabled:active{transform:none}
+.sp-badge{position:absolute;top:7px;right:7px;background:rgba(251,146,60,0.15);border:1px solid rgba(251,146,60,0.25);border-radius:5px;font-size:0.48rem;font-weight:900;color:var(--orange);padding:2px 5px;text-transform:uppercase;letter-spacing:0.5px}
+.sp-emoji{font-size:1.7rem}
+.sp-label{font-size:1rem;font-weight:900;display:block}
+.sp-desc{font-size:0.62rem;font-weight:600;color:var(--muted2);line-height:1.45}
+
+/* Dal / Sınıf cards */
+.ob-dal-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:16px;padding:16px;cursor:pointer;
+  transition:all 0.2s;text-align:center;
+}
+.ob-dal-card:active{transform:scale(0.97)}
+.ob-dal-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08)}
+.ob-sinif-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:14px;padding:14px 16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:space-between;
+  font-weight:800;font-size:0.88rem;transition:all 0.2s;
+}
+.ob-sinif-card:active{transform:scale(0.98)}
+.ob-sinif-card.selected{border-color:var(--accent);background:rgba(56,189,248,0.08)}
+.kpss-kat-card{
+  background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.1);
+  border-radius:14px;cursor:pointer;transition:all 0.2s;
+}
+.kpss-kat-card:active{transform:scale(0.98)}
+.kpss-kat-card.selected{border-color:var(--accent2);background:rgba(129,140,248,0.08)}
+
+/* Select inputs */
+select{
+  width:100%;padding:13px 14px;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:600;outline:none;
+  -webkit-appearance:none;transition:border-color 0.2s;
+}
+select:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px rgba(56,189,248,0.08)}
+input[type=number]{
+  width:100%;padding:13px 14px;
+  background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);
+  border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;
+  font-size:0.88rem;font-weight:700;outline:none;
+  transition:border-color 0.2s;
+}
+input[type=number]:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px rgba(56,189,248,0.08)}
+.fadeIn{animation:fadeUp 0.3s ease}
+</style>
 </head>
 <body>
-  <script>
-    (function() {
-      try {
-        var savedTheme = localStorage.getItem('pugi_active_theme');
-        if (savedTheme) { document.body.className = 'theme-' + savedTheme; }
-      } catch (e) { console.error(e); }
-    })();
-  </script>
-  <h2>Pugi Ders Koçu</h2>
-  <p>Pugi sınavlara hazırlık ve çalışma takibi sayfası.</p>
+
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text">YÜKLENIYOR...</div>
+</div>
+
+<!-- EKRAN 1: LANDING -->
+<div class="screen active" id="screenLanding">
+  <div class="landing-inner">
+
+    <!-- Karşılama -->
+    <div id="panelWelcome" class="landing-panel is-active">
+      <div class="hero">
+        <div class="brand-mark">
+      <img src="icon-512.png" alt="Pugi" style="width:72px;height:72px;object-fit:contain;display:block;">
+    </div>
+        <div class="hero-logo-name">Pugi</div>
+        <h1 class="welcome-title">Pugi Ders Koçu&#x2019;na<br>hoş geldin!</h1>
+        <p class="welcome-sub">Sınav hazırlığını planla, çalışmanı takip et, hedefe odaklan — tek yerden.</p>
+      <div class="hero-pills">
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Zamanlayıcı
+        </div>
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          İstatistik
+        </div>
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/></svg>
+          AI Koç
+        </div>
+        <div class="hero-pill">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Koçlar
+        </div>
+      </div>
+      </div>
+
+      <div class="landing-cta-stack">
+        <button type="button" class="btn-start" onclick="openExamPicker()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Hemen Başla
+        </button>
+        <button type="button" class="btn-secondary-landing" onclick="goToAuthScreen()">Giriş yap / Kayıt ol</button>
+      </div>
+
+      <div class="landing-footer">
+        Misafir olarak <strong>YKS</strong> ile hemen başlayabilirsin &mdash; kayıt gerekmez.<br>
+        Daha fazlası için kayıt ol &mdash; <strong>temel özellikler ücretsiz</strong>.
+      </div>
+
+      <div class="landing-divider">
+        <div class="landing-divider-line"></div>
+        <div class="landing-divider-text">ÖZELLİKLER</div>
+        <div class="landing-divider-line"></div>
+      </div>
+
+      <div class="landing-features">
+        <div class="landing-feat-card">
+          <div class="feat-icon blue">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Pomodoro Zamanlayıcı</div>
+            <div class="feat-text-sub">Özelleştirilebilir odak seansları, mola hatırlatıcıları ve tam ekran mod</div>
+          </div>
+        </div>
+        <div class="landing-feat-card">
+          <div class="feat-icon purple">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M12 11V7"/><circle cx="12" cy="5" r="2"/><path d="M8 16h.01M12 16h.01M16 16h.01"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Kişisel AI Koç</div>
+            <div class="feat-text-sub">Çalışma verilerine göre günlük öneri ve haftalık derin analiz</div>
+          </div>
+        </div>
+        <div class="landing-feat-card">
+          <div class="feat-icon green">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Detaylı İstatistikler</div>
+            <div class="feat-text-sub">Günlük / haftalık / aylık grafikler, soru net takibi, konu haritası</div>
+          </div>
+        </div>
+        <div class="landing-feat-card">
+          <div class="feat-icon orange">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <div class="feat-text-title">Koçlar</div>
+            <div class="feat-text-sub">Gerçek koçlarla bağlan, haftalık raporlarını paylaş</div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="scroll-reveal-hint" onclick="scrollToLandingIntro()" aria-controls="landingIntro">
+        <span>Aşağı kaydır · tanıtım</span>
+        <span class="chev" aria-hidden="true">▼</span>
+      </button>
+
+      <section id="landingIntro" class="landing-intro" aria-label="Pugi tanıtımı">
+        <p class="intro-kicker">Keşfet</p>
+        <h2 class="intro-title">İstediğin sınav için tek uygulama</h2>
+        <p class="intro-lead">Karmaşık menü yok: önce çalış, verilerin oturduğunda hedefe daha net bakarsın.</p>
+
+        <div class="intro-feature-strip">
+          <div class="intro-feat">
+            <span class="if-emoji">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
+            <span class="if-t">Odak</span>
+            <span class="if-d">Zamanlayıcı ile seans</span>
+          </div>
+          <div class="intro-feat">
+            <span class="if-emoji">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            <span class="if-t">Netlik</span>
+            <span class="if-d">Gün ve hafta özeti</span>
+          </div>
+          <div class="intro-feat">
+            <span class="if-emoji">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </span>
+            <span class="if-t">Hedef</span>
+            <span class="if-d">Sıralama veya bölüm</span>
+          </div>
+        </div>
+
+        <details class="intro-details">
+          <summary>Misafir ile kayıtlı farkı nedir? <span class="sum-chev">▼</span></summary>
+          <div class="intro-details-body">
+            Misafir modunda <strong>YKS</strong> ile uygulamayı deneyebilirsin. Hesap açtığında verilerin bulutta saklanır; AI koç ve koç bağlantıları gibi özelliklere geçebilirsin.
+          </div>
+        </details>
+
+        <details class="intro-details">
+          <summary>Hangi sınavlar var? <span class="sum-chev">▼</span></summary>
+          <div class="intro-details-body">
+            Şu an <strong>YKS</strong>, <strong>KPSS</strong> ve <strong>LGS</strong> tam destekli. <strong>ALES</strong> için çalışmalar sürüyor; açıldığında aynı uygulama içinden seçebileceksin.
+          </div>
+        </details>
+
+        <details class="intro-details">
+          <summary>Ücret ve gizlilik <span class="sum-chev">▼</span></summary>
+          <div class="intro-details-body">
+            Temel özellikler ücretsiz kullanıma uygun tasarlandı. Hesabını istediğin zaman silebilirsin; ayrıntılar için uygulama içi ayarlara göz at.
+          </div>
+        </details>
+
+        <div class="intro-foot">
+          Hazır mısın? Hesabın yoksa önce dene, sonra kayıt ol.
+          <button type="button" onclick="goToAuthScreen()">Hesap oluştur / Giriş yap</button>
+        </div>
+      </section>
+    </div>
+
+    <!-- Sınav seçimi (misafir) -->
+    <div id="panelExams" class="landing-panel">
+      <div class="exam-picker-head">
+        <div class="landing-back-row">
+          <button type="button" class="btn-landing-back" onclick="closeExamPicker()" aria-label="Geri">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+        </div>
+        <div class="exam-section-label">Hangi sınava hazırlanıyorsun?</div>
+        <p class="exam-section-hint">Birini seç; şu an <strong style="color:var(--accent)">YKS</strong>, <strong style="color:#34d399">KPSS</strong> ve <strong style="color:var(--orange)">LGS</strong> ile devam edebilirsin.</p>
+      </div>
+
+      <div class="exam-section">
+        <div class="exam-grid">
+          <div class="exam-card yks" onclick="guestEnterExam('yks')">
+            <span class="exam-emoji">&#x1F4DA;</span>
+            <span class="exam-label">YKS</span>
+            <span class="exam-desc">TYT &middot; AYT<br>Sayısal / Sözel / EA / Dil</span>
+          </div>
+
+          <div class="exam-card lgs" onclick="guestEnterExam('lgs')">
+            <span class="exam-emoji">&#x1F392;</span>
+            <span class="exam-label">LGS</span>
+            <span class="exam-desc">Liseye geçiş sınavı</span>
+          </div>
+
+          <div class="exam-card ales coming-soon" onclick="showComingSoon()">
+            <span class="coming-badge">Yakında</span>
+            <span class="exam-emoji">&#x1F4C8;</span>
+            <span class="exam-label">ALES</span>
+            <span class="exam-desc">Lisansüstü sınavı</span>
+          </div>
+
+          <div class="exam-card kpss" onclick="guestEnterExam('kpss')">
+            <span class="exam-emoji">&#x1F3DB;</span>
+            <span class="exam-label">KPSS</span>
+            <span class="exam-desc">Kamu personeli seçme</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<button type="button" id="landingFloatCta" class="landing-float-cta" onclick="landingFloatHemenBasla()" aria-label="Hemen başla — sınav seç">
+  Hemen Başla
+</button>
+
+<div id="landingToast" class="landing-toast" role="status" aria-live="polite"></div>
+
+<!-- EKRAN 2: HESAP TÜRÜ + GİRİŞ/KAYIT -->
+<div class="screen" id="screenAuth">
+  <div class="auth-inner">
+
+    <div class="auth-logo">
+      <div class="auth-logo-icon" style="background:none;border-radius:0;box-shadow:none;width:40px;height:40px;">
+        <img src="icon-512.png" alt="Pugi" style="width:40px;height:40px;object-fit:contain;">
+      </div>
+      <div class="auth-logo-name">Pugi</div>
+    </div>
+
+    <div id="step1" class="step">
+      <div class="step-title">Hesap Türünü Seç</div>
+      <div class="step-sub">Devam etmek için bir hesap türü seç</div>
+      <div class="type-grid">
+        <div class="type-card student" onclick="selectType('student',this)">
+          <span class="type-check">&#x2713;</span>
+          <span class="type-emoji">&#x1F4DA;</span>
+          <span class="type-label">Öğrenci</span>
+          <span class="type-desc">Çalışmalarını takip et, koçunla bağlan</span>
+        </div>
+        <div class="type-card coach" onclick="selectType('coach',this)">
+          <span class="type-check">&#x2713;</span>
+          <span class="type-emoji">&#x1F3AF;</span>
+          <span class="type-label">Koç</span>
+          <span class="type-desc">Öğrencilerini yönet, istatistikleri gör</span>
+        </div>
+      </div>
+      <button class="btn-main" id="continueBtn" onclick="goToStep2()" disabled>Devam Et &#x2192;</button>
+      <div class="login-link" style="margin-top:14px">
+        <span onclick="goToLanding()">← Anasayfaya Dön</span>
+      </div>
+    </div>
+
+    <div id="step2" class="step">
+      <button class="btn-back" onclick="goBackToStep1()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tabLogin" onclick="setAuthMode('login')">Giriş Yap</button>
+        <button class="auth-tab" id="tabRegister" onclick="setAuthMode('register')">Kayıt Ol</button>
+      </div>
+
+      <div class="form-card">
+        <div class="form-title" id="formTitle">GİRİŞ YAP</div>
+
+        <div class="input-wrap" id="nameWrap" style="display:none">
+          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <input class="form-input" type="text" id="nameInput" placeholder="Adın ve soyadın" autocomplete="name">
+        </div>
+
+        <div class="input-wrap" id="unameWrap" style="display:none">
+          <span class="input-icon">@</span>
+          <input class="form-input" type="text" id="unameInput" placeholder="kullanici_adi" style="padding-left:36px" autocomplete="username">
+        </div>
+
+        <div class="input-wrap">
+          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg></span>
+          <input class="form-input" type="email" id="emailInput" placeholder="email@adresin.com" autocomplete="email">
+        </div>
+
+        <div class="input-wrap pw-wrap">
+          <span class="input-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <input class="form-input" type="password" id="pwInput" placeholder="&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;&#xB7;" autocomplete="current-password">
+          <button class="pw-toggle" type="button" onclick="togglePw()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+
+        <div id="forgotWrap">
+          <span onclick="sendReset()">Şifremi unuttum</span>
+        </div>
+
+        <button class="btn-main" id="submitBtn" onclick="submitAuth()">Giriş Yap</button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-text">VEYA</div>
+          <div class="divider-line"></div>
+        </div>
+
+        <button class="btn-google" onclick="signInWithGoogle()">
+          <svg width="18" height="18" viewBox="0 0 24 24" style="flex-shrink:0">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          <span>Google ile Devam Et</span>
+        </button>
+      </div>
+
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     EKRAN 3b — SINAV SEÇİMİ (kayıt/giriş sonrası)
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screenExamPick">
+  <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
+    <div class="auth-logo">
+      <div class="auth-logo-icon" style="background:none;border-radius:0;box-shadow:none;width:40px;height:40px;">
+        <img src="icon-512.png" alt="Pugi" style="width:40px;height:40px;object-fit:contain;">
+      </div>
+      <div class="auth-logo-name">Pugi</div>
+    </div>
+    <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hangi sınava hazırlanıyorsun?</div>
+    <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-bottom:22px">Birden fazla sınav için profil oluşturabilirsin, sonradan ekleyebilirsin</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+      <div class="sinav-pick-card yks" id="spYks" onclick="pickExam('yks',this)">
+        <span class="sp-emoji">📚</span>
+        <span class="sp-label" style="color:var(--accent)">YKS</span>
+        <span class="sp-desc">TYT · AYT<br>Sayısal / Sözel / EA / Dil</span>
+      </div>
+      <div class="sinav-pick-card kpss" id="spKpss" onclick="pickExam('kpss',this)">
+        <span class="sp-emoji">🏛️</span>
+        <span class="sp-label" style="color:#34d399">KPSS</span>
+        <span class="sp-desc">GY · GK · Eğitim Bil.</span>
+      </div>
+      <div class="sinav-pick-card lgs" id="spLgs" onclick="pickExam('lgs',this)">
+        <span class="sp-emoji">🎒</span>
+        <span class="sp-label" style="color:var(--orange)">LGS</span>
+        <span class="sp-desc">Liseye Geçiş Sınavı</span>
+      </div>
+      <div class="sinav-pick-card lgs disabled" onclick="">
+        <span class="sp-badge">Yakında</span>
+        <span class="sp-emoji">📈</span>
+        <span class="sp-label" style="color:var(--accent2)">ALES</span>
+        <span class="sp-desc">Lisansüstü Eğitim</span>
+      </div>
+    </div>
+
+    <button class="btn-main" id="examPickBtn" onclick="confirmExamPick()" disabled>Devam Et →</button>
+    <div class="login-link" style="margin-top:12px">
+      <span onclick="skipExamPick()">Şimdi atla, sonra ekle</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     EKRAN 3c — KPSS ONBOARDİNG (sadece kategori seçimi)
+══════════════════════════════════════════════════════ -->
+<div class="screen" id="screenKpssOnboarding">
+  <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
+
+    <!-- İlerleme -->
+    <div style="display:flex;gap:6px;margin-bottom:24px">
+      <div style="flex:1;height:4px;border-radius:99px;background:#34d399"></div>
+      <div id="kpssOb2Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
+    </div>
+
+    <!-- ADIM 1: Kategori -->
+    <div id="kpssObStep1">
+      <div style="margin-bottom:20px">
+        <button class="btn-back" onclick="showScreen('screenExamPick')" style="margin-bottom:14px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">KPSS — Kadro Türünü Seç</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">Hangi kadro için hazırlanıyorsun?</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:24px">
+
+        <div class="kpss-kat-card" id="kkatLisansA" onclick="selectKpssKat('lisans_a',this)" style="text-align:left;padding:13px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">⚖️</span>
+            <div>
+              <div style="font-size:0.88rem;font-weight:900;color:#fb923c">Lisans — A Grubu / Kariyer</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">Müfettiş · Uzman · Kontrolör · Denetmen</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpss-kat-card" id="kkatLisansB" onclick="selectKpssKat('lisans_b',this)" style="text-align:left;padding:13px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">🏛️</span>
+            <div>
+              <div style="font-size:0.88rem;font-weight:900;color:#34d399">Lisans — B Grubu / Memur</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">KPSS P1–P121 · Genel devlet memurluğu</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpss-kat-card" id="kkatLisansE" onclick="selectKpssKat('lisans_egitim',this)" style="text-align:left;padding:13px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">🏫</span>
+            <div>
+              <div style="font-size:0.88rem;font-weight:900;color:#a78bfa">Lisans — Eğitim (ÖABT)</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">Öğretmenlik · Alan Bilgisi Testi</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpss-kat-card" id="kkatOnLisans" onclick="selectKpssKat('on_lisans',this)" style="text-align:left;padding:13px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">📋</span>
+            <div>
+              <div style="font-size:0.88rem;font-weight:900;color:#38bdf8">Ön Lisans</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">KPSS P93–P94 · 2 yıllık mezunlar</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpss-kat-card" id="kkatLise" onclick="selectKpssKat('lise',this)" style="text-align:left;padding:13px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:1.5rem">🎒</span>
+            <div>
+              <div style="font-size:0.88rem;font-weight:900;color:#fbbf24">Ortaöğretim (Lise)</div>
+              <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:2px">KPSS P95–P96 · Lise mezunları</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <button class="btn-main" id="kpssObStep1Btn" onclick="kpssObGoStep2()" disabled style="background:linear-gradient(135deg,#34d399,#a78bfa)">Devam Et →</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipKpssOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+    <!-- ADIM 2: Hedef puan (opsiyonel) -->
+    <div id="kpssObStep2" style="display:none">
+      <button class="btn-back" onclick="kpssObGoStep1()" style="margin-bottom:14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedef Puanın Kaç?</div>
+      <div style="font-size:0.78rem;color:var(--muted);font-weight:600;margin-bottom:20px">Opsiyonel — istersen atla</div>
+      <input type="number" id="kpssHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
+        style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px;transition:border-color 0.2s"
+        onfocus="this.style.borderColor='#34d399'" onblur="this.style.borderColor='var(--border)'">
+      <div style="font-size:0.68rem;color:var(--muted);font-weight:600;margin-bottom:24px">Sınavda kaç puan almak istiyorsun?</div>
+      <button class="btn-main" onclick="finishKpssOnboarding()" style="background:linear-gradient(135deg,#34d399,#a78bfa);margin-bottom:10px">🚀 KPSS Profilini Oluştur!</button>
+      <div class="login-link"><span onclick="skipKpssOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     EKRAN 3 — YKS ONBOARDİNG
+     Kayıt sonrası dal / hedef / sınıf
+══════════════════════════════════ -->
+<div class="screen" id="screenOnboarding">
+  <div class="auth-inner" style="max-width:430px;padding:24px 20px 40px;overflow-y:auto;min-height:100dvh">
+
+    <!-- Progress bar -->
+    <div style="display:flex;gap:6px;margin-bottom:24px">
+      <div id="obStep1Bar" style="flex:1;height:4px;border-radius:99px;background:var(--accent);transition:background 0.3s"></div>
+      <div id="obStep2Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
+      <div id="obStep3Bar" style="flex:1;height:4px;border-radius:99px;background:var(--border);transition:background 0.3s"></div>
+    </div>
+
+    <!-- ADIM 1: Dal seçimi -->
+    <div id="obStep1">
+      <div style="margin-bottom:20px">
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hangi alanda çalışıyorsun?</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">Bu seçim sana özel ders listesi ve AI önerileri için kullanılır</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px">
+        <div class="ob-dal-card" id="dalSay" onclick="selectDal('sayisal',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">📐</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--accent)">Sayısal</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Mat · Fiz · Kim · Bio</div>
+        </div>
+        <div class="ob-dal-card" id="dalSoz" onclick="selectDal('sozel',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">📖</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--warn)">Sözel</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Ede · Tar · Coğ · Fel</div>
+        </div>
+        <div class="ob-dal-card" id="dalEa" onclick="selectDal('ea',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">⚖️</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--accent3)">Eşit Ağırlık</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">Mat · Ede · Tar · Coğ</div>
+        </div>
+        <div class="ob-dal-card" id="dalDil" onclick="selectDal('dil',this)">
+          <div style="font-size:1.8rem;margin-bottom:8px">🌍</div>
+          <div style="font-size:0.92rem;font-weight:900;color:var(--accent2)">Dil</div>
+          <div style="font-size:0.62rem;color:var(--muted);font-weight:700;margin-top:3px">İng · Alm · Fra · Ara</div>
+        </div>
+      </div>
+      <button class="btn-main" id="obStep1Btn" onclick="obGoStep2()" disabled>Devam Et →</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+    <!-- ADIM 2: Hedef -->
+    <div id="obStep2" style="display:none">
+      <button class="btn-back" onclick="obGoStep1()" style="margin-bottom:16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="margin-bottom:20px">
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Hedefin ne?</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">AI koçun seni hedefe göre yönlendirir</div>
+      </div>
+
+      <!-- Hedef türü seçimi -->
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="hedefSiralamaBtn" onclick="selectHedefTur('siralama')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">🏆 Sıralama</button>
+        <button id="hedefOkulBtn" onclick="selectHedefTur('okul')" style="flex:1;padding:11px;border-radius:12px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">🎓 Okul/Bölüm</button>
+      </div>
+
+      <!-- Sıralama hedefi -->
+      <div id="hedefSiralamaWrap">
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Hedef Sıralama</div>
+        <input type="number" id="hedefSiralamaInput" placeholder="örn: 10000" min="1" max="3000000"
+          style="width:100%;padding:14px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;outline:none;margin-bottom:8px"
+          oninput="checkHedefValid(); _obOnSiralamaInput();">
+        <div style="font-size:0.68rem;color:var(--muted);font-weight:600">İlk kaçıncı olmak istiyorsun?</div>
+      </div>
+
+      <!-- Okul hedefi -->
+      <div id="hedefOkulWrap" style="display:none">
+        <!-- Öğrenim süresi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Öğrenim Süresi</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button id="sure2Btn" onclick="selectSure(2)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">2 Yıllık</button>
+          <button id="sure4Btn" onclick="selectSure(4)" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--accent);background:rgba(56,189,248,0.1);color:var(--accent);font-weight:800;font-size:0.82rem;cursor:pointer;font-family:'Sora',sans-serif">4 Yıllık</button>
+        </div>
+
+        <!-- İl seçimi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Şehir</div>
+        <select id="hedefIlSel" onchange="loadHedefUnis()" style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+          <option value="">Şehir seç...</option>
+        </select>
+
+        <!-- Üniversite seçimi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Üniversite</div>
+        <select id="hedefUniSel" onchange="loadHedefBolumler()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+          <option value="">Önce şehir seç...</option>
+        </select>
+
+        <!-- Bölüm seçimi -->
+        <div style="font-size:0.72rem;font-weight:800;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Bölüm</div>
+        <select id="hedefBolumSel" onchange="selectHedefBolum()" disabled style="width:100%;padding:13px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none;margin-bottom:12px;-webkit-appearance:none">
+          <option value="">Önce üniversite seç...</option>
+        </select>
+
+        <!-- Seçilen program önizleme -->
+        <div id="hedefProgramPreview" style="display:none;background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(129,140,248,0.08));border:1.5px solid rgba(56,189,248,0.2);border-radius:12px;padding:12px 14px;margin-bottom:12px">
+          <div id="hedefPreviewUni" style="font-size:0.82rem;font-weight:900;margin-bottom:4px"></div>
+          <div id="hedefPreviewBolum" style="font-size:0.75rem;font-weight:800;color:var(--accent);margin-bottom:4px"></div>
+          <div id="hedefPreviewDetay" style="font-size:0.68rem;color:var(--muted);font-weight:700"></div>
+        </div>
+      </div>
+
+      <button class="btn-main" id="obStep2Btn" onclick="obGoStep3()" disabled style="margin-top:8px">Devam Et →</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+    <!-- ADIM 3: Sınıf -->
+    <div id="obStep3" style="display:none">
+      <button class="btn-back" onclick="obGoStep2()" style="margin-bottom:16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="margin-bottom:20px">
+        <div style="font-size:1.1rem;font-weight:900;margin-bottom:6px">Şu an kaçıncı sınıfsın?</div>
+        <div style="font-size:0.78rem;color:var(--muted);font-weight:600">AI koçun sana uygun strateji önerir</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+        <div class="ob-sinif-card" onclick="selectSinif('1',this)"><span>1. Sınıf</span><span style="font-size:0.7rem;color:var(--muted)">YKS'ye 2+ yıl var</span></div>
+        <div class="ob-sinif-card" onclick="selectSinif('2',this)"><span>2. Sınıf</span><span style="font-size:0.7rem;color:var(--muted)">YKS'ye ~1.5 yıl var</span></div>
+        <div class="ob-sinif-card" onclick="selectSinif('3',this)"><span>3. Sınıf (Bu yıl)</span><span style="font-size:0.7rem;color:var(--muted)">YKS bu yıl</span></div>
+        <div class="ob-sinif-card" onclick="selectSinif('mezun',this)"><span>Mezun</span><span style="font-size:0.7rem;color:var(--muted)">Tekrar çalışıyorum</span></div>
+      </div>
+      <button class="btn-main" id="obStep3Btn" onclick="finishOnboarding()" disabled>🚀 Başla!</button>
+      <div class="login-link" style="margin-top:12px"><span onclick="skipOnboarding()">Şimdi atla, sonra ekle</span></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+'use strict';
+var selectedAccountType=null,authMode='login';
+
+// ── Onboarding State ─────────────────────────────
+var _obExam     = null;   // 'yks' | 'kpss'
+var _obKpssKat  = null;   // gy_gk|egitim|a_grubu
+var _obDal      = null;   // sayisal|sozel|ea|dil
+var _obHedefTur = 'siralama'; // siralama|okul
+var _obSiralama = null;
+var _obProgram  = null;   // seçilen program objesi
+var _obSure     = 4;      // 2|4 yıllık
+var _obSinif    = null;   // 1|2|3|mezun
+var _obUid      = null;   // kayıt sonrası uid
+var _fbDbOb     = null;   // Firestore ref (initFirebase'den alınır)
+
+// İl listesi — Firestore'daki il değerleriyle eşleşir
+// {value: Firestore değeri, label: görünen ad}
+var IL_LISTESI = [
+  {v:'adana',l:'Adana'},{v:'ankara',l:'Ankara'},{v:'antalya',l:'Antalya'},
+  {v:'ardahan',l:'Ardahan'},{v:'artvin',l:'Artvin'},{v:'aydın',l:'Aydın'},
+  {v:'balıkesir',l:'Balıkesir'},{v:'bartın',l:'Bartın'},{v:'batman',l:'Batman'},
+  {v:'bayburt',l:'Bayburt'},{v:'bilecik',l:'Bilecik'},{v:'bingöl',l:'Bingöl'},
+  {v:'bitlis',l:'Bitlis'},{v:'bolu',l:'Bolu'},{v:'burdur',l:'Burdur'},
+  {v:'bursa',l:'Bursa'},{v:'çanakkale',l:'Çanakkale'},{v:'çankırı',l:'Çankırı'},
+  {v:'çorum',l:'Çorum'},{v:'denizli',l:'Denizli'},{v:'düzce',l:'Düzce'},
+  {v:'edirne',l:'Edirne'},{v:'elazığ',l:'Elazığ'},{v:'erzincan',l:'Erzincan'},
+  {v:'erzurum',l:'Erzurum'},{v:'eskişehir',l:'Eskişehir'},{v:'gaziantep',l:'Gaziantep'},
+  {v:'giresun',l:'Giresun'},{v:'gümüşhane',l:'Gümüşhane'},{v:'hakkari',l:'Hakkari'},
+  {v:'hatay',l:'Hatay'},{v:'ığdır',l:'Iğdır'},{v:'ısparta',l:'Isparta'},
+  {v:'istanbul',l:'İstanbul'},{v:'izmir',l:'İzmir'},{v:'kahramanmaraş',l:'Kahramanmaraş'},
+  {v:'karabük',l:'Karabük'},{v:'karaman',l:'Karaman'},{v:'kars',l:'Kars'},
+  {v:'kastamonu',l:'Kastamonu'},{v:'kayseri',l:'Kayseri'},{v:'kilis',l:'Kilis'},
+  {v:'kırıkkale',l:'Kırıkkale'},{v:'kırklareli',l:'Kırklareli'},{v:'kırşehir',l:'Kırşehir'},
+  {v:'kocaeli',l:'Kocaeli'},{v:'konya',l:'Konya'},{v:'kütahya',l:'Kütahya'},
+  {v:'malatya',l:'Malatya'},{v:'manisa',l:'Manisa'},{v:'mardin',l:'Mardin'},
+  {v:'mersin',l:'Mersin'},{v:'muğla',l:'Muğla'},{v:'muş',l:'Muş'},
+  {v:'nevşehir',l:'Nevşehir'},{v:'niğde',l:'Niğde'},{v:'ordu',l:'Ordu'},
+  {v:'osmaniye',l:'Osmaniye'},{v:'rize',l:'Rize'},{v:'sakarya',l:'Sakarya'},
+  {v:'samsun',l:'Samsun'},{v:'siirt',l:'Siirt'},{v:'sinop',l:'Sinop'},
+  {v:'sivas',l:'Sivas'},{v:'şanlıurfa',l:'Şanlıurfa'},{v:'şırnak',l:'Şırnak'},
+  {v:'tekirdağ',l:'Tekirdağ'},{v:'tokat',l:'Tokat'},{v:'trabzon',l:'Trabzon'},
+  {v:'tunceli',l:'Tunceli'},{v:'uşak',l:'Uşak'},{v:'van',l:'Van'},
+  {v:'yalova',l:'Yalova'},{v:'yozgat',l:'Yozgat'},{v:'zonguldak',l:'Zonguldak'},
+  {v:'amasya',l:'Amasya'},{v:'kktc',l:'KKTC'}
+];
+var firebaseConfig = {
+  apiKey: "AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
+  authDomain: "pugi-app-deeaa.firebaseapp.com",
+  projectId: "pugi-app-deeaa",
+  storageBucket: "pugi-app-deeaa.firebasestorage.app",
+  messagingSenderId: "219082394848",
+  appId: "1:219082394848:web:8780f59490374d6566d485"
+};
+var _fbApp=null,_fbDb=null,_fbAuth=null;
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');window.scrollTo(0,0);updateLandingFloatCta();}
+function resetLandingToWelcome(){
+  var w=document.getElementById('panelWelcome'),e=document.getElementById('panelExams');
+  if(w&&e){e.classList.remove('is-active');w.classList.add('is-active');}
+}
+function goToLanding(){showScreen('screenLanding');resetLandingToWelcome();}
+function goToAuthScreen(){showScreen('screenAuth');document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';}
+
+function updateLandingFloatCta(){
+  var btn=document.getElementById('landingFloatCta');
+  var land=document.getElementById('screenLanding');
+  var welcome=document.getElementById('panelWelcome');
+  if(!btn||!land)return;
+  var onLanding=land.classList.contains('active');
+  var onWelcome=welcome&&welcome.classList.contains('is-active');
+  var scrolled=land.scrollTop>100;
+  btn.classList.toggle('is-visible',onLanding&&onWelcome&&scrolled);
+}
+function landingFloatHemenBasla(){
+  openExamPicker();
+}
+function openExamPicker(){
+  var w=document.getElementById('panelWelcome'),e=document.getElementById('panelExams');
+  var land=document.getElementById('screenLanding');
+  if(!w||!e)return;
+  w.classList.remove('is-active');e.classList.add('is-active');
+  if(land) land.scrollTop=0;
+  window.scrollTo(0,0);
+  updateLandingFloatCta();
+}
+function closeExamPicker(){
+  resetLandingToWelcome();
+  var land=document.getElementById('screenLanding');
+  if(land) land.scrollTop=0;
+  window.scrollTo(0,0);
+  updateLandingFloatCta();
+}
+function scrollToLandingIntro(){
+  var el=document.getElementById('landingIntro');
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function guestEnterExam(exam){
+  if(exam!=='yks'&&exam!=='kpss'&&exam!=='lgs')return;
+  sessionStorage.setItem('pugi_sinav',exam);
+  sessionStorage.setItem('pugi_guest','true');
+  if(exam==='kpss') window.location.href='kpss.html';
+  else if(exam==='lgs') window.location.href='lgs.html';
+  else window.location.href='student.html';
+}
+function showComingSoon(){
+  var t=document.getElementById('landingToast');
+  if(!t)return;
+  t.textContent='\u23F3 Bu sınav yakında eklenecek!';
+  t.classList.add('show');
+  clearTimeout(window._landingToastTimer);
+  window._landingToastTimer=setTimeout(function(){t.classList.remove('show');},2400);
+}
+
+function selectType(type,el){
+  selectedAccountType=type;
+  document.querySelectorAll('.type-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  var btn=document.getElementById('continueBtn');btn.disabled=false;
+  btn.className='btn-main'+(type==='coach'?' coach-mode':'');
+  btn.textContent=(type==='coach'?'🎯':'📚')+' Devam Et →';
+}
+function goToStep2(){if(!selectedAccountType)return;document.getElementById('step1').style.display='none';var s2=document.getElementById('step2');s2.style.display='block';s2.classList.add('fadeIn');updateFormForType();}
+function goBackToStep1(){document.getElementById('step2').style.display='none';document.getElementById('step1').style.display='block';document.getElementById('step1').classList.add('fadeIn');hideError();}
+function updateFormForType(){document.getElementById('submitBtn').className=selectedAccountType==='coach'?'btn-main coach-mode':'btn-main';}
+
+function setAuthMode(mode){
+  authMode=mode;
+  document.getElementById('tabLogin').classList.toggle('active',mode==='login');
+  document.getElementById('tabRegister').classList.toggle('active',mode==='register');
+  document.getElementById('nameWrap').style.display=mode==='register'?'block':'none';
+  document.getElementById('unameWrap').style.display=mode==='register'?'block':'none';
+  document.getElementById('forgotWrap').style.display=mode==='login'?'block':'none';
+  document.getElementById('formTitle').textContent=mode==='login'?'GİRİŞ YAP':'KAYIT OL';
+  document.getElementById('submitBtn').textContent=mode==='login'?'Giriş Yap':'Hesap Oluştur';
+  hideError();
+}
+
+function loadScript(src,cb){var s=document.createElement('script');s.src=src;s.onload=cb;s.onerror=function(){};document.head.appendChild(s);}
+function initFirebase(){
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-app-compat.min.js',function(){
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-auth-compat.min.js',function(){
+      loadScript('https://cdnjs.cloudflare.com/ajax/libs/firebase/10.8.0/firebase-firestore-compat.min.js',function(){
+        _fbApp=firebase.initializeApp(firebaseConfig);_fbDb=firebase.firestore();_fbAuth=firebase.auth();_fbDbOb=_fbDb;
+        _fbAuth.onAuthStateChanged(function(user){if(user){checkAccountTypeAndRedirect(user);}else{hideLoading();}});
+      });
+    });
+  });
+}
+function checkAccountTypeAndRedirect(user){
+  _fbDb.collection('users').doc(user.uid).get().then(function(doc){
+    hideLoading();
+    if(!doc.exists){showScreen('screenAuth');showStep2ForNewGoogleUser(user);return;}
+    var d=doc.data();
+    if(d.accountType==='coach'){window.location.href='coach.html';return;}
+    // Mevcut kullanıcı: onboarding tamamlandı mı?
+    if(!d.onboardingDone && !d.kpssProfile){
+      // Hiç profil yok → sınav seçimine gönder
+      _obUid=user.uid; _fbDbOb=_fbDb; showScreen('screenExamPick'); return;
+    }
+    // lastActiveExam'a göre yönlendir (varsayılan: yks)
+    var last=d.lastActiveExam||'yks';
+    if(last==='kpss') window.location.href='kpss.html';
+    else if(last==='lgs') window.location.href='lgs.html';
+    else window.location.href='student.html';
+  }).catch(function(){hideLoading();});
+}
+
+function submitAuth(){
+  var email=document.getElementById('emailInput').value.trim();
+  var pw=document.getElementById('pwInput').value;
+  if(!email||!pw){showError('Email ve şifreyi gir.');return;}
+  showLoading();
+  if(authMode==='login'){
+    _fbAuth.signInWithEmailAndPassword(email,pw).catch(function(e){hideLoading();showError(getErrorMsg(e.code));});
+  }else{
+    var name=document.getElementById('nameInput').value.trim();
+    var uname=document.getElementById('unameInput').value.trim().toLowerCase();
+    if(!name||!uname){hideLoading();showError('İsim ve kullanıcı adını gir.');return;}
+    if(pw.length<6){hideLoading();showError('Şifre en az 6 karakter olmalı.');return;}
+    _fbDb.collection('usernames').doc(uname).get().then(function(doc){
+      if(doc.exists){hideLoading();showError('Bu kullanıcı adı alınmış.');return null;}
+      return _fbAuth.createUserWithEmailAndPassword(email,pw);
+    }).then(function(cred){
+      if(!cred)return null;
+      return createUserProfile(cred.user,name,uname,selectedAccountType).then(function(){
+        if(selectedAccountType==='coach'){
+          window.location.href='coach.html';
+        } else {
+          showExamPick(cred.user.uid);
+        }
+      });
+    }).catch(function(e){hideLoading();showError(e.code?getErrorMsg(e.code):'Bir hata oluştu.');});
+  }
+}
+function signInWithGoogle(){
+  if(!_fbAuth)return;
+  var provider=new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});showLoading();
+  _fbAuth.signInWithPopup(provider).then(function(result){
+    var user=result.user,isNew=result.additionalUserInfo&&result.additionalUserInfo.isNewUser;
+    if(isNew){
+      var autoUname=user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
+      var type=selectedAccountType||'student';
+      return createUserProfile(user,user.displayName||autoUname,autoUname,type).then(function(){
+        if(type==='coach'){
+          window.location.href='coach.html';
+        } else {
+          showExamPick(user.uid);
+        }
+      });
+    }
+  }).catch(function(e){hideLoading();if(e.code!=='auth/popup-closed-by-user')showError('Google ile giriş başarısız.');});
+}
+function createUserProfile(user,displayName,username,accountType){
+  var batch=_fbDb.batch();
+  batch.set(_fbDb.collection('users').doc(user.uid),{username:username,displayName:displayName,accountType:accountType||'student',createdAt:new Date().toISOString()});
+  batch.set(_fbDb.collection('usernames').doc(username),{uid:user.uid});
+  return batch.commit();
+}
+function showStep2ForNewGoogleUser(user){
+  if(!selectedAccountType){document.getElementById('step1').style.display='block';document.getElementById('step2').style.display='none';return;}
+  var autoUname=user.email.split('@')[0].replace(/[^a-z0-9_]/gi,'').toLowerCase().slice(0,20);
+  createUserProfile(user,user.displayName||autoUname,autoUname,selectedAccountType);
+}
+function sendReset(){
+  var email=document.getElementById('emailInput').value.trim();
+  if(!email){showError('Önce email adresini gir.');return;}
+  _fbAuth.sendPasswordResetEmail(email).then(function(){
+    var el=document.getElementById('errorMsg');
+    el.textContent='\u2705 Sıfırlama maili gönderildi!';
+    el.style.background='rgba(52,211,153,0.1)';el.style.borderColor='rgba(52,211,153,0.3)';el.style.color='var(--accent3)';
+    el.classList.add('show');
+  }).catch(function(){showError('Mail gönderilemedi.');});
+}
+function togglePw(){var inp=document.getElementById('pwInput');inp.type=inp.type==='password'?'text':'password';}
+function showError(msg){var el=document.getElementById('errorMsg');el.textContent=msg;el.style.background='rgba(244,114,182,0.1)';el.style.borderColor='rgba(244,114,182,0.3)';el.style.color='var(--warn)';el.classList.add('show');}
+function hideError(){document.getElementById('errorMsg').classList.remove('show');}
+function showLoading(){document.getElementById('loadingOverlay').classList.remove('hidden');}
+function hideLoading(){document.getElementById('loadingOverlay').classList.add('hidden');}
+// ════════════════════════════════════════════
+// ONBOARDİNG FONKSİYONLARI
+// ════════════════════════════════════════════
+
+function showExamPick(uid) {
+  _obUid = uid;
+  _fbDbOb = _fbDb;
+  _obExam = null;
+  _obKpssKat = null;
+  document.getElementById('examPickBtn').disabled = true;
+  document.querySelectorAll('.sinav-pick-card').forEach(function(c){c.classList.remove('selected');});
+  showScreen('screenExamPick');
+}
+
+function showOnboarding(uid) {
+  _obUid = uid;
+  _fbDbOb = _fbDb;
+  showScreen('screenOnboarding');
+  // İl listesini doldur (Firestore değerleriyle eşleşen)
+  var sel = document.getElementById('hedefIlSel');
+  // Tekrar eklenmesin
+  if (sel.options.length <= 1) {
+    IL_LISTESI.forEach(function(il) {
+      var o = document.createElement('option');
+      o.value = il.v;
+      o.textContent = il.l;
+      sel.appendChild(o);
+    });
+  }
+  _updateObProgress(1);
+}
+
+function _updateObProgress(step) {
+  for(var i=1;i<=3;i++){
+    var bar=document.getElementById('obStep'+i+'Bar');
+    if(bar) bar.style.background = i<=step ? 'var(--accent)' : 'var(--border)';
+  }
+}
+
+// ── Dal seçimi ──
+function selectDal(dal, el) {
+  _obDal = dal;
+  document.querySelectorAll('.ob-dal-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('obStep1Btn').disabled = false;
+}
+
+function obGoStep1() {
+  document.getElementById('obStep2').style.display='none';
+  document.getElementById('obStep1').style.display='block';
+  _updateObProgress(1);
+}
+
+function obGoStep2() {
+  if(!_obDal) return;
+  document.getElementById('obStep1').style.display='none';
+  document.getElementById('obStep2').style.display='block';
+  _updateObProgress(2);
+}
+
+function obGoStep3() {
+  document.getElementById('obStep2').style.display='none';
+  document.getElementById('obStep3').style.display='block';
+  _updateObProgress(3);
+}
+
+// ── Hedef türü ──
+function selectHedefTur(tur) {
+  _obHedefTur = tur;
+  var sirBtn = document.getElementById('hedefSiralamaBtn');
+  var okulBtn = document.getElementById('hedefOkulBtn');
+  var sirWrap = document.getElementById('hedefSiralamaWrap');
+  var okulWrap = document.getElementById('hedefOkulWrap');
+  if(tur==='siralama'){
+    sirBtn.style.borderColor='var(--accent)';sirBtn.style.background='rgba(56,189,248,0.1)';sirBtn.style.color='var(--accent)';
+    okulBtn.style.borderColor='var(--border)';okulBtn.style.background='transparent';okulBtn.style.color='var(--muted)';
+    sirWrap.style.display='block';okulWrap.style.display='none';
+  } else {
+    okulBtn.style.borderColor='var(--accent)';okulBtn.style.background='rgba(56,189,248,0.1)';okulBtn.style.color='var(--accent)';
+    sirBtn.style.borderColor='var(--border)';sirBtn.style.background='transparent';sirBtn.style.color='var(--muted)';
+    okulWrap.style.display='block';sirWrap.style.display='none';
+  }
+  checkHedefValid();
+}
+
+function checkHedefValid() {
+  var btn = document.getElementById('obStep2Btn');
+  if(!btn) return;
+  if(_obHedefTur==='siralama'){
+    var v = parseInt(document.getElementById('hedefSiralamaInput').value)||0;
+    _obSiralama = v > 0 ? v : null;
+    btn.disabled = !_obSiralama;
+  } else {
+    btn.disabled = !_obProgram;
+  }
+}
+
+function selectSure(sure) {
+  _obSure = sure;
+  document.getElementById('sure2Btn').style.borderColor = sure===2?'var(--accent)':'var(--border)';
+  document.getElementById('sure2Btn').style.background  = sure===2?'rgba(56,189,248,0.1)':'transparent';
+  document.getElementById('sure2Btn').style.color       = sure===2?'var(--accent)':'var(--muted)';
+  document.getElementById('sure4Btn').style.borderColor = sure===4?'var(--accent)':'var(--border)';
+  document.getElementById('sure4Btn').style.background  = sure===4?'rgba(56,189,248,0.1)':'transparent';
+  document.getElementById('sure4Btn').style.color       = sure===4?'var(--accent)':'var(--muted)';
+  // Bölüm listesini sıfırla
+  _obProgram = null;
+  var bSel = document.getElementById('hedefBolumSel');
+  bSel.innerHTML = '<option value="">Önce üniversite seç...</option>';
+  bSel.disabled = true;
+  document.getElementById('hedefProgramPreview').style.display='none';
+  checkHedefValid();
+  // Eğer üniversite seçiliyse bölümleri yenile
+  var uSel = document.getElementById('hedefUniSel');
+  if(uSel.value) loadHedefBolumler();
+}
+
+// ── Üniversite yükleme ──
+function loadHedefUnis() {
+  var il = document.getElementById('hedefIlSel').value;
+  var uSel = document.getElementById('hedefUniSel');
+  var bSel = document.getElementById('hedefBolumSel');
+  uSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  uSel.disabled = true;
+  bSel.innerHTML = '<option value="">Önce üniversite seç...</option>';
+  bSel.disabled = true;
+  _obProgram = null;
+  document.getElementById('hedefProgramPreview').style.display='none';
+  checkHedefValid();
+  if(!il) return;
+
+  // Puan türünü dal'dan belirle
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_obDal] || 'SAY';
+
+  // Sadece il filtresi — index gerektirmez, puan_turu client-side filtrele
+  _fbDb.collection('yks_programlar')
+    .where('il','==',il)
+    .get().then(function(snap){
+      var unis = {};
+      snap.forEach(function(doc){
+        var d=doc.data();
+        // Puan türü filtresi — dal seçilmişse filtrele, seçilmemişse hepsini göster
+        if (pt && d.puan_turu !== pt) return;
+        if(!unis[d.uni]) unis[d.uni]=d.uni;
+      });
+      uSel.innerHTML = '<option value="">Üniversite seç...</option>';
+      if (Object.keys(unis).length === 0) {
+        uSel.innerHTML = '<option value="">Bu şehirde program bulunamadı</option>';
+        return;
+      }
+      Object.keys(unis).sort().forEach(function(u){
+        var o=document.createElement('option');
+        o.value=u; o.textContent=u;
+        uSel.appendChild(o);
+      });
+      uSel.disabled=false;
+    }).catch(function(e){
+      console.error('Üniversite yükleme hatası:', e);
+      uSel.innerHTML='<option value="">Hata: ' + (e.message||'Bilinmeyen') + '</option>';
+    });
+}
+
+// ── Bölüm yükleme ──
+function loadHedefBolumler() {
+  var il  = document.getElementById('hedefIlSel').value;
+  var uni = document.getElementById('hedefUniSel').value;
+  var bSel = document.getElementById('hedefBolumSel');
+  bSel.innerHTML = '<option value="">Yükleniyor...</option>';
+  bSel.disabled = true;
+  _obProgram = null;
+  document.getElementById('hedefProgramPreview').style.display='none';
+  checkHedefValid();
+  if(!uni) return;
+
+  var ptMap = {sayisal:'SAY',sozel:'SÖZ',ea:'EA',dil:'DİL'};
+  var pt = ptMap[_obDal] || 'SAY';
+
+  // uni tek başına sorgula — compound index gerektirmez
+  _fbDb.collection('yks_programlar')
+    .where('uni','==',uni)
+    .get().then(function(snap){
+      var bolumler = [];
+      snap.forEach(function(doc){
+        var d=doc.data();
+        // Puan türü filtresi client-side
+        if(pt && d.puan_turu !== pt) return;
+        bolumler.push({kod:doc.id, data:d});
+      });
+      bolumler.sort(function(a,b){ return (a.data.program||'').localeCompare(b.data.program||'','tr'); });
+      bSel.innerHTML = '<option value="">Bölüm seç...</option>';
+      bolumler.forEach(function(b){
+        var o=document.createElement('option');
+        o.value=b.kod;
+        var puan = b.data.min_puan_2024 ? ' ('+parseFloat(b.data.min_puan_2024).toFixed(1)+')' : '';
+        o.textContent = b.data.program + puan;
+        bSel.appendChild(o);
+      });
+      bSel.disabled = bolumler.length===0;
+      if(bolumler.length===0) bSel.innerHTML='<option value="">Bu üniversitede program bulunamadı</option>';
+    });
+}
+
+// ── Bölüm seçimi ──
+function _obOnSiralamaInput() {
+  if (!_obProgram) return;
+  _obProgram = null;
+  // Bölüm dropdown'u görsel sıfırla
+  var bSel = document.getElementById('hedefBolumSel');
+  if (bSel) bSel.value = '';
+  document.getElementById('hedefProgramPreview').style.display = 'none';
+}
+
+function selectHedefBolum() {
+  var kod = document.getElementById('hedefBolumSel').value;
+  if(!kod){ _obProgram=null; document.getElementById('hedefProgramPreview').style.display='none'; checkHedefValid(); return; }
+  // Bölüm seçilince sıralama inputunu sıfırla
+  var sirEl = document.getElementById('hedefSiralamaInput');
+  if (sirEl) { sirEl.value = ''; }
+  _obSiralama = null;
+  _fbDb.collection('yks_programlar').doc(kod).get().then(function(doc){
+    if(!doc.exists){ _obProgram=null; checkHedefValid(); return; }
+    var d = doc.data();
+    _obProgram = {
+      kod:kod, uni:d.uni, bolum:d.program, puan_turu:d.puan_turu,
+      min_puan_2024:d.min_puan_2024||null, siralama_2024:d.siralama_2024||null
+    };
+    // Önizleme
+    var preview = document.getElementById('hedefProgramPreview');
+    document.getElementById('hedefPreviewUni').textContent = d.uni;
+    document.getElementById('hedefPreviewBolum').textContent = d.program;
+    var detay = [];
+    if(d.siralama_2024) detay.push('2024 Sıra: '+parseInt(d.siralama_2024).toLocaleString('tr-TR'));
+    if(d.min_puan_2024) detay.push('Taban: '+parseFloat(d.min_puan_2024).toFixed(2));
+    if(d.kontenjan)     detay.push('Kontenjan: '+d.kontenjan);
+    document.getElementById('hedefPreviewDetay').textContent = detay.join('  |  ');
+    preview.style.display='block';
+    checkHedefValid();
+  });
+}
+
+// ── Sınıf seçimi ──
+function selectSinif(sinif, el) {
+  _obSinif = sinif;
+  document.querySelectorAll('.ob-sinif-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('obStep3Btn').disabled = false;
+}
+
+// ── Onboarding tamamla ──
+function finishOnboarding() {
+  if(!_obUid || !_fbDb) return;
+  var profil = {
+    dal: _obDal,
+    sinif: _obSinif,
+    onboardingDone: true,
+    onboardingDate: new Date().toISOString()
+  };
+  // Son değiştirilen kazanır
+  // (selectHedefBolum sıralamayı, _obOnSiralamaInput programı sıfırlar)
+  if (_obProgram) {
+    profil.hedefTur      = 'okul';
+    profil.hedefProgram  = _obProgram;
+    profil.hedefSiralama = null;
+  } else if (_obSiralama) {
+    profil.hedefTur      = 'siralama';
+    profil.hedefSiralama = _obSiralama;
+    profil.hedefProgram  = null;
+  }
+  showLoading();
+  profil.lastActiveExam = 'yks';
+  _fbDb.collection('users').doc(_obUid).set(profil,{merge:true}).then(function(){
+    hideLoading();
+    window.location.href = 'student.html';
+  }).catch(function(){ hideLoading(); window.location.href='student.html'; });
+}
+
+// ── Onboarding atla ──
+function skipOnboarding() {
+  if(_obUid && _fbDb){
+    _fbDb.collection('users').doc(_obUid).set({onboardingDone:true,lastActiveExam:'yks'},{merge:true});
+  }
+  window.location.href = 'student.html';
+}
+
+
+// ════════════════════════════════════════════
+// SINAV SEÇİMİ FONKSİYONLARI
+// ════════════════════════════════════════════
+
+function pickExam(exam, el) {
+  _obExam = exam;
+  document.querySelectorAll('.sinav-pick-card:not(.disabled)').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('examPickBtn').disabled = false;
+}
+
+function confirmExamPick() {
+  if(!_obExam) return;
+  if(_obExam === 'yks') {
+    showScreen('screenOnboarding');
+    // İl listesini doldur
+    var sel = document.getElementById('hedefIlSel');
+    if(sel.options.length <= 1){
+      IL_LISTESI.forEach(function(il){
+        var o=document.createElement('option'); o.value=il.v; o.textContent=il.l; sel.appendChild(o);
+      });
+    }
+    _updateObProgress(1);
+  } else if(_obExam === 'kpss') {
+    _obKpssKat = null;
+    document.querySelectorAll('.kpss-kat-card').forEach(function(c){c.classList.remove('selected');});
+    document.getElementById('kpssObStep1Btn').disabled = true;
+    document.getElementById('kpssObStep1').style.display = 'block';
+    document.getElementById('kpssObStep2').style.display = 'none';
+    document.getElementById('kpssOb2Bar').style.background = 'var(--border)';
+    showScreen('screenKpssOnboarding');
+  } else if(_obExam === 'lgs') {
+    if(_obUid && _fbDb) {
+      _fbDb.collection('users').doc(_obUid).set({lastActiveExam:'lgs',onboardingDone:true},{merge:true});
+    }
+    window.location.href = 'lgs.html';
+  }
+}
+
+function skipExamPick() {
+  // Sınav seçmeden atla → YKS varsayılan
+  if(_obUid && _fbDb){
+    _fbDb.collection('users').doc(_obUid).set({onboardingDone:true,lastActiveExam:'yks'},{merge:true});
+  }
+  window.location.href = 'student.html';
+}
+
+// ── KPSS Onboarding ──────────────────────
+function selectKpssKat(kat, el) {
+  _obKpssKat = kat;
+  document.querySelectorAll('.kpss-kat-card').forEach(function(c){c.classList.remove('selected');});
+  el.classList.add('selected');
+  document.getElementById('kpssObStep1Btn').disabled = false;
+}
+
+function kpssObGoStep1() {
+  document.getElementById('kpssObStep2').style.display = 'none';
+  document.getElementById('kpssObStep1').style.display = 'block';
+  document.getElementById('kpssOb2Bar').style.background = 'var(--border)';
+}
+
+function kpssObGoStep2() {
+  if(!_obKpssKat) return;
+  document.getElementById('kpssObStep1').style.display = 'none';
+  document.getElementById('kpssObStep2').style.display = 'block';
+  document.getElementById('kpssOb2Bar').style.background = '#34d399';
+}
+
+function finishKpssOnboarding() {
+  if(!_obUid || !_fbDb) return;
+  var puan = parseFloat(document.getElementById('kpssHedefSiralama').value)||null;
+  var kpssProfile = {
+    kategori: _obKpssKat,
+    onboardingDone: true,
+    createdAt: new Date().toISOString()
+  };
+  if(puan) kpssProfile.hedefPuan = puan;
+  showLoading();
+  _fbDb.collection('users').doc(_obUid).set({
+    kpssProfile: kpssProfile,
+    hedefPuan: puan || null,
+    lastActiveExam: 'kpss'
+  },{merge:true}).then(function(){
+    hideLoading();
+    window.location.href = 'kpss.html';
+  }).catch(function(){ hideLoading(); window.location.href='kpss.html'; });
+}
+
+function skipKpssOnboarding() {
+  if(_obUid && _fbDb){
+    _fbDb.collection('users').doc(_obUid).set({
+      kpssProfile: { onboardingDone: true, kategori: null, createdAt: new Date().toISOString() },
+      lastActiveExam: 'kpss'
+    },{merge:true});
+  }
+  window.location.href = 'kpss.html';
+}
+
+function getErrorMsg(code){var msgs={'auth/user-not-found':'Bu email ile kayıtlı hesap yok.','auth/wrong-password':'Şifre hatalı.','auth/email-already-in-use':'Bu email zaten kullanımda.','auth/invalid-email':'Geçersiz email adresi.','auth/weak-password':'Şifre çok zayıf.','auth/too-many-requests':'Çok fazla deneme. Biraz bekle.','auth/invalid-credential':'Email veya şifre hatalı.'};return msgs[code]||'Bir hata oluştu.';}
+
+document.addEventListener('DOMContentLoaded',function(){
+  initFirebase();
+  document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('step2').style.display!=='none')submitAuth();});
+  var land=document.getElementById('screenLanding');
+  if(land){
+    land.addEventListener('scroll',updateLandingFloatCta,{passive:true});
+  }
+  updateLandingFloatCta();
+});
+</script>
 </body>
 </html>
