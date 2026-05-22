@@ -302,6 +302,10 @@ body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; m
 .spin { width:32px; height:32px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--accent); animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
+.pax-card{image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:0 auto;}
+.item-preview canvas{image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:0 auto;}
+
+
 @keyframes fadeUp { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:none; } }
 .fade-up { animation:fadeUp 0.3s ease both; }
 </style>
@@ -320,7 +324,9 @@ body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; m
 <!-- TABS -->
 <div class="shop-tabs">
   <div class="shop-tab active" onclick="switchTab('frames',this)">🖼️ Çerçeveler</div>
-  <div class="shop-tab" onclick="switchTab('avatars',this)">👤 Avatarlar</div>
+  <div class="shop-tab" onclick="switchTab('outfits',this)">👕 Kıyafetler</div>
+  <div class="shop-tab" onclick="switchTab('glasses',this)">🕶️ Aksesuarlar</div>
+  <div class="shop-tab" onclick="switchTab('character',this)">🧑 Karakter</div>
   <div class="shop-tab" onclick="switchTab('themes',this)">🎨 Temalar</div>
 </div>
 
@@ -354,65 +360,142 @@ body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; m
 <div id="toast" class="toast"></div>
 
 <script>
+
+/* PAX Pixel Art Avatar Engine v1.0 */
+var PAX={
+  W:16,H:18,
+  SKINS:{light:'#FFD5B8',fair:'#F4A574',olive:'#D4906A',tan:'#C07040',brown:'#8B5523',dark:'#5C3318'},
+  HAIR:{black:'#1C1410',darkbrown:'#3D200E',brown:'#6B3520',auburn:'#8B2515',red:'#CC2200',orange:'#D05020',blonde:'#D4A83A',platinum:'#D8D0B8',blue:'#2244BB',pink:'#CC4488',teal:'#228888',gray:'#8A8A8A'},
+  EYES:{dark:'#2A180A',brown:'#6B3520',blue:'#2277BB',green:'#227744',teal:'#226688',amber:'#8B5520'},
+  OUTFIT:{blue:'#2255CC',red:'#CC2222',green:'#228833',purple:'#7733BB',gray:'#667788',gold:'#CC8822',black:'#2A2A3A',pink:'#CC4488',white:'#99AABB',teal:'#228899',orange:'#CC5522'},
+  GLASS:{black:'#222233',brown:'#6B3520',red:'#CC2222',pink:'#CC4488',gold:'#CC9922',blue:'#2255CC',white:'#CCCCCC'},
+  _lgt:function(h,n){var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);r=Math.min(255,r+n);g=Math.min(255,g+n);b=Math.min(255,b+n);return '#'+[r,g,b].map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('');},
+  L:{
+    skin:['________________','________________','________________','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSS____','____SSSSSSSS____','____SSSSSSS_____','_____SSSSSS_____','_____SSSS_______','_____SSSS_______','_____SSSS_______','________________','________________','________________'],
+    eyes:['________________','________________','________________','________________','________________','____WWW__WWW____','____WEW__WEW____','____WWW__WWW____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    mouth:['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-short':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-afro':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-long':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-spiky':['___HH_HHH_H_____','___HHHHHHHHH____','__HHHHHHHHHH____','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-bob':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-bun':['_____HHHHH______','____HH___HH_____','___HHHHHHHHHH___','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'outfit-tshirt':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
+    'outfit-vneck':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOO___OOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
+    'outfit-hoodie':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___AAOOOOOAA____','___AOOOOOOO_____','___OOOOOOOOO____','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
+    'outfit-jacket':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OAAAAOOOOOO__','__OOAAAAOOOOOO__','_OOOAOOOOOOOOOO_'],
+    'glasses-none':[],
+    'glasses-rect':['________________','________________','________________','________________','________________','___GGGGGGGGGG___','___GGGGGGGGGG___','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'glasses-round':['________________','________________','________________','________________','________________','____GGG_GGG_____','___G___GG___G___','____GGG_GGG_____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'glasses-cool':['________________','________________','________________','________________','____GGGGGGGG____','___GLLLLLLLLG___','___GLLLLLLLLG___','____GGGGGGGG____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________']
+  },
+  draw:function(canvas,opts,sc){
+    sc=sc||5;
+    var ctx=canvas.getContext('2d');
+    canvas.width=PAX.W*sc;canvas.height=PAX.H*sc;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var sk=PAX.SKINS[opts.skinTone]||PAX.SKINS.fair;
+    var hr=PAX.HAIR[opts.hairColor]||PAX.HAIR.black;
+    var ey=PAX.EYES[opts.eyeColor]||PAX.EYES.dark;
+    var ot=PAX.OUTFIT[opts.outfitColor]||PAX.OUTFIT.blue;
+    var gl=PAX.GLASS[opts.glassesColor]||PAX.GLASS.black;
+    var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,A:'#AABBCC',G:gl,L:gl+'55'};
+    var ord=['outfit-'+(opts.outfitStyle||'tshirt'),'skin','hair-'+(opts.hairStyle||'short'),'eyes','mouth',(opts.glassesStyle&&opts.glassesStyle!='none')?'glasses-'+opts.glassesStyle:null];
+    ord.forEach(function(ln){
+      if(!ln)return;
+      var layer=PAX.L[ln];if(!layer||!layer.length)return;
+      layer.forEach(function(row,y){
+        for(var x=0;x<row.length;x++){
+          var ch=row[x];if(ch==='_')continue;
+          var c=cm[ch];if(!c)continue;
+          ctx.fillStyle=c;ctx.fillRect(x*sc,y*sc,sc,sc);
+        }
+      });
+    });
+  },
+  fromCosmetics:function(cos){
+    cos=cos||{};
+    return {skinTone:cos.skinTone||'fair',hairStyle:cos.hairStyle||'short',hairColor:cos.hairColor||'black',eyeColor:cos.eyeColor||'dark',outfitStyle:cos.outfitStyle||'tshirt',outfitColor:cos.outfitColor||'blue',glassesStyle:cos.glassesStyle||'none',glassesColor:cos.glassesColor||'black'};
+  },
+  initCards:function(){
+    document.querySelectorAll('.pax-card').forEach(function(c){
+      PAX.draw(c,{skinTone:c.dataset.skin||'fair',hairStyle:c.dataset.hair||'short',hairColor:c.dataset.hcol||'black',eyeColor:c.dataset.eye||'dark',outfitStyle:c.dataset.outfit||'tshirt',outfitColor:c.dataset.ocol||'blue',glassesStyle:c.dataset.glass||'none',glassesColor:c.dataset.gcol||'black'},parseInt(c.dataset.sc)||2);
+    });
+  }
+};
 // ══════════════════════════════════════════════
 // CATALOG
 // ══════════════════════════════════════════════
 var CATALOG = {
   frames: [
-    // Basit — 100 coin
-    { id:'blue_simple',   name:'Mavi',        tier:'Basit', price:100,  tierClass:'tier-basic',
-      preview:'<div class="frame-preview-circle fp-blue_simple">S</div>' },
-    { id:'teal_simple',   name:'Yeşil',       tier:'Basit', price:100,  tierClass:'tier-basic',
-      preview:'<div class="frame-preview-circle fp-teal_simple">S</div>' },
-    { id:'orange_simple', name:'Turuncu',     tier:'Basit', price:100,  tierClass:'tier-basic',
-      preview:'<div class="frame-preview-circle fp-orange_simple">S</div>' },
-    { id:'red_simple',    name:'Kırmızı',     tier:'Basit', price:100,  tierClass:'tier-basic',
-      preview:'<div class="frame-preview-circle fp-red_simple">S</div>' },
-    { id:'white_simple',  name:'Beyaz',       tier:'Basit', price:100,  tierClass:'tier-basic',
-      preview:'<div class="frame-preview-circle fp-white_simple">S</div>' },
-    // Orta — 400 coin
-    { id:'purple_mid',    name:'Mor Parıltı', tier:'Orta',  price:400,  tierClass:'tier-mid',
-      preview:'<div class="frame-preview-circle fp-purple_mid">S</div>' },
-    { id:'pink_mid',      name:'Pembe Işık',  tier:'Orta',  price:400,  tierClass:'tier-mid',
-      preview:'<div class="frame-preview-circle fp-pink_mid">S</div>' },
-    { id:'gold_mid',      name:'Altın',       tier:'Orta',  price:400,  tierClass:'tier-mid',
-      preview:'<div class="frame-preview-circle fp-gold_mid">S</div>' },
-    { id:'cyan_mid',      name:'Siyan',       tier:'Orta',  price:400,  tierClass:'tier-mid',
-      preview:'<div class="frame-preview-circle fp-cyan_mid">S</div>' },
-    { id:'green_mid',     name:'Zümrüt',      tier:'Orta',  price:400,  tierClass:'tier-mid',
-      preview:'<div class="frame-preview-circle fp-green_mid">S</div>' },
-    // Nadir — 1600 coin
-    { id:'diamond_rare',  name:'Elmas',       tier:'Nadir', price:1600, tierClass:'tier-rare',
-      preview:'<div class="frame-preview-circle fp-diamond_rare">S</div>' },
-    { id:'fire_rare',     name:'Alev',        tier:'Nadir', price:1600, tierClass:'tier-rare',
-      preview:'<div class="frame-preview-circle fp-fire_rare">S</div>' },
-    { id:'rainbow_rare',  name:'Gökkuşağı',   tier:'Nadir', price:1600, tierClass:'tier-rare',
-      preview:'<div class="frame-preview-circle fp-rainbow_rare">S</div>' },
-    { id:'aurora_rare',   name:'Aurora',      tier:'Nadir', price:1600, tierClass:'tier-rare',
-      preview:'<div class="frame-preview-circle fp-aurora_rare">S</div>' },
+    { id:'blue_simple',   name:'Mavi',        tier:'Basit', price:100,  tierClass:'tier-basic', preview:'<div class="frame-preview-circle fp-blue_simple">S</div>' },
+    { id:'teal_simple',   name:'Yeşil',       tier:'Basit', price:100,  tierClass:'tier-basic', preview:'<div class="frame-preview-circle fp-teal_simple">S</div>' },
+    { id:'orange_simple', name:'Turuncu',     tier:'Basit', price:100,  tierClass:'tier-basic', preview:'<div class="frame-preview-circle fp-orange_simple">S</div>' },
+    { id:'red_simple',    name:'Kırmızı',     tier:'Basit', price:100,  tierClass:'tier-basic', preview:'<div class="frame-preview-circle fp-red_simple">S</div>' },
+    { id:'white_simple',  name:'Beyaz',       tier:'Basit', price:100,  tierClass:'tier-basic', preview:'<div class="frame-preview-circle fp-white_simple">S</div>' },
+    { id:'purple_mid',    name:'Mor Parıltı', tier:'Orta',  price:400,  tierClass:'tier-mid',   preview:'<div class="frame-preview-circle fp-purple_mid">S</div>' },
+    { id:'pink_mid',      name:'Pembe Işık',  tier:'Orta',  price:400,  tierClass:'tier-mid',   preview:'<div class="frame-preview-circle fp-pink_mid">S</div>' },
+    { id:'gold_mid',      name:'Altın',       tier:'Orta',  price:400,  tierClass:'tier-mid',   preview:'<div class="frame-preview-circle fp-gold_mid">S</div>' },
+    { id:'cyan_mid',      name:'Siyan',       tier:'Orta',  price:400,  tierClass:'tier-mid',   preview:'<div class="frame-preview-circle fp-cyan_mid">S</div>' },
+    { id:'green_mid',     name:'Zümrüt',      tier:'Orta',  price:400,  tierClass:'tier-mid',   preview:'<div class="frame-preview-circle fp-green_mid">S</div>' },
+    { id:'diamond_rare',  name:'Elmas',       tier:'Nadir', price:1600, tierClass:'tier-rare',  preview:'<div class="frame-preview-circle fp-diamond_rare">S</div>' },
+    { id:'fire_rare',     name:'Alev',        tier:'Nadir', price:1600, tierClass:'tier-rare',  preview:'<div class="frame-preview-circle fp-fire_rare">S</div>' },
+    { id:'rainbow_rare',  name:'Gökkuşağı',   tier:'Nadir', price:1600, tierClass:'tier-rare',  preview:'<div class="frame-preview-circle fp-rainbow_rare">S</div>' },
+    { id:'aurora_rare',   name:'Aurora',      tier:'Nadir', price:1600, tierClass:'tier-rare',  preview:'<div class="frame-preview-circle fp-aurora_rare">S</div>' },
   ],
-  avatars: [
-    // Standart — 250 coin
-    { id:'1', name:'Avatar 1', tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/1.png" onerror="this.parentNode.innerHTML=\'1\'"></div>' },
-    { id:'2', name:'Avatar 2', tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/2.png" onerror="this.parentNode.innerHTML=\'2\'"></div>' },
-    { id:'3', name:'Avatar 3', tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/3.png" onerror="this.parentNode.innerHTML=\'3\'"></div>' },
-    { id:'4', name:'Avatar 4', tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/4.png" onerror="this.parentNode.innerHTML=\'4\'"></div>' },
-    { id:'5', name:'Avatar 5', tier:'Standart', price:250, tierClass:'tier-basic',
-      preview:'<div class="av-circle"><img src="avatars/5.png" onerror="this.parentNode.innerHTML=\'5\'"></div>' },
-    // Özel — 400 coin
-    { id:'6', name:'Avatar 6', tier:'Özel', price:400, tierClass:'tier-mid',
-      preview:'<div class="av-circle"><img src="avatars/6.png" onerror="this.parentNode.innerHTML=\'6\'"></div>' },
-    { id:'7', name:'Avatar 7', tier:'Özel', price:400, tierClass:'tier-mid',
-      preview:'<div class="av-circle"><img src="avatars/7.png" onerror="this.parentNode.innerHTML=\'7\'"></div>' },
-    { id:'8', name:'Avatar 8', tier:'Özel', price:400, tierClass:'tier-mid',
-      preview:'<div class="av-circle"><img src="avatars/8.png" onerror="this.parentNode.innerHTML=\'8\'"></div>' },
-    // Efsane — 1600 coin
-    { id:'9', name:'Avatar 9', tier:'Efsane', price:1600, tierClass:'tier-rare',
-      preview:'<div class="av-circle"><img src="avatars/9.png" onerror="this.parentNode.innerHTML=\'9\'"></div>' },
+  outfits: [
+    { id:'tshirt_blue',   name:'Mavi Tişört',    tier:'Ücretsiz', price:0,    style:'tshirt', color:'blue',   tierClass:'tier-basic' },
+    { id:'tshirt_red',    name:'Kırmızı Tişört', tier:'Ücretsiz', price:0,    style:'tshirt', color:'red',    tierClass:'tier-basic' },
+    { id:'tshirt_green',  name:'Yeşil Tişört',   tier:'Basit',    price:200,  style:'tshirt', color:'green',  tierClass:'tier-basic' },
+    { id:'tshirt_purple', name:'Mor Tişört',     tier:'Basit',    price:200,  style:'tshirt', color:'purple', tierClass:'tier-basic' },
+    { id:'tshirt_orange', name:'Turuncu Tişört', tier:'Basit',    price:200,  style:'tshirt', color:'orange', tierClass:'tier-basic' },
+    { id:'vneck_black',   name:'Siyah V-Yaka',   tier:'Orta',     price:400,  style:'vneck',  color:'black',  tierClass:'tier-mid'   },
+    { id:'vneck_teal',    name:'Teal V-Yaka',    tier:'Orta',     price:400,  style:'vneck',  color:'teal',   tierClass:'tier-mid'   },
+    { id:'hoodie_gray',   name:'Gri Hoodie',     tier:'Orta',     price:600,  style:'hoodie', color:'gray',   tierClass:'tier-mid'   },
+    { id:'hoodie_purple', name:'Mor Hoodie',     tier:'Orta',     price:600,  style:'hoodie', color:'purple', tierClass:'tier-mid'   },
+    { id:'jacket_black',  name:'Siyah Ceket',    tier:'Nadir',    price:1200, style:'jacket', color:'black',  tierClass:'tier-rare'  },
+    { id:'jacket_gold',   name:'Altın Üniforma', tier:'Nadir',    price:1200, style:'jacket', color:'gold',   tierClass:'tier-rare'  },
+    { id:'hoodie_pink',   name:'Pembe Hoodie',   tier:'Nadir',    price:800,  style:'hoodie', color:'pink',   tierClass:'tier-rare'  },
+  ],
+  glasses: [
+    { id:'glasses_none',       name:'Gözlüksüz',        tier:'Ücretsiz', price:0,    style:'none',  color:'black', tierClass:'tier-basic' },
+    { id:'glasses_rect_pink',  name:'Pembe Dikdörtgen', tier:'Basit',    price:200,  style:'rect',  color:'pink',  tierClass:'tier-basic' },
+    { id:'glasses_rect_black', name:'Siyah Dikdörtgen', tier:'Basit',    price:200,  style:'rect',  color:'black', tierClass:'tier-basic' },
+    { id:'glasses_rect_red',   name:'Kırmızı Çerçeve',  tier:'Basit',    price:200,  style:'rect',  color:'red',   tierClass:'tier-basic' },
+    { id:'glasses_round_brown',name:'Yuvarlak Kahve',   tier:'Orta',     price:500,  style:'round', color:'brown', tierClass:'tier-mid'   },
+    { id:'glasses_round_gold', name:'Yuvarlak Altın',   tier:'Orta',     price:500,  style:'round', color:'gold',  tierClass:'tier-mid'   },
+    { id:'glasses_cool_black', name:'Güneş Gözlüğü',   tier:'Nadir',    price:1000, style:'cool',  color:'black', tierClass:'tier-rare'  },
+    { id:'glasses_cool_gold',  name:'Altın Güneş',      tier:'Nadir',    price:1000, style:'cool',  color:'gold',  tierClass:'tier-rare'  },
+  ],
+  character: [
+    { id:'skin_light',   name:'Açık Ten',    tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'light',     tierClass:'tier-basic', skinColor:'#FFD5B8' },
+    { id:'skin_fair',    name:'Bej',         tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'fair',      tierClass:'tier-basic', skinColor:'#F4A574' },
+    { id:'skin_olive',   name:'Zeytinyağı',  tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'olive',     tierClass:'tier-basic', skinColor:'#D4906A' },
+    { id:'skin_tan',     name:'Bronz',       tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'tan',       tierClass:'tier-basic', skinColor:'#C07040' },
+    { id:'skin_brown',   name:'Kahve',       tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'brown',     tierClass:'tier-basic', skinColor:'#8B5523' },
+    { id:'skin_dark',    name:'Koyu',        tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'dark',      tierClass:'tier-basic', skinColor:'#5C3318' },
+    { id:'hair_short',   name:'Kısa',        tier:'Saç Stili',  price:0,   attribute:'hairStyle', value:'short',   tierClass:'tier-basic' },
+    { id:'hair_afro',    name:'Afro',        tier:'Saç Stili',  price:0,   attribute:'hairStyle', value:'afro',    tierClass:'tier-basic' },
+    { id:'hair_long',    name:'Uzun',        tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'long',    tierClass:'tier-basic' },
+    { id:'hair_spiky',   name:'Sivri',       tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'spiky',   tierClass:'tier-basic' },
+    { id:'hair_bob',     name:'Bob',         tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'bob',     tierClass:'tier-basic' },
+    { id:'hair_bun',     name:'Topuz',       tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'bun',     tierClass:'tier-basic' },
+    { id:'hcol_black',   name:'Siyah',       tier:'Saç Rengi',  price:0,   attribute:'hairColor', value:'black',     tierClass:'tier-basic', hairColor:'#1C1410' },
+    { id:'hcol_brown',   name:'Kahverengi',  tier:'Saç Rengi',  price:0,   attribute:'hairColor', value:'brown',     tierClass:'tier-basic', hairColor:'#6B3520' },
+    { id:'hcol_dark',    name:'Koyu Kahve',  tier:'Saç Rengi',  price:0,   attribute:'hairColor', value:'darkbrown', tierClass:'tier-basic', hairColor:'#3D200E' },
+    { id:'hcol_red',     name:'Kızıl',       tier:'Saç Rengi',  price:200, attribute:'hairColor', value:'red',       tierClass:'tier-basic', hairColor:'#CC2200' },
+    { id:'hcol_blonde',  name:'Sarı',        tier:'Saç Rengi',  price:200, attribute:'hairColor', value:'blonde',    tierClass:'tier-basic', hairColor:'#D4A83A' },
+    { id:'hcol_orange',  name:'Turuncu',     tier:'Saç Rengi',  price:200, attribute:'hairColor', value:'orange',    tierClass:'tier-basic', hairColor:'#D05020' },
+    { id:'hcol_blue',    name:'Mavi',        tier:'Saç Rengi',  price:400, attribute:'hairColor', value:'blue',      tierClass:'tier-mid',   hairColor:'#2244BB' },
+    { id:'hcol_pink',    name:'Pembe',       tier:'Saç Rengi',  price:400, attribute:'hairColor', value:'pink',      tierClass:'tier-mid',   hairColor:'#CC4488' },
+    { id:'hcol_teal',    name:'Teal',        tier:'Saç Rengi',  price:400, attribute:'hairColor', value:'teal',      tierClass:'tier-mid',   hairColor:'#228888' },
+    { id:'hcol_white',   name:'Platin',      tier:'Saç Rengi',  price:800, attribute:'hairColor', value:'platinum',  tierClass:'tier-rare',  hairColor:'#D8D0B8' },
+    { id:'eye_dark',     name:'Koyu',        tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'dark',      tierClass:'tier-basic', eyeColor:'#2A180A' },
+    { id:'eye_brown',    name:'Kahve',       tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'brown',     tierClass:'tier-basic', eyeColor:'#6B3520' },
+    { id:'eye_blue',     name:'Mavi',        tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'blue',      tierClass:'tier-basic', eyeColor:'#2277BB' },
+    { id:'eye_green',    name:'Yeşil',       tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'green',     tierClass:'tier-basic', eyeColor:'#227744' },
+    { id:'eye_teal',     name:'Teal',        tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'teal',      tierClass:'tier-basic', eyeColor:'#226688' },
+    { id:'eye_amber',    name:'Kehribar',    tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'amber',     tierClass:'tier-basic', eyeColor:'#8B5520' },
   ],
   themes: [
     // Varsayılan — Ücretsiz
@@ -545,52 +628,69 @@ function openSheet(tab, itemId) {
   var items = CATALOG[tab];
   var item  = items.find(function(i){ return i.id === itemId; });
   if (!item) return;
-
   _selectedItem = { tab:tab, item:item };
 
-  var equippedKey = tab === 'frames' ? 'frame' : tab === 'avatars' ? 'avatar' : 'theme';
-  var isOwned    = _owned.indexOf(item.id) !== -1;
-  var isEquipped = (_cosmetics[equippedKey] || 'none') === item.id;
-
-  // Preview (büyütülmüş)
-  var bigPreview = item.preview.replace('52px','72px').replace('52px','72px')
-    .replace('frame-preview-circle','frame-preview-circle')
-    .replace('av-circle','av-circle');
-  document.getElementById('sheetPreview').innerHTML = '<div style="transform:scale(1.2);transform-origin:center">' + item.preview + '</div>';
-  document.getElementById('sheetName').textContent  = item.name;
-  document.getElementById('sheetTier').textContent  = item.tier + ' · ' + tab.charAt(0).toUpperCase() + tab.slice(1,-1);
-
-  document.getElementById('sheetPrice').textContent    = item.price.toLocaleString('tr-TR');
-  document.getElementById('sheetBal').textContent      = _coins.toLocaleString('tr-TR');
-  document.getElementById('sheetBalAfter').textContent = isOwned ? _coins.toLocaleString('tr-TR') : Math.max(0, _coins - item.price).toLocaleString('tr-TR');
-
-  var canAfford = _coins >= item.price;
-  var buyBtn    = document.getElementById('sheetBuyBtn');
-  if (item.price === 0) { buyBtn.textContent = '✨ Ücretsiz Edin'; buyBtn.style.background = 'linear-gradient(135deg,var(--accent),var(--accent2))'; }
-  else { buyBtn.textContent = 'Satın Al'; buyBtn.style.background = 'linear-gradient(135deg,var(--yellow),var(--orange))'; }
-  var equipBtn  = document.getElementById('sheetEquipBtn');
-  var insuf     = document.getElementById('insufficientMsg');
-
-  if (isEquipped) {
-    buyBtn.style.display   = 'none';
-    equipBtn.style.display = 'none';
-    equipBtn.textContent   = '✓ Zaten Takılı';
-    equipBtn.style.display = 'block';
-    equipBtn.disabled = true;
-    insuf.style.display = 'none';
-  } else if (isOwned) {
-    buyBtn.style.display   = 'none';
-    equipBtn.style.display = 'block';
-    equipBtn.textContent   = '✓ Kuşan';
-    equipBtn.disabled = false;
-    insuf.style.display    = 'none';
+  var isOwned    = item.price===0 || _owned.indexOf(item.id)!==-1;
+  var isEquipped = false;
+  if (tab==='character') {
+    isEquipped = (_cosmetics[item.attribute]===item.value) ||
+      (item.attribute==='skinTone'  && !_cosmetics.skinTone   && item.value==='fair') ||
+      (item.attribute==='hairStyle' && !_cosmetics.hairStyle  && item.value==='short') ||
+      (item.attribute==='hairColor' && !_cosmetics.hairColor  && item.value==='black') ||
+      (item.attribute==='eyeColor'  && !_cosmetics.eyeColor   && item.value==='dark');
+    isOwned = item.price===0 || _owned.indexOf(item.id)!==-1;
   } else {
-    buyBtn.style.display   = 'block';
-    equipBtn.style.display = 'none';
-    buyBtn.disabled        = !canAfford;
-    insuf.style.display    = canAfford ? 'none' : 'block';
+    var equippedId = getEquippedId(tab);
+    isEquipped = (equippedId === item.id);
   }
 
+  // Sheet preview — PAX canvas
+  var prevEl = document.getElementById('sheetPreview');
+  prevEl.innerHTML = '';
+  if (tab==='frames'||tab==='themes') {
+    var sc = 1.4;
+    prevEl.innerHTML = '<div style="transform:scale('+sc+');transform-origin:center">'+(item.preview||'')+'</div>';
+  } else {
+    var pv = document.createElement('canvas');
+    pv.className = 'pax-card';
+    pv.style.imageRendering = 'pixelated';
+    prevEl.appendChild(pv);
+    var pvOpts = buildPaxOpts(
+      tab==='outfits'  ? {outfitStyle:item.style,outfitColor:item.color}
+      :tab==='glasses' ? {glassesStyle:item.style,glassesColor:item.color}
+      :tab==='character'&&item.attribute==='skinTone'  ? {skinTone:item.value}
+      :tab==='character'&&item.attribute==='hairStyle' ? {hairStyle:item.value}
+      :tab==='character'&&item.attribute==='hairColor' ? {hairColor:item.value}
+      :tab==='character'&&item.attribute==='eyeColor'  ? {eyeColor:item.value}
+      :{}
+    );
+    if (window.PAX) PAX.draw(pv, pvOpts, 4);
+  }
+
+  var tabLabel = {frames:'Çerçeve',outfits:'Kıyafet',glasses:'Aksesuar',character:'Karakter',themes:'Tema'};
+  document.getElementById('sheetName').textContent  = item.name;
+  document.getElementById('sheetTier').textContent  = item.tier + ' · ' + (tabLabel[tab]||tab);
+  document.getElementById('sheetPrice').textContent = item.price.toLocaleString('tr-TR');
+  document.getElementById('sheetBal').textContent   = _coins.toLocaleString('tr-TR');
+  document.getElementById('sheetBalAfter').textContent = isOwned ? _coins.toLocaleString('tr-TR') : Math.max(0,_coins-item.price).toLocaleString('tr-TR');
+
+  var canAfford = _coins >= item.price;
+  var buyBtn  = document.getElementById('sheetBuyBtn');
+  var equipBtn= document.getElementById('sheetEquipBtn');
+  var insuf   = document.getElementById('insufficientMsg');
+  if (item.price===0){buyBtn.textContent='✨ Ücretsiz Edin';buyBtn.style.background='linear-gradient(135deg,var(--accent),var(--accent2))';}
+  else{buyBtn.textContent='Satın Al';buyBtn.style.background='linear-gradient(135deg,var(--yellow),var(--orange))';}
+
+  if (isEquipped) {
+    buyBtn.style.display='none'; equipBtn.style.display='block';
+    equipBtn.textContent='✓ Aktif'; equipBtn.disabled=true; insuf.style.display='none';
+  } else if (isOwned) {
+    buyBtn.style.display='none'; equipBtn.style.display='block';
+    equipBtn.textContent='✓ Kuşan'; equipBtn.disabled=false; insuf.style.display='none';
+  } else {
+    buyBtn.style.display='block'; equipBtn.style.display='none';
+    buyBtn.disabled=!canAfford; insuf.style.display=canAfford?'none':'block';
+  }
   document.getElementById('sheetOverlay').classList.add('open');
   document.getElementById('buySheet').classList.add('open');
 }
@@ -604,54 +704,38 @@ function closeSheet() {
 // ══════════════════════════════════════════════
 // BUY & EQUIP
 // ══════════════════════════════════════════════
+function applyItemToCosmetics(cos, tab, item) {
+  var c = Object.assign({}, cos);
+  if (tab==='frames')  { c.frame=item.id; }
+  else if (tab==='themes')  { c.theme=item.id; }
+  else if (tab==='outfits') { c.outfitId=item.id; c.outfitStyle=item.style; c.outfitColor=item.color; }
+  else if (tab==='glasses') { c.glassesId=item.id; c.glassesStyle=item.style; c.glassesColor=item.color; }
+  else if (tab==='character'){ c[item.attribute]=item.value; }
+  return c;
+}
+
 function confirmBuy() {
-  if (!_selectedItem || !_db) return;
-  var item = _selectedItem.item;
-  if (_coins < item.price) return;
-
-  var newCoins = item.price === 0 ? _coins : (_coins - item.price);
+  if (!_selectedItem||!_db) return;
+  var item=_selectedItem.item; var tab=_selectedItem.tab;
+  if (_coins<item.price) return;
+  var newCoins = item.price===0 ? _coins : (_coins-item.price);
   var newOwned = _owned.concat([item.id]);
-
-  // Otomatik kuşan (satın alınca direkt takılsın)
-  var equippedKey = _selectedItem.tab === 'frames' ? 'frame'
-                  : _selectedItem.tab === 'avatars' ? 'avatar' : 'theme';
-  var newCosmetics = Object.assign({}, _cosmetics);
-  newCosmetics[equippedKey] = item.id;
-
-  _db.collection('users').doc(_uid).update({
-    coins:      newCoins,
-    ownedItems: newOwned,
-    cosmetics:  newCosmetics
-  }).then(function() {
-    _coins     = newCoins;
-    _owned     = newOwned;
-    _cosmetics = newCosmetics;
-    document.getElementById('coinBal').textContent = _coins.toLocaleString('tr-TR');
-    closeSheet();
-    renderTab(_activeTab);
-    showToast('✅ Satın alındı ve kuşanıldı!');
-  }).catch(function(e) {
-    showToast('❌ Hata: ' + e.message);
-  });
+  var newCosmetics = applyItemToCosmetics(_cosmetics, tab, item);
+  _db.collection('users').doc(_uid).update({coins:newCoins,ownedItems:newOwned,cosmetics:newCosmetics}).then(function(){
+    _coins=newCoins; _owned=newOwned; _cosmetics=newCosmetics;
+    document.getElementById('coinBal').textContent=_coins.toLocaleString('tr-TR');
+    closeSheet(); renderTab(_activeTab); showToast('✅ Satın alındı ve kuşanıldı!');
+  }).catch(function(e){showToast('❌ Hata: '+e.message);});
 }
 
 function confirmEquip() {
-  if (!_selectedItem || !_db) return;
-  var item = _selectedItem.item;
-  var equippedKey = _selectedItem.tab === 'frames' ? 'frame'
-                  : _selectedItem.tab === 'avatars' ? 'avatar' : 'theme';
-
-  var newCosmetics = Object.assign({}, _cosmetics);
-  newCosmetics[equippedKey] = item.id;
-
-  _db.collection('users').doc(_uid).update({ cosmetics: newCosmetics }).then(function() {
-    _cosmetics = newCosmetics;
-    closeSheet();
-    renderTab(_activeTab);
-    showToast('✓ ' + item.name + ' kuşanıldı!');
-  }).catch(function(e) {
-    showToast('❌ Hata: ' + e.message);
-  });
+  if (!_selectedItem||!_db) return;
+  var item=_selectedItem.item; var tab=_selectedItem.tab;
+  var newCosmetics = applyItemToCosmetics(_cosmetics, tab, item);
+  _db.collection('users').doc(_uid).update({cosmetics:newCosmetics}).then(function(){
+    _cosmetics=newCosmetics; closeSheet(); renderTab(_activeTab);
+    showToast('✓ '+item.name+' kuşanıldı!');
+  }).catch(function(e){showToast('❌ Hata: '+e.message);});
 }
 
 // ══════════════════════════════════════════════
