@@ -577,39 +577,88 @@ function switchTab(tab, el) {
   renderTab(tab);
 }
 
+function getEquippedId(tab) {
+  if (tab==='frames')   return _cosmetics.frame     || 'none';
+  if (tab==='themes')   return _cosmetics.theme     || 'none';
+  if (tab==='outfits')  return _cosmetics.outfitId  || 'none';
+  if (tab==='glasses')  return _cosmetics.glassesId || 'none';
+  return 'none';
+}
+
+function isCharEquipped(item) {
+  var v = _cosmetics[item.attribute];
+  if (v === item.value) return true;
+  if (item.attribute==='skinTone'  && !v && item.value==='fair')   return true;
+  if (item.attribute==='hairStyle' && !v && item.value==='short')  return true;
+  if (item.attribute==='hairColor' && !v && item.value==='black')  return true;
+  if (item.attribute==='eyeColor'  && !v && item.value==='dark')   return true;
+  return false;
+}
+
+function buildPaxOpts(overrides) {
+  var base = PAX.fromCosmetics(_cosmetics);
+  return Object.assign({}, base, overrides || {});
+}
+
+function buildCardCanvas(opts) {
+  return '<canvas class="pax-card" width="32" height="36" data-sc="2"' +
+    ' data-skin="'  + opts.skinTone    + '"' +
+    ' data-hair="'  + opts.hairStyle   + '"' +
+    ' data-hcol="'  + opts.hairColor   + '"' +
+    ' data-eye="'   + opts.eyeColor    + '"' +
+    ' data-outfit="'+ opts.outfitStyle + '"' +
+    ' data-ocol="'  + opts.outfitColor + '"' +
+    ' data-glass="' + opts.glassesStyle+ '"' +
+    ' data-gcol="'  + opts.glassesColor+ '"></canvas>';
+}
+
 function renderTab(tab) {
   var items = CATALOG[tab];
-  var equippedKey = tab === 'frames' ? 'frame' : tab === 'avatars' ? 'avatar' : 'theme';
-  var equippedId  = _cosmetics[equippedKey] || 'none';
+  if (!items) return;
 
-  // Tier grupları
   var groups = {};
   items.forEach(function(item) {
     if (!groups[item.tier]) groups[item.tier] = [];
     groups[item.tier].push(item);
   });
 
+  var equippedId = (tab !== 'character') ? getEquippedId(tab) : null;
+
   var html = '';
   Object.keys(groups).forEach(function(tier) {
-    html += '<div class="sec">' + tier + '</div>';
-    html += '<div class="items-grid">';
+    html += '<div class="sec">' + tier + '</div><div class="items-grid">';
     groups[tier].forEach(function(item) {
-      var isOwned    = _owned.indexOf(item.id) !== -1;
-      var isEquipped = equippedId === item.id;
-      var cardClass  = 'item-card' +
+      var isOwned    = item.price === 0 || _owned.indexOf(item.id) !== -1;
+      var isEquipped = (tab === 'character') ? isCharEquipped(item) : (equippedId === item.id);
+
+      var cardClass = 'item-card' +
         (isEquipped ? ' equipped' : isOwned ? ' owned' : '') +
         (item.tier === 'Nadir' || item.tier === 'Efsane' ? ' rare-item' : '');
 
       var priceHTML = isEquipped
-        ? '<span class="item-price equipped-price">✓ Takılı</span>'
+        ? '<span class="item-price equipped-price">✓ Aktif</span>'
         : isOwned
           ? '<span class="item-price owned-price">✓ Sahipsin</span>'
           : '<span class="item-price">🪙 ' + item.price.toLocaleString('tr-TR') + '</span>';
 
+      // ── PREVIEW HTML ──
+      var previewHTML = '';
+      if (tab === 'frames' || tab === 'themes') {
+        previewHTML = item.preview || '';
+      } else if (tab === 'outfits') {
+        previewHTML = buildCardCanvas(buildPaxOpts({outfitStyle:item.style, outfitColor:item.color}));
+      } else if (tab === 'glasses') {
+        previewHTML = buildCardCanvas(buildPaxOpts({glassesStyle:item.style, glassesColor:item.color}));
+      } else if (tab === 'character') {
+        var charOver = {};
+        charOver[item.attribute] = item.value;
+        previewHTML = buildCardCanvas(buildPaxOpts(charOver));
+      }
+
       html += '<div class="' + cardClass + '" onclick="openSheet(\'' + tab + '\',\'' + item.id + '\')">' +
         '<span class="tier-badge ' + item.tierClass + '">' + item.tier + '</span>' +
         '<span class="equipped-badge">✓</span>' +
-        '<div class="item-preview">' + item.preview + '</div>' +
+        '<div class="item-preview">' + previewHTML + '</div>' +
         '<div class="item-name">' + item.name + '</div>' +
         priceHTML +
       '</div>';
@@ -619,6 +668,7 @@ function renderTab(tab) {
 
   var wrap = document.getElementById('shopContent');
   wrap.innerHTML = '<div class="fade-up">' + html + '</div>';
+  if (window.PAX) PAX.initCards();
 }
 
 // ══════════════════════════════════════════════
