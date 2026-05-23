@@ -361,7 +361,7 @@ body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; m
 
 <script>
 
-/* PAX Pixel Art Avatar Engine v1.0 */
+/* PAX Pixel Art Avatar Engine v2.0 */
 var PAX={
   W:16,H:18,
   SKINS:{light:'#FFD5B8',fair:'#F4A574',olive:'#D4906A',tan:'#C07040',brown:'#8B5523',dark:'#5C3318'},
@@ -373,13 +373,22 @@ var PAX={
   L:{
     skin:['________________','________________','________________','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSS____','____SSSSSSSS____','____SSSSSSS_____','_____SSSSSS_____','_____SSSS_______','_____SSSS_______','_____SSSS_______','________________','________________','________________'],
     eyes:['________________','________________','________________','________________','________________','____WWW__WWW____','____WEW__WEW____','____WWW__WWW____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    mouth:['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','________________','________________','________________','________________','________________','________________','________________'],
+    'face-female':['________________','________________','________________','________________','____CCC__CCC____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'expr-neutral':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','________________','________________','________________','________________','________________','________________','________________'],
+    'expr-happy':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','____MM______MM__','_____MMMMMM_____','________________','________________','________________','________________','________________','________________'],
+    'expr-sad':['________________','________________','________________','___B______B_____','____B_____B_____','________________','________________','________________','________________','________________','_____MMMMMM_____','____MM______MM__','________________','________________','________________','________________','________________','________________'],
+    'expr-thinking':['________________','________________','________________','___B____________','__________B_____','________________','________________','________________','________________','________________','________MMMM____','________________','________________','________________','________________','________________','________________','________________'],
+    'expr-angry':['________________','________________','________________','____B_____B_____','___BB_____BB____','________________','________________','________________','________________','________________','___MM________MM_','____MMMMMMMM____','________________','________________','________________','________________','________________','________________'],
+    'expr-overwhelmed':['________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','_____M____M_____','______MMMM______','________________','________________','________________','________________','________________','________________'],
+    'expr-cool':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','_______MMM______','________________','________________','________________','________________','________________','________________','________________'],
     'hair-short':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-afro':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-long':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-spiky':['___HH_HHH_H_____','___HHHHHHHHH____','__HHHHHHHHHH____','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-bob':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-bun':['_____HHHHH______','____HH___HH_____','___HHHHHHHHHH___','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-shoulder':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','_HSSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+    'hair-shouldercurly':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSHH_','HHSSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-longstraight':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-wavylong':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','_HHSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'hair-twintails':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','_HSSSSSSSSSSSHH_','HH____________HH','HH____________HH','_H____________H_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
@@ -404,30 +413,34 @@ var PAX={
     var ey=PAX.EYES[opts.eyeColor]||PAX.EYES.dark;
     var ot=PAX.OUTFIT[opts.outfitColor]||PAX.OUTFIT.blue;
     var gl=PAX.GLASS[opts.glassesColor]||PAX.GLASS.black;
-    var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,A:'#AABBCC',G:gl,L:gl+'55'};
-    var ord=['outfit-'+(opts.outfitStyle||'tshirt'),'skin','hair-'+(opts.hairStyle||'short'),'eyes','mouth',(opts.glassesStyle&&opts.glassesStyle!='none')?'glasses-'+opts.glassesStyle:null];
+    var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,A:'#AABBCC',G:gl,L:gl+'55',B:'#3D200E',C:'#1C1410',T:'#EEEEEE'};
+    var expr=opts.expression||'neutral';
+    var ord=[
+      'outfit-'+(opts.outfitStyle||'tshirt'),
+      'skin',
+      'hair-'+(opts.hairStyle||'short'),
+      'eyes',
+      'expr-'+expr,
+      opts.avatarType==='female'?'face-female':null,
+      (opts.glassesStyle&&opts.glassesStyle!='none')?'glasses-'+opts.glassesStyle:null
+    ];
     ord.forEach(function(ln){
       if(!ln)return;
       var layer=PAX.L[ln];if(!layer||!layer.length)return;
-      layer.forEach(function(row,y){
-        for(var x=0;x<row.length;x++){
-          var ch=row[x];if(ch==='_')continue;
-          var c=cm[ch];if(!c)continue;
-          ctx.fillStyle=c;ctx.fillRect(x*sc,y*sc,sc,sc);
-        }
-      });
+      layer.forEach(function(row,y){for(var x=0;x<row.length;x++){var ch=row[x];if(ch==='_')continue;var c=cm[ch];if(!c)return;ctx.fillStyle=c;ctx.fillRect(x*sc,y*sc,sc,sc);}});
     });
   },
   fromCosmetics:function(cos){
     cos=cos||{};
-    return {skinTone:cos.skinTone||'fair',hairStyle:cos.hairStyle||'short',hairColor:cos.hairColor||'black',eyeColor:cos.eyeColor||'dark',outfitStyle:cos.outfitStyle||'tshirt',outfitColor:cos.outfitColor||'blue',glassesStyle:cos.glassesStyle||'none',glassesColor:cos.glassesColor||'black'};
+    return {skinTone:cos.skinTone||'fair',hairStyle:cos.hairStyle||'short',hairColor:cos.hairColor||'black',eyeColor:cos.eyeColor||'dark',outfitStyle:cos.outfitStyle||'tshirt',outfitColor:cos.outfitColor||'blue',glassesStyle:cos.glassesStyle||'none',glassesColor:cos.glassesColor||'black',avatarType:cos.avatarType||'male',expression:cos.expression||'neutral'};
   },
   initCards:function(){
     document.querySelectorAll('.pax-card').forEach(function(c){
-      PAX.draw(c,{skinTone:c.dataset.skin||'fair',hairStyle:c.dataset.hair||'short',hairColor:c.dataset.hcol||'black',eyeColor:c.dataset.eye||'dark',outfitStyle:c.dataset.outfit||'tshirt',outfitColor:c.dataset.ocol||'blue',glassesStyle:c.dataset.glass||'none',glassesColor:c.dataset.gcol||'black'},parseInt(c.dataset.sc)||2);
+      PAX.draw(c,{skinTone:c.dataset.skin||'fair',hairStyle:c.dataset.hair||'short',hairColor:c.dataset.hcol||'black',eyeColor:c.dataset.eye||'dark',outfitStyle:c.dataset.outfit||'tshirt',outfitColor:c.dataset.ocol||'blue',glassesStyle:c.dataset.glass||'none',glassesColor:c.dataset.gcol||'black',avatarType:c.dataset.type||'male',expression:c.dataset.expr||'neutral'},parseInt(c.dataset.sc)||2);
     });
   }
 };
+
 // ══════════════════════════════════════════════
 // CATALOG
 // ══════════════════════════════════════════════
@@ -473,39 +486,50 @@ var CATALOG = {
     { id:'glasses_cool_gold',  name:'Altın Güneş',      tier:'Nadir',    price:1000, style:'cool',  color:'gold',  tierClass:'tier-rare'  },
   ],
   character: [
-    { id:'skin_light',   name:'Açık Ten',    tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'light',     tierClass:'tier-basic', skinColor:'#FFD5B8' },
-    { id:'skin_fair',    name:'Bej',         tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'fair',      tierClass:'tier-basic', skinColor:'#F4A574' },
-    { id:'skin_olive',   name:'Zeytinyağı',  tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'olive',     tierClass:'tier-basic', skinColor:'#D4906A' },
-    { id:'skin_tan',     name:'Bronz',       tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'tan',       tierClass:'tier-basic', skinColor:'#C07040' },
-    { id:'skin_brown',   name:'Kahve',       tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'brown',     tierClass:'tier-basic', skinColor:'#8B5523' },
-    { id:'skin_dark',    name:'Koyu',        tier:'Ten Rengi',  price:0, attribute:'skinTone',  value:'dark',      tierClass:'tier-basic', skinColor:'#5C3318' },
-    { id:'hair_short',   name:'Kısa',        tier:'Saç Stili',  price:0,   attribute:'hairStyle', value:'short',   tierClass:'tier-basic' },
-    { id:'hair_afro',    name:'Afro',        tier:'Saç Stili',  price:0,   attribute:'hairStyle', value:'afro',    tierClass:'tier-basic' },
-    { id:'hair_long',    name:'Uzun',        tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'long',    tierClass:'tier-basic' },
-    { id:'hair_spiky',   name:'Sivri',       tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'spiky',   tierClass:'tier-basic' },
-    { id:'hair_bob',     name:'Bob',         tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'bob',     tierClass:'tier-basic' },
-    { id:'hair_bun',     name:'Topuz',       tier:'Saç Stili',  price:300, attribute:'hairStyle', value:'bun',     tierClass:'tier-basic' },
-    { id:'hcol_black',   name:'Siyah',       tier:'Saç Rengi',  price:0,   attribute:'hairColor', value:'black',     tierClass:'tier-basic', hairColor:'#1C1410' },
-    { id:'hcol_brown',   name:'Kahverengi',  tier:'Saç Rengi',  price:0,   attribute:'hairColor', value:'brown',     tierClass:'tier-basic', hairColor:'#6B3520' },
-    { id:'hcol_dark',    name:'Koyu Kahve',  tier:'Saç Rengi',  price:0,   attribute:'hairColor', value:'darkbrown', tierClass:'tier-basic', hairColor:'#3D200E' },
-    { id:'hcol_red',     name:'Kızıl',       tier:'Saç Rengi',  price:200, attribute:'hairColor', value:'red',       tierClass:'tier-basic', hairColor:'#CC2200' },
-    { id:'hcol_blonde',  name:'Sarı',        tier:'Saç Rengi',  price:200, attribute:'hairColor', value:'blonde',    tierClass:'tier-basic', hairColor:'#D4A83A' },
-    { id:'hcol_orange',  name:'Turuncu',     tier:'Saç Rengi',  price:200, attribute:'hairColor', value:'orange',    tierClass:'tier-basic', hairColor:'#D05020' },
-    { id:'hcol_blue',    name:'Mavi',        tier:'Saç Rengi',  price:400, attribute:'hairColor', value:'blue',      tierClass:'tier-mid',   hairColor:'#2244BB' },
-    { id:'hcol_pink',    name:'Pembe',       tier:'Saç Rengi',  price:400, attribute:'hairColor', value:'pink',      tierClass:'tier-mid',   hairColor:'#CC4488' },
-    { id:'hcol_teal',    name:'Teal',        tier:'Saç Rengi',  price:400, attribute:'hairColor', value:'teal',      tierClass:'tier-mid',   hairColor:'#228888' },
-    { id:'hcol_white',   name:'Platin',      tier:'Saç Rengi',  price:800, attribute:'hairColor', value:'platinum',  tierClass:'tier-rare',  hairColor:'#D8D0B8' },
-    { id:'hair_longstraight', name:'Uzun Düz',      tier:'Uzun Saç', price:0,   attribute:'hairStyle', value:'longstraight', tierClass:'tier-basic' },
-    { id:'hair_fringe',       name:'Perçemli',       tier:'Uzun Saç', price:0,   attribute:'hairStyle', value:'fringe',      tierClass:'tier-basic' },
-    { id:'hair_wavylong',     name:'Dalgalı Uzun',   tier:'Uzun Saç', price:300, attribute:'hairStyle', value:'wavylong',    tierClass:'tier-basic' },
-    { id:'hair_twintails',   name:'İki Örgü',       tier:'Uzun Saç', price:300, attribute:'hairStyle', value:'twintails',  tierClass:'tier-basic' },
-    { id:'hair_curlybob',    name:'Kıvırcık Bob',   tier:'Uzun Saç', price:400, attribute:'hairStyle', value:'curlybob',   tierClass:'tier-mid'   },
-    { id:'eye_dark',     name:'Koyu',        tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'dark',      tierClass:'tier-basic', eyeColor:'#2A180A' },
-    { id:'eye_brown',    name:'Kahve',       tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'brown',     tierClass:'tier-basic', eyeColor:'#6B3520' },
-    { id:'eye_blue',     name:'Mavi',        tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'blue',      tierClass:'tier-basic', eyeColor:'#2277BB' },
-    { id:'eye_green',    name:'Yeşil',       tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'green',     tierClass:'tier-basic', eyeColor:'#227744' },
-    { id:'eye_teal',     name:'Teal',        tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'teal',      tierClass:'tier-basic', eyeColor:'#226688' },
-    { id:'eye_amber',    name:'Kehribar',    tier:'Göz Rengi',  price:0,   attribute:'eyeColor',  value:'amber',     tierClass:'tier-basic', eyeColor:'#8B5520' },
+    { id:'type_male',          name:'Erkek',          tier:'Karakter Tipi', price:0,   attribute:'avatarType',  value:'male',        tierClass:'tier-basic' },
+    { id:'type_female',        name:'Kadın',          tier:'Karakter Tipi', price:0,   attribute:'avatarType',  value:'female',      tierClass:'tier-basic' },
+    { id:'skin_light',         name:'Açık Ten',       tier:'Ten Rengi',     price:0,   attribute:'skinTone',    value:'light',       tierClass:'tier-basic', skinColor:'#FFD5B8' },
+    { id:'skin_fair',          name:'Bej',            tier:'Ten Rengi',     price:0,   attribute:'skinTone',    value:'fair',        tierClass:'tier-basic', skinColor:'#F4A574' },
+    { id:'skin_olive',         name:'Zeytinyağı',     tier:'Ten Rengi',     price:0,   attribute:'skinTone',    value:'olive',       tierClass:'tier-basic', skinColor:'#D4906A' },
+    { id:'skin_tan',           name:'Bronz',          tier:'Ten Rengi',     price:0,   attribute:'skinTone',    value:'tan',         tierClass:'tier-basic', skinColor:'#C07040' },
+    { id:'skin_brown',         name:'Kahve',          tier:'Ten Rengi',     price:0,   attribute:'skinTone',    value:'brown',       tierClass:'tier-basic', skinColor:'#8B5523' },
+    { id:'skin_dark',          name:'Koyu',           tier:'Ten Rengi',     price:0,   attribute:'skinTone',    value:'dark',        tierClass:'tier-basic', skinColor:'#5C3318' },
+    { id:'hair_short',         name:'Kısa',           tier:'Saç Stili',     price:0,   attribute:'hairStyle',   value:'short',       tierClass:'tier-basic' },
+    { id:'hair_afro',          name:'Afro',           tier:'Saç Stili',     price:0,   attribute:'hairStyle',   value:'afro',        tierClass:'tier-basic' },
+    { id:'hair_fringe',        name:'Perçemli',       tier:'Saç Stili',     price:0,   attribute:'hairStyle',   value:'fringe',      tierClass:'tier-basic' },
+    { id:'hair_shoulder',      name:'Omuz Boy',       tier:'Saç Stili',     price:0,   attribute:'hairStyle',   value:'shoulder',    tierClass:'tier-basic' },
+    { id:'hair_longstraight',  name:'Uzun Düz',       tier:'Saç Stili',     price:0,   attribute:'hairStyle',   value:'longstraight',tierClass:'tier-basic' },
+    { id:'hair_long',          name:'Uzun',           tier:'Saç Stili',     price:300, attribute:'hairStyle',   value:'long',        tierClass:'tier-basic' },
+    { id:'hair_spiky',         name:'Sivri',          tier:'Saç Stili',     price:300, attribute:'hairStyle',   value:'spiky',       tierClass:'tier-basic' },
+    { id:'hair_bob',           name:'Bob',            tier:'Saç Stili',     price:300, attribute:'hairStyle',   value:'bob',         tierClass:'tier-basic' },
+    { id:'hair_bun',           name:'Topuz',          tier:'Saç Stili',     price:300, attribute:'hairStyle',   value:'bun',         tierClass:'tier-basic' },
+    { id:'hair_wavylong',      name:'Dalgalı Uzun',   tier:'Saç Stili',     price:300, attribute:'hairStyle',   value:'wavylong',    tierClass:'tier-basic' },
+    { id:'hair_twintails',     name:'İki Örgü',       tier:'Saç Stili',     price:300, attribute:'hairStyle',   value:'twintails',   tierClass:'tier-basic' },
+    { id:'hair_shouldercurly', name:'Kıvırcık Omuz',  tier:'Saç Stili',     price:300, attribute:'hairStyle',   value:'shouldercurly',tierClass:'tier-basic' },
+    { id:'hair_curlybob',      name:'Kıvırcık Bob',   tier:'Saç Stili',     price:400, attribute:'hairStyle',   value:'curlybob',    tierClass:'tier-mid'   },
+    { id:'hcol_black',         name:'Siyah',          tier:'Saç Rengi',     price:0,   attribute:'hairColor',   value:'black',       tierClass:'tier-basic', hairColor:'#1C1410' },
+    { id:'hcol_brown',         name:'Kahverengi',     tier:'Saç Rengi',     price:0,   attribute:'hairColor',   value:'brown',       tierClass:'tier-basic', hairColor:'#6B3520' },
+    { id:'hcol_dark',          name:'Koyu Kahve',     tier:'Saç Rengi',     price:0,   attribute:'hairColor',   value:'darkbrown',   tierClass:'tier-basic', hairColor:'#3D200E' },
+    { id:'hcol_red',           name:'Kızıl',          tier:'Saç Rengi',     price:200, attribute:'hairColor',   value:'red',         tierClass:'tier-basic', hairColor:'#CC2200' },
+    { id:'hcol_blonde',        name:'Sarı',           tier:'Saç Rengi',     price:200, attribute:'hairColor',   value:'blonde',      tierClass:'tier-basic', hairColor:'#D4A83A' },
+    { id:'hcol_orange',        name:'Turuncu',        tier:'Saç Rengi',     price:200, attribute:'hairColor',   value:'orange',      tierClass:'tier-basic', hairColor:'#D05020' },
+    { id:'hcol_blue',          name:'Mavi',           tier:'Saç Rengi',     price:400, attribute:'hairColor',   value:'blue',        tierClass:'tier-mid',   hairColor:'#2244BB' },
+    { id:'hcol_pink',          name:'Pembe',          tier:'Saç Rengi',     price:400, attribute:'hairColor',   value:'pink',        tierClass:'tier-mid',   hairColor:'#CC4488' },
+    { id:'hcol_teal',          name:'Teal',           tier:'Saç Rengi',     price:400, attribute:'hairColor',   value:'teal',        tierClass:'tier-mid',   hairColor:'#228888' },
+    { id:'hcol_white',         name:'Platin',         tier:'Saç Rengi',     price:800, attribute:'hairColor',   value:'platinum',    tierClass:'tier-rare',  hairColor:'#D8D0B8' },
+    { id:'eye_dark',           name:'Koyu',           tier:'Göz Rengi',     price:0,   attribute:'eyeColor',    value:'dark',        tierClass:'tier-basic', eyeColor:'#2A180A' },
+    { id:'eye_brown',          name:'Kahve',          tier:'Göz Rengi',     price:0,   attribute:'eyeColor',    value:'brown',       tierClass:'tier-basic', eyeColor:'#6B3520' },
+    { id:'eye_blue',           name:'Mavi',           tier:'Göz Rengi',     price:0,   attribute:'eyeColor',    value:'blue',        tierClass:'tier-basic', eyeColor:'#2277BB' },
+    { id:'eye_green',          name:'Yeşil',          tier:'Göz Rengi',     price:0,   attribute:'eyeColor',    value:'green',       tierClass:'tier-basic', eyeColor:'#227744' },
+    { id:'eye_teal',           name:'Teal',           tier:'Göz Rengi',     price:0,   attribute:'eyeColor',    value:'teal',        tierClass:'tier-basic', eyeColor:'#226688' },
+    { id:'eye_amber',          name:'Kehribar',       tier:'Göz Rengi',     price:0,   attribute:'eyeColor',    value:'amber',       tierClass:'tier-basic', eyeColor:'#8B5520' },
+    { id:'expr_neutral',       name:'Nötr',           tier:'Yüz İfadesi',   price:0,   attribute:'expression',  value:'neutral',     tierClass:'tier-basic' },
+    { id:'expr_happy',         name:'😊 Mutlu',       tier:'Yüz İfadesi',   price:0,   attribute:'expression',  value:'happy',       tierClass:'tier-basic' },
+    { id:'expr_cool',          name:'😎 Havalı',      tier:'Yüz İfadesi',   price:0,   attribute:'expression',  value:'cool',        tierClass:'tier-basic' },
+    { id:'expr_thinking',      name:'🤔 Düşünceli',   tier:'Yüz İfadesi',   price:300, attribute:'expression',  value:'thinking',    tierClass:'tier-basic' },
+    { id:'expr_sad',           name:'😒 Somurtan',    tier:'Yüz İfadesi',   price:300, attribute:'expression',  value:'sad',         tierClass:'tier-basic' },
+    { id:'expr_angry',         name:'😠 Kızgın',      tier:'Yüz İfadesi',   price:400, attribute:'expression',  value:'angry',       tierClass:'tier-mid'   },
+    { id:'expr_overwhelmed',   name:'😵 Bunalmış',    tier:'Yüz İfadesi',   price:400, attribute:'expression',  value:'overwhelmed', tierClass:'tier-mid'   },
   ],
   themes: [
     // Varsayılan — Ücretsiz
@@ -598,10 +622,12 @@ function getEquippedId(tab) {
 function isCharEquipped(item) {
   var v = _cosmetics[item.attribute];
   if (v === item.value) return true;
-  if (item.attribute==='skinTone'  && !v && item.value==='fair')   return true;
-  if (item.attribute==='hairStyle' && !v && item.value==='short')  return true;
-  if (item.attribute==='hairColor' && !v && item.value==='black')  return true;
-  if (item.attribute==='eyeColor'  && !v && item.value==='dark')   return true;
+  if (item.attribute==='skinTone'   && !v && item.value==='fair')    return true;
+  if (item.attribute==='hairStyle'  && !v && item.value==='short')   return true;
+  if (item.attribute==='hairColor'  && !v && item.value==='black')   return true;
+  if (item.attribute==='eyeColor'   && !v && item.value==='dark')    return true;
+  if (item.attribute==='avatarType' && !v && item.value==='male')    return true;
+  if (item.attribute==='expression' && !v && item.value==='neutral') return true;
   return false;
 }
 
@@ -612,14 +638,16 @@ function buildPaxOpts(overrides) {
 
 function buildCardCanvas(opts) {
   return '<canvas class="pax-card" width="32" height="36" data-sc="2"' +
-    ' data-skin="'  + opts.skinTone    + '"' +
-    ' data-hair="'  + opts.hairStyle   + '"' +
-    ' data-hcol="'  + opts.hairColor   + '"' +
-    ' data-eye="'   + opts.eyeColor    + '"' +
-    ' data-outfit="'+ opts.outfitStyle + '"' +
-    ' data-ocol="'  + opts.outfitColor + '"' +
-    ' data-glass="' + opts.glassesStyle+ '"' +
-    ' data-gcol="'  + opts.glassesColor+ '"></canvas>';
+    ' data-skin="'  + opts.skinTone     + '"' +
+    ' data-hair="'  + opts.hairStyle    + '"' +
+    ' data-hcol="'  + opts.hairColor    + '"' +
+    ' data-eye="'   + opts.eyeColor     + '"' +
+    ' data-outfit="'+ opts.outfitStyle  + '"' +
+    ' data-ocol="'  + opts.outfitColor  + '"' +
+    ' data-glass="' + opts.glassesStyle + '"' +
+    ' data-gcol="'  + opts.glassesColor + '"' +
+    ' data-type="'  + (opts.avatarType||'male')   + '"' +
+    ' data-expr="'  + (opts.expression||'neutral') + '"></canvas>';
 }
 
 function renderTab(tab) {
