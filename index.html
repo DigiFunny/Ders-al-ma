@@ -341,6 +341,7 @@ body{
 .form-input::placeholder{color:var(--muted)}
 .pw-wrap{position:relative}
 .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex;align-items:center}
+
 #forgotWrap{text-align:right;margin-bottom:14px;margin-top:-6px}
 #forgotWrap span{font-size:0.72rem;font-weight:700;color:var(--accent);cursor:pointer}
 .divider{display:flex;align-items:center;gap:10px;margin:16px 0}
@@ -725,6 +726,13 @@ input[type=number]:focus{border-color:rgba(56,189,248,0.5);box-shadow:0 0 0 3px 
         </div>
 
         <button class="btn-main" id="submitBtn" onclick="submitAuth()">Giriş Yap</button>
+        <p id="kvkkNotice" style="display:none;font-size:0.68rem;color:#64748b;text-align:center;line-height:1.65;margin-top:10px;padding:0 4px">
+          <strong style="color:#8892a4">Hesap oluştur</strong>'a dokunarak, bir hesap oluşturmayı ve Pugiapp
+          <a href="kvkk.html" target="_blank" style="color:#a78bfa;font-weight:700;text-decoration:underline;text-underline-offset:2px">Koşullarını</a>,
+          <a href="kvkk.html" target="_blank" style="color:#a78bfa;font-weight:700;text-decoration:underline;text-underline-offset:2px">Gizlilik İlkesini</a> ve
+          <a href="kvkk.html" target="_blank" style="color:#a78bfa;font-weight:700;text-decoration:underline;text-underline-offset:2px">Çerezler İlkesini</a>
+          kabul etmiş olursun.
+        </p>
 
         <div class="divider">
           <div class="divider-line"></div>
@@ -1158,6 +1166,8 @@ function setAuthMode(mode){
   document.getElementById('forgotWrap').style.display=mode==='login'?'block':'none';
   document.getElementById('formTitle').textContent=mode==='login'?'GİRİŞ YAP':'KAYIT OL';
   document.getElementById('submitBtn').textContent=mode==='login'?'Giriş Yap':'Hesap Oluştur';
+  var kn=document.getElementById('kvkkNotice');
+  if(kn) kn.style.display=mode==='register'?'block':'none';
   hideError();
 }
 
@@ -1202,6 +1212,7 @@ function submitAuth(){
     var name=document.getElementById('nameInput').value.trim();
     var uname=document.getElementById('unameInput').value.trim().toLowerCase();
     if(!name||!uname){hideLoading();showError('İsim ve kullanıcı adını gir.');return;}
+
     if(pw.length<6){hideLoading();showError('Şifre en az 6 karakter olmalı.');return;}
     _fbDb.collection('usernames').doc(uname).get().then(function(doc){
       if(doc.exists){hideLoading();showError('Bu kullanıcı adı alınmış.');return null;}
