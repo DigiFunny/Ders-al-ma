@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Gizlilik Politikası ve Kullanım Koşulları — Pugi</title>
+<title>Kullanım Koşulları, Aydınlatma Metni ve Açık Rıza — Pugi</title>
 <style>
   body {
     background: #0f1117;
     color: #d1d5db;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 15px;
-    line-height: 1.75;
+    line-height: 1.8;
     margin: 0;
     padding: 0;
   }
@@ -35,104 +35,64 @@
     cursor: pointer;
     font-family: inherit;
   }
-  .top-bar-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #e5e7eb;
+  .top-bar-title { font-size: 14px; font-weight: 600; color: #e5e7eb; }
+  .page { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
+  .doc-title { font-size: 20px; font-weight: 700; color: #f9fafb; margin-bottom: 4px; }
+  .doc-meta { font-size: 13px; color: #6b7280; margin-bottom: 8px; }
+  .doc-platform { font-size: 13px; color: #6b7280; border-bottom: 1px solid #1f2937; padding-bottom: 20px; margin-bottom: 28px; }
+  .notice-box {
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: #9ca3af;
+    line-height: 1.65;
   }
-  .page {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 32px 20px 80px;
-  }
-  .doc-title {
-    font-size: 22px;
+  .notice-box strong { color: #d1d5db; }
+  .part-header {
+    font-size: 11px;
     font-weight: 700;
-    color: #f9fafb;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6b7280;
+    border-top: 1px solid #1f2937;
+    padding-top: 28px;
+    margin-top: 36px;
     margin-bottom: 4px;
   }
-  .doc-subtitle {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 32px;
-    border-bottom: 1px solid #1f2937;
-    padding-bottom: 20px;
-  }
-  h2 {
-    font-size: 17px;
+  .part-title {
+    font-size: 18px;
     font-weight: 700;
     color: #f3f4f6;
-    margin-top: 36px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
-  h3 {
-    font-size: 14px;
-    font-weight: 700;
-    color: #e5e7eb;
-    margin-top: 20px;
-    margin-bottom: 8px;
-  }
-  p {
-    margin: 0 0 14px;
-    color: #9ca3af;
-  }
-  ul, ol {
-    margin: 0 0 14px;
-    padding-left: 22px;
-    color: #9ca3af;
-  }
-  li {
-    margin-bottom: 7px;
-  }
-  strong {
-    color: #d1d5db;
-    font-weight: 600;
-  }
-  a {
-    color: #818cf8;
-    text-decoration: underline;
-  }
-  .updated {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 24px;
-  }
-  hr {
-    border: none;
-    border-top: 1px solid #1f2937;
-    margin: 32px 0;
-  }
-  .toc {
-    margin-bottom: 32px;
-  }
-  .toc p {
-    font-size: 13px;
-    font-weight: 700;
-    color: #6b7280;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .toc ol {
-    color: #818cf8;
-    font-size: 14px;
-  }
-  .toc li {
-    margin-bottom: 4px;
-  }
-  .toc a {
-    color: #818cf8;
-    text-decoration: none;
-  }
+  h2 { font-size: 15px; font-weight: 700; color: #e5e7eb; margin-top: 28px; margin-bottom: 10px; }
+  h3 { font-size: 13px; font-weight: 700; color: #d1d5db; margin-top: 18px; margin-bottom: 8px; }
+  p { margin: 0 0 14px; color: #9ca3af; font-size: 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; color: #9ca3af; font-size: 14px; }
+  li { margin-bottom: 7px; }
+  strong { color: #d1d5db; font-weight: 600; }
+  a { color: #818cf8; text-decoration: underline; }
+  hr { border: none; border-top: 1px solid #1f2937; margin: 24px 0; }
+  .toc { margin-bottom: 28px; }
+  .toc-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; margin-bottom: 10px; }
+  .toc a { display: block; font-size: 13px; color: #818cf8; text-decoration: none; padding: 3px 0; }
   .contact-block {
-    background: #111827;
     border: 1px solid #1f2937;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 16px 18px;
     margin-top: 12px;
+    font-size: 14px;
   }
-  .contact-block p {
-    margin: 0 0 4px;
+  .contact-block p { margin: 0 0 6px; font-size: 13px; }
+  .warning-note {
+    border-left: 3px solid #6b7280;
+    padding: 10px 14px;
+    margin: 14px 0;
+    font-size: 13px;
+    color: #9ca3af;
+    line-height: 1.6;
   }
 </style>
 </head>
@@ -140,212 +100,213 @@
 
 <div class="top-bar">
   <button class="back-btn" onclick="window.location.href='index.html'">← Geri</button>
-  <span class="top-bar-title">Gizlilik Politikası ve Kullanım Koşulları</span>
+  <span class="top-bar-title">Kullanım Koşulları, Aydınlatma Metni ve Açık Rıza</span>
 </div>
 
 <div class="page">
 
-  <div class="doc-title">Gizlilik Politikası ve Kullanım Koşulları</div>
-  <div class="doc-subtitle">Pugi · pugiapp.com</div>
-  <p class="updated">Bu politika en son <strong>Mayıs 2026</strong> tarihinde güncellenmiştir. 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve Avrupa Genel Veri Koruma Tüzüğü (GDPR) kapsamındaki yükümlülüklerimizi yerine getirmek amacıyla hazırlanmıştır.</p>
+  <div class="doc-title">Kullanım Koşulları, Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni ve Açık Rıza Beyanı</div>
+  <div class="doc-meta">Son güncelleme: Mayıs 2026</div>
+  <div class="doc-platform">Pugi · pugiapp.com</div>
+
+  <div class="notice-box">
+    <strong>Önemli Not:</strong> Bu belge üç ayrı bölümden oluşmaktadır. <strong>Bölüm I</strong> kullanım koşullarını, <strong>Bölüm II</strong> 6698 sayılı KVKK'nın 10. maddesi uyarınca hazırlanmış aydınlatma metnini (bilgi amaçlı olup onay gerektirmez), <strong>Bölüm III</strong> ise yalnızca açık rıza gerektiren belirli işlemler için ayrı bir rıza beyanını içermektedir. Kayıt aşamasında "Hesap Oluştur" butonuna basarak Bölüm I'i kabul etmiş, Bölüm II kapsamında bilgilendirilmiş ve Bölüm III'teki açık rıza gerektiren işlemler için onay vermiş olursunuz.
+  </div>
 
   <div class="toc">
-    <p>İçindekiler</p>
-    <ol>
-      <li><a href="#s1">Genel Bakış ve Uygulama Kapsamı</a></li>
-      <li><a href="#s2">Topladığımız Kişisel Veriler</a></li>
-      <li><a href="#s3">Verileri Nasıl Kullanıyoruz</a></li>
-      <li><a href="#s4">Hukuki Dayanak (KVKK Madde 5)</a></li>
-      <li><a href="#s5">Verilerinizi Kimlerle Paylaşıyoruz</a></li>
-      <li><a href="#s6">Çerezler ve Yerel Depolama</a></li>
-      <li><a href="#s7">Verilerin Saklanması ve Silinmesi</a></li>
-      <li><a href="#s8">Çocukların Gizliliği</a></li>
-      <li><a href="#s9">Veri Güvenliği</a></li>
-      <li><a href="#s10">Haklarınız (KVKK Madde 11)</a></li>
-      <li><a href="#s11">Politika Değişiklikleri</a></li>
-      <li><a href="#s12">İletişim ve Başvuru</a></li>
-    </ol>
+    <div class="toc-label">İçindekiler</div>
+    <a href="#p1">Bölüm I — Kullanım Koşulları</a>
+    <a href="#p2">Bölüm II — Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni (KVKK m. 10)</a>
+    <a href="#p3">Bölüm III — Açık Rıza Beyanı (KVKK m. 5/1)</a>
+    <a href="#p4">Bölüm IV — Çerez Politikası</a>
+    <a href="#p5">İletişim ve Başvuru</a>
   </div>
 
-  <hr>
+  <!-- ════════════════════════════════════════════
+       BÖLÜM I — KULLANIM KOŞULLARI
+  ════════════════════════════════════════════ -->
+  <div class="part-header">Bölüm I</div>
+  <div class="part-title" id="p1">Kullanım Koşulları</div>
 
-  <h2 id="s1">1. Genel Bakış ve Uygulama Kapsamı</h2>
+  <h2>1.1 Hizmetin Tanımı ve Taraflar</h2>
+  <p>Pugi, öğrencilerin YKS, KPSS ve LGS başta olmak üzere Türkiye'deki ulusal sınavlara hazırlanmasını destekleyen, pugiapp.com alan adı üzerinde çalışan bir dijital eğitim platformudur. Bu koşullar, platformu kullanan her gerçek kişi ile Pugi arasındaki hukuki ilişkiyi düzenler.</p>
+  <p>Pugi'yi kullanarak bu koşulları okuduğunuzu, anladığınızı ve bağlayıcılığını kabul ettiğinizi beyan etmiş olursunuz.</p>
 
-  <p>Pugi, öğrencilerin YKS, KPSS ve LGS gibi Türkiye'deki ulusal sınavlara hazırlanmasına yardımcı olan bir dijital eğitim platformudur. Bu Gizlilik Politikası; pugiapp.com adresinde yer alan web sitesi ve progresif web uygulaması (PWA) aracılığıyla sunulan tüm hizmetleri kapsamaktadır.</p>
+  <h2>1.2 Hesap Oluşturma ve Kullanım Şartları</h2>
+  <p>Platformu kullanabilmek için e-posta ve şifre ile ya da Google hesabıyla kayıt olunabilir. Kayıt sırasında sağlanan bilgilerin doğru ve güncel olması kullanıcının sorumluluğundadır.</p>
+  <p>Hesabınızın güvenliğinden siz sorumlusunuz; şifrenizi üçüncü kişilerle paylaşmamalısınız. Hesabınızda yetkisiz bir erişim fark ettiğinizde derhal pugiappofficial@gmail.com adresine bildirmeniz gerekmektedir.</p>
+  <p>Bir hesap yalnızca bir gerçek kişiye aittir; ticari amaçla çok sayıda hesap oluşturmak veya başkası adına hesap işletmek yasaktır.</p>
 
-  <p>Pugi'yi kullanarak bu politikada açıklanan veri işleme faaliyetlerini kabul etmiş olursunuz. Hesap oluşturmak veya misafir olarak kullanmak; bu koşulları okuduğunuz ve anladığınız anlamına gelir.</p>
-
-  <p>Bu politika yalnızca Pugi'nin doğrudan işlettiği hizmetler için geçerlidir. Google, Firebase veya diğer üçüncü taraf hizmet sağlayıcıların kendi gizlilik politikaları ayrıca geçerli olmaya devam eder.</p>
-
-  <hr>
-
-  <h2 id="s2">2. Topladığımız Kişisel Veriler</h2>
-
-  <h3>Doğrudan sizden aldığımız veriler</h3>
-
-  <p><strong>Hesap bilgileri:</strong> Kayıt sırasında adınız, kullanıcı adınız ve e-posta adresiniz toplanır. Google ile giriş yapıyorsanız Google profilinizden alınan isim ve e-posta adresi kullanılır. Şifreler hiçbir zaman açık metin olarak saklanmaz; Firebase Authentication tarafından güvenli biçimde işlenir.</p>
-
-  <p><strong>Eğitim ve çalışma verileri:</strong> Çalışma süreleri, çözülen soru sayısı, konu takip durumu, deneme sınavı sonuçları ve haftalık/günlük çalışma hedefleri kayıt altına alınır. Bu veriler ilerlemenizi görmek ve size önerilerde bulunmak amacıyla kullanılır.</p>
-
-  <p><strong>Tercih ve özelleştirme verileri:</strong> Seçilen sınav türü (YKS, KPSS, LGS), hedef bölüm ve üniversite bilgisi, uygulama teması ve piksel avatar özelleştirmeleri bu kapsamda değerlendirilir.</p>
-
-  <p><strong>Sosyal özellikler:</strong> Arkadaş ekleme ve arkadaş sıralaması gibi sosyal özelliklerden yararlanabilmek için kullanıcı adınız ve çalışma istatistiklerinizin diğer kullanıcılara görünmesine izin vermiş olursunuz.</p>
-
-  <h3>Otomatik olarak toplanan veriler</h3>
-
-  <p><strong>Teknik veriler:</strong> IP adresi, tarayıcı türü ve sürümü, işletim sistemi, ekran çözünürlüğü ve ziyaret edilen sayfalar Firebase Analytics aracılığıyla anonim istatistik olarak kaydedilir.</p>
-
-  <p><strong>Yapay zeka etkileşimleri:</strong> "Al Koçun" ve günlük yapay zeka önerisi gibi özelliklerde, kişisel tanımlayıcı içermeyen çalışma verileri Google Gemini API'ye iletilir. Bu veriler reklam profillemesi veya yapay zekanın yeniden eğitimi için kullanılmaz.</p>
-
-  <h3>Toplamadığımız veriler</h3>
-
-  <p>Pugi; sağlık bilgisi, siyasi görüş, din, ırk veya etnik köken gibi özel nitelikli kişisel veri toplamamaktadır ve toplamayı planlamaz. Kredi kartı veya banka hesabı bilgisi de toplanmamaktadır; uygulama içi satın alımlar henüz aktif değildir.</p>
-
-  <hr>
-
-  <h2 id="s3">3. Verileri Nasıl Kullanıyoruz</h2>
-
-  <p>Topladığımız kişisel veriler yalnızca aşağıda belirtilen amaçlar doğrultusunda kullanılır:</p>
-
+  <h2>1.3 Fikri Mülkiyet Hakları</h2>
+  <p>Pugi adı, logosu, maskotu, arayüz tasarımı, yazılım kodu, piksel karakter sistemi, soru içerikleri ve diğer tüm özgün materyaller Pugi'nin fikri mülkiyetidir. Bu materyaller üzerinde kullanıcılara yalnızca kişisel, devredilemez ve münhasır olmayan bir kullanım hakkı tanınmaktadır.</p>
+  <p>Aşağıdaki eylemler açıkça yasaktır:</p>
   <ul>
-    <li>Kullanıcı hesabını oluşturmak, kimliğini doğrulamak ve hesap güvenliğini sağlamak</li>
-    <li>Çalışma istatistiklerini kaydetmek, görüntülemek ve haftalık özetler sunmak</li>
-    <li>Yapay zeka destekli kişiselleştirilmiş çalışma önerileri oluşturmak</li>
-    <li>Arkadaş sistemi, rozet kazanımı ve sıralama gibi sosyal özellikleri çalıştırmak</li>
-    <li>Kullanıcı deneyimini iyileştirmek amacıyla anonim kullanım istatistiklerini analiz etmek</li>
-    <li>Teknik hata ve güvenlik açıklarını tespit etmek ve gidermek</li>
-    <li>Yasal yükümlülükleri yerine getirmek</li>
+    <li>Platform içeriklerini kaynak göstermeksizin kopyalamak, çoğaltmak veya dağıtmak</li>
+    <li>Yazılımı tersine mühendislik yöntemiyle analiz etmek veya kaynak koda ulaşmaya çalışmak</li>
+    <li>Pugi adını, logosunu veya görsel kimliğini izinsiz ticari amaçla kullanmak</li>
+    <li>Platforma ait içerikleri başka bir uygulama veya hizmette kullanmak</li>
   </ul>
 
-  <p>Verileriniz reklam gösterimi, reklam profili oluşturma veya üçüncü taraflara satış amacıyla <strong>kesinlikle kullanılmaz</strong>. Pugi tamamen reklamsız bir platformdur.</p>
-
-  <hr>
-
-  <h2 id="s4">4. Hukuki Dayanak (KVKK Madde 5)</h2>
-
-  <p>Kişisel verilerinizin işlenmesi aşağıdaki hukuki dayanaklar çerçevesinde gerçekleştirilir:</p>
-
-  <p><strong>Açık rıza (KVKK m. 5/1):</strong> Kayıt sırasında bu politikayı kabul etmeniz, analitik veriler ve yapay zeka özellikleri için hukuki dayanağı oluşturur.</p>
-
-  <p><strong>Sözleşmenin kurulması ve ifası (KVKK m. 5/2-c):</strong> Hesap bilgileri ve çalışma verileri, Pugi hizmetinin sunulabilmesi için zorunludur ve bu nedenle işlenir.</p>
-
-  <p><strong>Meşru menfaat (KVKK m. 5/2-f):</strong> Güvenlik logları ve teknik hata ayıklama verileri, platformun güvenli çalışması için meşru menfaat kapsamında işlenir.</p>
-
-  <p><strong>Hukuki yükümlülük (KVKK m. 5/2-ç):</strong> Yetkili kamu kurumlarından gelen yasal talepler söz konusu olduğunda ilgili veriler yasal zorunluluk kapsamında işlenebilir.</p>
-
-  <hr>
-
-  <h2 id="s5">5. Verilerinizi Kimlerle Paylaşıyoruz</h2>
-
-  <p>Pugi, kullanıcı verilerini üçüncü taraflara <strong>satmaz, kiralamaz veya ticari amaçla devretmez</strong>. Verileriniz yalnızca hizmetin çalışması için zorunlu olan aşağıdaki altyapı sağlayıcılarıyla ve yalnızca gerekli minimum kapsamda paylaşılır:</p>
-
-  <p><strong>Google Firebase (Alphabet Inc.):</strong> Kimlik doğrulama (Firebase Authentication) ve veritabanı (Firestore) hizmetleri için kullanılmaktadır. Veriler ABD'de bulunan Google sunucularında saklanır; aktarım, Standart Sözleşme Hükümleri (SCCs) kapsamında gerçekleştirilir. Google Firebase Gizlilik Politikası: firebase.google.com/support/privacy</p>
-
-  <p><strong>Google Gemini API:</strong> Yapay zeka önerileri için kullanılır. API'ye gönderilen veriler, kullanıcıyı doğrudan tanımlamaz; isim, e-posta veya kullanıcı adı içermez. Yalnızca anonim çalışma istatistikleri ve bağlam bilgisi iletilir.</p>
-
-  <p><strong>Cloudflare Workers:</strong> Gemini API isteklerini güvenli bir şekilde iletmek için kullanılan ara katman proxy hizmetidir. Bu hizmet veri saklamaz ve yalnızca istek iletimini gerçekleştirir.</p>
-
-  <p>Yetkili kamu kurum ve kuruluşlarından hukuki talepler gelmesi durumunda, yürürlükteki mevzuat çerçevesinde gerekli bilgiler paylaşılabilir. Bu durumda izin vermek için kullanıcıyla iletişime geçmek her zaman mümkün olmayabilir.</p>
-
-  <hr>
-
-  <h2 id="s6">6. Çerezler ve Yerel Depolama</h2>
-
-  <p>Pugi, hizmetin çalışması ve kullanıcı deneyiminin iyileştirilmesi amacıyla çerez ve yerel depolama teknolojileri kullanmaktadır.</p>
-
-  <p><strong>Zorunlu çerezler:</strong> Firebase Authentication oturum bilgisi ve giriş durumu bu kapsamdadır. Bu çerezler olmadan oturum açık tutulamaz. Devre dışı bırakılamaz.</p>
-
-  <p><strong>İşlevsel çerezler:</strong> Tema tercihleri, son aktif sınav seçimi ve misafir modu bilgisi yerel depolamada saklanır. Bu veriler yalnızca cihazınızda bulunur ve sunucuya gönderilmez.</p>
-
-  <p><strong>Analitik çerezler:</strong> Firebase Analytics, anonim kullanım verilerini toplamak için çerez kullanır. Bu çerezler kullanıcıları bireysel olarak tanımlamaz; yalnızca toplu istatistik üretir.</p>
-
-  <p>Pugi, <strong>reklam çerezi kullanmaz</strong>. Reklam şirketleriyle paylaşılan herhangi bir izleme verisi bulunmamaktadır.</p>
-
-  <p>Tarayıcı ayarlarınızdan çerezleri devre dışı bırakabilirsiniz. Ancak zorunlu çerezlerin engellenmesi, hesabınıza giriş yapamamanıza yol açar.</p>
-
-  <hr>
-
-  <h2 id="s7">7. Verilerin Saklanması ve Silinmesi</h2>
-
-  <p><strong>Hesap ve çalışma verileri:</strong> Hesabınız aktif olduğu sürece veya siz silme talebinde bulunana kadar saklanır.</p>
-
-  <p><strong>Firebase Authentication logları:</strong> Google Firebase'in kendi politikasına göre en fazla 90 gün süreyle saklanır.</p>
-
-  <p><strong>Firebase Analytics verileri:</strong> Anonim ve toplu hâlde en fazla 14 ay süreyle saklanır.</p>
-
-  <p><strong>Misafir modu verileri:</strong> Tarayıcı yerel depolamasında tutulur; tarayıcı önbelleği temizlendiğinde silinir.</p>
-
-  <p>Hesabınızı silmek istemeniz durumunda pugiappofficial@gmail.com adresine talepte bulunabilirsiniz. Hesap silme talebi alındıktan sonra tüm kişisel verileriniz 30 gün içinde kalıcı olarak silinir. Üçüncü taraf hizmet sağlayıcıların (Firebase vb.) kendi saklama politikaları bu süreyi etkileyebilir; bu kapsamda söz konusu sağlayıcılarla da iletişim kurmanızı öneririz.</p>
-
-  <hr>
-
-  <h2 id="s8">8. Çocukların Gizliliği</h2>
-
-  <p>Pugi, 13 yaşın altındaki çocuklara yönelik hizmet sunmamaktadır. 13-18 yaş arasındaki kullanıcıların platformu ebeveyn veya yasal vasi gözetiminde kullanması önerilir.</p>
-
-  <p>13 yaşın altında bir çocuğun hesap oluşturduğunu fark edersek, söz konusu hesabı ve ilişkili verileri derhal sileriz. Böyle bir durumdan haberdar olursanız lütfen pugiappofficial@gmail.com adresiyle iletişime geçin.</p>
-
-  <hr>
-
-  <h2 id="s9">9. Veri Güvenliği</h2>
-
-  <p>Verilerinizin korunması için endüstri standardı güvenlik önlemleri uygulanmaktadır:</p>
-
+  <h2>1.4 Yasaklı Kullanımlar</h2>
+  <p>Pugi'yi aşağıdaki amaçlarla kullanmak kesinlikle yasaktır:</p>
   <ul>
-    <li>Tüm veri iletimi HTTPS/TLS şifrelemesiyle gerçekleştirilir.</li>
-    <li>Şifreler Firebase Authentication tarafından güvenli biçimde hash'lenerek saklanır; Pugi'nin bu verilere erişimi yoktur.</li>
-    <li>Firestore güvenlik kuralları, kullanıcıların yalnızca kendi verilerine erişebilmesini sağlar.</li>
-    <li>API anahtarları istemci tarafında açık olarak barındırılmaz; Cloudflare Workers proxy katmanı aracılığıyla güvence altına alınır.</li>
+    <li>Platformun güvenliğini, bütünlüğünü veya erişilebilirliğini tehdit eden saldırılar gerçekleştirmek</li>
+    <li>Otomatik botlar veya script'ler aracılığıyla sisteme izinsiz erişim sağlamak</li>
+    <li>Sahte hesaplar oluşturarak sıralama veya rozet sistemini manipüle etmek</li>
+    <li>Diğer kullanıcıların hesaplarına, verilerine veya özel bilgilerine izinsiz erişmeye çalışmak</li>
+    <li>Platformu yasadışı içerik üretmek veya yaymak amacıyla kullanmak</li>
+  </ul>
+  <p>Bu koşulların ihlal edilmesi durumunda Pugi, önceden bildirim yapmaksızın hesabı askıya alma veya kalıcı olarak kapatma hakkını saklı tutar.</p>
+
+  <h2>1.5 Sorumluluk Sınırlaması</h2>
+  <p>Pugi, bir eğitim destek aracıdır; sınav başarısını garanti etmez. Platforma sağlanan bilgi ve önerilerin doğruluğu için makul özen gösterilmekle birlikte herhangi bir hata ya da eksiklik nedeniyle oluşabilecek dolaylı zararlardan Pugi sorumlu tutulamaz.</p>
+  <p>Platform, internet bağlantısı gerektiren bir hizmet olduğundan teknik kesintiler, bakım çalışmaları veya üçüncü taraf hizmet sağlayıcılardan kaynaklanan aksaklıklar nedeniyle erişim sürekliliği garanti edilemez. Bu durumlar Pugi'nin hukuki sorumluluğunu doğurmaz.</p>
+  <p>Yapay zeka tarafından üretilen içerikler (koç önerileri, analiz sonuçları vb.) tavsiye niteliğindedir; bu içeriklerin doğruluğu ve güncelliği için sorumluluk kabul edilmez.</p>
+
+  <h2>1.6 Hizmet Değişiklikleri ve Fesih</h2>
+  <p>Pugi, önceden bildirimde bulunarak veya bulunmaksızın hizmetlerin kapsamını, özelliklerini veya koşullarını değiştirme hakkını saklı tutar. Önemli değişiklikler uygulama içi bildirimle duyurulur. Değişikliklerden sonra platformun kullanılmaya devam edilmesi, güncel koşulların kabul edildiği anlamına gelir.</p>
+  <p>Hesabınızı istediğiniz zaman pugiappofficial@gmail.com adresine yazarak kapatabilirsiniz. Hesap kapatılmasından önce dışa aktarmak istediğiniz verileriniz varsa aynı adresten talepte bulunabilirsiniz.</p>
+
+  <h2>1.7 Uygulanacak Hukuk ve Uyuşmazlık Çözümü</h2>
+  <p>Bu koşullar Türkiye Cumhuriyeti hukukuna tabidir. Bu koşullardan doğacak uyuşmazlıklarda Türkiye mahkemeleri yetkilidir.</p>
+
+  <!-- ════════════════════════════════════════════
+       BÖLÜM II — AYDINLATMA METNİ
+  ════════════════════════════════════════════ -->
+  <div class="part-header">Bölüm II</div>
+  <div class="part-title" id="p2">Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni</div>
+
+  <div class="notice-box">
+    Bu bölüm, 6698 sayılı Kişisel Verilerin Korunması Kanunu'nun 10. maddesi uyarınca hazırlanmış <strong>aydınlatma metnidir</strong>. Aydınlatma metni yalnızca bilgilendirme amacı taşır; onay gerektirmez ve imzalatılamaz. Açık rıza gerektiren işlemler için Bölüm III'e bakınız.
+  </div>
+
+  <h2>2.1 Veri Sorumlusu</h2>
+  <p>Veri sorumlusu sıfatıyla kişisel verilerinizi işleyen taraf <strong>Pugi</strong>'dir (pugiapp.com). Veri sorumlusuna ilişkin iletişim bilgileri bu belgenin sonunda yer almaktadır.</p>
+  <div class="warning-note">
+    <strong>Önemli:</strong> Pugi, bireysel bir geliştirici tarafından işletilmektedir. Kişisel Verileri Koruma Kurulu'nun veri sorumluları siciline (VERBİS) kayıt yükümlülüğüne ilişkin eşiklerin aşılması durumunda gerekli kayıt işlemleri yapılacaktır. Yazılı başvurular e-posta yoluyla kabul edilmektedir; e-postanın yasal tebligat adresi olarak geçerliliği için KEP (Kayıtlı Elektronik Posta) altyapısına geçiş planlanmaktadır.
+  </div>
+
+  <h2>2.2 İşlenen Kişisel Veriler</h2>
+
+  <h3>Hesap ve Kimlik Verileri</h3>
+  <p>Ad-soyad, kullanıcı adı, e-posta adresi. Google ile giriş yapılması hâlinde Google profilinden alınan isim ve e-posta adresi. Şifreler Firebase Authentication tarafından güvenli biçimde işlenir; Pugi bu verilere erişemez.</p>
+
+  <h3>Eğitim ve Çalışma Verileri</h3>
+  <p>Günlük ve haftalık çalışma süreleri, çözülen soru sayısı, konu takip durumu, deneme sınavı sonuçları, hedef belirleme bilgisi, sınav türü tercihi (YKS, KPSS, LGS), hedef bölüm ve üniversite bilgisi.</p>
+
+  <h3>Uygulama Tercihleri</h3>
+  <p>Tema seçimi, avatar ve kozmetik özelleştirmeleri, koç sıralaması tercihleri, bildirim ayarları.</p>
+
+  <h3>Teknik Veriler</h3>
+  <p>IP adresi, tarayıcı türü ve sürümü, işletim sistemi, ekran çözünürlüğü, sayfa gezinme bilgisi. Bu veriler Firebase Analytics aracılığıyla anonim istatistik olarak toplanır.</p>
+
+  <h3>Yapay Zeka Etkileşim Verileri</h3>
+  <p>"Al Koçun" ve günlük öneri gibi özelliklerde kişisel tanımlayıcı içermeyen çalışma istatistikleri Google Gemini API'ye iletilir.</p>
+
+  <h3>İşlenmeyen Veriler</h3>
+  <p>Pugi; sağlık bilgisi, siyasi görüş, din, ırk, etnik köken ve biyometrik veri gibi özel nitelikli kişisel veri toplamamaktadır. Ödeme bilgisi de toplanmamaktadır.</p>
+
+  <h2>2.3 Kişisel Verilerin İşlenme Amaçları</h2>
+  <ul>
+    <li>Kullanıcı hesabının oluşturulması ve kimlik doğrulaması</li>
+    <li>Çalışma istatistiklerinin kaydedilmesi ve görüntülenmesi</li>
+    <li>Kişiselleştirilmiş yapay zeka destekli çalışma önerileri sunulması</li>
+    <li>Arkadaş sistemi, rozet ve sıralama özelliklerinin çalıştırılması</li>
+    <li>Platform güvenliğinin sağlanması ve teknik hataların giderilmesi</li>
+    <li>Anonim istatistiksel analiz yoluyla kullanıcı deneyiminin iyileştirilmesi</li>
+    <li>Yasal yükümlülüklerin yerine getirilmesi</li>
   </ul>
 
-  <p>İnternetin doğası gereği hiçbir veri aktarım veya depolama yöntemi yüzde yüz güvenli değildir. Pugi, makul teknik önlemleri almakla birlikte mutlak güvenlik garantisi veremez. Hesabınızda yetkisiz bir etkinlik fark ederseniz derhal pugiappofficial@gmail.com adresine bildirin.</p>
+  <h2>2.4 Hukuki Dayanaklar (KVKK m. 5)</h2>
+  <p><strong>Sözleşmenin kurulması ve ifası (m. 5/2-c):</strong> Hesap ve çalışma verileri, hizmetin sunulabilmesi için zorunlu olup bu kapsamda işlenir.</p>
+  <p><strong>Meşru menfaat (m. 5/2-f):</strong> Güvenlik logları ve teknik hata ayıklama verileri meşru menfaat kapsamında işlenir.</p>
+  <p><strong>Hukuki yükümlülük (m. 5/2-ç):</strong> Yetkili kamu kurumlarından gelen talepler hâlinde ilgili veriler yasal zorunluluk kapsamında işlenebilir.</p>
+  <p><strong>Açık rıza (m. 5/1):</strong> Yurt dışına veri aktarımı ve analitik takip için açık rıza, Bölüm III kapsamında ayrıca alınmaktadır.</p>
 
-  <hr>
+  <h2>2.5 Yurt İçi ve Yurt Dışı Aktarımlar</h2>
+  <p><strong>Yurt içi aktarım:</strong> Kişisel verileriniz yurt içinde herhangi bir üçüncü kişiye aktarılmamaktadır.</p>
+  <p><strong>Yurt dışı aktarım:</strong> Platformun çalışması için kullanılan altyapı hizmetleri nedeniyle kişisel verileriniz yurt dışına aktarılmaktadır. 1 Haziran 2024'te yürürlüğe giren KVKK'nın 9. maddesinin yeni hükümlerine göre bu aktarım için kullanıcıdan ayrı açık rıza alınması gerekmektedir. Bu rıza, Bölüm III'te açık biçimde düzenlenmiştir.</p>
+  <ul>
+    <li><strong>Google Firebase (Google LLC, ABD):</strong> Kimlik doğrulama ve veritabanı hizmetleri. Veriler ABD'deki Google sunucularında saklanır.</li>
+    <li><strong>Google Gemini API (Google LLC, ABD):</strong> Yapay zeka öneri hizmetleri; yalnızca anonim çalışma verisi iletilir.</li>
+    <li><strong>Cloudflare Workers (Cloudflare Inc., ABD):</strong> API proxy hizmeti; veri saklamaz.</li>
+  </ul>
 
-  <h2 id="s10">10. Haklarınız (KVKK Madde 11)</h2>
+  <h2>2.6 Saklama Süreleri</h2>
+  <p><strong>Hesap ve çalışma verileri:</strong> Hesap aktif olduğu sürece veya silme talebine kadar.</p>
+  <p><strong>Firebase Authentication logları:</strong> Google Firebase politikasına göre en fazla 90 gün.</p>
+  <p><strong>Firebase Analytics verileri:</strong> Anonim ve toplu hâlde en fazla 14 ay.</p>
+  <p><strong>Hesap silme:</strong> Talepten itibaren 30 gün içinde tüm kişisel veriler silinir.</p>
 
-  <p>6698 sayılı KVKK'nın 11. maddesi uyarınca kişisel verileriniz üzerinde aşağıdaki haklara sahipsiniz:</p>
-
+  <h2>2.7 Haklarınız (KVKK m. 11)</h2>
+  <p>KVKK'nın 11. maddesi uyarınca aşağıdaki haklara sahipsiniz:</p>
   <ol>
-    <li><strong>Bilgi edinme hakkı:</strong> Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
-    <li><strong>Erişim hakkı:</strong> İşlenen verilerinize ve bu verilere ilişkin bilgilere erişme</li>
-    <li><strong>Düzeltme hakkı:</strong> Eksik veya yanlış işlenen verilerin düzeltilmesini isteme</li>
-    <li><strong>Silme hakkı:</strong> Yasal saklama yükümlülüğü bulunmayan verilerin silinmesini talep etme</li>
-    <li><strong>İşlemeyi kısıtlama hakkı:</strong> Belirli koşulların varlığı hâlinde verilerin işlenmesinin sınırlandırılmasını talep etme</li>
-    <li><strong>Veri taşınabilirliği hakkı:</strong> Verilerinizin yapılandırılmış ve makine tarafından okunabilir bir formatta tarafınıza iletilmesini talep etme</li>
-    <li><strong>İtiraz hakkı:</strong> Otomatik sistemler aracılığıyla aleyhinize sonuç doğuran kararların insani denetimle yeniden değerlendirilmesini isteme</li>
-    <li><strong>Tazminat hakkı:</strong> Kişisel verilerinizin mevzuata aykırı işlenmesi nedeniyle uğradığınız zararın giderilmesini talep etme</li>
+    <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
+    <li>İşlenmiş verilere ve işleme bilgilerine erişme</li>
+    <li>Eksik veya yanlış verilerin düzeltilmesini isteme</li>
+    <li>Yasal yükümlülük bulunmayan verilerin silinmesini talep etme</li>
+    <li>Silme veya düzeltme işleminin üçüncü taraflara bildirilmesini isteme</li>
+    <li>Otomatik sistemlerle analiz sonucunda aleyhinize çıkan kararların itirazla yeniden değerlendirilmesini talep etme</li>
+    <li>Kanuna aykırı işleme nedeniyle uğranan zararın tazminini isteme</li>
   </ol>
+  <p>Başvurular en geç 30 gün içinde yanıtlanır. Yetersiz bulduğunuz yanıtlar için <a href="https://www.kvkk.gov.tr" target="_blank">Kişisel Verileri Koruma Kurumu</a>'na şikâyette bulunabilirsiniz.</p>
 
-  <p>Bu haklarınızı kullanmak için pugiappofficial@gmail.com adresine yazılı olarak başvurabilirsiniz. Talepler en geç <strong>30 gün</strong> içinde yanıtlanır. Gerekli görülmesi hâlinde kimlik doğrulaması istenebilir.</p>
+  <!-- ════════════════════════════════════════════
+       BÖLÜM III — AÇIK RIZA BEYANI
+  ════════════════════════════════════════════ -->
+  <div class="part-header">Bölüm III</div>
+  <div class="part-title" id="p3">Açık Rıza Beyanı (KVKK m. 5/1)</div>
 
-  <p>Pugi'nin yanıtını yetersiz bulursanız Kişisel Verileri Koruma Kurumu'na (KVKK) şikâyette bulunma hakkınız saklıdır. Kurum'un web sitesi: <a href="https://www.kvkk.gov.tr" target="_blank">www.kvkk.gov.tr</a></p>
+  <div class="notice-box">
+    Bu bölüm, Bölüm II'deki aydınlatma metninden <strong>bağımsız</strong> olarak, yalnızca açık rıza gerektiren kişisel veri işleme faaliyetleri için hazırlanmıştır. "Hesap Oluştur" butonuna basarak aşağıdaki işlemlere özgürce ve bilgilendirilerek onay vermiş olursunuz.
+  </div>
 
-  <hr>
+  <h2>3.1 Yurt Dışına Veri Aktarımı İçin Açık Rıza</h2>
+  <p>KVKK'nın 9. maddesi (1 Haziran 2024 itibarıyla yürürlükte olan hükümler) uyarınca, hesap bilgilerimin ve çalışma verilerimin Google LLC bünyesindeki Firebase altyapısı aracılığıyla Amerika Birleşik Devletleri'nde işlenmesine ve saklanmasına <strong>açıkça onay veriyorum</strong>. Bu aktarımın, verilerimin yeterli düzeyde korunduğu kararı bulunmayan bir ülkeye yapıldığını ve rızamı her zaman geri çekme hakkım bulunduğunu anlamış durumdayım.</p>
 
-  <h2 id="s11">11. Politika Değişiklikleri</h2>
+  <h2>3.2 Analitik Takip İçin Açık Rıza</h2>
+  <p>Kullanım alışkanlıklarıma ilişkin anonim teknik verilerin (sayfa gezintisi, özellik kullanımı, hata raporları) Firebase Analytics aracılığıyla toplanmasına ve platform geliştirme amacıyla analiz edilmesine <strong>açıkça onay veriyorum</strong>. Bu verilerin hiçbir zaman kimliğimle ilişkilendirilmeyeceğini ve reklam amacıyla kullanılmayacağını anlamış durumdayım.</p>
 
-  <p>Bu politika zaman zaman güncellenebilir. Önemli değişiklikler yapılması durumunda uygulama içi bildirim veya e-posta yoluyla bilgilendirilirsiniz. Bildirimin ardından Pugi'yi kullanmaya devam etmeniz, güncellenmiş koşulları kabul ettiğiniz anlamına gelir.</p>
+  <h2>3.3 Rızanın Geri Alınması</h2>
+  <p>Vermiş olduğunuz açık rızaları her zaman geri alabilirsiniz. Rıza geri alımı, geri alım tarihinden önceki işlemlerin hukuka aykırılığı sonucunu doğurmaz. Rıza geri almak için pugiappofficial@gmail.com adresine yazabilirsiniz. Yurt dışı aktarımı veya analitik takip için verilen rızanın geri alınması, bu özelliklere bağımlı hizmetlerin kısmen çalışmamasına yol açabilir.</p>
 
-  <p>Politikanın her versiyonuna ait tarih bu sayfanın üstünde "Son güncelleme" başlığı altında belirtilir. Güncel olmayan bir versiyonu okumak istemeniz durumunda pugiappofficial@gmail.com adresine başvurabilirsiniz.</p>
+  <!-- ════════════════════════════════════════════
+       BÖLÜM IV — ÇEREZ POLİTİKASI
+  ════════════════════════════════════════════ -->
+  <div class="part-header">Bölüm IV</div>
+  <div class="part-title" id="p4">Çerez Politikası</div>
 
-  <hr>
+  <h2>4.1 Zorunlu Çerezler</h2>
+  <p>Firebase Authentication oturum verisi ve giriş durumu bu kapsamdadır. Bu çerezler devre dışı bırakılamaz; aksi hâlde oturumunuz korunamaz.</p>
 
-  <h2 id="s12">12. İletişim ve Başvuru</h2>
+  <h2>4.2 İşlevsel Çerezler</h2>
+  <p>Tema tercihleri, son aktif sınav seçimi ve misafir modu bilgisi tarayıcı yerel depolamasında saklanır. Bu veriler yalnızca cihazınızda kalır ve sunucuya iletilmez.</p>
 
-  <p>Bu gizlilik politikasına ilişkin sorularınız, veri işleme faaliyetlerine itirazlarınız veya KVKK kapsamındaki haklarınızı kullanmaya yönelik başvurularınız için:</p>
+  <h2>4.3 Analitik Çerezler</h2>
+  <p>Firebase Analytics anonim kullanım istatistiklerini toplamak için çerez kullanır. Bu çerezler yalnızca Bölüm III kapsamında açık rıza verilen kullanıcılar için aktif olur.</p>
+
+  <h2>4.4 Reklam Çerezleri</h2>
+  <p>Pugi hiçbir reklam ağıyla entegre değildir. Platform tamamen reklamsızdır. Reklam çerezi kullanılmamaktadır.</p>
+
+  <h2>4.5 Çerez Yönetimi</h2>
+  <p>Tarayıcı ayarlarınızdan çerezleri yönetebilir veya silebilirsiniz. Zorunlu çerezlerin engellenmesi hesabınıza erişimi olumsuz etkileyebilir.</p>
+
+  <!-- ════════════════════════════════════════════
+       İLETİŞİM
+  ════════════════════════════════════════════ -->
+  <div class="part-header">İletişim</div>
+  <div class="part-title" id="p5">Başvuru ve İletişim</div>
+
+  <p>KVKK kapsamındaki haklarınızı kullanmak, bu belgede yer alan herhangi bir konuda bilgi almak veya hesabınızla ilgili işlem talebinde bulunmak için aşağıdaki iletişim kanalını kullanabilirsiniz:</p>
 
   <div class="contact-block">
-    <p><strong>Pugi Destek</strong></p>
+    <p><strong>Pugi</strong> · pugiapp.com</p>
     <p>E-posta: <a href="mailto:pugiappofficial@gmail.com">pugiappofficial@gmail.com</a></p>
-    <p>Web: <a href="https://pugiapp.com" target="_blank">pugiapp.com</a></p>
+    <p style="margin-top:10px;color:#6b7280;font-size:12px;">Başvurunuzun işleme alınabilmesi için ad-soyad, kayıtlı e-posta adresi ve talebinizin açık biçimde belirtilmesi gerekmektedir. Kimlik doğrulaması amacıyla ek bilgi talep edilebilir. Yanıt süresi: en fazla 30 gün.</p>
   </div>
 
-  <p style="margin-top: 16px;">Başvurularınızın işleme alınabilmesi için adınız, soyadınız, e-posta adresiniz ve talebinizin açık bir şekilde belirtilmesi gerekmektedir. Kimliğinizi doğrulamak amacıyla ek bilgi talep edilebilir.</p>
-
   <hr>
-
-  <p style="font-size: 12px; color: #4b5563; margin-top: 32px;">© 2026 Pugi · pugiapp.com · Tüm hakları saklıdır. Bu metin 6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında hazırlanmıştır.</p>
+  <p style="font-size:12px;color:#4b5563;margin-top:24px;">© 2026 Pugi · pugiapp.com · Bu belge 6698 sayılı Kişisel Verilerin Korunması Kanunu ve ilgili mevzuat kapsamında hazırlanmıştır. Son güncelleme: Mayıs 2026.</p>
 
 </div>
 </body>
