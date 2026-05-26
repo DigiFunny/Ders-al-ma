@@ -831,6 +831,41 @@ body.light.theme-midnight {
 }
 
 /* AUTH MODAL */
+
+/* ── KVKK Checkbox ── */
+.kvkk-wrap {
+  display:none; /* sadece register modunda gösterilecek */
+  align-items:flex-start; gap:10px;
+  background:rgba(108,99,255,0.06);
+  border:1px solid rgba(108,99,255,0.2);
+  border-radius:12px; padding:12px 14px;
+  margin:12px 0 4px; cursor:pointer;
+}
+.kvkk-wrap.show { display:flex; }
+.kvkk-checkbox {
+  width:20px; height:20px; min-width:20px;
+  border-radius:6px; border:2px solid var(--accent);
+  background:transparent; cursor:pointer;
+  appearance:none; -webkit-appearance:none;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.2s, border-color 0.2s;
+  margin-top:1px;
+}
+.kvkk-checkbox:checked {
+  background:var(--accent);
+  border-color:var(--accent);
+}
+.kvkk-checkbox:checked::after {
+  content:'✓'; color:#fff; font-size:0.75rem; font-weight:900;
+}
+.kvkk-label {
+  font-size:0.73rem; color:#aab4c8; line-height:1.55; cursor:pointer;
+  user-select:none;
+}
+.kvkk-label a {
+  color:var(--accent2); font-weight:700; text-decoration:underline;
+  text-underline-offset:2px;
+}
 .auth-modal { position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center; }
 .auth-modal.open { display:flex;pointer-events:all; }
 .auth-overlay { position:absolute;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px); }
@@ -1374,6 +1409,14 @@ body {
           <svg id="pwEyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </button>
       </div>
+    </div>
+    <!-- KVKK onay kutusu — sadece register modunda -->
+    <div class="kvkk-wrap" id="kvkkWrap" onclick="document.getElementById('kvkkCheck').click()">
+      <input type="checkbox" class="kvkk-checkbox" id="kvkkCheck" onclick="event.stopPropagation()">
+      <label class="kvkk-label" for="kvkkCheck" onclick="event.stopPropagation()">
+        <a href="kvkk.html" target="_blank" onclick="event.stopPropagation()">Gizlilik Politikası ve Çerez Politikasını</a>
+        okudum, kabul ediyorum. Kişisel verilerimin yukarıda belirtilen amaçlarla işlenmesine onay veriyorum.
+      </label>
     </div>
     <button class="auth-btn" id="authSubmitBtn" onclick="submitAuth()">Giriş Yap</button>
     <div class="auth-divider"><div class="auth-divider-line"></div><div class="auth-divider-text">VEYA</div><div class="auth-divider-line"></div></div>
@@ -4719,10 +4762,7 @@ function onUserLoggedIn(user) {
     // User bar güncelle
     document.getElementById('userBarGuest').style.display = 'none';
     document.getElementById('userBarLoggedIn').style.display = 'flex';
-    var _avBar = document.getElementById('userAvatarBar');
-    if (_avBar && !_avBar.querySelector('canvas.pax-sm')) {
-      _avBar.textContent = displayName.charAt(0).toUpperCase();
-    }
+    document.getElementById('userAvatarBar').textContent = displayName.charAt(0).toUpperCase();
     document.getElementById('userNameBar').textContent = displayName;
     document.getElementById('userUnameBar').textContent = '@' + username;
 
@@ -4739,19 +4779,17 @@ function onUserLoggedIn(user) {
       if (heroAvatar) {
         var cos = data.cosmetics || {};
         // Avatar resmi
-        // Piksel art avatar — profil hero kartı (64×64 daire)
-        if (window.PAX) {
-          var paxHero = heroAvatar.querySelector('canvas.pax-hero');
-          if (!paxHero) {
-            paxHero = document.createElement('canvas');
-            paxHero.className = 'pax-hero';
-            paxHero.style.cssText = 'display:block;image-rendering:pixelated;image-rendering:crisp-edges;position:absolute;top:0;left:0;';
+        if (cos.avatar && cos.avatar !== 'default') {
+          var avImg = heroAvatar.querySelector('img.ph-av-img');
+          if (!avImg) {
+            avImg = document.createElement('img');
+            avImg.className = 'ph-av-img';
+            avImg.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
             heroAvatar.innerHTML = '';
-            heroAvatar.style.position = 'relative';
-            heroAvatar.style.overflow = 'hidden';
-            heroAvatar.appendChild(paxHero);
+            heroAvatar.appendChild(avImg);
           }
-          PAX.draw(paxHero, PAX.fromCosmetics(cos), 4);
+          avImg.src = 'avatars/' + cos.avatar + '.png';
+          avImg.onerror = function(){ heroAvatar.innerHTML = displayName.charAt(0).toUpperCase(); };
         } else {
           heroAvatar.innerHTML = displayName.charAt(0).toUpperCase();
         }
@@ -5929,6 +5967,8 @@ function toggleAuthMode() {
     : 'Hesabın yok mu? <span onclick="toggleAuthMode()">Kayıt Ol</span>';
   document.getElementById('usernameGroup').style.display = isReg ? 'block' : 'none';
   document.getElementById('forgotWrap').style.display = isReg ? 'none' : 'block';
+  var kw = document.getElementById('kvkkWrap');
+  if (kw) { if (isReg) kw.classList.add('show'); else { kw.classList.remove('show'); document.getElementById('kvkkCheck').checked = false; } }
   document.getElementById('authError').classList.remove('show');
 }
 
@@ -5976,6 +6016,10 @@ function submitAuth() {
 
   if (!email || !password) { showAuthError('E-posta ve şifre gerekli.'); return; }
   if (_authMode === 'register' && !username) { showAuthError('Kullanıcı adı gerekli.'); return; }
+  if (_authMode === 'register') {
+    var kvkk = document.getElementById('kvkkCheck');
+    if (!kvkk || !kvkk.checked) { showAuthError('Kayıt olmak için Gizlilik Politikasını kabul etmelisiniz.'); return; }
+  }
   if (_authMode === 'register' && !/^[a-z0-9_]{3,20}$/.test(username)) {
     showAuthError('Kullanıcı adı 3-20 karakter, sadece harf/rakam/alt çizgi.'); return;
   }
@@ -7448,87 +7492,6 @@ function notifyBreakStarted() {
   sendNotification('🎉 Çalışma bitti!', mins + ' dk ' + label + ' zamanı. Telefonu bırak 😌');
 }
 
-
-/* PAX Pixel Art Avatar Engine v2.0 */
-var PAX={
-  W:16,H:18,
-  SKINS:{light:'#FFD5B8',fair:'#F4A574',olive:'#D4906A',tan:'#C07040',brown:'#8B5523',dark:'#5C3318'},
-  HAIR:{black:'#1C1410',darkbrown:'#3D200E',brown:'#6B3520',auburn:'#8B2515',red:'#CC2200',orange:'#D05020',blonde:'#D4A83A',platinum:'#D8D0B8',blue:'#2244BB',pink:'#CC4488',teal:'#228888',gray:'#8A8A8A'},
-  EYES:{dark:'#2A180A',brown:'#6B3520',blue:'#2277BB',green:'#227744',teal:'#226688',amber:'#8B5520'},
-  OUTFIT:{blue:'#2255CC',red:'#CC2222',green:'#228833',purple:'#7733BB',gray:'#667788',gold:'#CC8822',black:'#2A2A3A',pink:'#CC4488',white:'#99AABB',teal:'#228899',orange:'#CC5522'},
-  GLASS:{black:'#222233',brown:'#6B3520',red:'#CC2222',pink:'#CC4488',gold:'#CC9922',blue:'#2255CC',white:'#CCCCCC'},
-  _lgt:function(h,n){var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);r=Math.min(255,r+n);g=Math.min(255,g+n);b=Math.min(255,b+n);return '#'+[r,g,b].map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('');},
-  L:{
-    skin:['________________','________________','________________','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSS____','____SSSSSSSS____','____SSSSSSS_____','_____SSSSSS_____','_____SSSS_______','_____SSSS_______','_____SSSS_______','________________','________________','________________'],
-    eyes:['________________','________________','________________','________________','________________','____WWW__WWW____','____WEW__WEW____','____WWW__WWW____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'face-female':['________________','________________','________________','________________','____CCC__CCC____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'expr-neutral':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','________________','________________','________________','________________','________________','________________','________________'],
-    'expr-happy':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','____MM______MM__','_____MMMMMM_____','________________','________________','________________','________________','________________','________________'],
-    'expr-sad':['________________','________________','________________','___B______B_____','____B_____B_____','________________','________________','________________','________________','________________','_____MMMMMM_____','____MM______MM__','________________','________________','________________','________________','________________','________________'],
-    'expr-thinking':['________________','________________','________________','___B____________','__________B_____','________________','________________','________________','________________','________________','________MMMM____','________________','________________','________________','________________','________________','________________','________________'],
-    'expr-angry':['________________','________________','________________','____B_____B_____','___BB_____BB____','________________','________________','________________','________________','________________','___MM________MM_','____MMMMMMMM____','________________','________________','________________','________________','________________','________________'],
-    'expr-overwhelmed':['________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','_____M____M_____','______MMMM______','________________','________________','________________','________________','________________','________________'],
-    'expr-cool':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','_______MMM______','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-short':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-afro':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-long':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-spiky':['___HH_HHH_H_____','___HHHHHHHHH____','__HHHHHHHHHH____','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-bob':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-bun':['_____HHHHH______','____HH___HH_____','___HHHHHHHHHH___','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-shoulder':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','_HSSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-shouldercurly':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSHH_','HHSSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-longstraight':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-wavylong':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','_HHSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-twintails':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','_HSSSSSSSSSSSHH_','HH____________HH','HH____________HH','_H____________H_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-curlybob':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSHH_','__HSSSSSSSSSSSH_','___HSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'hair-fringe':['__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'outfit-tshirt':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
-    'outfit-vneck':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOO___OOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
-    'outfit-hoodie':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___AAOOOOOAA____','___AOOOOOOO_____','___OOOOOOOOO____','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
-    'outfit-jacket':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OAAAAOOOOOO__','__OOAAAAOOOOOO__','_OOOAOOOOOOOOOO_'],
-    'glasses-none':[],
-    'glasses-rect':['________________','________________','________________','________________','________________','___GGGGGGGGGG___','___GGGGGGGGGG___','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'glasses-round':['________________','________________','________________','________________','________________','____GGG_GGG_____','___G___GG___G___','____GGG_GGG_____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-    'glasses-cool':['________________','________________','________________','________________','____GGGGGGGG____','___GLLLLLLLLG___','___GLLLLLLLLG___','____GGGGGGGG____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________']
-  },
-  draw:function(canvas,opts,sc){
-    sc=sc||5;
-    var ctx=canvas.getContext('2d');
-    canvas.width=PAX.W*sc;canvas.height=PAX.H*sc;
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    var sk=PAX.SKINS[opts.skinTone]||PAX.SKINS.fair;
-    var hr=PAX.HAIR[opts.hairColor]||PAX.HAIR.black;
-    var ey=PAX.EYES[opts.eyeColor]||PAX.EYES.dark;
-    var ot=PAX.OUTFIT[opts.outfitColor]||PAX.OUTFIT.blue;
-    var gl=PAX.GLASS[opts.glassesColor]||PAX.GLASS.black;
-    var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,A:'#AABBCC',G:gl,L:gl+'55',B:'#3D200E',C:'#1C1410',T:'#EEEEEE'};
-    var expr=opts.expression||'neutral';
-    var ord=[
-      'outfit-'+(opts.outfitStyle||'tshirt'),
-      'skin',
-      'hair-'+(opts.hairStyle||'short'),
-      'eyes',
-      'expr-'+expr,
-      opts.avatarType==='female'?'face-female':null,
-      (opts.glassesStyle&&opts.glassesStyle!='none')?'glasses-'+opts.glassesStyle:null
-    ];
-    ord.forEach(function(ln){
-      if(!ln)return;
-      var layer=PAX.L[ln];if(!layer||!layer.length)return;
-      layer.forEach(function(row,y){for(var x=0;x<row.length;x++){var ch=row[x];if(ch==='_')continue;var c=cm[ch];if(!c)return;ctx.fillStyle=c;ctx.fillRect(x*sc,y*sc,sc,sc);}});
-    });
-  },
-  fromCosmetics:function(cos){
-    cos=cos||{};
-    return {skinTone:cos.skinTone||'fair',hairStyle:cos.hairStyle||'short',hairColor:cos.hairColor||'black',eyeColor:cos.eyeColor||'dark',outfitStyle:cos.outfitStyle||'tshirt',outfitColor:cos.outfitColor||'blue',glassesStyle:cos.glassesStyle||'none',glassesColor:cos.glassesColor||'black',avatarType:cos.avatarType||'male',expression:cos.expression||'neutral'};
-  },
-  initCards:function(){
-    document.querySelectorAll('.pax-card').forEach(function(c){
-      PAX.draw(c,{skinTone:c.dataset.skin||'fair',hairStyle:c.dataset.hair||'short',hairColor:c.dataset.hcol||'black',eyeColor:c.dataset.eye||'dark',outfitStyle:c.dataset.outfit||'tshirt',outfitColor:c.dataset.ocol||'blue',glassesStyle:c.dataset.glass||'none',glassesColor:c.dataset.gcol||'black',avatarType:c.dataset.type||'male',expression:c.dataset.expr||'neutral'},parseInt(c.dataset.sc)||2);
-    });
-  }
-};
-
 // Profil hero avatar çerçevesi uygula
 function _applyHeroFrame(el, frame) {
   if (!el) return;
@@ -7608,19 +7571,18 @@ function applyCosmetics(cosmetics) {
     profBtn.style.boxShadow = '';
   }
 
-  // Piksel art avatar — üst bar (32×32 küçük)
-  if (window.PAX) {
-    var paxSm = profBtn.querySelector('canvas.pax-sm');
-    if (!paxSm) {
-      paxSm = document.createElement('canvas');
-      paxSm.className = 'pax-sm';
-      paxSm.style.cssText = 'position:absolute;top:0;left:0;image-rendering:pixelated;image-rendering:crisp-edges;';
+  var avatarId = cosmetics.avatar || 'default';
+  if (avatarId !== 'default') {
+    var img = profBtn.querySelector('img.prof-av-img');
+    if (!img) {
+      img = document.createElement('img');
+      img.className = 'prof-av-img';
+      img.style.cssText = 'width:100%;height:100%;border-radius:50%;object-fit:cover;position:absolute;inset:0;';
       profBtn.style.position = 'relative';
-      profBtn.style.overflow = 'hidden';
-      profBtn.textContent = '';
-      profBtn.appendChild(paxSm);
+      profBtn.insertBefore(img, profBtn.firstChild);
     }
-    PAX.draw(paxSm, PAX.fromCosmetics(cosmetics), 2);
+    img.src = 'avatars/' + avatarId + '.png';
+    img.onerror = function(){ this.style.display='none'; };
   }
 }
 

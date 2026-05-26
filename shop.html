@@ -681,8 +681,11 @@ function renderTab(tab) {
 
       // ── PREVIEW HTML ──
       var previewHTML = '';
-      if (tab === 'frames' || tab === 'themes') {
+      if (tab === 'themes') {
         previewHTML = item.preview || '';
+      } else if (tab === 'frames') {
+        var _fo = buildPaxOpts({});
+        previewHTML = '<div class="fp-'+item.id+'" style="width:48px;height:48px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;margin:0 auto;background:linear-gradient(135deg,var(--accent2),var(--accent3));transition:box-shadow 0.3s">'+buildCardCanvas(_fo)+'</div>';
       } else if (tab === 'outfits') {
         previewHTML = buildCardCanvas(buildPaxOpts({outfitStyle:item.style, outfitColor:item.color}));
       } else if (tab === 'glasses') {
