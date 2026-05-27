@@ -4980,6 +4980,7 @@ var _aiDeepLastWeek  = '';    // Son derin analiz haftası (YYYY-Www)
 // sessionStorage'dan okunur, sayfa kapanınca silinir.
 var _isGuest = sessionStorage.getItem('pugi_guest') === 'true';
 var _guestSinav = sessionStorage.getItem('pugi_sinav') || 'lgs';
+var _authGraceTimer = null; // Token yenileme grace period
 var _authMode = 'login'; // 'login' | 'register'
 
 
@@ -5252,18 +5253,24 @@ function _initFirebaseCore() {
     _fbAuth = firebase.auth();
 
     _fbAuth.onAuthStateChanged(function(user) {
-      _currentUser = user;
+      if (_authGraceTimer) { clearTimeout(_authGraceTimer); _authGraceTimer = null; }
       if (user) {
-        // Giriş yapılmış kullanıcı — misafir sessionStorage'ı temizle
+        _currentUser = user;
         sessionStorage.removeItem('pugi_guest');
         sessionStorage.removeItem('pugi_sinav');
         _isGuest = false;
         onUserLoggedIn(user);
       } else if (_isGuest) {
-        // Misafir modu — Firebase verisi yok, local çalışır
+        _currentUser = null;
         onGuestMode();
       } else {
-        onUserLoggedOut();
+        _authGraceTimer = setTimeout(function() {
+          _authGraceTimer = null;
+          if (!_fbAuth.currentUser && !_isGuest) {
+            _currentUser = null;
+            onUserLoggedOut();
+          }
+        }, 3000);
       }
     });
   } catch(e) {
