@@ -328,6 +328,7 @@ body { background:var(--bg); color:var(--text); font-family:'Sora',sans-serif; m
   <div class="shop-tab" onclick="switchTab('glasses',this)">🕶️ Aksesuarlar</div>
   <div class="shop-tab" onclick="switchTab('character',this)">🧑 Karakter</div>
   <div class="shop-tab" onclick="switchTab('themes',this)">🎨 Temalar</div>
+  <div class="shop-tab" onclick="switchTab('studio',this)">✨ Stüdyo</div>
 </div>
 
 <!-- CONTENT -->
@@ -403,6 +404,20 @@ var PAX={
     'glasses-round':['________________','________________','________________','________________','________________','____GGG_GGG_____','___G___GG___G___','____GGG_GGG_____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
     'glasses-cool':['________________','________________','________________','________________','____GGGGGGGG____','___GLLLLLLLLG___','___GLLLLLLLLG___','____GGGGGGGG____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________']
   },
+  _studioLayerFromPixels:function(pixels){
+    if(!pixels||!pixels.length) return null;
+    var out=[];
+    for(var y=0;y<PAX.H;y++){
+      var r=(pixels[y]||'').padEnd(PAX.W,'.').slice(0,PAX.W);
+      var row='';
+      for(var x=0;x<r.length;x++){
+        var ch=r[x];
+        row += (ch==='.' ? '_' : ch);
+      }
+      out.push(row);
+    }
+    return out;
+  },
   draw:function(canvas,opts,sc){
     sc=sc||5;
     var ctx=canvas.getContext('2d');
@@ -414,7 +429,22 @@ var PAX={
     var ot=PAX.OUTFIT[opts.outfitColor]||PAX.OUTFIT.blue;
     var gl=PAX.GLASS[opts.glassesColor]||PAX.GLASS.black;
     var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,A:'#AABBCC',G:gl,L:gl+'55',B:'#3D200E',C:'#1C1410',T:'#EEEEEE'};
+    // studio palette colors (a..h)
+    if (opts.studioPalette && opts.studioPalette.length) {
+      for (var pi=0;pi<8;pi++){
+        cm[String.fromCharCode('a'.charCodeAt(0)+pi)] = opts.studioPalette[pi] || '#ffffff';
+      }
+    }
     var expr=opts.expression||'neutral';
+
+    // dynamic studio layers
+    if (opts.studioExprPixels && expr) {
+      PAX.L['expr-'+expr] = PAX._studioLayerFromPixels(opts.studioExprPixels) || PAX.L['expr-neutral'];
+    }
+    if (opts.studioAccPixels && opts.studioAccessoryId) {
+      PAX.L['acc-'+opts.studioAccessoryId] = PAX._studioLayerFromPixels(opts.studioAccPixels);
+    }
+
     var ord=[
       'outfit-'+(opts.outfitStyle||'tshirt'),
       'skin',
@@ -422,7 +452,8 @@ var PAX={
       'eyes',
       'expr-'+expr,
       opts.avatarType==='female'?'face-female':null,
-      (opts.glassesStyle&&opts.glassesStyle!='none')?'glasses-'+opts.glassesStyle:null
+      (opts.glassesStyle&&opts.glassesStyle!='none')?'glasses-'+opts.glassesStyle:null,
+      opts.studioAccessoryId ? ('acc-'+opts.studioAccessoryId) : null
     ];
     ord.forEach(function(ln){
       if(!ln)return;
@@ -432,11 +463,23 @@ var PAX={
   },
   fromCosmetics:function(cos){
     cos=cos||{};
-    return {skinTone:cos.skinTone||'fair',hairStyle:cos.hairStyle||'short',hairColor:cos.hairColor||'black',eyeColor:cos.eyeColor||'dark',outfitStyle:cos.outfitStyle||'tshirt',outfitColor:cos.outfitColor||'blue',glassesStyle:cos.glassesStyle||'none',glassesColor:cos.glassesColor||'black',avatarType:cos.avatarType||'male',expression:cos.expression||'neutral'};
+    return {
+      skinTone:cos.skinTone||'fair',
+      hairStyle:cos.hairStyle||'short',
+      hairColor:cos.hairColor||'black',
+      eyeColor:cos.eyeColor||'dark',
+      outfitStyle:cos.outfitStyle||'tshirt',
+      outfitColor:cos.outfitColor||'blue',
+      glassesStyle:cos.glassesStyle||'none',
+      glassesColor:cos.glassesColor||'black',
+      avatarType:cos.avatarType||'male',
+      expression:cos.expression||'neutral',
+      studioAccessoryId: cos.studioAccessoryId || null
+    };
   },
   initCards:function(){
     document.querySelectorAll('.pax-card').forEach(function(c){
-      PAX.draw(c,{skinTone:c.dataset.skin||'fair',hairStyle:c.dataset.hair||'short',hairColor:c.dataset.hcol||'black',eyeColor:c.dataset.eye||'dark',outfitStyle:c.dataset.outfit||'tshirt',outfitColor:c.dataset.ocol||'blue',glassesStyle:c.dataset.glass||'none',glassesColor:c.dataset.gcol||'black',avatarType:c.dataset.type||'male',expression:c.dataset.expr||'neutral'},parseInt(c.dataset.sc)||2);
+      PAX.draw(c,{skinTone:c.dataset.skin||'fair',hairStyle:c.dataset.hair||'short',hairColor:c.dataset.hcol||'black',eyeColor:c.dataset.eye||'dark',outfitStyle:c.dataset.outfit||'tshirt',outfitColor:c.dataset.ocol||'blue',glassesStyle:c.dataset.glass||'none',glassesColor:c.dataset.gcol||'black',avatarType:c.dataset.type||'male',expression:c.dataset.expr||'neutral',studioAccessoryId:c.dataset.sacc||null},parseInt(c.dataset.sc)||2);
     });
   }
 };
@@ -550,6 +593,10 @@ var CATALOG = {
     { id:'midnight', name:'Gece Yarısı',    tier:'Nadir', price:600, tierClass:'tier-rare',
       preview:'<div class="theme-preview" style="background:#020617"><div class="theme-dot-row"><div class="theme-dot" style="background:#6366f1"></div><div class="theme-dot" style="background:#8b5cf6"></div></div><div class="theme-dot-row"><div class="theme-dot" style="background:#0f172a;flex:2"></div></div></div>' },
   ]
+  ,
+  studio: [
+    // Published Studio assets are injected at runtime
+  ]
 };
 
 // ══════════════════════════════════════════════
@@ -561,6 +608,7 @@ var _owned = [];        // sahip olunan item id'leri
 var _cosmetics = {};    // { frame, avatar, theme }
 var _activeTab = 'frames';
 var _selectedItem = null;
+var _studioAssets = { expressions:{}, accessories:{} }; // slug -> {pixels,palette,name,price,slug}
 var firebaseConfig = {
   apiKey:"AIzaSyATKwttmv9nYvCXwdBPO2rjG-rqD-2xinM",
   authDomain:"pugi-app-deeaa.firebaseapp.com",
@@ -593,12 +641,38 @@ function initFirebase() {
             _owned     = d.ownedItems  || [];
             _cosmetics = d.cosmetics   || {};
             document.getElementById('coinBal').textContent = _coins.toLocaleString('tr-TR');
-            renderTab(_activeTab);
+            loadStudioAssets().then(function(){ renderTab(_activeTab); });
           });
         });
       });
     });
   });
+}
+
+function loadStudioAssets() {
+  if (!_db) return Promise.resolve();
+  return _db.collection('studioAssets').where('isPublished','==',true).get().then(function(snap){
+    _studioAssets = { expressions:{}, accessories:{} };
+    CATALOG.studio = [];
+    snap.forEach(function(doc){
+      var d = doc.data() || {};
+      var type = d.type || '';
+      if (type !== 'expression' && type !== 'accessory') return;
+      var slug = d.slug || doc.id;
+      var item = {
+        id: 'studio_' + type + '_' + slug,
+        kind: type,
+        slug: slug,
+        name: d.name || slug,
+        tier: (type==='expression') ? 'Stüdyo · Yüz İfadesi' : 'Stüdyo · Aksesuar',
+        tierClass: 'tier-mid',
+        price: (typeof d.price === 'number') ? d.price : 0
+      };
+      CATALOG.studio.push(item);
+      var store = (type==='expression') ? _studioAssets.expressions : _studioAssets.accessories;
+      store[slug] = { pixels: d.pixels || null, palette: d.palette || null, name: item.name, price: item.price, slug: slug };
+    });
+  }).catch(function(){});
 }
 
 // ══════════════════════════════════════════════
@@ -616,6 +690,7 @@ function getEquippedId(tab) {
   if (tab==='themes')   return _cosmetics.theme     || 'none';
   if (tab==='outfits')  return _cosmetics.outfitId  || 'none';
   if (tab==='glasses')  return _cosmetics.glassesId || 'none';
+  if (tab==='studio')   return 'none';
   return 'none';
 }
 
@@ -633,7 +708,24 @@ function isCharEquipped(item) {
 
 function buildPaxOpts(overrides) {
   var base = PAX.fromCosmetics(_cosmetics);
-  return Object.assign({}, base, overrides || {});
+  var merged = Object.assign({}, base, overrides || {});
+
+  // attach studio assets for the merged opts (equipped OR previewed)
+  if (merged.expression && merged.expression !== 'neutral') {
+    var ex = _studioAssets.expressions[merged.expression];
+    if (ex && ex.pixels) {
+      merged.studioExprPixels = ex.pixels;
+      merged.studioPalette = ex.palette || null;
+    }
+  }
+  if (merged.studioAccessoryId) {
+    var ac = _studioAssets.accessories[merged.studioAccessoryId];
+    if (ac && ac.pixels) {
+      merged.studioAccPixels = ac.pixels;
+      merged.studioPalette = merged.studioPalette || (ac.palette || null);
+    }
+  }
+  return merged;
 }
 
 function buildCardCanvas(opts) {
@@ -647,7 +739,8 @@ function buildCardCanvas(opts) {
     ' data-glass="' + opts.glassesStyle + '"' +
     ' data-gcol="'  + opts.glassesColor + '"' +
     ' data-type="'  + (opts.avatarType||'male')   + '"' +
-    ' data-expr="'  + (opts.expression||'neutral') + '"></canvas>';
+    ' data-expr="'  + (opts.expression||'neutral') + '"' +
+    ' data-sacc="'  + (opts.studioAccessoryId||'') + '"></canvas>';
 }
 
 function renderTab(tab) {
@@ -660,14 +753,17 @@ function renderTab(tab) {
     groups[item.tier].push(item);
   });
 
-  var equippedId = (tab !== 'character') ? getEquippedId(tab) : null;
+  var equippedId = (tab !== 'character' && tab !== 'studio') ? getEquippedId(tab) : null;
 
   var html = '';
   Object.keys(groups).forEach(function(tier) {
     html += '<div class="sec">' + tier + '</div><div class="items-grid">';
     groups[tier].forEach(function(item) {
       var isOwned    = item.price === 0 || _owned.indexOf(item.id) !== -1;
-      var isEquipped = (tab === 'character') ? isCharEquipped(item) : (equippedId === item.id);
+      var isEquipped =
+        (tab === 'character') ? isCharEquipped(item)
+        : (tab === 'studio') ? ((item.kind==='expression') ? ((_cosmetics.expression||'neutral')===item.slug) : ((_cosmetics.studioAccessoryId||null)===item.slug))
+        : (equippedId === item.id);
 
       var cardClass = 'item-card' +
         (isEquipped ? ' equipped' : isOwned ? ' owned' : '') +
@@ -694,6 +790,9 @@ function renderTab(tab) {
         var charOver = {};
         charOver[item.attribute] = item.value;
         previewHTML = buildCardCanvas(buildPaxOpts(charOver));
+      } else if (tab === 'studio') {
+        if (item.kind === 'expression') previewHTML = buildCardCanvas(buildPaxOpts({ expression: item.slug }));
+        else previewHTML = buildCardCanvas(buildPaxOpts({ studioAccessoryId: item.slug }));
       }
 
       html += '<div class="' + cardClass + '" onclick="openSheet(\'' + tab + '\',\'' + item.id + '\')">' +
@@ -729,6 +828,11 @@ function openSheet(tab, itemId) {
       (item.attribute==='hairColor' && !_cosmetics.hairColor  && item.value==='black') ||
       (item.attribute==='eyeColor'  && !_cosmetics.eyeColor   && item.value==='dark');
     isOwned = item.price===0 || _owned.indexOf(item.id)!==-1;
+  } else if (tab==='studio') {
+    isEquipped = (item.kind==='expression')
+      ? ((_cosmetics.expression || 'neutral') === item.slug)
+      : ((_cosmetics.studioAccessoryId || null) === item.slug);
+    isOwned = item.price===0 || _owned.indexOf(item.id)!==-1;
   } else {
     var equippedId = getEquippedId(tab);
     isEquipped = (equippedId === item.id);
@@ -752,12 +856,14 @@ function openSheet(tab, itemId) {
       :tab==='character'&&item.attribute==='hairStyle' ? {hairStyle:item.value}
       :tab==='character'&&item.attribute==='hairColor' ? {hairColor:item.value}
       :tab==='character'&&item.attribute==='eyeColor'  ? {eyeColor:item.value}
+      :tab==='studio'&&item.kind==='expression' ? {expression:item.slug}
+      :tab==='studio'&&item.kind==='accessory' ? {studioAccessoryId:item.slug}
       :{}
     );
     if (window.PAX) PAX.draw(pv, pvOpts, 4);
   }
 
-  var tabLabel = {frames:'Çerçeve',outfits:'Kıyafet',glasses:'Aksesuar',character:'Karakter',themes:'Tema'};
+  var tabLabel = {frames:'Çerçeve',outfits:'Kıyafet',glasses:'Aksesuar',character:'Karakter',themes:'Tema',studio:'Stüdyo'};
   document.getElementById('sheetName').textContent  = item.name;
   document.getElementById('sheetTier').textContent  = item.tier + ' · ' + (tabLabel[tab]||tab);
   document.getElementById('sheetPrice').textContent = item.price.toLocaleString('tr-TR');
@@ -801,6 +907,10 @@ function applyItemToCosmetics(cos, tab, item) {
   else if (tab==='outfits') { c.outfitId=item.id; c.outfitStyle=item.style; c.outfitColor=item.color; }
   else if (tab==='glasses') { c.glassesId=item.id; c.glassesStyle=item.style; c.glassesColor=item.color; }
   else if (tab==='character'){ c[item.attribute]=item.value; }
+  else if (tab==='studio'){
+    if (item.kind==='expression') c.expression = item.slug;
+    else c.studioAccessoryId = item.slug;
+  }
   return c;
 }
 

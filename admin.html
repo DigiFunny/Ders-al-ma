@@ -57,6 +57,63 @@ input:focus { border-color: var(--admin); }
 .switch-btn { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s; }
 .switch-btn:hover { border-color: var(--admin); }
 .switch-btn-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+
+/* Studio */
+.studio-wrap { display:grid; gap:12px; }
+.studio-top { display:grid; grid-template-columns: 1fr; gap:10px; }
+.studio-split { display:grid; grid-template-columns: 1fr; gap:10px; }
+@media (min-width: 420px) {
+  .studio-top { grid-template-columns: 1fr 1fr; }
+  .studio-split { grid-template-columns: 1fr 1fr; }
+}
+.studio-card { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 14px; }
+.studio-h { font-size:0.86rem; font-weight:900; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.studio-sub { font-size:0.7rem; font-weight:800; color:var(--muted); margin-top:-6px; margin-bottom:10px; line-height:1.5; }
+.seg { display:flex; gap:6px; background: var(--bg2); border:1.5px solid var(--border); border-radius: 12px; padding:6px; }
+.seg button { flex:1; border:none; background:transparent; color:var(--muted); font-family:'Nunito',sans-serif; font-weight:900; font-size:0.72rem; padding:8px 10px; border-radius:10px; cursor:pointer; transition:all .15s; }
+.seg button.active { background: rgba(245,158,11,0.16); color: var(--admin); }
+.row { display:grid; grid-template-columns: 1fr; gap:10px; }
+.field { display:flex; flex-direction:column; gap:6px; }
+.lbl { font-size:0.68rem; font-weight:900; letter-spacing:1px; text-transform:uppercase; color:var(--muted); }
+.input { width:100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family:'Nunito',sans-serif; font-size:0.88rem; font-weight:800; padding: 11px 12px; outline:none; }
+.input:focus { border-color: rgba(245,158,11,0.55); }
+.help { font-size:0.7rem; color:var(--muted); font-weight:700; line-height:1.5; }
+.pill { display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:12px; background: rgba(245,158,11,0.08); border:1.5px solid rgba(245,158,11,0.18); }
+.badge { font-size:0.6rem; font-weight:900; letter-spacing:1px; padding:3px 8px; border-radius:99px; background: rgba(56,189,248,0.12); color: var(--accent); border:1px solid rgba(56,189,248,0.22); }
+
+.palette { display:flex; flex-wrap:wrap; gap:8px; }
+.sw { width:26px; height:26px; border-radius:9px; border:1.5px solid rgba(226,232,240,0.14); cursor:pointer; position:relative; }
+.sw.active { outline:2px solid rgba(245,158,11,0.85); outline-offset: 2px; }
+.sw .dot { position:absolute; inset:0; border-radius:9px; }
+.grid-wrap { background: var(--bg2); border:1.5px solid var(--border); border-radius: 14px; padding: 12px; }
+.px-grid { display:grid; grid-template-columns: repeat(16, 1fr); gap:4px; touch-action: manipulation; }
+.px { aspect-ratio: 1 / 1; border-radius: 6px; background: rgba(19,30,51,0.9); border: 1px solid rgba(28,45,71,0.85); cursor:pointer; transition: transform .05s; }
+.px:active { transform: scale(0.95); }
+.px.filled { border-color: rgba(245,158,11,0.35); }
+.studio-actions { display:flex; gap:8px; }
+.btn-ghost { padding:10px 14px; border-radius:12px; border:1.5px solid var(--border); background:transparent; color:var(--text); font-family:'Nunito',sans-serif; font-weight:900; cursor:pointer; }
+.btn-ghost:active { transform: scale(0.98); }
+.btn-publish { background: linear-gradient(135deg, #34d399, #059669); color:#fff; }
+.btn-save { background: linear-gradient(135deg, #f59e0b, #d97706); color:#000; }
+.list { display:flex; flex-direction:column; gap:8px; }
+.asset { padding:12px; border-radius:14px; border:1.5px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); cursor:pointer; transition:border-color .15s, transform .08s; }
+.asset:active { transform: scale(0.99); }
+.asset.sel { border-color: rgba(56,189,248,0.55); }
+.asset-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.asset-name { font-size:0.9rem; font-weight:900; }
+.asset-meta { font-size:0.68rem; font-weight:800; color: var(--muted); margin-top:4px; }
+.mini { width:52px; height:58px; border-radius:14px; background: var(--bg3); border:1.5px solid var(--border); overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.mini canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
+
+.demo-card { background: linear-gradient(135deg, rgba(129,140,248,0.14), rgba(52,211,153,0.10)); border:1.5px solid rgba(129,140,248,0.25); border-radius: 18px; padding: 14px; display:flex; gap:12px; align-items:center; }
+.demo-avatar { width:74px; height:74px; border-radius: 18px; background: rgba(0,0,0,0.25); border:1.5px solid rgba(226,232,240,0.14); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.demo-avatar canvas { image-rendering: pixelated; image-rendering: crisp-edges; }
+.demo-info { flex:1; min-width:0; }
+.demo-title { font-size:0.95rem; font-weight:900; }
+.demo-sub { font-size:0.72rem; font-weight:800; color: var(--muted); margin-top:2px; line-height:1.5; }
+.hint { font-size:0.72rem; font-weight:800; color: var(--muted); line-height:1.5; }
+.fade-in { animation: fadeIn .18s ease both; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:none; } }
 </style>
 </head>
 <body>
@@ -206,6 +263,142 @@ input:focus { border-color: var(--admin); }
   </div>
 </div>
 
+<!-- SAYFA: Studio -->
+<div class="page" id="page-studio">
+  <div class="sec" style="margin-top:8px">Avatar Tasarım Stüdyosu</div>
+
+  <div class="studio-wrap">
+    <div class="studio-card fade-in">
+      <div class="studio-h">
+        <div>🎨 Tasarla</div>
+        <span class="badge" id="studioStatusBadge">DRAFT</span>
+      </div>
+      <div class="studio-sub">
+        Mağazaya girecek yeni <b>yüz ifadesi</b>, <b>aksesuar</b> veya <b>avatar</b> tasarla. Piksel editöründe çiz, demo kartta test et, istersen mağazaya yayınla.
+      </div>
+
+      <div class="seg" id="studioTypeSeg">
+        <button type="button" class="active" onclick="studioSetType('expression',this)">🙂 Yüz İfadesi</button>
+        <button type="button" onclick="studioSetType('accessory',this)">🧩 Aksesuar</button>
+        <button type="button" onclick="studioSetType('avatar',this)">🧑 Avatar</button>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div class="field">
+          <div class="lbl">Ad</div>
+          <input class="input" id="studioName" placeholder="Örn: Mutlu Gülüş" maxlength="48" />
+        </div>
+        <div class="field">
+          <div class="lbl">Kod (slug)</div>
+          <input class="input" id="studioSlug" placeholder="Örn: happy_smile_v2" maxlength="40" />
+          <div class="help">Sadece harf/rakam/alt-çizgi. Mağaza ve diğer avatarlar bu kodla kullanır.</div>
+        </div>
+      </div>
+
+      <div class="studio-top" style="margin-top:10px">
+        <div class="studio-card" style="padding:12px">
+          <div class="studio-h" style="margin-bottom:8px"><div>🧪 Demo Profil Kartı</div></div>
+          <div class="demo-card">
+            <div class="demo-avatar"><canvas id="studioDemoCanvas"></canvas></div>
+            <div class="demo-info">
+              <div class="demo-title" id="studioDemoTitle">Demo Öğrenci</div>
+              <div class="demo-sub" id="studioDemoSub">Seçtiğin yüz ifadesi/aksesuarı avatara uygula ve görünümü kontrol et.</div>
+            </div>
+          </div>
+          <div class="hint" style="margin-top:10px">
+            İpucu: Stüdyoda tasarladığın yüz ifadesi/aksesuar <b>tüm avatarlarla</b> uyumlu olur. Avatar tasarlarsan, mevcut tüm aksesuar ve yüz ifadelerini ona uygulayarak test edebilirsin.
+          </div>
+        </div>
+
+        <div class="studio-card" style="padding:12px">
+          <div class="studio-h" style="margin-bottom:8px"><div>🧷 Test Ayarları</div></div>
+          <div class="field">
+            <div class="lbl">Test Avatarı</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-admin" style="flex:1;padding:10px;border-radius:12px" onclick="studioSetTestAvatar('male')">👦 Erkek</button>
+              <button class="btn btn-admin" style="flex:1;padding:10px;border-radius:12px" onclick="studioSetTestAvatar('female')">👧 Kız</button>
+            </div>
+          </div>
+          <div class="field" style="margin-top:10px">
+            <div class="lbl">Uygula</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <button class="btn btn-approve" style="padding:10px;border-radius:12px" onclick="studioApplySelectedToDemo()">✓ Seçileni Uygula</button>
+              <button class="btn btn-reject" style="padding:10px;border-radius:12px" onclick="studioClearDemo()">⟲ Sıfırla</button>
+            </div>
+          </div>
+          <div class="help" style="margin-top:10px">Aşağıdaki listeden daha önce tasarlanmış yüz ifadelerini/aksesuarları seçip demoda dene.</div>
+        </div>
+      </div>
+
+      <div class="studio-split" style="margin-top:10px">
+        <div class="studio-card" style="padding:12px">
+          <div class="studio-h" style="margin-bottom:8px"><div>🧩 Tasarım Alanı</div></div>
+
+          <div id="studioEditorExpressionAccessory">
+            <div class="field">
+              <div class="lbl">Renk Paleti</div>
+              <div class="palette" id="studioPalette"></div>
+              <div class="help">Sol tık: boya · Tekrar tık: sil</div>
+            </div>
+            <div class="grid-wrap" style="margin-top:10px">
+              <div class="px-grid" id="studioPxGrid"></div>
+            </div>
+            <div class="studio-actions" style="margin-top:10px">
+              <button class="btn-ghost" onclick="studioFillClear()">🧽 Temizle</button>
+              <button class="btn-ghost" onclick="studioMirror()">🪞 Yatay Aynala</button>
+            </div>
+          </div>
+
+          <div id="studioEditorAvatar" style="display:none">
+            <div class="help" style="margin-bottom:10px">Avatar tasarımı bu sürümde “preset” mantığıyla çalışır (ten/saç/göz/kıyafet + varsayılan ifade). Yayınlanan avatar mağazada “Karakter” sekmesinde görünür.</div>
+            <div class="row">
+              <div class="field"><div class="lbl">Ten</div><select class="input" id="studioAvatarSkin">
+                <option value="fair">Bej</option><option value="light">Açık</option><option value="olive">Zeytin</option><option value="tan">Bronz</option><option value="brown">Kahve</option><option value="dark">Koyu</option>
+              </select></div>
+              <div class="field"><div class="lbl">Saç Stili</div><select class="input" id="studioAvatarHair">
+                <option value="short">Kısa</option><option value="afro">Afro</option><option value="fringe">Perçemli</option><option value="shoulder">Omuz Boy</option><option value="long">Uzun</option><option value="spiky">Sivri</option><option value="bob">Bob</option><option value="bun">Topuz</option><option value="wavylong">Dalgalı Uzun</option><option value="twintails">İki Örgü</option><option value="shouldercurly">Kıvırcık Omuz</option><option value="longstraight">Uzun Düz</option><option value="curlybob">Kıvırcık Bob</option>
+              </select></div>
+              <div class="field"><div class="lbl">Saç Rengi</div><select class="input" id="studioAvatarHairColor">
+                <option value="black">Siyah</option><option value="darkbrown">Koyu Kahve</option><option value="brown">Kahve</option><option value="red">Kızıl</option><option value="blonde">Sarı</option><option value="orange">Turuncu</option><option value="blue">Mavi</option><option value="pink">Pembe</option><option value="teal">Teal</option><option value="platinum">Platin</option><option value="gray">Gri</option>
+              </select></div>
+              <div class="field"><div class="lbl">Göz</div><select class="input" id="studioAvatarEye">
+                <option value="dark">Koyu</option><option value="brown">Kahve</option><option value="blue">Mavi</option><option value="green">Yeşil</option><option value="teal">Teal</option><option value="amber">Kehribar</option>
+              </select></div>
+              <div class="field"><div class="lbl">Kıyafet</div><select class="input" id="studioAvatarOutfit">
+                <option value="tshirt">Tişört</option><option value="vneck">V-Yaka</option><option value="hoodie">Hoodie</option><option value="jacket">Ceket</option>
+              </select></div>
+              <div class="field"><div class="lbl">Kıyafet Rengi</div><select class="input" id="studioAvatarOutfitColor">
+                <option value="blue">Mavi</option><option value="red">Kırmızı</option><option value="green">Yeşil</option><option value="purple">Mor</option><option value="gray">Gri</option><option value="gold">Altın</option><option value="black">Siyah</option><option value="pink">Pembe</option><option value="white">Beyaz</option><option value="teal">Teal</option><option value="orange">Turuncu</option>
+              </select></div>
+            </div>
+            <div class="studio-actions" style="margin-top:10px">
+              <button class="btn-ghost" onclick="studioApplyAvatarFieldsToDemo()">👁️ Demoda Gör</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-card" style="padding:12px">
+          <div class="studio-h" style="margin-bottom:8px">
+            <div>📦 Tasarlanmış Öğeler</div>
+            <button class="btn-ghost" style="padding:8px 10px" onclick="studioReloadAssets()">↻</button>
+          </div>
+          <div class="help" style="margin-bottom:10px">Bir öğe seç, demoya uygula veya düzenlemeye yükle.</div>
+          <div class="list" id="studioAssetsList">Yükleniyor...</div>
+        </div>
+      </div>
+
+      <div class="studio-card" style="padding:12px;margin-top:10px">
+        <div class="studio-h" style="margin-bottom:8px"><div>🚀 Kaydet / Yayınla</div></div>
+        <div class="studio-actions">
+          <button class="btn btn-save" style="flex:1;border-radius:12px" onclick="studioSaveDraft()">💾 Taslağı Kaydet</button>
+          <button class="btn btn-publish" style="flex:1;border-radius:12px" onclick="studioPublish()">🛍️ Mağazada Yayınla</button>
+        </div>
+        <div class="help" id="studioSaveMsg" style="margin-top:10px;min-height:18px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Tab Bar -->
 <div class="tabs">
   <button class="tab-btn active" onclick="switchAdminTab('stats',this)">
@@ -219,6 +412,10 @@ input:focus { border-color: var(--admin); }
   <button class="tab-btn" onclick="switchAdminTab('switch',this)">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
     <span>Geçiş</span>
+  </button>
+  <button class="tab-btn" onclick="switchAdminTab('studio',this)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-7-7-3 3 7 7"/><path d="M2 22l6-2-4-4-2 6z"/></svg>
+    <span>Stüdyo</span>
   </button>
 </div>
 
@@ -251,6 +448,17 @@ var ADMIN_EMAILS = ['admin@pugiapp.com']; // buraya admin e-postalarını ekle
 
 var _db = null, _auth = null, _adminUser = null;
 var _pendingRejectUid = null;
+
+// Studio state
+var _studio = {
+  type: 'expression',
+  palette: ['#e2e8f0','#38bdf8','#818cf8','#34d399','#fbbf24','#fb923c','#f472b6','#111827'],
+  activeColorIdx: 1,
+  grid: null, // 18 x 16 char matrix: '.' empty, 'a'..'h' color index
+  selectedAssetId: null,
+  assets: [],
+  demo: { avatarType:'male', expression:'neutral', accessoryId:null, avatarPreset:null }
+};
 
 function loadScript(src, cb) {
   var s = document.createElement('script');
@@ -307,6 +515,7 @@ function checkAdminAccess(user) {
     document.getElementById('adminName').textContent = user.displayName || user.email || 'Admin';
     loadStats();
     loadListings();
+    studioInit();
   });
 }
 
@@ -551,6 +760,7 @@ function switchAdminTab(tab, el) {
   el.classList.add('active');
   if (tab === 'stats') loadStats();
   if (tab === 'listings') loadListings();
+  if (tab === 'studio') studioRenderAll();
 }
 
 var _toastTimer;
@@ -562,6 +772,486 @@ function showToast(msg) {
 }
 
 document.addEventListener('DOMContentLoaded', initFirebase);
+
+// ════════════ STUDIO (Avatar/Expression/Accessory) ════════════
+function studioInit() {
+  if (!_db) return;
+  studioResetGrid();
+  studioBuildPalette();
+  studioBuildPxGrid();
+  studioWireSlugAuto();
+  studioReloadAssets();
+  studioRenderAll();
+}
+
+function studioWireSlugAuto() {
+  var nameEl = document.getElementById('studioName');
+  var slugEl = document.getElementById('studioSlug');
+  if (!nameEl || !slugEl) return;
+  nameEl.addEventListener('input', function() {
+    if ((slugEl.value || '').trim()) return;
+    slugEl.value = studioSlugify(nameEl.value);
+  });
+  slugEl.addEventListener('input', function() {
+    slugEl.value = (slugEl.value || '').toLowerCase().replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);
+  });
+}
+
+function studioSlugify(s) {
+  s = (s || '').toLowerCase().trim();
+  var map = { 'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u' };
+  s = s.replace(/[çğışöü]/g, function(m){ return map[m] || m; });
+  return s.replace(/[^a-z0-9]+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);
+}
+
+function studioSetType(type, btn) {
+  _studio.type = type;
+  document.querySelectorAll('#studioTypeSeg button').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  document.getElementById('studioEditorAvatar').style.display = (type==='avatar') ? 'block' : 'none';
+  document.getElementById('studioEditorExpressionAccessory').style.display = (type==='avatar') ? 'none' : 'block';
+  _studio.selectedAssetId = null;
+  studioSetStatus('DRAFT');
+  studioResetGrid();
+  studioRenderAssetsList();
+  studioRenderDemo();
+}
+
+function studioSetStatus(txt) {
+  var b = document.getElementById('studioStatusBadge');
+  if (!b) return;
+  b.textContent = txt;
+  b.style.background = txt === 'PUBLISHED' ? 'rgba(52,211,153,0.15)' : 'rgba(245,158,11,0.12)';
+  b.style.color = txt === 'PUBLISHED' ? '#34d399' : 'var(--admin)';
+  b.style.border = txt === 'PUBLISHED' ? '1px solid rgba(52,211,153,0.28)' : '1px solid rgba(245,158,11,0.22)';
+}
+
+function studioResetGrid() {
+  _studio.grid = [];
+  for (var y=0;y<18;y++){
+    var row = [];
+    for (var x=0;x<16;x++) row.push('.');
+    _studio.grid.push(row);
+  }
+}
+
+function studioBuildPalette() {
+  var wrap = document.getElementById('studioPalette');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  _studio.palette.forEach(function(hex, idx){
+    var sw = document.createElement('div');
+    sw.className = 'sw' + (idx===_studio.activeColorIdx ? ' active' : '');
+    sw.title = hex;
+    var dot = document.createElement('div');
+    dot.className = 'dot';
+    dot.style.background = hex;
+    sw.appendChild(dot);
+    sw.addEventListener('click', function(){
+      _studio.activeColorIdx = idx;
+      studioBuildPalette();
+    });
+    wrap.appendChild(sw);
+  });
+}
+
+function studioBuildPxGrid() {
+  var g = document.getElementById('studioPxGrid');
+  if (!g) return;
+  g.innerHTML = '';
+  for (var y=0;y<18;y++){
+    for (var x=0;x<16;x++){
+      (function(xx,yy){
+        var c = document.createElement('div');
+        c.className = 'px';
+        c.addEventListener('click', function(){ studioTogglePx(xx,yy); });
+        g.appendChild(c);
+      })(x,y);
+    }
+  }
+  studioRenderPxGrid();
+}
+
+function studioTogglePx(x,y) {
+  var cur = _studio.grid[y][x];
+  var next = cur === '.' ? String.fromCharCode('a'.charCodeAt(0) + _studio.activeColorIdx) : '.';
+  _studio.grid[y][x] = next;
+  studioRenderPxGrid();
+  studioRenderDemo();
+}
+
+function studioRenderPxGrid() {
+  var g = document.getElementById('studioPxGrid');
+  if (!g) return;
+  var kids = g.children;
+  var i=0;
+  for (var y=0;y<18;y++){
+    for (var x=0;x<16;x++){
+      var v = _studio.grid[y][x];
+      var el = kids[i++];
+      if (!el) continue;
+      if (v === '.') {
+        el.classList.remove('filled');
+        el.style.background = 'rgba(19,30,51,0.9)';
+      } else {
+        el.classList.add('filled');
+        var idx = v.charCodeAt(0) - 'a'.charCodeAt(0);
+        el.style.background = _studio.palette[idx] || _studio.palette[0];
+      }
+    }
+  }
+}
+
+function studioFillClear() {
+  studioResetGrid();
+  studioRenderPxGrid();
+  studioRenderDemo();
+}
+
+function studioMirror() {
+  for (var y=0;y<18;y++){
+    for (var x=0;x<8;x++){
+      var tmp = _studio.grid[y][x];
+      _studio.grid[y][x] = _studio.grid[y][15-x];
+      _studio.grid[y][15-x] = tmp;
+    }
+  }
+  studioRenderPxGrid();
+  studioRenderDemo();
+}
+
+function studioSetTestAvatar(type) {
+  _studio.demo.avatarType = type;
+  studioRenderDemo();
+}
+
+function studioApplySelectedToDemo() {
+  var a = _studio.assets.find(function(x){ return x.id === _studio.selectedAssetId; });
+  if (!a) { showToast('Önce listeden bir öğe seç'); return; }
+  if (a.type === 'expression') _studio.demo.expression = a.slug;
+  if (a.type === 'accessory') _studio.demo.accessoryId = a.slug;
+  if (a.type === 'avatar') _studio.demo.avatarPreset = a.avatarPreset || null;
+  studioRenderDemo();
+  showToast('✓ Demoya uygulandı');
+}
+
+function studioClearDemo() {
+  _studio.demo.expression = 'neutral';
+  _studio.demo.accessoryId = null;
+  _studio.demo.avatarPreset = null;
+  studioRenderDemo();
+}
+
+function studioApplyAvatarFieldsToDemo() {
+  _studio.demo.avatarPreset = {
+    skinTone: document.getElementById('studioAvatarSkin').value,
+    hairStyle: document.getElementById('studioAvatarHair').value,
+    hairColor: document.getElementById('studioAvatarHairColor').value,
+    eyeColor: document.getElementById('studioAvatarEye').value,
+    outfitStyle: document.getElementById('studioAvatarOutfit').value,
+    outfitColor: document.getElementById('studioAvatarOutfitColor').value
+  };
+  studioRenderDemo();
+}
+
+function studioRenderAll() {
+  studioRenderAssetsList();
+  studioRenderDemo();
+}
+
+function studioReloadAssets() {
+  if (!_db) return;
+  document.getElementById('studioAssetsList').innerHTML = 'Yükleniyor...';
+  _db.collection('studioAssets').orderBy('updatedAt','desc').limit(40).get().then(function(snap){
+    _studio.assets = [];
+    snap.forEach(function(doc){
+      var d = doc.data() || {};
+      _studio.assets.push({
+        id: doc.id,
+        type: d.type || 'expression',
+        name: d.name || '—',
+        slug: d.slug || doc.id,
+        isPublished: d.isPublished === true,
+        palette: d.palette || _studio.palette,
+        pixels: d.pixels || null,
+        avatarPreset: d.avatarPreset || null,
+        updatedAt: d.updatedAt || ''
+      });
+    });
+    studioRenderAssetsList();
+  }).catch(function(e){
+    document.getElementById('studioAssetsList').innerHTML = '<div class="help">❌ ' + e.message + '</div>';
+  });
+}
+
+function studioRenderAssetsList() {
+  var wrap = document.getElementById('studioAssetsList');
+  if (!wrap) return;
+  var list = _studio.assets.filter(function(a){ return a.type === _studio.type; });
+  if (!list.length) {
+    wrap.innerHTML = '<div class="help">Henüz ' + (_studio.type==='expression'?'yüz ifadesi':_studio.type==='accessory'?'aksesuar':'avatar') + ' yok.</div>';
+    return;
+  }
+  var html = '';
+  list.forEach(function(a){
+    var sel = a.id === _studio.selectedAssetId;
+    html += '<div class="asset' + (sel?' sel':'') + '" onclick="studioSelectAsset(\''+a.id+'\')">'
+      + '<div class="asset-top"><div>'
+      + '<div class="asset-name">' + escapeHtml(a.name) + '</div>'
+      + '<div class="asset-meta">' + (a.isPublished?'🛍️ Yayında':'🧪 Taslak') + ' · <span style="font-family:\\'Space Mono\\',monospace">' + escapeHtml(a.slug) + '</span></div>'
+      + '</div>'
+      + '<div class="mini"><canvas id="mini_'+a.id.replace(/[^a-zA-Z0-9]/g,'_')+'" width="32" height="36"></canvas></div>'
+      + '</div></div>';
+  });
+  wrap.innerHTML = html;
+  setTimeout(studioRenderMinis, 0);
+}
+
+function studioSelectAsset(id) {
+  _studio.selectedAssetId = id;
+  var a = _studio.assets.find(function(x){ return x.id === id; });
+  if (!a) return;
+  document.getElementById('studioName').value = a.name || '';
+  document.getElementById('studioSlug').value = a.slug || '';
+  if (_studio.type !== 'avatar') {
+    _studio.palette = a.palette || _studio.palette;
+    studioBuildPalette();
+    if (a.pixels && a.pixels.length === 18) {
+      for (var y=0;y<18;y++){
+        var row = (a.pixels[y] || '').padEnd(16,'.').slice(0,16);
+        for (var x=0;x<16;x++) _studio.grid[y][x] = row[x];
+      }
+    }
+    studioRenderPxGrid();
+  } else {
+    var p = a.avatarPreset || {};
+    if (document.getElementById('studioAvatarSkin')) document.getElementById('studioAvatarSkin').value = p.skinTone || 'fair';
+    if (document.getElementById('studioAvatarHair')) document.getElementById('studioAvatarHair').value = p.hairStyle || 'short';
+    if (document.getElementById('studioAvatarHairColor')) document.getElementById('studioAvatarHairColor').value = p.hairColor || 'black';
+    if (document.getElementById('studioAvatarEye')) document.getElementById('studioAvatarEye').value = p.eyeColor || 'dark';
+    if (document.getElementById('studioAvatarOutfit')) document.getElementById('studioAvatarOutfit').value = p.outfitStyle || 'tshirt';
+    if (document.getElementById('studioAvatarOutfitColor')) document.getElementById('studioAvatarOutfitColor').value = p.outfitColor || 'blue';
+  }
+  studioSetStatus(a.isPublished ? 'PUBLISHED' : 'DRAFT');
+  studioRenderAssetsList();
+  studioRenderDemo();
+}
+
+function studioGetDraftPayload() {
+  var name = (document.getElementById('studioName').value || '').trim();
+  var slug = (document.getElementById('studioSlug').value || '').trim();
+  if (!name) throw new Error('Ad zorunlu.');
+  if (!slug) throw new Error('Kod (slug) zorunlu.');
+  if (!/^[a-z0-9_]{2,40}$/.test(slug)) throw new Error('Kod sadece harf/rakam/alt-çizgi olmalı (2-40).');
+
+  var payload = {
+    type: _studio.type,
+    name: name,
+    slug: slug,
+    updatedAt: new Date().toISOString(),
+    updatedByUid: _adminUser ? _adminUser.uid : null
+  };
+  if (_studio.type === 'avatar') {
+    payload.avatarPreset = {
+      skinTone: document.getElementById('studioAvatarSkin').value,
+      hairStyle: document.getElementById('studioAvatarHair').value,
+      hairColor: document.getElementById('studioAvatarHairColor').value,
+      eyeColor: document.getElementById('studioAvatarEye').value,
+      outfitStyle: document.getElementById('studioAvatarOutfit').value,
+      outfitColor: document.getElementById('studioAvatarOutfitColor').value
+    };
+  } else {
+    payload.palette = _studio.palette.slice(0, 8);
+    payload.pixels = _studio.grid.map(function(row){ return row.join(''); });
+  }
+  return payload;
+}
+
+function studioSaveDraft() {
+  if (!_db) return;
+  var msg = document.getElementById('studioSaveMsg');
+  try {
+    var payload = studioGetDraftPayload();
+    payload.isPublished = false;
+    payload.createdAt = payload.createdAt || new Date().toISOString();
+    msg.textContent = 'Kaydediliyor...'; msg.style.color = 'var(--muted)';
+    var ref = _studio.selectedAssetId ? _db.collection('studioAssets').doc(_studio.selectedAssetId) : _db.collection('studioAssets').doc();
+    if (!_studio.selectedAssetId) _studio.selectedAssetId = ref.id;
+    ref.set(payload, { merge: true }).then(function(){
+      msg.textContent = '✅ Taslak kaydedildi.'; msg.style.color = 'var(--admin)';
+      studioSetStatus('DRAFT');
+      studioReloadAssets();
+    }).catch(function(e){
+      msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
+    });
+  } catch (e) {
+    msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
+  }
+}
+
+function studioPublish() {
+  if (!_db) return;
+  var msg = document.getElementById('studioSaveMsg');
+  try {
+    var payload = studioGetDraftPayload();
+    payload.isPublished = true;
+    payload.publishedAt = new Date().toISOString();
+    msg.textContent = 'Yayınlanıyor...'; msg.style.color = 'var(--muted)';
+    var ref = _studio.selectedAssetId ? _db.collection('studioAssets').doc(_studio.selectedAssetId) : _db.collection('studioAssets').doc();
+    if (!_studio.selectedAssetId) _studio.selectedAssetId = ref.id;
+    ref.set(payload, { merge: true }).then(function(){
+      msg.textContent = '🛍️ Yayınlandı! (Mağaza sayfası bu asset’i okuyacak)'; msg.style.color = '#34d399';
+      studioSetStatus('PUBLISHED');
+      studioReloadAssets();
+      showToast('✅ Mağazada yayınlandı');
+    }).catch(function(e){
+      msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
+    });
+  } catch (e) {
+    msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
+  }
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, function(m){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+  });
+}
+
+// ── PAX (mini) renderer for studio previews ──
+var STUDIO_PAX = (function(){
+  var P = {
+    W:16,H:18,
+    SKINS:{light:'#FFD5B8',fair:'#F4A574',olive:'#D4906A',tan:'#C07040',brown:'#8B5523',dark:'#5C3318'},
+    HAIR:{black:'#1C1410',darkbrown:'#3D200E',brown:'#6B3520',auburn:'#8B2515',red:'#CC2200',orange:'#D05020',blonde:'#D4A83A',platinum:'#D8D0B8',blue:'#2244BB',pink:'#CC4488',teal:'#228888',gray:'#8A8A8A'},
+    EYES:{dark:'#2A180A',brown:'#6B3520',blue:'#2277BB',green:'#227744',teal:'#226688',amber:'#8B5520'},
+    OUTFIT:{blue:'#2255CC',red:'#CC2222',green:'#228833',purple:'#7733BB',gray:'#667788',gold:'#CC8822',black:'#2A2A3A',pink:'#CC4488',white:'#99AABB',teal:'#228899',orange:'#CC5522'},
+    L:{
+      skin:['________________','________________','________________','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSSS___','___SSSSSSSSS____','____SSSSSSSS____','____SSSSSSS_____','_____SSSSSS_____','_____SSSS_______','_____SSSS_______','_____SSSS_______','________________','________________','________________'],
+      eyes:['________________','________________','________________','________________','________________','____WWW__WWW____','____WEW__WEW____','____WWW__WWW____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'face-female':['________________','________________','________________','________________','____CCC__CCC____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'expr-neutral':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-short':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'outfit-tshirt':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_']
+    },
+    fromDemo:function(d){
+      var base = d && d.avatarPreset ? d.avatarPreset : {};
+      return {
+        skinTone: base.skinTone || 'fair',
+        hairStyle: base.hairStyle || 'short',
+        hairColor: base.hairColor || 'black',
+        eyeColor: base.eyeColor || 'dark',
+        outfitStyle: base.outfitStyle || 'tshirt',
+        outfitColor: base.outfitColor || 'blue',
+        avatarType: d.avatarType || 'male',
+        expression: d.expression || 'neutral',
+        studioAccessoryId: d.accessoryId || null
+      };
+    },
+    buildStudioLayer:function(pixels, palette){
+      var rows = pixels.map(function(r){ return (r||'').padEnd(16,'.').slice(0,16); });
+      return rows.map(function(r){
+        var out = '';
+        for (var i=0;i<r.length;i++){
+          var ch = r[i];
+          out += (ch==='.' ? '_' : ch);
+        }
+        return out;
+      });
+    },
+    draw:function(canvas, opts, pixelsForExpr, exprPalette, pixelsForAcc, accPalette){
+      var sc=4;
+      var ctx=canvas.getContext('2d');
+      canvas.width=P.W*sc; canvas.height=P.H*sc;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      var sk=P.SKINS[opts.skinTone]||P.SKINS.fair;
+      var hr=P.HAIR[opts.hairColor]||P.HAIR.black;
+      var ey=P.EYES[opts.eyeColor]||P.EYES.dark;
+      var ot=P.OUTFIT[opts.outfitColor]||P.OUTFIT.blue;
+      var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,C:'#1C1410'};
+      var palette = (exprPalette && exprPalette.length) ? exprPalette : _studio.palette;
+      for (var pi=0;pi<8;pi++){
+        cm[String.fromCharCode('a'.charCodeAt(0)+pi)] = palette[pi] || '#ffffff';
+      }
+      var accPal = (accPalette && accPalette.length) ? accPalette : _studio.palette;
+      for (var pj=0;pj<8;pj++){
+        cm[String.fromCharCode('a'.charCodeAt(0)+pj)] = cm[String.fromCharCode('a'.charCodeAt(0)+pj)] || accPal[pj] || '#ffffff';
+      }
+      // Prepare custom layers if needed
+      if (pixelsForExpr) P.L['expr-'+opts.expression] = P.buildStudioLayer(pixelsForExpr, palette);
+      if (pixelsForAcc && opts.studioAccessoryId) P.L['acc-'+opts.studioAccessoryId] = P.buildStudioLayer(pixelsForAcc, accPal);
+
+      var ord=[
+        'outfit-'+(opts.outfitStyle||'tshirt'),
+        'skin',
+        'hair-'+(opts.hairStyle||'short'),
+        'eyes',
+        'expr-'+(opts.expression||'neutral'),
+        opts.avatarType==='female'?'face-female':null,
+        opts.studioAccessoryId ? ('acc-'+opts.studioAccessoryId) : null
+      ];
+      ord.forEach(function(ln){
+        if(!ln) return;
+        var layer=P.L[ln]; if(!layer||!layer.length) return;
+        layer.forEach(function(row,y){
+          for(var x=0;x<row.length;x++){
+            var ch=row[x]; if(ch==='_') continue;
+            var c=cm[ch]; if(!c) continue;
+            ctx.fillStyle=c; ctx.fillRect(x*sc,y*sc,sc,sc);
+          }
+        });
+      });
+    }
+  };
+  return P;
+})();
+
+function studioRenderMinis() {
+  _studio.assets.filter(function(a){ return a.type === _studio.type; }).forEach(function(a){
+    var id = 'mini_'+a.id.replace(/[^a-zA-Z0-9]/g,'_');
+    var c = document.getElementById(id);
+    if (!c) return;
+    var demo = { avatarType:'male', expression:'neutral', accessoryId:null, avatarPreset:null };
+    if (a.type==='expression') demo.expression = a.slug;
+    if (a.type==='accessory') demo.accessoryId = a.slug;
+    if (a.type==='avatar') demo.avatarPreset = a.avatarPreset || null;
+    STUDIO_PAX.draw(c, STUDIO_PAX.fromDemo(demo), a.type==='expression'?a.pixels:null, a.palette, a.type==='accessory'?a.pixels:null, a.palette);
+  });
+}
+
+function studioRenderDemo() {
+  var c = document.getElementById('studioDemoCanvas');
+  if (!c) return;
+  var demo = _studio.demo;
+  var exprPixels = null, exprPal = null, accPixels = null, accPal = null;
+
+  // If current editor is expression/accessory, preview live edits
+  if (_studio.type === 'expression') {
+    demo.expression = (document.getElementById('studioSlug').value || '').trim() || 'neutral';
+    exprPixels = _studio.grid.map(function(r){ return r.join(''); });
+    exprPal = _studio.palette;
+  } else if (_studio.type === 'accessory') {
+    demo.accessoryId = (document.getElementById('studioSlug').value || '').trim() || 'acc_demo';
+    accPixels = _studio.grid.map(function(r){ return r.join(''); });
+    accPal = _studio.palette;
+  } else if (_studio.type === 'avatar') {
+    // keep demo preset from fields if exists
+  }
+
+  // If selected published draft exists, let demo use that (when applied)
+  var appliedExpr = demo.expression;
+  var appliedAcc = demo.accessoryId;
+  if (!exprPixels && appliedExpr && appliedExpr !== 'neutral') {
+    var a1 = _studio.assets.find(function(x){ return x.type==='expression' && x.slug===appliedExpr; });
+    if (a1 && a1.pixels) { exprPixels = a1.pixels; exprPal = a1.palette; }
+  }
+  if (!accPixels && appliedAcc) {
+    var a2 = _studio.assets.find(function(x){ return x.type==='accessory' && x.slug===appliedAcc; });
+    if (a2 && a2.pixels) { accPixels = a2.pixels; accPal = a2.palette; }
+  }
+
+  STUDIO_PAX.draw(c, STUDIO_PAX.fromDemo(demo), exprPixels, exprPal, accPixels, accPal);
+}
 </script>
 </body>
 </html>
