@@ -4932,6 +4932,10 @@ function onUserLoggedIn(user) {
     if (!_userProfil.onboardingDone) {
       setTimeout(function(){ showOnboardingModal(); }, 1500);
     }
+  }).catch(function(e) {
+    console.warn('Kullanıcı verisi okunamadı:', e);
+    try { _fbAuth && _fbAuth.signOut && _fbAuth.signOut(); } catch(_) {}
+    try { window.location.href = 'index.html'; } catch(_) {}
   });
 }
 

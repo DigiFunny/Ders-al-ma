@@ -516,6 +516,16 @@ function checkAdminAccess(user) {
     loadStats();
     loadListings();
     studioInit();
+  }).catch(function(e) {
+    // Fail closed instead of hanging on overlay
+    try { showToast('❌ Giriş doğrulanamadı'); } catch(_) {}
+    var msgEl = document.getElementById('loginMsg');
+    if (msgEl) {
+      msgEl.textContent = 'Giriş doğrulanamadı: ' + (e && e.message ? e.message : 'Bilinmeyen hata');
+      msgEl.style.color = '#ef4444';
+    }
+    try { document.getElementById('loginOverlay').style.display = 'flex'; } catch(_) {}
+    try { _auth && _auth.signOut && _auth.signOut(); } catch(_) {}
   });
 }
 
@@ -998,7 +1008,7 @@ function studioRenderAssetsList() {
     html += '<div class="asset' + (sel?' sel':'') + '" onclick="studioSelectAsset(\''+a.id+'\')">'
       + '<div class="asset-top"><div>'
       + '<div class="asset-name">' + escapeHtml(a.name) + '</div>'
-      + '<div class="asset-meta">' + (a.isPublished?'🛍️ Yayında':'🧪 Taslak') + ' · <span style="font-family:\\'Space Mono\\',monospace">' + escapeHtml(a.slug) + '</span></div>'
+      + '<div class="asset-meta">' + (a.isPublished?'🛍️ Yayında':'🧪 Taslak') + ' · <span style="font-family:\'Space Mono\',monospace">' + escapeHtml(a.slug) + '</span></div>'
       + '</div>'
       + '<div class="mini"><canvas id="mini_'+a.id.replace(/[^a-zA-Z0-9]/g,'_')+'" width="32" height="36"></canvas></div>'
       + '</div></div>';

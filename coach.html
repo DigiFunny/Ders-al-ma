@@ -842,6 +842,10 @@ function loadCoachProfile() {
     var studentsBtn = document.getElementById('studentsTabBtn');
     if (studentsBtn) studentsBtn.classList.add('active');
     loadAllData();
+  }).catch(function(e) {
+    console.warn('Koç profili okunamadı:', e);
+    try { _auth && _auth.signOut && _auth.signOut(); } catch(_) {}
+    try { window.location.href = 'index.html'; } catch(_) {}
   });
 }
 
