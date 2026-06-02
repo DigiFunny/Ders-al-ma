@@ -1187,6 +1187,8 @@ function checkAccountTypeAndRedirect(user){
     hideLoading();
     if(!doc.exists){showScreen('screenAuth');showStep2ForNewGoogleUser(user);return;}
     var d=doc.data();
+    // Admin hesabı her zaman direkt admin paneline gitmeli
+    if(d.isAdmin===true){window.location.href='admin.html';return;}
     if(d.accountType==='coach'){window.location.href='coach.html';return;}
     // Mevcut kullanıcı: onboarding tamamlandı mı?
     if(!d.onboardingDone && !d.kpssProfile){

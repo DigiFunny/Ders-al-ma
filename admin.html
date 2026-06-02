@@ -114,6 +114,18 @@ input:focus { border-color: var(--admin); }
 .hint { font-size:0.72rem; font-weight:800; color: var(--muted); line-height:1.5; }
 .fade-in { animation: fadeIn .18s ease both; }
 @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:none; } }
+.studio-profile-card{background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(129,140,248,.12));border:1.5px solid rgba(129,140,248,.35);border-radius:16px;padding:12px;display:flex;align-items:center;gap:10px}
+.studio-profile-avatar{width:72px;height:72px;border-radius:16px;background:rgba(0,0,0,.25);border:1.5px solid rgba(226,232,240,.15);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.studio-profile-avatar canvas{image-rendering:pixelated;image-rendering:crisp-edges}
+.tool-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool-block{background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:10px}
+.rgb-wrap{display:grid;grid-template-columns:1fr;gap:6px}
+.slider{width:100%}
+.paint-wrap{background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:10px}
+.paint-canvas-wrap{display:flex;justify-content:center;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px}
+.paint-canvas{width:320px;height:360px;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:crosshair}
+.mode-pill{padding:8px 10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:900;font-size:.72rem;cursor:pointer}
+.mode-pill.active{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.1);color:var(--accent)}
 </style>
 </head>
 <body>
@@ -295,85 +307,71 @@ input:focus { border-color: var(--admin); }
         </div>
       </div>
 
-      <div class="studio-top" style="margin-top:10px">
-        <div class="studio-card" style="padding:12px">
-          <div class="studio-h" style="margin-bottom:8px"><div>🧪 Demo Profil Kartı</div></div>
-          <div class="demo-card">
-            <div class="demo-avatar"><canvas id="studioDemoCanvas"></canvas></div>
-            <div class="demo-info">
-              <div class="demo-title" id="studioDemoTitle">Demo Öğrenci</div>
-              <div class="demo-sub" id="studioDemoSub">Seçtiğin yüz ifadesi/aksesuarı avatara uygula ve görünümü kontrol et.</div>
-            </div>
+      <div class="studio-profile-card" style="margin-top:10px">
+        <div class="studio-profile-avatar"><canvas id="studioDemoCanvas"></canvas></div>
+        <div style="flex:1">
+          <div style="font-size:.92rem;font-weight:900">Demo Profil Kartı</div>
+          <div style="font-size:.7rem;color:var(--muted);font-weight:800;line-height:1.5">Öğrenci kartındaki görünümün canlı önizlemesi. Tüm çizimler bu avatara anlık uygulanır.</div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-admin" style="padding:8px 10px;border-radius:10px" onclick="studioSetTestAvatar('male')">👦 Erkek</button>
+            <button class="btn btn-admin" style="padding:8px 10px;border-radius:10px" onclick="studioSetTestAvatar('female')">👧 Kız</button>
           </div>
-          <div class="hint" style="margin-top:10px">
-            İpucu: Stüdyoda tasarladığın yüz ifadesi/aksesuar <b>tüm avatarlarla</b> uyumlu olur. Avatar tasarlarsan, mevcut tüm aksesuar ve yüz ifadelerini ona uygulayarak test edebilirsin.
-          </div>
-        </div>
-
-        <div class="studio-card" style="padding:12px">
-          <div class="studio-h" style="margin-bottom:8px"><div>🧷 Test Ayarları</div></div>
-          <div class="field">
-            <div class="lbl">Test Avatarı</div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-admin" style="flex:1;padding:10px;border-radius:12px" onclick="studioSetTestAvatar('male')">👦 Erkek</button>
-              <button class="btn btn-admin" style="flex:1;padding:10px;border-radius:12px" onclick="studioSetTestAvatar('female')">👧 Kız</button>
-            </div>
-          </div>
-          <div class="field" style="margin-top:10px">
-            <div class="lbl">Uygula</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-              <button class="btn btn-approve" style="padding:10px;border-radius:12px" onclick="studioApplySelectedToDemo()">✓ Seçileni Uygula</button>
-              <button class="btn btn-reject" style="padding:10px;border-radius:12px" onclick="studioClearDemo()">⟲ Sıfırla</button>
-            </div>
-          </div>
-          <div class="help" style="margin-top:10px">Aşağıdaki listeden daha önce tasarlanmış yüz ifadelerini/aksesuarları seçip demoda dene.</div>
         </div>
       </div>
 
       <div class="studio-split" style="margin-top:10px">
         <div class="studio-card" style="padding:12px">
-          <div class="studio-h" style="margin-bottom:8px"><div>🧩 Tasarım Alanı</div></div>
-
-          <div id="studioEditorExpressionAccessory">
-            <div class="field">
-              <div class="lbl">Renk Paleti</div>
-              <div class="palette" id="studioPalette"></div>
-              <div class="help">Sol tık: boya · Tekrar tık: sil</div>
+          <div class="studio-h" style="margin-bottom:8px"><div>🧩 Tasarım Alanı</div><span class="help" id="studioToolLabel">Kalem</span></div>
+          <div class="tool-row">
+            <div class="tool-block">
+              <div class="lbl" style="margin-bottom:6px">Araç</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button id="studioPenBtn" class="mode-pill active" onclick="studioSetTool('pen')">✏️ Kalem</button>
+                <button id="studioEraseBtn" class="mode-pill" onclick="studioSetTool('erase')">🧽 Silgi</button>
+                <button id="studioFillBtn" class="mode-pill" onclick="studioSetTool('fill')">🪣 Dolgu</button>
+              </div>
+              <div class="help" style="margin-top:8px">Silgi yalnızca sonradan çizilen pikselleri siler; temel avatarı silemez.</div>
             </div>
-            <div class="grid-wrap" style="margin-top:10px">
-              <div class="px-grid" id="studioPxGrid"></div>
-            </div>
-            <div class="studio-actions" style="margin-top:10px">
-              <button class="btn-ghost" onclick="studioFillClear()">🧽 Temizle</button>
-              <button class="btn-ghost" onclick="studioMirror()">🪞 Yatay Aynala</button>
+            <div class="tool-block">
+              <div class="lbl" style="margin-bottom:6px">Boyut</div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <input id="studioBrushSize" class="slider" type="range" min="1" max="4" value="1" oninput="studioUpdateBrushSize()">
+                <span id="studioBrushSizeVal" style="font-size:.72rem;font-weight:900;color:var(--muted)">1px</span>
+              </div>
+              <div class="studio-actions" style="margin-top:8px">
+                <button class="btn-ghost" onclick="studioMirror()">🪞 Yatay</button>
+                <button class="btn-ghost" onclick="studioMirrorVertical()">🔁 Dikey</button>
+              </div>
             </div>
           </div>
-
-          <div id="studioEditorAvatar" style="display:none">
-            <div class="help" style="margin-bottom:10px">Avatar tasarımı bu sürümde “preset” mantığıyla çalışır (ten/saç/göz/kıyafet + varsayılan ifade). Yayınlanan avatar mağazada “Karakter” sekmesinde görünür.</div>
-            <div class="row">
-              <div class="field"><div class="lbl">Ten</div><select class="input" id="studioAvatarSkin">
-                <option value="fair">Bej</option><option value="light">Açık</option><option value="olive">Zeytin</option><option value="tan">Bronz</option><option value="brown">Kahve</option><option value="dark">Koyu</option>
-              </select></div>
-              <div class="field"><div class="lbl">Saç Stili</div><select class="input" id="studioAvatarHair">
-                <option value="short">Kısa</option><option value="afro">Afro</option><option value="fringe">Perçemli</option><option value="shoulder">Omuz Boy</option><option value="long">Uzun</option><option value="spiky">Sivri</option><option value="bob">Bob</option><option value="bun">Topuz</option><option value="wavylong">Dalgalı Uzun</option><option value="twintails">İki Örgü</option><option value="shouldercurly">Kıvırcık Omuz</option><option value="longstraight">Uzun Düz</option><option value="curlybob">Kıvırcık Bob</option>
-              </select></div>
-              <div class="field"><div class="lbl">Saç Rengi</div><select class="input" id="studioAvatarHairColor">
-                <option value="black">Siyah</option><option value="darkbrown">Koyu Kahve</option><option value="brown">Kahve</option><option value="red">Kızıl</option><option value="blonde">Sarı</option><option value="orange">Turuncu</option><option value="blue">Mavi</option><option value="pink">Pembe</option><option value="teal">Teal</option><option value="platinum">Platin</option><option value="gray">Gri</option>
-              </select></div>
-              <div class="field"><div class="lbl">Göz</div><select class="input" id="studioAvatarEye">
-                <option value="dark">Koyu</option><option value="brown">Kahve</option><option value="blue">Mavi</option><option value="green">Yeşil</option><option value="teal">Teal</option><option value="amber">Kehribar</option>
-              </select></div>
-              <div class="field"><div class="lbl">Kıyafet</div><select class="input" id="studioAvatarOutfit">
-                <option value="tshirt">Tişört</option><option value="vneck">V-Yaka</option><option value="hoodie">Hoodie</option><option value="jacket">Ceket</option>
-              </select></div>
-              <div class="field"><div class="lbl">Kıyafet Rengi</div><select class="input" id="studioAvatarOutfitColor">
-                <option value="blue">Mavi</option><option value="red">Kırmızı</option><option value="green">Yeşil</option><option value="purple">Mor</option><option value="gray">Gri</option><option value="gold">Altın</option><option value="black">Siyah</option><option value="pink">Pembe</option><option value="white">Beyaz</option><option value="teal">Teal</option><option value="orange">Turuncu</option>
-              </select></div>
+          <div class="tool-row" style="margin-top:8px">
+            <div class="tool-block">
+              <div class="lbl" style="margin-bottom:6px">RGB</div>
+              <div class="rgb-wrap">
+                <input id="studioR" class="slider" type="range" min="0" max="255" value="56" oninput="studioRgbChanged()">
+                <input id="studioG" class="slider" type="range" min="0" max="255" value="189" oninput="studioRgbChanged()">
+                <input id="studioB" class="slider" type="range" min="0" max="255" value="248" oninput="studioRgbChanged()">
+              </div>
             </div>
-            <div class="studio-actions" style="margin-top:10px">
-              <button class="btn-ghost" onclick="studioApplyAvatarFieldsToDemo()">👁️ Demoda Gör</button>
+            <div class="tool-block">
+              <div class="lbl" style="margin-bottom:6px">Renk Kodu</div>
+              <input id="studioHex" class="input" value="#38bdf8" oninput="studioHexChanged()" maxlength="7">
+              <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+                <div id="studioColorPreview" style="width:24px;height:24px;border-radius:8px;border:1px solid var(--border);background:#38bdf8"></div>
+                <div class="help">Palet ve hex senkron çalışır.</div>
+              </div>
             </div>
+          </div>
+          <div class="palette" id="studioPalette" style="margin-top:8px"></div>
+          <div class="paint-wrap" style="margin-top:8px">
+            <div class="paint-canvas-wrap">
+              <canvas id="studioPaintCanvas" class="paint-canvas" width="160" height="180"></canvas>
+            </div>
+          </div>
+          <div class="studio-actions" style="margin-top:8px">
+            <button class="btn-ghost" onclick="studioFillClear()">🧹 Değişiklikleri Sıfırla</button>
+            <button class="btn-ghost" onclick="studioApplySelectedToDemo()">✓ Seçileni Demoya Uygula</button>
+            <button class="btn-ghost" onclick="studioClearDemo()">⟲ Demo Sıfırla</button>
           </div>
         </div>
 
@@ -455,6 +453,10 @@ var _studio = {
   palette: ['#e2e8f0','#38bdf8','#818cf8','#34d399','#fbbf24','#fb923c','#f472b6','#111827'],
   activeColorIdx: 1,
   grid: null, // 18 x 16 char matrix: '.' empty, 'a'..'h' color index
+  baseMask: null,
+  tool: 'pen',
+  brushSize: 1,
+  isDrawing: false,
   selectedAssetId: null,
   assets: [],
   demo: { avatarType:'male', expression:'neutral', accessoryId:null, avatarPreset:null }
@@ -1261,6 +1263,263 @@ function studioRenderDemo() {
   }
 
   STUDIO_PAX.draw(c, STUDIO_PAX.fromDemo(demo), exprPixels, exprPal, accPixels, accPal);
+}
+
+// ---- Studio Revize Overrides ----
+function studioSetTool(tool) {
+  _studio.tool = tool;
+  ['studioPenBtn','studioEraseBtn','studioFillBtn'].forEach(function(id){ var e=document.getElementById(id); if(e) e.classList.remove('active'); });
+  if (tool === 'pen' && document.getElementById('studioPenBtn')) document.getElementById('studioPenBtn').classList.add('active');
+  if (tool === 'erase' && document.getElementById('studioEraseBtn')) document.getElementById('studioEraseBtn').classList.add('active');
+  if (tool === 'fill' && document.getElementById('studioFillBtn')) document.getElementById('studioFillBtn').classList.add('active');
+  var lbl = document.getElementById('studioToolLabel');
+  if (lbl) lbl.textContent = tool === 'pen' ? 'Kalem' : tool === 'erase' ? 'Silgi' : 'Dolgu';
+}
+
+function studioUpdateBrushSize() {
+  var v = parseInt((document.getElementById('studioBrushSize')||{}).value || '1', 10);
+  _studio.brushSize = Math.max(1, Math.min(4, v));
+  var t = document.getElementById('studioBrushSizeVal');
+  if (t) t.textContent = _studio.brushSize + 'px';
+}
+
+function studioRgbChanged() {
+  var r = parseInt(document.getElementById('studioR').value, 10) || 0;
+  var g = parseInt(document.getElementById('studioG').value, 10) || 0;
+  var b = parseInt(document.getElementById('studioB').value, 10) || 0;
+  var hex = '#' + [r,g,b].map(function(v){ var s=v.toString(16); return s.length===1?'0'+s:s; }).join('');
+  document.getElementById('studioHex').value = hex;
+  _studio.palette[_studio.activeColorIdx] = hex;
+  studioBuildPalette();
+}
+
+function studioHexChanged() {
+  var h = (document.getElementById('studioHex').value || '').trim();
+  if (!/^#[0-9a-fA-F]{6}$/.test(h)) return;
+  _studio.palette[_studio.activeColorIdx] = h.toLowerCase();
+  var r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16);
+  document.getElementById('studioR').value = r;
+  document.getElementById('studioG').value = g;
+  document.getElementById('studioB').value = b;
+  studioBuildPalette();
+}
+
+function studioBuildBaseMask() {
+  _studio.baseMask = [];
+  var base = STUDIO_PAX.fromDemo(_studio.demo);
+  var c = document.createElement('canvas');
+  STUDIO_PAX.draw(c, base, null, null, null, null);
+  var ctx = c.getContext('2d');
+  var data = ctx.getImageData(0,0,c.width,c.height).data;
+  // canvas 64x72 (16*4 x 18*4). map to 16x18
+  for (var y=0;y<18;y++){
+    var row=[];
+    for (var x=0;x<16;x++){
+      var px = ((y*4+1) * c.width + (x*4+1)) * 4 + 3;
+      row.push(data[px] > 0);
+    }
+    _studio.baseMask.push(row);
+  }
+}
+
+function studioPaintAt(cx, cy) {
+  if (!_studio.grid) return;
+  var colorChar = String.fromCharCode('a'.charCodeAt(0) + _studio.activeColorIdx);
+  var size = _studio.brushSize || 1;
+  for (var dy=0;dy<size;dy++){
+    for (var dx=0;dx<size;dx++){
+      var x = cx + dx, y = cy + dy;
+      if (x<0||x>15||y<0||y>17) continue;
+      if (_studio.tool === 'erase') {
+        // temel avatarı silemez, sadece overlay noktaları siler
+        if (_studio.grid[y][x] !== '.') _studio.grid[y][x] = '.';
+      } else {
+        _studio.grid[y][x] = colorChar;
+      }
+    }
+  }
+}
+
+function studioFloodFill(x, y) {
+  var target = _studio.grid[y][x];
+  var rep = String.fromCharCode('a'.charCodeAt(0) + _studio.activeColorIdx);
+  if (target === rep) return;
+  var q=[[x,y]], seen={};
+  while(q.length){
+    var p=q.shift(), px=p[0], py=p[1], key=px+'_'+py;
+    if (seen[key]) continue; seen[key]=1;
+    if (px<0||px>15||py<0||py>17) continue;
+    if (_studio.grid[py][px] !== target) continue;
+    _studio.grid[py][px] = rep;
+    q.push([px+1,py],[px-1,py],[px,py+1],[px,py-1]);
+  }
+}
+
+function studioBindPaintCanvas() {
+  var c = document.getElementById('studioPaintCanvas');
+  if (!c) return;
+  var getCell = function(ev){
+    var r = c.getBoundingClientRect();
+    var x = Math.floor((ev.clientX - r.left) / (r.width / 16));
+    var y = Math.floor((ev.clientY - r.top) / (r.height / 18));
+    return {x:Math.max(0,Math.min(15,x)), y:Math.max(0,Math.min(17,y))};
+  };
+  c.onpointerdown = function(ev){
+    ev.preventDefault();
+    _studio.isDrawing = true;
+    var p = getCell(ev);
+    if (_studio.tool === 'fill') studioFloodFill(p.x,p.y);
+    else studioPaintAt(p.x,p.y);
+    studioRenderDemo();
+  };
+  c.onpointermove = function(ev){
+    if (!_studio.isDrawing || _studio.tool === 'fill') return;
+    var p = getCell(ev);
+    studioPaintAt(p.x,p.y);
+    studioRenderDemo();
+  };
+  window.addEventListener('pointerup', function(){ _studio.isDrawing = false; });
+}
+
+function studioRenderDemo() {
+  var c = document.getElementById('studioDemoCanvas');
+  if (!c) return;
+  var demo = _studio.demo;
+  var exprPixels = null, exprPal = null, accPixels = null, accPal = null;
+
+  if (_studio.type === 'expression') {
+    demo.expression = (document.getElementById('studioSlug').value || '').trim() || 'neutral';
+    exprPixels = _studio.grid.map(function(r){ return r.join(''); });
+    exprPal = _studio.palette;
+  } else if (_studio.type === 'accessory') {
+    demo.accessoryId = (document.getElementById('studioSlug').value || '').trim() || 'acc_demo';
+    accPixels = _studio.grid.map(function(r){ return r.join(''); });
+    accPal = _studio.palette;
+  } else if (_studio.type === 'avatar') {
+    // avatar çiziminde overlay aksesuar gibi gösterilir
+    demo.accessoryId = (document.getElementById('studioSlug').value || '').trim() || 'avatar_overlay';
+    accPixels = _studio.grid.map(function(r){ return r.join(''); });
+    accPal = _studio.palette;
+  }
+
+  STUDIO_PAX.draw(c, STUDIO_PAX.fromDemo(demo), exprPixels, exprPal, accPixels, accPal);
+
+  var pc = document.getElementById('studioPaintCanvas');
+  if (pc) {
+    STUDIO_PAX.draw(pc, STUDIO_PAX.fromDemo(demo), null, null, null, null);
+    var pctx = pc.getContext('2d');
+    for (var y=0;y<18;y++){
+      for (var x=0;x<16;x++){
+        var ch = _studio.grid[y][x];
+        if (ch === '.') continue;
+        var idx = ch.charCodeAt(0)-'a'.charCodeAt(0);
+        pctx.fillStyle = _studio.palette[idx] || '#ffffff';
+        pctx.fillRect(x*10, y*10, 10, 10);
+      }
+    }
+    pctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    for (var gx=0; gx<=16; gx++){ pctx.beginPath(); pctx.moveTo(gx*10,0); pctx.lineTo(gx*10,180); pctx.stroke(); }
+    for (var gy=0; gy<=18; gy++){ pctx.beginPath(); pctx.moveTo(0,gy*10); pctx.lineTo(160,gy*10); pctx.stroke(); }
+  }
+}
+
+function studioSetType(type, btn) {
+  _studio.type = type;
+  document.querySelectorAll('#studioTypeSeg button').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  _studio.selectedAssetId = null;
+  studioSetStatus('DRAFT');
+  studioFillClear();
+  studioRenderAssetsList();
+}
+
+function studioInit() {
+  if (!_db) return;
+  studioResetGrid();
+  studioBuildPalette();
+  studioWireSlugAuto();
+  studioReloadAssets();
+  studioBuildBaseMask();
+  studioBindPaintCanvas();
+  studioSetTool('pen');
+  studioUpdateBrushSize();
+  studioHexChanged();
+  studioRenderAll();
+}
+
+function studioMirrorVertical() {
+  for (var x=0;x<16;x++){
+    for (var y=0;y<9;y++){
+      var t = _studio.grid[y][x];
+      _studio.grid[y][x] = _studio.grid[17-y][x];
+      _studio.grid[17-y][x] = t;
+    }
+  }
+  studioRenderDemo();
+}
+
+function studioFillClear() {
+  for (var y=0;y<18;y++) for (var x=0;x<16;x++) _studio.grid[y][x]='.';
+  studioRenderDemo();
+}
+
+function studioBuildPalette() {
+  var wrap = document.getElementById('studioPalette');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  _studio.palette.forEach(function(hex, idx){
+    var sw = document.createElement('div');
+    sw.className = 'sw' + (idx===_studio.activeColorIdx ? ' active' : '');
+    sw.title = hex;
+    sw.innerHTML = '<div class="dot" style="background:'+hex+'"></div>';
+    sw.onclick = function(){
+      _studio.activeColorIdx = idx;
+      document.getElementById('studioHex').value = hex;
+      studioHexChanged();
+      studioBuildPalette();
+    };
+    wrap.appendChild(sw);
+  });
+  var cp = document.getElementById('studioColorPreview');
+  if (cp) cp.style.background = _studio.palette[_studio.activeColorIdx];
+}
+
+function studioSelectAsset(id) {
+  _studio.selectedAssetId = id;
+  var a = _studio.assets.find(function(x){ return x.id === id; });
+  if (!a) return;
+  document.getElementById('studioName').value = a.name || '';
+  document.getElementById('studioSlug').value = a.slug || '';
+  _studio.palette = a.palette || _studio.palette;
+  if (a.pixels && a.pixels.length) {
+    for (var y=0;y<18;y++){
+      var row = (a.pixels[y] || '').padEnd(16,'.').slice(0,16);
+      for (var x=0;x<16;x++) _studio.grid[y][x] = row[x];
+    }
+  } else {
+    studioFillClear();
+  }
+  studioSetStatus(a.isPublished ? 'PUBLISHED' : 'DRAFT');
+  studioBuildPalette();
+  studioRenderAssetsList();
+  studioRenderDemo();
+}
+
+function studioGetDraftPayload() {
+  var name = (document.getElementById('studioName').value || '').trim();
+  var slug = (document.getElementById('studioSlug').value || '').trim();
+  if (!name) throw new Error('Ad zorunlu.');
+  if (!slug) throw new Error('Kod (slug) zorunlu.');
+  if (!/^[a-z0-9_]{2,40}$/.test(slug)) throw new Error('Kod sadece harf/rakam/alt-çizgi olmalı (2-40).');
+  return {
+    type: _studio.type,
+    name: name,
+    slug: slug,
+    palette: _studio.palette.slice(0, 8),
+    pixels: _studio.grid.map(function(row){ return row.join(''); }),
+    updatedAt: new Date().toISOString(),
+    updatedByUid: _adminUser ? _adminUser.uid : null
+  };
 }
 </script>
 </body>
