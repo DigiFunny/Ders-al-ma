@@ -114,18 +114,20 @@ input:focus { border-color: var(--admin); }
 .hint { font-size:0.72rem; font-weight:800; color: var(--muted); line-height:1.5; }
 .fade-in { animation: fadeIn .18s ease both; }
 @keyframes fadeIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform:none; } }
-.studio-profile-card{background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(129,140,248,.12));border:1.5px solid rgba(129,140,248,.35);border-radius:16px;padding:12px;display:flex;align-items:center;gap:10px}
-.studio-profile-avatar{width:72px;height:72px;border-radius:16px;background:rgba(0,0,0,.25);border:1.5px solid rgba(226,232,240,.15);display:flex;align-items:center;justify-content:center;overflow:hidden}
-.studio-profile-avatar canvas{image-rendering:pixelated;image-rendering:crisp-edges}
-.tool-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.tool-block{background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:10px}
-.rgb-wrap{display:grid;grid-template-columns:1fr;gap:6px}
-.slider{width:100%}
-.paint-wrap{background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:10px}
-.paint-canvas-wrap{display:flex;justify-content:center;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:8px}
-.paint-canvas{width:320px;height:360px;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none;cursor:crosshair}
-.mode-pill{padding:8px 10px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text);font-weight:900;font-size:.72rem;cursor:pointer}
-.mode-pill.active{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.1);color:var(--accent)}
+/* ══ STUDIO REVISED STYLES ══ */
+.studio-profile-card{background:linear-gradient(135deg,rgba(56,189,248,0.07),rgba(129,140,248,0.07));border:1.5px solid rgba(56,189,248,0.15);border-radius:20px;padding:18px 16px;margin-bottom:12px;}
+.sec-mini{font-size:0.68rem;font-weight:900;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;margin-top:4px;}
+.tool-btn{padding:8px 11px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:900;font-size:0.74rem;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.tool-btn.active{background:rgba(245,158,11,0.14);border-color:rgba(245,158,11,0.4);color:var(--admin);}
+.tool-btn:active{transform:scale(0.94);}
+.rgb-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.rgb-lbl{font-size:0.72rem;font-weight:900;width:12px;flex-shrink:0;}
+.rgb-sl{flex:1;-webkit-appearance:none;appearance:none;height:7px;border-radius:99px;outline:none;cursor:pointer;}
+.rgb-sl::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#e2e8f0;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,0.5);}
+.rgb-val{font-family:'Space Mono',monospace;font-size:0.68rem;font-weight:700;color:var(--muted);width:26px;text-align:right;flex-shrink:0;}
+.xp-track-s{height:6px;background:var(--bg2);border-radius:99px;overflow:hidden;margin-top:5px;}
+.xp-fill-s{height:100%;width:62%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;}
+
 </style>
 </head>
 <body>
@@ -279,122 +281,213 @@ input:focus { border-color: var(--admin); }
 <div class="page" id="page-studio">
   <div class="sec" style="margin-top:8px">Avatar Tasarım Stüdyosu</div>
 
-  <div class="studio-wrap">
-    <div class="studio-card fade-in">
-      <div class="studio-h">
-        <div>🎨 Tasarla</div>
-        <span class="badge" id="studioStatusBadge">DRAFT</span>
-      </div>
-      <div class="studio-sub">
-        Mağazaya girecek yeni <b>yüz ifadesi</b>, <b>aksesuar</b> veya <b>avatar</b> tasarla. Piksel editöründe çiz, demo kartta test et, istersen mağazaya yayınla.
-      </div>
-
-      <div class="seg" id="studioTypeSeg">
-        <button type="button" class="active" onclick="studioSetType('expression',this)">🙂 Yüz İfadesi</button>
-        <button type="button" onclick="studioSetType('accessory',this)">🧩 Aksesuar</button>
-        <button type="button" onclick="studioSetType('avatar',this)">🧑 Avatar</button>
-      </div>
-
-      <div class="row" style="margin-top:10px">
-        <div class="field">
-          <div class="lbl">Ad</div>
-          <input class="input" id="studioName" placeholder="Örn: Mutlu Gülüş" maxlength="48" />
-        </div>
-        <div class="field">
-          <div class="lbl">Kod (slug)</div>
-          <input class="input" id="studioSlug" placeholder="Örn: happy_smile_v2" maxlength="40" />
-          <div class="help">Sadece harf/rakam/alt-çizgi. Mağaza ve diğer avatarlar bu kodla kullanır.</div>
+  <!-- ═══════ 1. CANLI PROFİL ÖNİZLEMESİ ═══════ -->
+  <div class="sec-mini">📱 Canlı Profil Önizlemesi — tüm değişiklikler burada yansır</div>
+  <div class="studio-profile-card fade-in">
+    <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
+      <!-- Avatar canvas (64x64 circle, 72px canvas height clipped) -->
+      <div style="position:relative;width:64px;height:64px;flex-shrink:0">
+        <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));overflow:hidden;border:2px solid rgba(56,189,248,0.25)">
+          <canvas id="studioPreviewAvatarCanvas" style="image-rendering:pixelated;image-rendering:crisp-edges;display:block"></canvas>
         </div>
       </div>
-
-      <div class="studio-profile-card" style="margin-top:10px">
-        <div class="studio-profile-avatar"><canvas id="studioDemoCanvas"></canvas></div>
-        <div style="flex:1">
-          <div style="font-size:.92rem;font-weight:900">Demo Profil Kartı</div>
-          <div style="font-size:.7rem;color:var(--muted);font-weight:800;line-height:1.5">Öğrenci kartındaki görünümün canlı önizlemesi. Tüm çizimler bu avatara anlık uygulanır.</div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="btn btn-admin" style="padding:8px 10px;border-radius:10px" onclick="studioSetTestAvatar('male')">👦 Erkek</button>
-            <button class="btn btn-admin" style="padding:8px 10px;border-radius:10px" onclick="studioSetTestAvatar('female')">👧 Kız</button>
-          </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:1.05rem;font-weight:900;margin-bottom:1px">Demo Öğrenci</div>
+        <div style="font-size:0.72rem;color:var(--muted);font-weight:700;margin-bottom:7px">@pugi_demo</div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:0.72rem;font-weight:900">Seviye 5</span>
+          <span style="font-size:0.68rem;color:var(--accent);font-weight:800;background:rgba(56,189,248,0.12);padding:2px 9px;border-radius:6px">Kahraman</span>
+          <span id="studioPreviewTypeBadge" style="font-size:0.62rem;font-weight:900;background:rgba(245,158,11,0.12);color:var(--admin);padding:2px 8px;border-radius:6px;border:1px solid rgba(245,158,11,0.22)">Yüz İfadesi</span>
         </div>
       </div>
-
-      <div class="studio-split" style="margin-top:10px">
-        <div class="studio-card" style="padding:12px">
-          <div class="studio-h" style="margin-bottom:8px"><div>🧩 Tasarım Alanı</div><span class="help" id="studioToolLabel">Kalem</span></div>
-          <div class="tool-row">
-            <div class="tool-block">
-              <div class="lbl" style="margin-bottom:6px">Araç</div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap">
-                <button id="studioPenBtn" class="mode-pill active" onclick="studioSetTool('pen')">✏️ Kalem</button>
-                <button id="studioEraseBtn" class="mode-pill" onclick="studioSetTool('erase')">🧽 Silgi</button>
-                <button id="studioFillBtn" class="mode-pill" onclick="studioSetTool('fill')">🪣 Dolgu</button>
-              </div>
-              <div class="help" style="margin-top:8px">Silgi yalnızca sonradan çizilen pikselleri siler; temel avatarı silemez.</div>
-            </div>
-            <div class="tool-block">
-              <div class="lbl" style="margin-bottom:6px">Boyut</div>
-              <div style="display:flex;gap:8px;align-items:center">
-                <input id="studioBrushSize" class="slider" type="range" min="1" max="4" value="1" oninput="studioUpdateBrushSize()">
-                <span id="studioBrushSizeVal" style="font-size:.72rem;font-weight:900;color:var(--muted)">1px</span>
-              </div>
-              <div class="studio-actions" style="margin-top:8px">
-                <button class="btn-ghost" onclick="studioMirror()">🪞 Yatay</button>
-                <button class="btn-ghost" onclick="studioMirrorVertical()">🔁 Dikey</button>
-              </div>
-            </div>
-          </div>
-          <div class="tool-row" style="margin-top:8px">
-            <div class="tool-block">
-              <div class="lbl" style="margin-bottom:6px">RGB</div>
-              <div class="rgb-wrap">
-                <input id="studioR" class="slider" type="range" min="0" max="255" value="56" oninput="studioRgbChanged()">
-                <input id="studioG" class="slider" type="range" min="0" max="255" value="189" oninput="studioRgbChanged()">
-                <input id="studioB" class="slider" type="range" min="0" max="255" value="248" oninput="studioRgbChanged()">
-              </div>
-            </div>
-            <div class="tool-block">
-              <div class="lbl" style="margin-bottom:6px">Renk Kodu</div>
-              <input id="studioHex" class="input" value="#38bdf8" oninput="studioHexChanged()" maxlength="7">
-              <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
-                <div id="studioColorPreview" style="width:24px;height:24px;border-radius:8px;border:1px solid var(--border);background:#38bdf8"></div>
-                <div class="help">Palet ve hex senkron çalışır.</div>
-              </div>
-            </div>
-          </div>
-          <div class="palette" id="studioPalette" style="margin-top:8px"></div>
-          <div class="paint-wrap" style="margin-top:8px">
-            <div class="paint-canvas-wrap">
-              <canvas id="studioPaintCanvas" class="paint-canvas" width="160" height="180"></canvas>
-            </div>
-          </div>
-          <div class="studio-actions" style="margin-top:8px">
-            <button class="btn-ghost" onclick="studioFillClear()">🧹 Değişiklikleri Sıfırla</button>
-            <button class="btn-ghost" onclick="studioApplySelectedToDemo()">✓ Seçileni Demoya Uygula</button>
-            <button class="btn-ghost" onclick="studioClearDemo()">⟲ Demo Sıfırla</button>
-          </div>
-        </div>
-
-        <div class="studio-card" style="padding:12px">
-          <div class="studio-h" style="margin-bottom:8px">
-            <div>📦 Tasarlanmış Öğeler</div>
-            <button class="btn-ghost" style="padding:8px 10px" onclick="studioReloadAssets()">↻</button>
-          </div>
-          <div class="help" style="margin-bottom:10px">Bir öğe seç, demoya uygula veya düzenlemeye yükle.</div>
-          <div class="list" id="studioAssetsList">Yükleniyor...</div>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,146,60,0.12));border:1.5px solid rgba(251,191,36,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem">🛍️</div>
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--card);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem">⚙️</div>
       </div>
-
-      <div class="studio-card" style="padding:12px;margin-top:10px">
-        <div class="studio-h" style="margin-bottom:8px"><div>🚀 Kaydet / Yayınla</div></div>
-        <div class="studio-actions">
-          <button class="btn btn-save" style="flex:1;border-radius:12px" onclick="studioSaveDraft()">💾 Taslağı Kaydet</button>
-          <button class="btn btn-publish" style="flex:1;border-radius:12px" onclick="studioPublish()">🛍️ Mağazada Yayınla</button>
-        </div>
-        <div class="help" id="studioSaveMsg" style="margin-top:10px;min-height:18px"></div>
+    </div>
+    <!-- XP bar -->
+    <div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:0.62rem;color:var(--muted);font-weight:700">620 XP</span>
+        <span style="font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--yellow);font-weight:700">1.000 XP</span>
+        <span style="font-size:0.62rem;color:var(--muted);font-weight:700">380 XP sonraki</span>
+      </div>
+      <div class="xp-track-s"><div class="xp-fill-s"></div></div>
+    </div>
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div style="background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.15);border-radius:10px;padding:9px 8px;text-align:center">
+        <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">ARKADAŞ</div>
+        <div style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent)">12</div>
+      </div>
+      <div style="background:rgba(129,140,248,0.08);border:1px solid rgba(129,140,248,0.15);border-radius:10px;padding:9px 8px;text-align:center">
+        <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">BAŞARIM</div>
+        <div style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent2)">7</div>
+      </div>
+      <div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.15);border-radius:10px;padding:9px 8px;text-align:center">
+        <div style="font-size:0.65rem;color:var(--muted);font-weight:800;letter-spacing:0.5px;margin-bottom:3px">KOÇLARIM</div>
+        <div style="font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent3)">2</div>
       </div>
     </div>
   </div>
+
+  <!-- ═══════ 2. TİP + META ═══════ -->
+  <div class="studio-card fade-in">
+    <div class="studio-h">
+      <div>🎨 Tasarla</div>
+      <span class="badge" id="studioStatusBadge">DRAFT</span>
+    </div>
+    <div class="studio-sub">Mağazaya girecek yüz ifadesi, aksesuar veya avatar oluştur. Canvas editöründe basit karakter üzerine çiz.</div>
+    <div class="seg" id="studioTypeSeg">
+      <button type="button" class="active" onclick="studioSetType('expression',this)">🙂 Yüz</button>
+      <button type="button" onclick="studioSetType('accessory',this)">🧩 Aksesuar</button>
+      <button type="button" onclick="studioSetType('avatar',this)">🧑 Avatar</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <div class="field">
+        <div class="lbl">Ad</div>
+        <input class="input" id="studioName" placeholder="Örn: Mutlu Gülüş" maxlength="48" />
+      </div>
+      <div class="field">
+        <div class="lbl">Kod (slug)</div>
+        <input class="input" id="studioSlug" placeholder="Örn: happy_v2" maxlength="40" />
+        <div class="help">harf/rakam/alt-çizgi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ 3a. CANVAS ÇİZİM ALANI ═══════ -->
+  <div id="studioEditorDrawArea" class="studio-card" style="display:block">
+    <div class="studio-h">
+      <div>🖌️ Çizim Alanı <span style="font-size:0.65rem;color:var(--muted);font-weight:700">16×18 px</span></div>
+    </div>
+    <div class="studio-sub">Basit karakter yarı saydam görünür, üzerine çiz. <b>Silgi</b> ile karakterin kendisini silemezsin.</div>
+
+    <!-- Renk Seçici -->
+    <div class="studio-card" style="padding:12px;margin-bottom:10px;background:var(--bg2)">
+      <div class="lbl" style="margin-bottom:8px">🎨 Renk Seçici</div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div class="rgb-row">
+            <span class="rgb-lbl" style="color:#f87171">R</span>
+            <input type="range" id="sliderR" min="0" max="255" value="56" class="rgb-sl" oninput="studioRGBChanged()" style="background:linear-gradient(to right,#000,#f00)">
+            <span id="valR" class="rgb-val">56</span>
+          </div>
+          <div class="rgb-row">
+            <span class="rgb-lbl" style="color:#4ade80">G</span>
+            <input type="range" id="sliderG" min="0" max="255" value="189" class="rgb-sl" oninput="studioRGBChanged()" style="background:linear-gradient(to right,#000,#0f0)">
+            <span id="valG" class="rgb-val">189</span>
+          </div>
+          <div class="rgb-row">
+            <span class="rgb-lbl" style="color:#60a5fa">B</span>
+            <input type="range" id="sliderB" min="0" max="255" value="248" class="rgb-sl" oninput="studioRGBChanged()" style="background:linear-gradient(to right,#000,#00f)">
+            <span id="valB" class="rgb-val">248</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0">
+          <div id="studioColorPreview" style="width:46px;height:46px;border-radius:10px;border:1.5px solid var(--border);background:#38bdf8;cursor:pointer" title="Bu rengi aktif palate yuvaya kaydet" onclick="studioSaveColorToSlot()"></div>
+          <input id="studioHexInput" class="input" type="text" value="#38bdf8" maxlength="7" style="width:86px;font-size:0.7rem;padding:7px 8px;text-align:center;font-family:'Space Mono',monospace" oninput="studioHexChanged()" onblur="studioHexBlur()" placeholder="#rrggbb">
+        </div>
+      </div>
+      <!-- Palet -->
+      <div style="margin-top:10px">
+        <div class="lbl" style="margin-bottom:6px">Palet <span style="font-weight:700;color:var(--muted);font-size:0.65rem">(yuva seç → RGB ile düzenle)</span></div>
+        <div class="palette" id="studioPalette"></div>
+        <div class="help" style="margin-top:5px">Yuvanın üstünü tıkla → aktif yap → RGB/hex ile değiştir</div>
+      </div>
+    </div>
+
+    <!-- Araçlar -->
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
+      <button id="toolPencil" class="tool-btn active" onclick="studioSetTool('pencil',this)">✏️ Kalem</button>
+      <button id="toolEraser" class="tool-btn" onclick="studioSetTool('eraser',this)">🧽 Silgi</button>
+      <button id="toolFill" class="tool-btn" onclick="studioSetTool('fill',this)">🪣 Dolgu</button>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+        <span class="lbl" style="margin-bottom:0">Boyut</span>
+        <button class="tool-btn active" id="sizeBtn1" onclick="studioSetBrushSize(1,this)" style="padding:7px 10px">1</button>
+        <button class="tool-btn" id="sizeBtn2" onclick="studioSetBrushSize(2,this)" style="padding:7px 10px">2</button>
+        <button class="tool-btn" id="sizeBtn3" onclick="studioSetBrushSize(3,this)" style="padding:7px 10px">3</button>
+      </div>
+    </div>
+
+    <!-- Canvas -->
+    <div style="display:flex;justify-content:center;margin:4px 0 8px">
+      <div style="border-radius:12px;overflow:hidden;border:1.5px solid var(--border);background:var(--bg2);touch-action:none;user-select:none;-webkit-user-select:none" id="studioCanvasWrap">
+        <canvas id="studioDrawCanvas" style="display:block;image-rendering:pixelated;image-rendering:crisp-edges;touch-action:none"></canvas>
+      </div>
+    </div>
+    <div class="help" style="text-align:center;margin-bottom:12px">Silgi modunda kırmızı bölgeler (karakter pikselleri) korumalıdır</div>
+
+    <!-- Aynala + Reset -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-ghost" onclick="studioMirrorH()">↔️ Yatay Aynala</button>
+      <button class="btn-ghost" onclick="studioMirrorV()">↕️ Dikey Aynala</button>
+      <button class="btn-ghost" onclick="studioGridReset()" style="margin-left:auto;color:#f472b6;border-color:rgba(244,114,182,0.3)">🔄 Sıfırla</button>
+    </div>
+  </div>
+
+  <!-- ═══════ 3b. AVATAR PRESET FORMU ═══════ -->
+  <div id="studioEditorAvatar" class="studio-card" style="display:none">
+    <div class="studio-h"><div>🧑 Avatar Özellikleri</div></div>
+    <div class="studio-sub">Preset sistemi: ten/saç/göz/kıyafet seçimlerini yap, önizlemede kontrol et.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="field"><div class="lbl">Ten Tonu</div><select class="input" id="studioAvatarSkin" onchange="studioAvatarChanged()">
+        <option value="fair">Bej</option><option value="light">Açık</option><option value="olive">Zeytin</option>
+        <option value="tan">Bronz</option><option value="brown">Kahve</option><option value="dark">Koyu</option>
+      </select></div>
+      <div class="field"><div class="lbl">Cinsiyet</div><select class="input" id="studioAvatarGender" onchange="studioAvatarChanged()">
+        <option value="male">Erkek</option><option value="female">Kız</option>
+      </select></div>
+      <div class="field"><div class="lbl">Saç Stili</div><select class="input" id="studioAvatarHair" onchange="studioAvatarChanged()">
+        <option value="short">Kısa</option><option value="afro">Afro</option><option value="fringe">Perçemli</option>
+        <option value="shoulder">Omuz Boy</option><option value="long">Uzun</option><option value="spiky">Sivri</option>
+        <option value="bob">Bob</option><option value="bun">Topuz</option><option value="wavylong">Dalgalı Uzun</option>
+        <option value="twintails">İki Örgü</option><option value="shouldercurly">Kıvırcık Omuz</option>
+        <option value="longstraight">Uzun Düz</option><option value="curlybob">Kıvırcık Bob</option>
+      </select></div>
+      <div class="field"><div class="lbl">Saç Rengi</div><select class="input" id="studioAvatarHairColor" onchange="studioAvatarChanged()">
+        <option value="black">Siyah</option><option value="darkbrown">Koyu Kahve</option><option value="brown">Kahve</option>
+        <option value="red">Kızıl</option><option value="blonde">Sarı</option><option value="orange">Turuncu</option>
+        <option value="blue">Mavi</option><option value="pink">Pembe</option><option value="teal">Teal</option>
+        <option value="platinum">Platin</option><option value="gray">Gri</option>
+      </select></div>
+      <div class="field"><div class="lbl">Göz Rengi</div><select class="input" id="studioAvatarEye" onchange="studioAvatarChanged()">
+        <option value="dark">Koyu</option><option value="brown">Kahve</option><option value="blue">Mavi</option>
+        <option value="green">Yeşil</option><option value="teal">Teal</option><option value="amber">Kehribar</option>
+      </select></div>
+      <div class="field"><div class="lbl">Kıyafet</div><select class="input" id="studioAvatarOutfit" onchange="studioAvatarChanged()">
+        <option value="tshirt">Tişört</option><option value="vneck">V-Yaka</option>
+        <option value="hoodie">Hoodie</option><option value="jacket">Ceket</option>
+      </select></div>
+      <div class="field" style="grid-column:span 2"><div class="lbl">Kıyafet Rengi</div><select class="input" id="studioAvatarOutfitColor" onchange="studioAvatarChanged()">
+        <option value="blue">Mavi</option><option value="red">Kırmızı</option><option value="green">Yeşil</option>
+        <option value="purple">Mor</option><option value="gray">Gri</option><option value="gold">Altın</option>
+        <option value="black">Siyah</option><option value="pink">Pembe</option><option value="white">Beyaz</option>
+        <option value="teal">Teal</option><option value="orange">Turuncu</option>
+      </select></div>
+    </div>
+  </div>
+
+  <!-- ═══════ 4. TASARLANMIŞ ÖĞELER ═══════ -->
+  <div class="studio-card">
+    <div class="studio-h">
+      <div>📦 Tasarlanmış Öğeler</div>
+      <button class="btn-ghost" style="padding:8px 10px;font-size:0.85rem" onclick="studioReloadAssets()">↻</button>
+    </div>
+    <div class="help" style="margin-bottom:10px">Tıkla → editöre yükle. Seçili öğe maviye döner.</div>
+    <div class="list" id="studioAssetsList">Yükleniyor...</div>
+  </div>
+
+  <!-- ═══════ 5. KAYDET / YAYINLA ═══════ -->
+  <div class="studio-card">
+    <div class="studio-h"><div>🚀 Kaydet / Yayınla</div></div>
+    <div class="studio-actions">
+      <button class="btn btn-save" style="flex:1;border-radius:12px" onclick="studioSaveDraft()">💾 Taslağı Kaydet</button>
+      <button class="btn btn-publish" style="flex:1;border-radius:12px" onclick="studioPublish()">🛍️ Mağazada Yayınla</button>
+    </div>
+    <div class="help" id="studioSaveMsg" style="margin-top:10px;min-height:18px"></div>
+  </div>
+
 </div>
 
 <!-- Tab Bar -->
@@ -453,10 +546,6 @@ var _studio = {
   palette: ['#e2e8f0','#38bdf8','#818cf8','#34d399','#fbbf24','#fb923c','#f472b6','#111827'],
   activeColorIdx: 1,
   grid: null, // 18 x 16 char matrix: '.' empty, 'a'..'h' color index
-  baseMask: null,
-  tool: 'pen',
-  brushSize: 1,
-  isDrawing: false,
   selectedAssetId: null,
   assets: [],
   demo: { avatarType:'male', expression:'neutral', accessoryId:null, avatarPreset:null }
@@ -785,354 +874,544 @@ function showToast(msg) {
 
 document.addEventListener('DOMContentLoaded', initFirebase);
 
-// ════════════ STUDIO (Avatar/Expression/Accessory) ════════════
+// ════════════ STUDIO REVISED ════════════
+var _studio = {
+  type: 'expression',
+  palette: ['#e2e8f0','#38bdf8','#818cf8','#34d399','#fbbf24','#fb923c','#f472b6','#111827'],
+  activePaletteSlot: 1,
+  activeColor: '#38bdf8',
+  tool: 'pencil',
+  brushSize: 1,
+  grid: null,
+  isDrawing: false,
+  lastCell: null,
+  baseMask: null,
+  _baseCanvas: null,
+  selectedAssetId: null,
+  assets: [],
+  demo: { avatarType:'male', expression:'neutral', accessoryId:null, avatarPreset:null }
+};
+var STUDIO_SC = 13; // scale factor: 1 grid cell = 13x13 px
+
 function studioInit() {
   if (!_db) return;
-  studioResetGrid();
+  studioGridClear();
+  studioSetupCanvas();
   studioBuildPalette();
-  studioBuildPxGrid();
   studioWireSlugAuto();
   studioReloadAssets();
-  studioRenderAll();
+  studioUpdatePreviewCard();
+  // init sliders
+  var hex = _studio.palette[_studio.activePaletteSlot];
+  studioLoadHexToPicker(hex);
 }
 
-function studioWireSlugAuto() {
-  var nameEl = document.getElementById('studioName');
-  var slugEl = document.getElementById('studioSlug');
-  if (!nameEl || !slugEl) return;
-  nameEl.addEventListener('input', function() {
-    if ((slugEl.value || '').trim()) return;
-    slugEl.value = studioSlugify(nameEl.value);
-  });
-  slugEl.addEventListener('input', function() {
-    slugEl.value = (slugEl.value || '').toLowerCase().replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);
-  });
-}
-
-function studioSlugify(s) {
-  s = (s || '').toLowerCase().trim();
-  var map = { 'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u' };
-  s = s.replace(/[çğışöü]/g, function(m){ return map[m] || m; });
-  return s.replace(/[^a-z0-9]+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);
-}
-
-function studioSetType(type, btn) {
-  _studio.type = type;
-  document.querySelectorAll('#studioTypeSeg button').forEach(function(b){ b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  document.getElementById('studioEditorAvatar').style.display = (type==='avatar') ? 'block' : 'none';
-  document.getElementById('studioEditorExpressionAccessory').style.display = (type==='avatar') ? 'none' : 'block';
-  _studio.selectedAssetId = null;
-  studioSetStatus('DRAFT');
-  studioResetGrid();
-  studioRenderAssetsList();
-  studioRenderDemo();
-}
-
-function studioSetStatus(txt) {
-  var b = document.getElementById('studioStatusBadge');
-  if (!b) return;
-  b.textContent = txt;
-  b.style.background = txt === 'PUBLISHED' ? 'rgba(52,211,153,0.15)' : 'rgba(245,158,11,0.12)';
-  b.style.color = txt === 'PUBLISHED' ? '#34d399' : 'var(--admin)';
-  b.style.border = txt === 'PUBLISHED' ? '1px solid rgba(52,211,153,0.28)' : '1px solid rgba(245,158,11,0.22)';
-}
-
-function studioResetGrid() {
+function studioGridClear() {
   _studio.grid = [];
-  for (var y=0;y<18;y++){
-    var row = [];
-    for (var x=0;x<16;x++) row.push('.');
-    _studio.grid.push(row);
+  for (var y=0;y<18;y++){var r=[];for(var x=0;x<16;x++)r.push('.');_studio.grid.push(r);}
+}
+
+function studioSetupCanvas() {
+  var canvas = document.getElementById('studioDrawCanvas');
+  if (!canvas) return;
+  canvas.width = 16 * STUDIO_SC;
+  canvas.height = 18 * STUDIO_SC;
+  canvas.style.width  = (16 * STUDIO_SC) + 'px';
+  canvas.style.height = (18 * STUDIO_SC) + 'px';
+  studioUpdateBaseMask();
+  studioRenderCanvas();
+
+  function getCell(e){
+    var rect = canvas.getBoundingClientRect();
+    var sx = canvas.width / rect.width, sy = canvas.height / rect.height;
+    return {
+      x: Math.max(0,Math.min(15, Math.floor((e.clientX-rect.left)*sx / STUDIO_SC))),
+      y: Math.max(0,Math.min(17, Math.floor((e.clientY-rect.top)*sy  / STUDIO_SC)))
+    };
+  }
+
+  canvas.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    _studio.isDrawing = true;
+    _studio.lastCell = null;
+    canvas.setPointerCapture(e.pointerId);
+    var c = getCell(e);
+    studioApplyTool(c.x,c.y);
+    studioRenderCanvas();
+  });
+  canvas.addEventListener('pointermove', function(e){
+    e.preventDefault();
+    if (!_studio.isDrawing || _studio.tool==='fill') return;
+    var c = getCell(e);
+    if (_studio.lastCell && _studio.lastCell.x===c.x && _studio.lastCell.y===c.y) return;
+    studioApplyTool(c.x,c.y);
+    studioRenderCanvas();
+  });
+  canvas.addEventListener('pointerup', function(){
+    _studio.isDrawing=false;_studio.lastCell=null;
+    studioUpdatePreviewCard();
+  });
+  canvas.addEventListener('pointerleave', function(){ _studio.isDrawing=false; });
+  canvas.addEventListener('contextmenu', function(e){e.preventDefault();});
+}
+
+function studioApplyTool(gx, gy) {
+  _studio.lastCell = {x:gx,y:gy};
+  if (_studio.tool==='pencil') {
+    var cc = String.fromCharCode('a'.charCodeAt(0)+_studio.activePaletteSlot);
+    var h = Math.floor((_studio.brushSize-1)/2);
+    for (var dy=-h;dy<=h;dy++) for (var dx=-h;dx<=h;dx++) {
+      var nx=gx+dx,ny=gy+dy;
+      if(nx>=0&&nx<16&&ny>=0&&ny<18) _studio.grid[ny][nx]=cc;
+    }
+  } else if (_studio.tool==='eraser') {
+    var h = Math.floor((_studio.brushSize-1)/2);
+    for (var dy=-h;dy<=h;dy++) for (var dx=-h;dx<=h;dx++) {
+      var nx=gx+dx,ny=gy+dy;
+      if(nx>=0&&nx<16&&ny>=0&&ny<18 && !(_studio.baseMask&&_studio.baseMask[ny][nx]))
+        _studio.grid[ny][nx]='.';
+    }
+  } else if (_studio.tool==='fill') {
+    studioFloodFill(gx,gy);
   }
 }
 
+function studioFloodFill(gx, gy) {
+  if (_studio.baseMask&&_studio.baseMask[gy][gx]) return;
+  var target = _studio.grid[gy][gx];
+  var cc = String.fromCharCode('a'.charCodeAt(0)+_studio.activePaletteSlot);
+  if (target===cc) return;
+  var vis=[];for(var i=0;i<18;i++){vis.push([]);for(var j=0;j<16;j++)vis[i].push(false);}
+  var q=[{x:gx,y:gy}]; vis[gy][gx]=true;
+  var dirs=[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+  while(q.length){
+    var c=q.shift();
+    _studio.grid[c.y][c.x]=cc;
+    for(var d=0;d<4;d++){
+      var nx=c.x+dirs[d].x,ny=c.y+dirs[d].y;
+      if(nx<0||nx>=16||ny<0||ny>=18||vis[ny][nx]) continue;
+      if(_studio.baseMask&&_studio.baseMask[ny][nx]) continue;
+      if(_studio.grid[ny][nx]!==target) continue;
+      vis[ny][nx]=true; q.push({x:nx,y:ny});
+    }
+  }
+}
+
+function studioUpdateBaseMask() {
+  _studio.baseMask=[];
+  for(var y=0;y<18;y++){_studio.baseMask.push([]);for(var x=0;x<16;x++)_studio.baseMask[y].push(false);}
+  var tmp = document.createElement('canvas');
+  var opts = STUDIO_PAX.fromDemo({
+    avatarType: _studio.demo.avatarType||'male',
+    expression: 'neutral',
+    accessoryId: null,
+    avatarPreset: _studio.demo.avatarPreset
+  });
+  opts.studioExprPixels=null; opts.studioAccPixels=null; opts.studioAccessoryId=null;
+  STUDIO_PAX.draw(tmp,opts,null,null,null,null);
+  var ctx=tmp.getContext('2d');
+  var id=ctx.getImageData(0,0,tmp.width,tmp.height), data=id.data;
+  for(var y=0;y<18;y++) for(var x=0;x<16;x++){
+    var px=x*4+2, py=y*4+2;
+    _studio.baseMask[y][x]=(data[(py*tmp.width+px)*4+3]>20);
+  }
+  _studio._baseCanvas=tmp;
+}
+
+function studioRenderCanvas() {
+  var canvas=document.getElementById('studioDrawCanvas');
+  if(!canvas) return;
+  var ctx=canvas.getContext('2d');
+  var W=16*STUDIO_SC, H=18*STUDIO_SC;
+  ctx.clearRect(0,0,W,H);
+  // Checkerboard bg
+  for(var y=0;y<18;y++) for(var x=0;x<16;x++){
+    ctx.fillStyle=(x+y)%2===0?'#0e1628':'#0a1120';
+    ctx.fillRect(x*STUDIO_SC,y*STUDIO_SC,STUDIO_SC,STUDIO_SC);
+  }
+  // Base avatar semi-transparent
+  if(_studio._baseCanvas){
+    ctx.globalAlpha=0.45; ctx.imageSmoothingEnabled=false;
+    ctx.drawImage(_studio._baseCanvas,0,0,64,72,0,0,W,H);
+    ctx.globalAlpha=1.0;
+  }
+  // User overlay
+  for(var y=0;y<18;y++) for(var x=0;x<16;x++){
+    var v=_studio.grid[y][x];
+    if(v!=='.'){
+      var idx=v.charCodeAt(0)-'a'.charCodeAt(0);
+      ctx.fillStyle=_studio.palette[idx]||'#fff';
+      ctx.fillRect(x*STUDIO_SC,y*STUDIO_SC,STUDIO_SC,STUDIO_SC);
+    }
+  }
+  // Grid lines
+  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=0.5;
+  for(var x=0;x<=16;x++){ctx.beginPath();ctx.moveTo(x*STUDIO_SC,0);ctx.lineTo(x*STUDIO_SC,H);ctx.stroke();}
+  for(var y=0;y<=18;y++){ctx.beginPath();ctx.moveTo(0,y*STUDIO_SC);ctx.lineTo(W,y*STUDIO_SC);ctx.stroke();}
+  // Eraser protect highlight
+  if(_studio.tool==='eraser'&&_studio.baseMask){
+    ctx.fillStyle='rgba(239,68,68,0.16)';
+    for(var y=0;y<18;y++) for(var x=0;x<16;x++)
+      if(_studio.baseMask[y][x]) ctx.fillRect(x*STUDIO_SC,y*STUDIO_SC,STUDIO_SC,STUDIO_SC);
+  }
+}
+
+function studioUpdatePreviewCard() {
+  var canvas=document.getElementById('studioPreviewAvatarCanvas');
+  if(!canvas) return;
+  var exprPixels=null,exprPal=null,accPixels=null,accPal=null;
+  var demo={
+    avatarType:_studio.demo.avatarType||'male',
+    expression:_studio.demo.expression||'neutral',
+    accessoryId:_studio.demo.accessoryId||null,
+    avatarPreset:_studio.demo.avatarPreset||null
+  };
+  if(_studio.type==='expression'){
+    demo.expression=(document.getElementById('studioSlug').value||'').trim()||'draft_expr';
+    exprPixels=_studio.grid.map(function(r){return r.join('');});
+    exprPal=_studio.palette;
+  } else if(_studio.type==='accessory'){
+    demo.accessoryId=(document.getElementById('studioSlug').value||'').trim()||'draft_acc';
+    accPixels=_studio.grid.map(function(r){return r.join('');});
+    accPal=_studio.palette;
+  }
+  STUDIO_PAX.draw(canvas,STUDIO_PAX.fromDemo(demo),exprPixels,exprPal,accPixels,accPal);
+}
+
+// ── Renk Seçici ──
+function studioRGBChanged() {
+  var r=+document.getElementById('sliderR').value;
+  var g=+document.getElementById('sliderG').value;
+  var b=+document.getElementById('sliderB').value;
+  document.getElementById('valR').textContent=r;
+  document.getElementById('valG').textContent=g;
+  document.getElementById('valB').textContent=b;
+  var hex='#'+[r,g,b].map(function(v){return('0'+v.toString(16)).slice(-2);}).join('');
+  _studio.activeColor=hex;
+  _studio.palette[_studio.activePaletteSlot]=hex;
+  document.getElementById('studioHexInput').value=hex;
+  document.getElementById('studioColorPreview').style.background=hex;
+  studioUpdateSliderGrads(r,g,b);
+  studioBuildPalette();
+  studioRenderCanvas();
+  studioUpdatePreviewCard();
+}
+
+function studioUpdateSliderGrads(r,g,b) {
+  var sr=document.getElementById('sliderR');
+  var sg=document.getElementById('sliderG');
+  var sb=document.getElementById('sliderB');
+  if(sr) sr.style.background='linear-gradient(to right,rgb(0,'+g+','+b+'),rgb(255,'+g+','+b+'))';
+  if(sg) sg.style.background='linear-gradient(to right,rgb('+r+',0,'+b+'),rgb('+r+',255,'+b+'))';
+  if(sb) sb.style.background='linear-gradient(to right,rgb('+r+','+g+',0),rgb('+r+','+g+',255))';
+}
+
+function studioHexChanged() {
+  var hex=(document.getElementById('studioHexInput').value||'').trim();
+  document.getElementById('studioColorPreview').style.background=hex;
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  document.getElementById('sliderR').value=r;
+  document.getElementById('sliderG').value=g;
+  document.getElementById('sliderB').value=b;
+  document.getElementById('valR').textContent=r;
+  document.getElementById('valG').textContent=g;
+  document.getElementById('valB').textContent=b;
+  _studio.activeColor=hex;
+  _studio.palette[_studio.activePaletteSlot]=hex;
+  studioUpdateSliderGrads(r,g,b);
+  studioBuildPalette();
+  studioRenderCanvas();
+  studioUpdatePreviewCard();
+}
+
+function studioHexBlur() {
+  var hex=(document.getElementById('studioHexInput').value||'').trim();
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex)) document.getElementById('studioHexInput').value=_studio.activeColor;
+}
+
+function studioLoadHexToPicker(hex) {
+  if(!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
+  var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  var slR=document.getElementById('sliderR'),slG=document.getElementById('sliderG'),slB=document.getElementById('sliderB');
+  if(slR) slR.value=r; if(slG) slG.value=g; if(slB) slB.value=b;
+  var vR=document.getElementById('valR'),vG=document.getElementById('valG'),vB=document.getElementById('valB');
+  if(vR) vR.textContent=r; if(vG) vG.textContent=g; if(vB) vB.textContent=b;
+  var hexEl=document.getElementById('studioHexInput');
+  var prev=document.getElementById('studioColorPreview');
+  if(hexEl) hexEl.value=hex;
+  if(prev) prev.style.background=hex;
+  studioUpdateSliderGrads(r,g,b);
+}
+
+function studioSaveColorToSlot() {
+  showToast('✅ Renk slot '+ (_studio.activePaletteSlot+1) +' kaydedildi');
+}
+
+// ── Palet ──
 function studioBuildPalette() {
-  var wrap = document.getElementById('studioPalette');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  _studio.palette.forEach(function(hex, idx){
-    var sw = document.createElement('div');
-    sw.className = 'sw' + (idx===_studio.activeColorIdx ? ' active' : '');
-    sw.title = hex;
-    var dot = document.createElement('div');
-    dot.className = 'dot';
-    dot.style.background = hex;
+  var wrap=document.getElementById('studioPalette');
+  if(!wrap) return;
+  wrap.innerHTML='';
+  _studio.palette.forEach(function(hex,idx){
+    var sw=document.createElement('div');
+    sw.className='sw'+(idx===_studio.activePaletteSlot?' active':'');
+    sw.title='Slot '+(idx+1)+': '+hex;
+    var dot=document.createElement('div'); dot.className='dot'; dot.style.background=hex;
     sw.appendChild(dot);
-    sw.addEventListener('click', function(){
-      _studio.activeColorIdx = idx;
+    sw.addEventListener('click',function(){
+      _studio.activePaletteSlot=idx; _studio.activeColor=hex;
+      studioLoadHexToPicker(hex);
       studioBuildPalette();
     });
     wrap.appendChild(sw);
   });
 }
 
-function studioBuildPxGrid() {
-  var g = document.getElementById('studioPxGrid');
-  if (!g) return;
-  g.innerHTML = '';
-  for (var y=0;y<18;y++){
-    for (var x=0;x<16;x++){
-      (function(xx,yy){
-        var c = document.createElement('div');
-        c.className = 'px';
-        c.addEventListener('click', function(){ studioTogglePx(xx,yy); });
-        g.appendChild(c);
-      })(x,y);
-    }
+// ── Araçlar ──
+function studioSetTool(tool, btn) {
+  _studio.tool=tool;
+  document.querySelectorAll('.tool-btn[id^="tool"]').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  studioRenderCanvas();
+}
+
+function studioSetBrushSize(size, btn) {
+  _studio.brushSize=size;
+  document.querySelectorAll('.tool-btn[id^="sizeBtn"]').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+}
+
+// ── Ayna & Reset ──
+function studioMirrorH() {
+  for(var y=0;y<18;y++) for(var x=0;x<8;x++){
+    var t=_studio.grid[y][x]; _studio.grid[y][x]=_studio.grid[y][15-x]; _studio.grid[y][15-x]=t;
   }
-  studioRenderPxGrid();
+  studioRenderCanvas(); studioUpdatePreviewCard();
 }
 
-function studioTogglePx(x,y) {
-  var cur = _studio.grid[y][x];
-  var next = cur === '.' ? String.fromCharCode('a'.charCodeAt(0) + _studio.activeColorIdx) : '.';
-  _studio.grid[y][x] = next;
-  studioRenderPxGrid();
-  studioRenderDemo();
-}
-
-function studioRenderPxGrid() {
-  var g = document.getElementById('studioPxGrid');
-  if (!g) return;
-  var kids = g.children;
-  var i=0;
-  for (var y=0;y<18;y++){
-    for (var x=0;x<16;x++){
-      var v = _studio.grid[y][x];
-      var el = kids[i++];
-      if (!el) continue;
-      if (v === '.') {
-        el.classList.remove('filled');
-        el.style.background = 'rgba(19,30,51,0.9)';
-      } else {
-        el.classList.add('filled');
-        var idx = v.charCodeAt(0) - 'a'.charCodeAt(0);
-        el.style.background = _studio.palette[idx] || _studio.palette[0];
-      }
-    }
+function studioMirrorV() {
+  for(var y=0;y<9;y++){
+    var t=_studio.grid[y].slice(); _studio.grid[y]=_studio.grid[17-y]; _studio.grid[17-y]=t;
   }
+  studioRenderCanvas(); studioUpdatePreviewCard();
 }
 
-function studioFillClear() {
-  studioResetGrid();
-  studioRenderPxGrid();
-  studioRenderDemo();
+function studioGridReset() {
+  if(!confirm('Tüm çizimler silinecek. Emin misin?')) return;
+  studioGridClear(); studioRenderCanvas(); studioUpdatePreviewCard();
 }
 
-function studioMirror() {
-  for (var y=0;y<18;y++){
-    for (var x=0;x<8;x++){
-      var tmp = _studio.grid[y][x];
-      _studio.grid[y][x] = _studio.grid[y][15-x];
-      _studio.grid[y][15-x] = tmp;
-    }
-  }
-  studioRenderPxGrid();
-  studioRenderDemo();
-}
-
-function studioSetTestAvatar(type) {
-  _studio.demo.avatarType = type;
-  studioRenderDemo();
-}
-
-function studioApplySelectedToDemo() {
-  var a = _studio.assets.find(function(x){ return x.id === _studio.selectedAssetId; });
-  if (!a) { showToast('Önce listeden bir öğe seç'); return; }
-  if (a.type === 'expression') _studio.demo.expression = a.slug;
-  if (a.type === 'accessory') _studio.demo.accessoryId = a.slug;
-  if (a.type === 'avatar') _studio.demo.avatarPreset = a.avatarPreset || null;
-  studioRenderDemo();
-  showToast('✓ Demoya uygulandı');
-}
-
-function studioClearDemo() {
-  _studio.demo.expression = 'neutral';
-  _studio.demo.accessoryId = null;
-  _studio.demo.avatarPreset = null;
-  studioRenderDemo();
-}
-
-function studioApplyAvatarFieldsToDemo() {
-  _studio.demo.avatarPreset = {
-    skinTone: document.getElementById('studioAvatarSkin').value,
-    hairStyle: document.getElementById('studioAvatarHair').value,
-    hairColor: document.getElementById('studioAvatarHairColor').value,
-    eyeColor: document.getElementById('studioAvatarEye').value,
-    outfitStyle: document.getElementById('studioAvatarOutfit').value,
-    outfitColor: document.getElementById('studioAvatarOutfitColor').value
-  };
-  studioRenderDemo();
-}
-
-function studioRenderAll() {
+// ── Tip Seçici ──
+function studioSetType(type, btn) {
+  _studio.type=type;
+  document.querySelectorAll('#studioTypeSeg button').forEach(function(b){b.classList.remove('active');});
+  if(btn) btn.classList.add('active');
+  var isAv=(type==='avatar');
+  document.getElementById('studioEditorDrawArea').style.display=isAv?'none':'block';
+  document.getElementById('studioEditorAvatar').style.display=isAv?'block':'none';
+  var badge=document.getElementById('studioPreviewTypeBadge');
+  if(badge) badge.textContent=type==='expression'?'Yüz İfadesi':type==='accessory'?'Aksesuar':'Avatar';
+  _studio.selectedAssetId=null;
+  studioSetStatus('DRAFT');
+  studioGridClear();
+  studioUpdateBaseMask();
+  studioRenderCanvas();
   studioRenderAssetsList();
-  studioRenderDemo();
+  studioUpdatePreviewCard();
 }
 
+function studioSetStatus(txt) {
+  var b=document.getElementById('studioStatusBadge');
+  if(!b) return;
+  b.textContent=txt;
+  b.style.background=txt==='PUBLISHED'?'rgba(52,211,153,0.15)':'rgba(245,158,11,0.12)';
+  b.style.color=txt==='PUBLISHED'?'#34d399':'var(--admin)';
+  b.style.border=txt==='PUBLISHED'?'1px solid rgba(52,211,153,0.28)':'1px solid rgba(245,158,11,0.22)';
+}
+
+// ── Avatar Form ──
+function studioAvatarChanged() {
+  _studio.demo.avatarType=document.getElementById('studioAvatarGender').value;
+  _studio.demo.avatarPreset={
+    skinTone:document.getElementById('studioAvatarSkin').value,
+    hairStyle:document.getElementById('studioAvatarHair').value,
+    hairColor:document.getElementById('studioAvatarHairColor').value,
+    eyeColor:document.getElementById('studioAvatarEye').value,
+    outfitStyle:document.getElementById('studioAvatarOutfit').value,
+    outfitColor:document.getElementById('studioAvatarOutfitColor').value
+  };
+  studioUpdateBaseMask(); studioRenderCanvas(); studioUpdatePreviewCard();
+}
+
+// ── Slug ──
+function studioWireSlugAuto() {
+  var nameEl=document.getElementById('studioName');
+  var slugEl=document.getElementById('studioSlug');
+  if(!nameEl||!slugEl) return;
+  nameEl.addEventListener('input',function(){
+    if((slugEl.value||'').trim()) return;
+    slugEl.value=studioSlugify(nameEl.value);
+  });
+  slugEl.addEventListener('input',function(){
+    slugEl.value=(slugEl.value||'').toLowerCase().replace(/[^a-z0-9_]/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);
+    studioUpdatePreviewCard();
+  });
+}
+
+function studioSlugify(s) {
+  s=(s||'').toLowerCase().trim();
+  var m={'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u'};
+  s=s.replace(/[çğışöü]/g,function(c){return m[c]||c;});
+  return s.replace(/[^a-z0-9]+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'').slice(0,40);
+}
+
+// ── Assets ──
 function studioReloadAssets() {
-  if (!_db) return;
-  document.getElementById('studioAssetsList').innerHTML = 'Yükleniyor...';
+  if(!_db) return;
+  var wrap=document.getElementById('studioAssetsList');
+  if(wrap) wrap.innerHTML='Yükleniyor...';
   _db.collection('studioAssets').orderBy('updatedAt','desc').limit(40).get().then(function(snap){
-    _studio.assets = [];
+    _studio.assets=[];
     snap.forEach(function(doc){
-      var d = doc.data() || {};
-      _studio.assets.push({
-        id: doc.id,
-        type: d.type || 'expression',
-        name: d.name || '—',
-        slug: d.slug || doc.id,
-        isPublished: d.isPublished === true,
-        palette: d.palette || _studio.palette,
-        pixels: d.pixels || null,
-        avatarPreset: d.avatarPreset || null,
-        updatedAt: d.updatedAt || ''
-      });
+      var d=doc.data()||{};
+      _studio.assets.push({id:doc.id,type:d.type||'expression',name:d.name||'—',slug:d.slug||doc.id,
+        isPublished:d.isPublished===true,palette:d.palette||_studio.palette,
+        pixels:d.pixels||null,avatarPreset:d.avatarPreset||null,avatarType:d.avatarType||'male',updatedAt:d.updatedAt||''});
     });
     studioRenderAssetsList();
   }).catch(function(e){
-    document.getElementById('studioAssetsList').innerHTML = '<div class="help">❌ ' + e.message + '</div>';
+    if(wrap) wrap.innerHTML='<div class="help">❌ '+e.message+'</div>';
   });
 }
 
 function studioRenderAssetsList() {
-  var wrap = document.getElementById('studioAssetsList');
-  if (!wrap) return;
-  var list = _studio.assets.filter(function(a){ return a.type === _studio.type; });
-  if (!list.length) {
-    wrap.innerHTML = '<div class="help">Henüz ' + (_studio.type==='expression'?'yüz ifadesi':_studio.type==='accessory'?'aksesuar':'avatar') + ' yok.</div>';
+  var wrap=document.getElementById('studioAssetsList');
+  if(!wrap) return;
+  var list=_studio.assets.filter(function(a){return a.type===_studio.type;});
+  if(!list.length){
+    wrap.innerHTML='<div class="help">Henüz '+(
+      _studio.type==='expression'?'yüz ifadesi':_studio.type==='accessory'?'aksesuar':'avatar'
+    )+' yok.</div>';
     return;
   }
-  var html = '';
+  var html='';
   list.forEach(function(a){
-    var sel = a.id === _studio.selectedAssetId;
-    html += '<div class="asset' + (sel?' sel':'') + '" onclick="studioSelectAsset(\''+a.id+'\')">'
-      + '<div class="asset-top"><div>'
-      + '<div class="asset-name">' + escapeHtml(a.name) + '</div>'
-      + '<div class="asset-meta">' + (a.isPublished?'🛍️ Yayında':'🧪 Taslak') + ' · <span style="font-family:\'Space Mono\',monospace">' + escapeHtml(a.slug) + '</span></div>'
-      + '</div>'
-      + '<div class="mini"><canvas id="mini_'+a.id.replace(/[^a-zA-Z0-9]/g,'_')+'" width="32" height="36"></canvas></div>'
-      + '</div></div>';
+    var sel=(a.id===_studio.selectedAssetId);
+    var safe=a.id.replace(/[^a-zA-Z0-9]/g,'_');
+    html+='<div class="asset'+(sel?' sel':'')+'" onclick="studioSelectAsset(\''+a.id+'\')">'+
+      '<div class="asset-top"><div>'+
+      '<div class="asset-name">'+escapeHtml(a.name)+'</div>'+
+      '<div class="asset-meta">'+(a.isPublished?'🛍️ Yayında':'🧪 Taslak')+
+      ' &middot; <span style="font-family:\'Space Mono\',monospace;font-size:0.65rem">'+escapeHtml(a.slug)+'</span></div>'+
+      '</div><div class="mini"><canvas id="mini_'+safe+'" width="64" height="72" style="image-rendering:pixelated;width:32px;height:36px"></canvas></div>'+
+      '</div></div>';
   });
-  wrap.innerHTML = html;
-  setTimeout(studioRenderMinis, 0);
+  wrap.innerHTML=html;
+  setTimeout(studioRenderMinis,0);
 }
 
 function studioSelectAsset(id) {
-  _studio.selectedAssetId = id;
-  var a = _studio.assets.find(function(x){ return x.id === id; });
-  if (!a) return;
-  document.getElementById('studioName').value = a.name || '';
-  document.getElementById('studioSlug').value = a.slug || '';
-  if (_studio.type !== 'avatar') {
-    _studio.palette = a.palette || _studio.palette;
+  _studio.selectedAssetId=id;
+  var a=_studio.assets.find(function(x){return x.id===id;});
+  if(!a) return;
+  document.getElementById('studioName').value=a.name||'';
+  document.getElementById('studioSlug').value=a.slug||'';
+  if(a.type!=='avatar'){
+    _studio.palette=(a.palette&&a.palette.length===8)?a.palette:_studio.palette;
+    var hex=_studio.palette[_studio.activePaletteSlot]||'#38bdf8';
+    _studio.activeColor=hex;
+    studioLoadHexToPicker(hex);
     studioBuildPalette();
-    if (a.pixels && a.pixels.length === 18) {
-      for (var y=0;y<18;y++){
-        var row = (a.pixels[y] || '').padEnd(16,'.').slice(0,16);
-        for (var x=0;x<16;x++) _studio.grid[y][x] = row[x];
+    if(a.pixels&&a.pixels.length===18){
+      for(var y=0;y<18;y++){
+        var row=(a.pixels[y]||'').padEnd(16,'.').slice(0,16);
+        for(var x=0;x<16;x++) _studio.grid[y][x]=row[x];
       }
     }
-    studioRenderPxGrid();
+    studioRenderCanvas();
   } else {
-    var p = a.avatarPreset || {};
-    if (document.getElementById('studioAvatarSkin')) document.getElementById('studioAvatarSkin').value = p.skinTone || 'fair';
-    if (document.getElementById('studioAvatarHair')) document.getElementById('studioAvatarHair').value = p.hairStyle || 'short';
-    if (document.getElementById('studioAvatarHairColor')) document.getElementById('studioAvatarHairColor').value = p.hairColor || 'black';
-    if (document.getElementById('studioAvatarEye')) document.getElementById('studioAvatarEye').value = p.eyeColor || 'dark';
-    if (document.getElementById('studioAvatarOutfit')) document.getElementById('studioAvatarOutfit').value = p.outfitStyle || 'tshirt';
-    if (document.getElementById('studioAvatarOutfitColor')) document.getElementById('studioAvatarOutfitColor').value = p.outfitColor || 'blue';
+    var p=a.avatarPreset||{};
+    var set=function(id,v){var el=document.getElementById(id);if(el)el.value=v;};
+    set('studioAvatarSkin',p.skinTone||'fair');
+    set('studioAvatarHair',p.hairStyle||'short');
+    set('studioAvatarHairColor',p.hairColor||'black');
+    set('studioAvatarEye',p.eyeColor||'dark');
+    set('studioAvatarOutfit',p.outfitStyle||'tshirt');
+    set('studioAvatarOutfitColor',p.outfitColor||'blue');
+    set('studioAvatarGender',a.avatarType||'male');
+    _studio.demo.avatarType=a.avatarType||'male';
+    _studio.demo.avatarPreset=p;
+    studioUpdateBaseMask(); studioRenderCanvas();
   }
-  studioSetStatus(a.isPublished ? 'PUBLISHED' : 'DRAFT');
+  studioSetStatus(a.isPublished?'PUBLISHED':'DRAFT');
   studioRenderAssetsList();
-  studioRenderDemo();
+  studioUpdatePreviewCard();
 }
 
 function studioGetDraftPayload() {
-  var name = (document.getElementById('studioName').value || '').trim();
-  var slug = (document.getElementById('studioSlug').value || '').trim();
-  if (!name) throw new Error('Ad zorunlu.');
-  if (!slug) throw new Error('Kod (slug) zorunlu.');
-  if (!/^[a-z0-9_]{2,40}$/.test(slug)) throw new Error('Kod sadece harf/rakam/alt-çizgi olmalı (2-40).');
-
-  var payload = {
-    type: _studio.type,
-    name: name,
-    slug: slug,
-    updatedAt: new Date().toISOString(),
-    updatedByUid: _adminUser ? _adminUser.uid : null
-  };
-  if (_studio.type === 'avatar') {
-    payload.avatarPreset = {
-      skinTone: document.getElementById('studioAvatarSkin').value,
-      hairStyle: document.getElementById('studioAvatarHair').value,
-      hairColor: document.getElementById('studioAvatarHairColor').value,
-      eyeColor: document.getElementById('studioAvatarEye').value,
-      outfitStyle: document.getElementById('studioAvatarOutfit').value,
-      outfitColor: document.getElementById('studioAvatarOutfitColor').value
+  var name=(document.getElementById('studioName').value||'').trim();
+  var slug=(document.getElementById('studioSlug').value||'').trim();
+  if(!name) throw new Error('Ad zorunlu.');
+  if(!slug) throw new Error('Slug zorunlu.');
+  if(!/^[a-z0-9_]{2,40}$/.test(slug)) throw new Error('Slug: harf/rakam/alt-çizgi (2-40).');
+  var payload={type:_studio.type,name:name,slug:slug,updatedAt:new Date().toISOString(),updatedByUid:_adminUser?_adminUser.uid:null};
+  if(_studio.type==='avatar'){
+    payload.avatarPreset={
+      skinTone:document.getElementById('studioAvatarSkin').value,
+      hairStyle:document.getElementById('studioAvatarHair').value,
+      hairColor:document.getElementById('studioAvatarHairColor').value,
+      eyeColor:document.getElementById('studioAvatarEye').value,
+      outfitStyle:document.getElementById('studioAvatarOutfit').value,
+      outfitColor:document.getElementById('studioAvatarOutfitColor').value
     };
+    payload.avatarType=document.getElementById('studioAvatarGender').value;
   } else {
-    payload.palette = _studio.palette.slice(0, 8);
-    payload.pixels = _studio.grid.map(function(row){ return row.join(''); });
+    payload.palette=_studio.palette.slice(0,8);
+    payload.pixels=_studio.grid.map(function(r){return r.join('');});
   }
   return payload;
 }
 
 function studioSaveDraft() {
-  if (!_db) return;
-  var msg = document.getElementById('studioSaveMsg');
-  try {
-    var payload = studioGetDraftPayload();
-    payload.isPublished = false;
-    payload.createdAt = payload.createdAt || new Date().toISOString();
-    msg.textContent = 'Kaydediliyor...'; msg.style.color = 'var(--muted)';
-    var ref = _studio.selectedAssetId ? _db.collection('studioAssets').doc(_studio.selectedAssetId) : _db.collection('studioAssets').doc();
-    if (!_studio.selectedAssetId) _studio.selectedAssetId = ref.id;
-    ref.set(payload, { merge: true }).then(function(){
-      msg.textContent = '✅ Taslak kaydedildi.'; msg.style.color = 'var(--admin)';
-      studioSetStatus('DRAFT');
-      studioReloadAssets();
-    }).catch(function(e){
-      msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
-    });
-  } catch (e) {
-    msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
-  }
+  if(!_db) return;
+  var msg=document.getElementById('studioSaveMsg');
+  try{
+    var payload=studioGetDraftPayload();
+    payload.isPublished=false; payload.createdAt=payload.createdAt||new Date().toISOString();
+    msg.textContent='Kaydediliyor...'; msg.style.color='var(--muted)';
+    var ref=_studio.selectedAssetId?_db.collection('studioAssets').doc(_studio.selectedAssetId):_db.collection('studioAssets').doc();
+    if(!_studio.selectedAssetId) _studio.selectedAssetId=ref.id;
+    ref.set(payload,{merge:true}).then(function(){
+      msg.textContent='✅ Taslak kaydedildi.'; msg.style.color='var(--admin)';
+      studioSetStatus('DRAFT'); studioReloadAssets();
+    }).catch(function(e){msg.textContent='❌ '+e.message; msg.style.color='#ef4444';});
+  }catch(e){msg.textContent='❌ '+e.message; msg.style.color='#ef4444';}
 }
 
 function studioPublish() {
-  if (!_db) return;
-  var msg = document.getElementById('studioSaveMsg');
-  try {
-    var payload = studioGetDraftPayload();
-    payload.isPublished = true;
-    payload.publishedAt = new Date().toISOString();
-    msg.textContent = 'Yayınlanıyor...'; msg.style.color = 'var(--muted)';
-    var ref = _studio.selectedAssetId ? _db.collection('studioAssets').doc(_studio.selectedAssetId) : _db.collection('studioAssets').doc();
-    if (!_studio.selectedAssetId) _studio.selectedAssetId = ref.id;
-    ref.set(payload, { merge: true }).then(function(){
-      msg.textContent = '🛍️ Yayınlandı! (Mağaza sayfası bu asset’i okuyacak)'; msg.style.color = '#34d399';
-      studioSetStatus('PUBLISHED');
-      studioReloadAssets();
-      showToast('✅ Mağazada yayınlandı');
-    }).catch(function(e){
-      msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
-    });
-  } catch (e) {
-    msg.textContent = '❌ ' + e.message; msg.style.color = '#ef4444';
-  }
+  if(!_db) return;
+  var msg=document.getElementById('studioSaveMsg');
+  try{
+    var payload=studioGetDraftPayload();
+    payload.isPublished=true; payload.publishedAt=new Date().toISOString();
+    msg.textContent='Yayınlanıyor...'; msg.style.color='var(--muted)';
+    var ref=_studio.selectedAssetId?_db.collection('studioAssets').doc(_studio.selectedAssetId):_db.collection('studioAssets').doc();
+    if(!_studio.selectedAssetId) _studio.selectedAssetId=ref.id;
+    ref.set(payload,{merge:true}).then(function(){
+      msg.textContent='🛍️ Mağazada yayınlandı!'; msg.style.color='#34d399';
+      studioSetStatus('PUBLISHED'); studioReloadAssets(); showToast('✅ Mağazada yayınlandı');
+    }).catch(function(e){msg.textContent='❌ '+e.message; msg.style.color='#ef4444';});
+  }catch(e){msg.textContent='❌ '+e.message; msg.style.color='#ef4444';}
 }
 
 function escapeHtml(s) {
-  return (s || '').replace(/[&<>"']/g, function(m){
-    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
-  });
+  return (s||'').replace(/[&<>"']/g,function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);});
 }
 
-// ── PAX (mini) renderer for studio previews ──
-var STUDIO_PAX = (function(){
-  var P = {
+// ── STUDIO_PAX Renderer (scale-aware) ──
+var STUDIO_PAX=(function(){
+  var P={
     W:16,H:18,
     SKINS:{light:'#FFD5B8',fair:'#F4A574',olive:'#D4906A',tan:'#C07040',brown:'#8B5523',dark:'#5C3318'},
     HAIR:{black:'#1C1410',darkbrown:'#3D200E',brown:'#6B3520',auburn:'#8B2515',red:'#CC2200',orange:'#D05020',blonde:'#D4A83A',platinum:'#D8D0B8',blue:'#2244BB',pink:'#CC4488',teal:'#228888',gray:'#8A8A8A'},
@@ -1143,35 +1422,43 @@ var STUDIO_PAX = (function(){
       eyes:['________________','________________','________________','________________','________________','____WWW__WWW____','____WEW__WEW____','____WWW__WWW____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
       'face-female':['________________','________________','________________','________________','____CCC__CCC____','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
       'expr-neutral':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','______MMMM______','________________','________________','________________','________________','________________','________________','________________'],
+      'expr-happy':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','____MM______MM__','_____MMMMMM_____','________________','________________','________________','________________','________________','________________'],
+      'expr-sad':['________________','________________','________________','___B______B_____','____B_____B_____','________________','________________','________________','________________','________________','_____MMMMMM_____','____MM______MM__','________________','________________','________________','________________','________________','________________'],
+      'expr-thinking':['________________','________________','________________','___B____________','__________B_____','________________','________________','________________','________________','________________','________MMMM____','________________','________________','________________','________________','________________','________________','________________'],
+      'expr-angry':['________________','________________','________________','____B_____B_____','___BB_____BB____','________________','________________','________________','________________','________________','___MM________MM_','____MMMMMMMM____','________________','________________','________________','________________','________________','________________'],
+      'expr-cool':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','_______MMM______','________________','________________','________________','________________','________________','________________','________________'],
       'hair-short':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
-      'outfit-tshirt':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_']
+      'hair-afro':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-long':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-bob':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-bun':['_____HHHHH______','____HH___HH_____','___HHHHHHHHHH___','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-shoulder':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','_HSSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-spiky':['___HH_HHH_H_____','___HHHHHHHHH____','__HHHHHHHHHH____','__HHSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-fringe':['__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-wavylong':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','_HHSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','_HHSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-twintails':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','_HSSSSSSSSSSSHH_','HH____________HH','HH____________HH','_H____________H_','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-shouldercurly':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSHH_','HHSSSSSSSSSSSSSH','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-longstraight':['____HHHHHHHH____','___HHHHHHHHHH___','__HHHHHHHHHHHH__','__HHSSSSSSSSSH__','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','__HSSSSSSSSSSSH_','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'hair-curlybob':['___HHHHHHHHHH___','__HHHHHHHHHHHH__','_HHHHHHHHHHHHHH_','_HHSSSSSSSSSSHH_','_HSSSSSSSSSSSHH_','__HSSSSSSSSSSSH_','___HSSSSSSSSSH__','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________'],
+      'outfit-tshirt':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
+      'outfit-vneck':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOO___OOO____','___OOOOOOOOOO___','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
+      'outfit-hoodie':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___AAOOOOOAA____','___AOOOOOOO_____','___OOOOOOOOO____','__OOOOOOOOOOOO__','_OOOOOOOOOOOOOO_'],
+      'outfit-jacket':['________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','________________','___OOOOOOOOO____','___OAAAAOOOOOO__','__OOAAAAOOOOOO__','_OOOAOOOOOOOOOO_']
     },
     fromDemo:function(d){
-      var base = d && d.avatarPreset ? d.avatarPreset : {};
+      var base=d&&d.avatarPreset?d.avatarPreset:{};
       return {
-        skinTone: base.skinTone || 'fair',
-        hairStyle: base.hairStyle || 'short',
-        hairColor: base.hairColor || 'black',
-        eyeColor: base.eyeColor || 'dark',
-        outfitStyle: base.outfitStyle || 'tshirt',
-        outfitColor: base.outfitColor || 'blue',
-        avatarType: d.avatarType || 'male',
-        expression: d.expression || 'neutral',
-        studioAccessoryId: d.accessoryId || null
+        skinTone:base.skinTone||'fair',hairStyle:base.hairStyle||'short',hairColor:base.hairColor||'black',
+        eyeColor:base.eyeColor||'dark',outfitStyle:base.outfitStyle||'tshirt',outfitColor:base.outfitColor||'blue',
+        avatarType:d.avatarType||'male',expression:d.expression||'neutral',studioAccessoryId:d.accessoryId||null
       };
     },
-    buildStudioLayer:function(pixels, palette){
-      var rows = pixels.map(function(r){ return (r||'').padEnd(16,'.').slice(0,16); });
-      return rows.map(function(r){
-        var out = '';
-        for (var i=0;i<r.length;i++){
-          var ch = r[i];
-          out += (ch==='.' ? '_' : ch);
-        }
-        return out;
+    buildStudioLayer:function(pixels){
+      return (pixels||[]).map(function(r){
+        var o='';for(var i=0;i<r.length;i++){var ch=r[i];o+=(ch==='.'?'_':ch);}return o;
       });
     },
-    draw:function(canvas, opts, pixelsForExpr, exprPalette, pixelsForAcc, accPalette){
+    draw:function(canvas,opts,pixelsForExpr,exprPalette,pixelsForAcc,accPalette){
       var sc=4;
       var ctx=canvas.getContext('2d');
       canvas.width=P.W*sc; canvas.height=P.H*sc;
@@ -1180,28 +1467,16 @@ var STUDIO_PAX = (function(){
       var hr=P.HAIR[opts.hairColor]||P.HAIR.black;
       var ey=P.EYES[opts.eyeColor]||P.EYES.dark;
       var ot=P.OUTFIT[opts.outfitColor]||P.OUTFIT.blue;
-      var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,C:'#1C1410'};
-      var palette = (exprPalette && exprPalette.length) ? exprPalette : _studio.palette;
-      for (var pi=0;pi<8;pi++){
-        cm[String.fromCharCode('a'.charCodeAt(0)+pi)] = palette[pi] || '#ffffff';
-      }
-      var accPal = (accPalette && accPalette.length) ? accPalette : _studio.palette;
-      for (var pj=0;pj<8;pj++){
-        cm[String.fromCharCode('a'.charCodeAt(0)+pj)] = cm[String.fromCharCode('a'.charCodeAt(0)+pj)] || accPal[pj] || '#ffffff';
-      }
-      // Prepare custom layers if needed
-      if (pixelsForExpr) P.L['expr-'+opts.expression] = P.buildStudioLayer(pixelsForExpr, palette);
-      if (pixelsForAcc && opts.studioAccessoryId) P.L['acc-'+opts.studioAccessoryId] = P.buildStudioLayer(pixelsForAcc, accPal);
-
-      var ord=[
-        'outfit-'+(opts.outfitStyle||'tshirt'),
-        'skin',
-        'hair-'+(opts.hairStyle||'short'),
-        'eyes',
+      var cm={S:sk,H:hr,W:'#F4F0EC',E:ey,M:'#CC3333',O:ot,C:'#1C1410',A:'#AABBCC'};
+      var pal=(exprPalette&&exprPalette.length)?exprPalette:_studio.palette;
+      var apal=(accPalette&&accPalette.length)?accPalette:_studio.palette;
+      for(var pi=0;pi<8;pi++) cm[String.fromCharCode('a'.charCodeAt(0)+pi)]=pal[pi]||'#fff';
+      if(pixelsForExpr) P.L['expr-'+(opts.expression||'draft')]=P.buildStudioLayer(pixelsForExpr);
+      if(pixelsForAcc&&opts.studioAccessoryId) P.L['acc-'+opts.studioAccessoryId]=P.buildStudioLayer(pixelsForAcc);
+      var ord=['outfit-'+(opts.outfitStyle||'tshirt'),'skin','hair-'+(opts.hairStyle||'short'),'eyes',
         'expr-'+(opts.expression||'neutral'),
         opts.avatarType==='female'?'face-female':null,
-        opts.studioAccessoryId ? ('acc-'+opts.studioAccessoryId) : null
-      ];
+        opts.studioAccessoryId?('acc-'+opts.studioAccessoryId):null];
       ord.forEach(function(ln){
         if(!ln) return;
         var layer=P.L[ln]; if(!layer||!layer.length) return;
@@ -1219,308 +1494,23 @@ var STUDIO_PAX = (function(){
 })();
 
 function studioRenderMinis() {
-  _studio.assets.filter(function(a){ return a.type === _studio.type; }).forEach(function(a){
-    var id = 'mini_'+a.id.replace(/[^a-zA-Z0-9]/g,'_');
-    var c = document.getElementById(id);
-    if (!c) return;
-    var demo = { avatarType:'male', expression:'neutral', accessoryId:null, avatarPreset:null };
-    if (a.type==='expression') demo.expression = a.slug;
-    if (a.type==='accessory') demo.accessoryId = a.slug;
-    if (a.type==='avatar') demo.avatarPreset = a.avatarPreset || null;
-    STUDIO_PAX.draw(c, STUDIO_PAX.fromDemo(demo), a.type==='expression'?a.pixels:null, a.palette, a.type==='accessory'?a.pixels:null, a.palette);
+  _studio.assets.filter(function(a){return a.type===_studio.type;}).forEach(function(a){
+    var c=document.getElementById('mini_'+a.id.replace(/[^a-zA-Z0-9]/g,'_'));
+    if(!c) return;
+    var demo={avatarType:a.avatarType||'male',expression:'neutral',accessoryId:null,avatarPreset:a.avatarPreset||null};
+    if(a.type==='expression') demo.expression=a.slug;
+    if(a.type==='accessory') demo.accessoryId=a.slug;
+    var opts=STUDIO_PAX.fromDemo(demo);
+    STUDIO_PAX.draw(c,opts,a.type==='expression'?a.pixels:null,a.palette,a.type==='accessory'?a.pixels:null,a.palette);
   });
 }
 
-function studioRenderDemo() {
-  var c = document.getElementById('studioDemoCanvas');
-  if (!c) return;
-  var demo = _studio.demo;
-  var exprPixels = null, exprPal = null, accPixels = null, accPal = null;
-
-  // If current editor is expression/accessory, preview live edits
-  if (_studio.type === 'expression') {
-    demo.expression = (document.getElementById('studioSlug').value || '').trim() || 'neutral';
-    exprPixels = _studio.grid.map(function(r){ return r.join(''); });
-    exprPal = _studio.palette;
-  } else if (_studio.type === 'accessory') {
-    demo.accessoryId = (document.getElementById('studioSlug').value || '').trim() || 'acc_demo';
-    accPixels = _studio.grid.map(function(r){ return r.join(''); });
-    accPal = _studio.palette;
-  } else if (_studio.type === 'avatar') {
-    // keep demo preset from fields if exists
-  }
-
-  // If selected published draft exists, let demo use that (when applied)
-  var appliedExpr = demo.expression;
-  var appliedAcc = demo.accessoryId;
-  if (!exprPixels && appliedExpr && appliedExpr !== 'neutral') {
-    var a1 = _studio.assets.find(function(x){ return x.type==='expression' && x.slug===appliedExpr; });
-    if (a1 && a1.pixels) { exprPixels = a1.pixels; exprPal = a1.palette; }
-  }
-  if (!accPixels && appliedAcc) {
-    var a2 = _studio.assets.find(function(x){ return x.type==='accessory' && x.slug===appliedAcc; });
-    if (a2 && a2.pixels) { accPixels = a2.pixels; accPal = a2.palette; }
-  }
-
-  STUDIO_PAX.draw(c, STUDIO_PAX.fromDemo(demo), exprPixels, exprPal, accPixels, accPal);
-}
-
-// ---- Studio Revize Overrides ----
-function studioSetTool(tool) {
-  _studio.tool = tool;
-  ['studioPenBtn','studioEraseBtn','studioFillBtn'].forEach(function(id){ var e=document.getElementById(id); if(e) e.classList.remove('active'); });
-  if (tool === 'pen' && document.getElementById('studioPenBtn')) document.getElementById('studioPenBtn').classList.add('active');
-  if (tool === 'erase' && document.getElementById('studioEraseBtn')) document.getElementById('studioEraseBtn').classList.add('active');
-  if (tool === 'fill' && document.getElementById('studioFillBtn')) document.getElementById('studioFillBtn').classList.add('active');
-  var lbl = document.getElementById('studioToolLabel');
-  if (lbl) lbl.textContent = tool === 'pen' ? 'Kalem' : tool === 'erase' ? 'Silgi' : 'Dolgu';
-}
-
-function studioUpdateBrushSize() {
-  var v = parseInt((document.getElementById('studioBrushSize')||{}).value || '1', 10);
-  _studio.brushSize = Math.max(1, Math.min(4, v));
-  var t = document.getElementById('studioBrushSizeVal');
-  if (t) t.textContent = _studio.brushSize + 'px';
-}
-
-function studioRgbChanged() {
-  var r = parseInt(document.getElementById('studioR').value, 10) || 0;
-  var g = parseInt(document.getElementById('studioG').value, 10) || 0;
-  var b = parseInt(document.getElementById('studioB').value, 10) || 0;
-  var hex = '#' + [r,g,b].map(function(v){ var s=v.toString(16); return s.length===1?'0'+s:s; }).join('');
-  document.getElementById('studioHex').value = hex;
-  _studio.palette[_studio.activeColorIdx] = hex;
-  studioBuildPalette();
-}
-
-function studioHexChanged() {
-  var h = (document.getElementById('studioHex').value || '').trim();
-  if (!/^#[0-9a-fA-F]{6}$/.test(h)) return;
-  _studio.palette[_studio.activeColorIdx] = h.toLowerCase();
-  var r = parseInt(h.slice(1,3),16), g = parseInt(h.slice(3,5),16), b = parseInt(h.slice(5,7),16);
-  document.getElementById('studioR').value = r;
-  document.getElementById('studioG').value = g;
-  document.getElementById('studioB').value = b;
-  studioBuildPalette();
-}
-
-function studioBuildBaseMask() {
-  _studio.baseMask = [];
-  var base = STUDIO_PAX.fromDemo(_studio.demo);
-  var c = document.createElement('canvas');
-  STUDIO_PAX.draw(c, base, null, null, null, null);
-  var ctx = c.getContext('2d');
-  var data = ctx.getImageData(0,0,c.width,c.height).data;
-  // canvas 64x72 (16*4 x 18*4). map to 16x18
-  for (var y=0;y<18;y++){
-    var row=[];
-    for (var x=0;x<16;x++){
-      var px = ((y*4+1) * c.width + (x*4+1)) * 4 + 3;
-      row.push(data[px] > 0);
-    }
-    _studio.baseMask.push(row);
-  }
-}
-
-function studioPaintAt(cx, cy) {
-  if (!_studio.grid) return;
-  var colorChar = String.fromCharCode('a'.charCodeAt(0) + _studio.activeColorIdx);
-  var size = _studio.brushSize || 1;
-  for (var dy=0;dy<size;dy++){
-    for (var dx=0;dx<size;dx++){
-      var x = cx + dx, y = cy + dy;
-      if (x<0||x>15||y<0||y>17) continue;
-      if (_studio.tool === 'erase') {
-        // temel avatarı silemez, sadece overlay noktaları siler
-        if (_studio.grid[y][x] !== '.') _studio.grid[y][x] = '.';
-      } else {
-        _studio.grid[y][x] = colorChar;
-      }
-    }
-  }
-}
-
-function studioFloodFill(x, y) {
-  var target = _studio.grid[y][x];
-  var rep = String.fromCharCode('a'.charCodeAt(0) + _studio.activeColorIdx);
-  if (target === rep) return;
-  var q=[[x,y]], seen={};
-  while(q.length){
-    var p=q.shift(), px=p[0], py=p[1], key=px+'_'+py;
-    if (seen[key]) continue; seen[key]=1;
-    if (px<0||px>15||py<0||py>17) continue;
-    if (_studio.grid[py][px] !== target) continue;
-    _studio.grid[py][px] = rep;
-    q.push([px+1,py],[px-1,py],[px,py+1],[px,py-1]);
-  }
-}
-
-function studioBindPaintCanvas() {
-  var c = document.getElementById('studioPaintCanvas');
-  if (!c) return;
-  var getCell = function(ev){
-    var r = c.getBoundingClientRect();
-    var x = Math.floor((ev.clientX - r.left) / (r.width / 16));
-    var y = Math.floor((ev.clientY - r.top) / (r.height / 18));
-    return {x:Math.max(0,Math.min(15,x)), y:Math.max(0,Math.min(17,y))};
-  };
-  c.onpointerdown = function(ev){
-    ev.preventDefault();
-    _studio.isDrawing = true;
-    var p = getCell(ev);
-    if (_studio.tool === 'fill') studioFloodFill(p.x,p.y);
-    else studioPaintAt(p.x,p.y);
-    studioRenderDemo();
-  };
-  c.onpointermove = function(ev){
-    if (!_studio.isDrawing || _studio.tool === 'fill') return;
-    var p = getCell(ev);
-    studioPaintAt(p.x,p.y);
-    studioRenderDemo();
-  };
-  window.addEventListener('pointerup', function(){ _studio.isDrawing = false; });
-}
-
-function studioRenderDemo() {
-  var c = document.getElementById('studioDemoCanvas');
-  if (!c) return;
-  var demo = _studio.demo;
-  var exprPixels = null, exprPal = null, accPixels = null, accPal = null;
-
-  if (_studio.type === 'expression') {
-    demo.expression = (document.getElementById('studioSlug').value || '').trim() || 'neutral';
-    exprPixels = _studio.grid.map(function(r){ return r.join(''); });
-    exprPal = _studio.palette;
-  } else if (_studio.type === 'accessory') {
-    demo.accessoryId = (document.getElementById('studioSlug').value || '').trim() || 'acc_demo';
-    accPixels = _studio.grid.map(function(r){ return r.join(''); });
-    accPal = _studio.palette;
-  } else if (_studio.type === 'avatar') {
-    // avatar çiziminde overlay aksesuar gibi gösterilir
-    demo.accessoryId = (document.getElementById('studioSlug').value || '').trim() || 'avatar_overlay';
-    accPixels = _studio.grid.map(function(r){ return r.join(''); });
-    accPal = _studio.palette;
-  }
-
-  STUDIO_PAX.draw(c, STUDIO_PAX.fromDemo(demo), exprPixels, exprPal, accPixels, accPal);
-
-  var pc = document.getElementById('studioPaintCanvas');
-  if (pc) {
-    STUDIO_PAX.draw(pc, STUDIO_PAX.fromDemo(demo), null, null, null, null);
-    var pctx = pc.getContext('2d');
-    for (var y=0;y<18;y++){
-      for (var x=0;x<16;x++){
-        var ch = _studio.grid[y][x];
-        if (ch === '.') continue;
-        var idx = ch.charCodeAt(0)-'a'.charCodeAt(0);
-        pctx.fillStyle = _studio.palette[idx] || '#ffffff';
-        pctx.fillRect(x*10, y*10, 10, 10);
-      }
-    }
-    pctx.strokeStyle = 'rgba(255,255,255,0.08)';
-    for (var gx=0; gx<=16; gx++){ pctx.beginPath(); pctx.moveTo(gx*10,0); pctx.lineTo(gx*10,180); pctx.stroke(); }
-    for (var gy=0; gy<=18; gy++){ pctx.beginPath(); pctx.moveTo(0,gy*10); pctx.lineTo(160,gy*10); pctx.stroke(); }
-  }
-}
-
-function studioSetType(type, btn) {
-  _studio.type = type;
-  document.querySelectorAll('#studioTypeSeg button').forEach(function(b){ b.classList.remove('active'); });
-  if (btn) btn.classList.add('active');
-  _studio.selectedAssetId = null;
-  studioSetStatus('DRAFT');
-  studioFillClear();
+function studioRenderAll() {
   studioRenderAssetsList();
+  studioRenderCanvas();
+  studioUpdatePreviewCard();
 }
 
-function studioInit() {
-  if (!_db) return;
-  studioResetGrid();
-  studioBuildPalette();
-  studioWireSlugAuto();
-  studioReloadAssets();
-  studioBuildBaseMask();
-  studioBindPaintCanvas();
-  studioSetTool('pen');
-  studioUpdateBrushSize();
-  studioHexChanged();
-  studioRenderAll();
-}
-
-function studioMirrorVertical() {
-  for (var x=0;x<16;x++){
-    for (var y=0;y<9;y++){
-      var t = _studio.grid[y][x];
-      _studio.grid[y][x] = _studio.grid[17-y][x];
-      _studio.grid[17-y][x] = t;
-    }
-  }
-  studioRenderDemo();
-}
-
-function studioFillClear() {
-  for (var y=0;y<18;y++) for (var x=0;x<16;x++) _studio.grid[y][x]='.';
-  studioRenderDemo();
-}
-
-function studioBuildPalette() {
-  var wrap = document.getElementById('studioPalette');
-  if (!wrap) return;
-  wrap.innerHTML = '';
-  _studio.palette.forEach(function(hex, idx){
-    var sw = document.createElement('div');
-    sw.className = 'sw' + (idx===_studio.activeColorIdx ? ' active' : '');
-    sw.title = hex;
-    sw.innerHTML = '<div class="dot" style="background:'+hex+'"></div>';
-    sw.onclick = function(){
-      _studio.activeColorIdx = idx;
-      document.getElementById('studioHex').value = hex;
-      studioHexChanged();
-      studioBuildPalette();
-    };
-    wrap.appendChild(sw);
-  });
-  var cp = document.getElementById('studioColorPreview');
-  if (cp) cp.style.background = _studio.palette[_studio.activeColorIdx];
-}
-
-function studioSelectAsset(id) {
-  _studio.selectedAssetId = id;
-  var a = _studio.assets.find(function(x){ return x.id === id; });
-  if (!a) return;
-  document.getElementById('studioName').value = a.name || '';
-  document.getElementById('studioSlug').value = a.slug || '';
-  _studio.palette = a.palette || _studio.palette;
-  if (a.pixels && a.pixels.length) {
-    for (var y=0;y<18;y++){
-      var row = (a.pixels[y] || '').padEnd(16,'.').slice(0,16);
-      for (var x=0;x<16;x++) _studio.grid[y][x] = row[x];
-    }
-  } else {
-    studioFillClear();
-  }
-  studioSetStatus(a.isPublished ? 'PUBLISHED' : 'DRAFT');
-  studioBuildPalette();
-  studioRenderAssetsList();
-  studioRenderDemo();
-}
-
-function studioGetDraftPayload() {
-  var name = (document.getElementById('studioName').value || '').trim();
-  var slug = (document.getElementById('studioSlug').value || '').trim();
-  if (!name) throw new Error('Ad zorunlu.');
-  if (!slug) throw new Error('Kod (slug) zorunlu.');
-  if (!/^[a-z0-9_]{2,40}$/.test(slug)) throw new Error('Kod sadece harf/rakam/alt-çizgi olmalı (2-40).');
-  return {
-    type: _studio.type,
-    name: name,
-    slug: slug,
-    palette: _studio.palette.slice(0, 8),
-    pixels: _studio.grid.map(function(row){ return row.join(''); }),
-    updatedAt: new Date().toISOString(),
-    updatedByUid: _adminUser ? _adminUser.uid : null
-  };
-}
 </script>
 </body>
 </html>
