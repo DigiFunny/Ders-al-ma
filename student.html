@@ -1213,6 +1213,7 @@ body {
 
 </style>
 
+  <link rel="stylesheet" href="pugi-modern.css">
 </head>
 <body>
 
@@ -5025,7 +5026,22 @@ function _buildAiPrompt(isDeep) {
   // ── Haftalık hedefte eksik dersler ──
   var dalDersMap={sayisal:['Matematik','Fizik','Kimya','Biyoloji'],sozel:['Türk Dili ve Edebiyatı','Tarih','Coğrafya','Felsefe'],ea:['Matematik','Türk Dili ve Edebiyatı','Tarih','Coğrafya'],dil:['İngilizce']};
   var dalDersler=(_userProfil&&dalDersMap[_userProfil.dal])||[];
+  // Alan seçilmemişse sınavın tüm derslerini kullan
+  if(!dalDersler.length){ try{ dalDersler=Object.keys(EXAM_DATA[currentExam]||{}); }catch(e){} }
   var eksikDersler=dalDersler.filter(function(d){return !haftaDers[d];});
+
+  // ── Sınava kalan gün (YKS) ──
+  var _sinavTarihi = new Date('2026-06-20T10:15:00');
+  var sinavKalan = Math.max(0, Math.ceil((_sinavTarihi - now)/86400000));
+  var sinavKalanStr = sinavKalan>0 ? (sinavKalan+' gün kaldı') : 'Sınav tarihi geçti';
+  // ── Tüm zamanlar ders dağılımı ──
+  var tumDers={};
+  entries.forEach(function(e){ if(e.subject) tumDers[e.subject]=(tumDers[e.subject]||0)+(e.sure||0); });
+  var tumToplamSaat=Math.round(entries.reduce(function(s,e){return s+(e.sure||0);},0)/60*10)/10;
+  var tumDersStr=Object.keys(tumDers).length
+    ? Object.keys(tumDers).sort(function(a,b){return tumDers[b]-tumDers[a];}).map(function(s){return s+': '+tumDers[s]+'dk';}).join(', ')
+    : 'Veri yok';
+  var _bugunAdi=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][now.getDay()];
 
   if (!isDeep) {
     // ══════════════════════════════════════════
@@ -5039,24 +5055,28 @@ function _buildAiPrompt(isDeep) {
     } catch(e){}
 
     var prompt=
-      'Sen Pugi YKS hazırlık uygulamasının kişisel AI koçusun.\n\n'+
-      '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+      'Sen Pugi YKS hazırlık uygulamasının kişisel AI koçusun. Öğrenciyle samimi ama net konuş, somut yönlendir.\n\n'+
+      'Bugün: '+_bugunAdi+' '+todayKey+'\n'+
+      'Sınava kalan: '+sinavKalanStr+'\n\n'+
+      '=== ÖĞRENCİ PROFİLİ ===\n'+(profil||'(profil girilmemiş)\n')+'\n'+
       '=== HAFTALIK ÖZET ===\n'+
       haftaSatirlari.join('\n')+'\n\n'+
       'Hafta toplamı: '+weeklyGoalStr+'\n'+
       'Bu hafta dersler: '+haftaDersStr+'\n'+
       'Bu hafta konular: '+haftaKonuStr+'\n\n'+
       '=== DÜN ===\n'+dunStr+'\n\n'+
+      '=== TÜM ZAMANLAR ===\nToplam: '+tumToplamSaat+' saat — '+tumDersStr+'\n\n'+
       '=== SON DENEMELER ===\n'+denemeStr+'\n\n'+
-      (eksikDersler.length?'=== BU HAFTA EKSİK DERSLER ===\n'+eksikDersler.join(', ')+'\n\n':'')+
+      (eksikDersler.length?'=== BU HAFTA HİÇ ÇALIŞILMAYAN DERSLER ===\n'+eksikDersler.join(', ')+'\n\n':'')+
       (sonDerinAnaliz?'=== SON DERİN ANALİZDEN ÖZET ===\n'+sonDerinAnaliz+'\n\n':'')+
       '=== GÜNLÜK ÖNERİ GÖREVİ ===\n'+
-      'Yukarıdaki verilere dayanarak BUGÜN için 3-4 cümlelik somut öneri yaz:\n'+
-      '- Bugün hangi derse/konuya kaç dakika odaklanmalı? (Spesifik konu adı ver)\n'+
-      '- Haftalık hedef durumuna göre ne yapmalı?\n'+
-      '- Deneme trendi veya hedefe yakınlık hakkında 1 cümle\n'+
-      (sonDerinAnaliz?'- Derin analizden bu yana nasıl ilerledi, doğru yolda mı? 1 cümle\n':'')+
-      'YASAK: Genel motivasyon cümleleri. Sadece verilerle konuş.';
+      'Yukarıdaki verilere dayanarak BUGÜN ('+_bugunAdi+') için 3-4 cümlelik somut öneri yaz:\n'+
+      '- Bugün hangi derse/konuya kaç dakika odaklanmalı? Spesifik KONU adı ver (örn. "Matematik / Türev").\n'+
+      '- Eksik/ihmal edilen dersi ve sınava kalan süreyi ('+sinavKalanStr+') dikkate al.\n'+
+      '- Haftalık hedefe göre bugün ne yapmalı?\n'+
+      (_userProfil&&_userProfil.hedefProgram?'- Hedef '+_userProfil.hedefProgram.uni+' — '+_userProfil.hedefProgram.bolum+' için bugünkü çalışmanın katkısı hakkında 1 cümle.\n':'- Deneme trendi veya hedefe yakınlık hakkında 1 cümle.\n')+
+      (sonDerinAnaliz?'- Derin analizden bu yana doğru yolda mı? 1 cümle.\n':'')+
+      'YASAK: Boş motivasyon cümleleri. Sadece verilerle konuş.';
     return prompt;
   }
 
@@ -5097,12 +5117,18 @@ function _buildAiPrompt(isDeep) {
       }).join('\n')
     : 'Deneme kaydı yok';
 
+  var _hedefMetni = (_userProfil&&_userProfil.hedefProgram)
+      ? ('Hedef: '+_userProfil.hedefProgram.uni+' — '+_userProfil.hedefProgram.bolum+(_userProfil.hedefProgram.siralama_2024?' (2024 sıra ~'+parseInt(_userProfil.hedefProgram.siralama_2024).toLocaleString('tr-TR')+')':''))
+      : (_userProfil&&_userProfil.hedefSiralama ? ('Hedef sıralama: ilk '+parseInt(_userProfil.hedefSiralama).toLocaleString('tr-TR')) : 'Hedef girilmemiş');
   var deepPrompt=
     'Sen Pugi YKS hazırlık uygulamasının kişisel AI koçusun. Aşağıdaki verilere dayanarak kapsamlı DERİN ANALİZ yap.\n\n'+
-    '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+    'Bugün: '+_bugunAdi+' '+todayKey+'  |  Sınava kalan: '+sinavKalanStr+'\n'+
+    _hedefMetni+'\n\n'+
+    '=== ÖĞRENCİ PROFİLİ ===\n'+(profil||'(profil girilmemiş)\n')+'\n'+
     '=== BU HAFTA (GÜN GÜN) ===\n'+haftaSatirlari.join('\n')+'\n'+
     'Hafta toplamı: '+weeklyGoalStr+'\n\n'+
     '=== SON 30 GÜN DERS DAĞILIMI ===\n'+ayDersStr+'\n\n'+
+    '=== TÜM ZAMANLAR ===\nToplam: '+tumToplamSaat+' saat — '+tumDersStr+'\n\n'+
     '=== EN ÇOK ÇALIŞILAN KONULAR (30 gün) ===\n'+(enCokKonu||'Konu kaydı yok')+'\n\n'+
     '=== EN AZ ÇALIŞILAN KONULAR (30 gün) ===\n'+(enAzKonu||'Veri yok')+'\n\n'+
     (ayEksikDers.length?'=== 30 GÜNDE HİÇ ÇALIŞILMAYAN DERSLER ===\n'+ayEksikDers.join(', ')+'\n\n':'')+
@@ -5111,22 +5137,24 @@ function _buildAiPrompt(isDeep) {
     '=== DERİN ANALİZ GÖREVİ ===\n'+
     'Aşağıdaki her başlığı MUTLAKA ele al:\n\n'+
     '**1. GENEL GİDİŞAT**\n'+
-    'Çalışma temposu nasıl? Seri değerlendirmesi. Haftalık hedefe ulaşılıyor mu?\n\n'+
+    'Çalışma temposu nasıl? Seri değerlendirmesi. Sınava kalan süreye ('+sinavKalanStr+') göre tempo yeterli mi?\n\n'+
     '**2. DERS ANALİZİ**\n'+
     'Hangi dersler güçlü, hangilerine yetersiz zaman ayrılmış? '+
-    (dalDersler.length?'Seçilen alanda ('+(_userProfil&&dalDersMap[_userProfil.dal]||[]).join('/')+') denge nasıl?':'')+
+    (dalDersler.length?'Seçilen alanda ('+dalDersler.join('/')+') denge nasıl?':'')+
     '\n\n'+
-    '**3. DENEME PERFORMANSI**\n'+
-    'Net trendi nasıl? '+
-    (_userProfil&&_userProfil.hedefProgram?'Hedef '+_userProfil.hedefProgram.uni+' için gereken puana ne kadar yakın?':'')+
-    (_userProfil&&_userProfil.hedefSiralama?'Hedef sıralama '+_userProfil.hedefSiralama.toLocaleString('tr-TR')+' için mevcut gidiş yeterli mi?':'')+
+    '**3. HEDEFE GİDEN YOL**\n'+
+    (_userProfil&&_userProfil.hedefProgram
+       ? ('Öğrenci '+_userProfil.hedefProgram.uni+' — '+_userProfil.hedefProgram.bolum+' istiyor. Bu bölümü KAZANMAK için: hangi 2-3 derse/konuya daha çok yüklenmeli? Hangi dersteki net artışı sıralamayı en çok yukarı taşır? Mevcut deneme netleriyle hedef sıra arasındaki mesafeyi somut yorumla.')
+       : (_userProfil&&_userProfil.hedefSiralama
+          ? ('Hedef ilk '+parseInt(_userProfil.hedefSiralama).toLocaleString('tr-TR')+' sıralama. Bu sıraya ulaşmak için hangi derslerden kaç net daha gerekiyor, öncelik hangi konularda?')
+          : 'Net trendi nasıl, hangi dersler puana en çok katkı sağlar?'))+
     '\n\n'+
     '**4. KRİTİK EKSİKLER**\n'+
-    'Hangi konular/dersler ihmal edilmiş? Neden önemli? Somut veriyle açıkla.\n\n'+
+    'Hangi konular/dersler ihmal edilmiş? Neden önemli (YKS\'de soru ağırlığı)? Somut veriyle açıkla.\n\n'+
     '**5. BU HAFTA YAPILACAKLAR LİSTESİ**\n'+
     'Her ders için kaç dakika, hangi konular. Net ve uygulanabilir plan.\n\n'+
     '**6. GENEL TAVSİYE**\n'+
-    'En kritik 1 eylem önerisi.\n\n'+
+    'Hedefe giden yolda en kritik 1 eylem önerisi.\n\n'+
     'ÖNEMLI: Her başlığı bold olarak yaz. Veriyle konuş, genel motivasyon yazma.';
 
   // Derin analizi localStorage'a kaydet (günlük öneri bunu referans alsın)
@@ -5196,7 +5224,7 @@ function loadAiDailyCoach() {
   var cachedText = null;
 
   // Cache versiyonu — prompt değişince eski öneriyi geçersiz say
-  var PROMPT_VERSION = 'v3';
+  var PROMPT_VERSION = 'v4';
   var uidSlice = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
   var aiDateKey = 'pugi_ai_date_' + uidSlice;
   var aiTextKey = 'pugi_ai_text_' + uidSlice;
@@ -5235,6 +5263,7 @@ function _fetchAiSuggestion(isDeep) {
     headers: { 'Content-Type': 'application/json' },
     signal: controller.signal,
     body: JSON.stringify({
+      model: GEMINI_MODEL,
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { maxOutputTokens: isDeep ? 1200 : 350, temperature: 0.75 }
     })
@@ -5279,7 +5308,7 @@ function _fetchAiSuggestion(isDeep) {
       var uidSl = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
       localStorage.setItem('pugi_ai_date_' + uidSl, todayKey);
       localStorage.setItem('pugi_ai_text_' + uidSl, text);
-      localStorage.setItem('pugi_ai_pv_'   + uidSl, 'v3');
+      localStorage.setItem('pugi_ai_pv_'   + uidSl, 'v4');
     }
     _showAiText(text, isDeep);
   })
@@ -5897,8 +5926,8 @@ function saveOnboardingModal() {
     _applyDalFilter();
     closeOnboardingModal(false);
     showToast('✅ Profil güncellendi!');
-    // AI öneriyi yenile (dal bilgisiyle)
-    localStorage.removeItem('pugi_ai_date');
+    // AI öneriyi yenile (yeni hedef/dal ile bugün tekrar üretilsin)
+    try { var u=_currentUser.uid.slice(0,8); localStorage.removeItem('pugi_ai_date_'+u); localStorage.removeItem('pugi_ai_text_'+u); } catch(e){}
     loadAiDailyCoach();
   });
 }

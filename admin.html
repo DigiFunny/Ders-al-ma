@@ -129,6 +129,7 @@ input:focus { border-color: var(--admin); }
 .xp-fill-s{height:100%;width:62%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;}
 
 </style>
+  <link rel="stylesheet" href="pugi-modern.css">
 </head>
 <body>
 
@@ -891,7 +892,7 @@ var _studio = {
   assets: [],
   demo: { avatarType:'male', expression:'neutral', accessoryId:null, avatarPreset:null }
 };
-var STUDIO_SC = 13; // scale factor: 1 grid cell = 13x13 px
+var STUDIO_SC = 19; // scale factor: 1 grid cell = 19x19 px (daha büyük çizim alanı)
 
 function studioInit() {
   if (!_db) return;
@@ -1044,8 +1045,8 @@ function studioRenderCanvas() {
       ctx.fillRect(x*STUDIO_SC,y*STUDIO_SC,STUDIO_SC,STUDIO_SC);
     }
   }
-  // Grid lines
-  ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=0.5;
+  // Grid lines (piksel yerleştirmeyi kolaylaştırmak için daha belirgin)
+  ctx.strokeStyle='rgba(255,255,255,0.13)'; ctx.lineWidth=1;
   for(var x=0;x<=16;x++){ctx.beginPath();ctx.moveTo(x*STUDIO_SC,0);ctx.lineTo(x*STUDIO_SC,H);ctx.stroke();}
   for(var y=0;y<=18;y++){ctx.beginPath();ctx.moveTo(0,y*STUDIO_SC);ctx.lineTo(W,y*STUDIO_SC);ctx.stroke();}
   // Eraser protect highlight

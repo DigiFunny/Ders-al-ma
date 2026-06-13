@@ -1191,6 +1191,7 @@ body {
 
 </style>
 
+  <link rel="stylesheet" href="pugi-modern.css">
 </head>
 <body>
 
@@ -4503,7 +4504,7 @@ var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif,
 
 // ── AI Koç Sabitleri ──────────────────────────────────
 var GEMINI_API_KEY = ''; // Artık gizli - Cloudflare Worker'da
-var GEMINI_MODEL   = 'gemini-1.5-flash';
+var GEMINI_MODEL   = 'gemini-2.5-flash';
 var GEMINI_URL     = 'https://pugi-ai-proxy.arifsenel48.workers.dev';
 
 // ── AI Koç State ─────────────────────────────────────
@@ -4832,6 +4833,7 @@ function onUserLoggedIn(user) {
 
   _fbDb.collection('users').doc(user.uid).get().then(function(doc) {
     var data = doc.exists ? doc.data() : {};
+    try {
     var username    = data.username    || user.email.split('@')[0];
     var displayName = data.displayName || username;
     var accountType = data.accountType || 'student';
@@ -4869,12 +4871,12 @@ function onUserLoggedIn(user) {
       _hiddenSuggestions: data.hiddenSuggestions   || []
     };
 
-    // User bar güncelle
-    document.getElementById('userBarGuest').style.display = 'none';
-    document.getElementById('userBarLoggedIn').style.display = 'flex';
-    document.getElementById('userAvatarBar').textContent = displayName.charAt(0).toUpperCase();
-    document.getElementById('userNameBar').textContent = displayName;
-    document.getElementById('userUnameBar').textContent = '@' + username;
+    // User bar güncelle (null-güvenli — eksik DOM render'ı durdurmasın)
+    var _ubG=document.getElementById('userBarGuest'); if(_ubG) _ubG.style.display='none';
+    var _ubL=document.getElementById('userBarLoggedIn'); if(_ubL) _ubL.style.display='flex';
+    var _avB=document.getElementById('userAvatarBar'); if(_avB) _avB.textContent=displayName.charAt(0).toUpperCase();
+    var _unB=document.getElementById('userNameBar'); if(_unB) _unB.textContent=displayName;
+    var _uuB=document.getElementById('userUnameBar'); if(_uuB) _uuB.textContent='@'+username;
 
     // Profilim kartını doldur
     var heroCard = document.getElementById('profileHeroCard');
@@ -4932,7 +4934,12 @@ function onUserLoggedIn(user) {
     if (!_userProfil.onboardingDone) {
       setTimeout(function(){ showOnboardingModal(); }, 1500);
     }
+    } catch(renderErr) {
+      // Arayüz render hatası oturumu KAPATMAMALI — sadece logla, kullanıcı içeride kalsın
+      console.error('Arayüz render hatası (oturum korundu):', renderErr);
+    }
   }).catch(function(e) {
+    // Buraya yalnızca gerçek Firestore okuma hatası düşer (izin/ağ) — render hataları yukarıda yakalandı
     console.warn('Kullanıcı verisi okunamadı:', e);
     try { _fbAuth && _fbAuth.signOut && _fbAuth.signOut(); } catch(_) {}
     try { window.location.href = 'index.html'; } catch(_) {}
@@ -5142,10 +5149,30 @@ function _buildAiPrompt(isDeep) {
     }
   }
 
-  // ── Haftalık hedefte eksik dersler ──
-  var dalDersMap={sayisal:['Matematik','Fizik','Kimya','Biyoloji'],sozel:['Türk Dili ve Edebiyatı','Tarih','Coğrafya','Felsefe'],ea:['Matematik','Türk Dili ve Edebiyatı','Tarih','Coğrafya'],dil:['İngilizce']};
-  var dalDersler=(_userProfil&&dalDersMap[_userProfil.dal])||[];
+  // ── Sınava kalan gün (KPSS) ──
+  var _sinavTarihi = new Date('2026-11-02T09:00:00');
+  var sinavKalan = Math.max(0, Math.ceil((_sinavTarihi - now)/86400000));
+  var sinavKalanStr = sinavKalan>0 ? (sinavKalan+' gün kaldı') : 'Sınav tarihi geçti';
+
+  // ── KPSS beklenen dersleri (GY + GK; eğitim kategorisinde Eğitim Bilimleri eklenir) ──
+  var _kpssKat=(_userProfil&&_userProfil.kpssProfile&&_userProfil.kpssProfile.kategori)||'';
+  var dalDersler=[];
+  try {
+    dalDersler=Object.keys(EXAM_DATA.GY||{}).concat(Object.keys(EXAM_DATA.GK||{}));
+    if(/egit/i.test(_kpssKat)) dalDersler=dalDersler.concat(Object.keys(EXAM_DATA.EGITIM||{}));
+  } catch(e){}
   var eksikDersler=dalDersler.filter(function(d){return !haftaDers[d];});
+
+  // ── Tüm zamanlar ders dağılımı ──
+  var tumDers={};
+  entries.forEach(function(e){ if(e.subject) tumDers[e.subject]=(tumDers[e.subject]||0)+(e.sure||0); });
+  var tumToplamSaat=Math.round(entries.reduce(function(s,e){return s+(e.sure||0);},0)/60*10)/10;
+  var tumDersStr=Object.keys(tumDers).length
+    ? Object.keys(tumDers).sort(function(a,b){return tumDers[b]-tumDers[a];}).map(function(s){return s+': '+tumDers[s]+'dk';}).join(', ')
+    : 'Veri yok';
+  // Hedef puan (KPSS)
+  var _hedefPuan=(_userProfil&&(_userProfil.hedefPuan||(_userProfil.kpssProfile&&_userProfil.kpssProfile.hedefPuan)))||null;
+  var _bugunAdi=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][now.getDay()];
 
   if (!isDeep) {
     // ══════════════════════════════════════════
@@ -5159,24 +5186,29 @@ function _buildAiPrompt(isDeep) {
     } catch(e){}
 
     var prompt=
-      'Sen Pugi KPSS hazırlık uygulamasının kişisel AI koçusun.\n\n'+
-      '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+      'Sen Pugi KPSS hazırlık uygulamasının kişisel AI koçusun. Adayla samimi ama net konuş, somut yönlendir.\n\n'+
+      'Bugün: '+_bugunAdi+' '+todayKey+'\n'+
+      'Sınava kalan: '+sinavKalanStr+'\n'+
+      (_hedefPuan?'Hedef KPSS puanı: '+_hedefPuan+'\n':'')+'\n'+
+      '=== ADAY PROFİLİ ===\n'+(profil||'(profil girilmemiş)\n')+'\n'+
       '=== HAFTALIK ÖZET ===\n'+
       haftaSatirlari.join('\n')+'\n\n'+
       'Hafta toplamı: '+weeklyGoalStr+'\n'+
       'Bu hafta dersler: '+haftaDersStr+'\n'+
       'Bu hafta konular: '+haftaKonuStr+'\n\n'+
       '=== DÜN ===\n'+dunStr+'\n\n'+
+      '=== TÜM ZAMANLAR ===\nToplam: '+tumToplamSaat+' saat — '+tumDersStr+'\n\n'+
       '=== SON DENEMELER ===\n'+denemeStr+'\n\n'+
-      (eksikDersler.length?'=== BU HAFTA EKSİK DERSLER ===\n'+eksikDersler.join(', ')+'\n\n':'')+
+      (eksikDersler.length?'=== BU HAFTA HİÇ ÇALIŞILMAYAN DERSLER ===\n'+eksikDersler.join(', ')+'\n\n':'')+
       (sonDerinAnaliz?'=== SON DERİN ANALİZDEN ÖZET ===\n'+sonDerinAnaliz+'\n\n':'')+
       '=== GÜNLÜK ÖNERİ GÖREVİ ===\n'+
-      'Yukarıdaki verilere dayanarak BUGÜN için 3-4 cümlelik somut öneri yaz:\n'+
-      '- Bugün hangi derse/konuya kaç dakika odaklanmalı? (Spesifik konu adı ver)\n'+
-      '- Haftalık hedef durumuna göre ne yapmalı?\n'+
-      '- Deneme trendi veya hedefe yakınlık hakkında 1 cümle\n'+
-      (sonDerinAnaliz?'- Derin analizden bu yana nasıl ilerledi, doğru yolda mı? 1 cümle\n':'')+
-      'YASAK: Genel motivasyon cümleleri. Sadece verilerle konuş.';
+      'Yukarıdaki verilere dayanarak BUGÜN ('+_bugunAdi+') için 3-4 cümlelik somut öneri yaz:\n'+
+      '- Bugün hangi derse/konuya kaç dakika odaklanmalı? Spesifik KONU adı ver (örn. "Coğrafya / İklim Tipleri").\n'+
+      '- Eksik/ihmal edilen dersi ve sınava kalan süreyi ('+sinavKalanStr+') dikkate al.\n'+
+      '- Haftalık hedefe göre bugün ne yapmalı?\n'+
+      (_hedefPuan?'- Hedef puana ('+_hedefPuan+') ulaşmak için bugünkü çalışmanın katkısı hakkında 1 cümle.\n':'- Deneme net trendi hakkında 1 cümle.\n')+
+      (sonDerinAnaliz?'- Derin analizden bu yana doğru yolda mı? 1 cümle.\n':'')+
+      'YASAK: Boş motivasyon cümleleri ("başarabilirsin" vb.). Sadece verilerle konuş.';
     return prompt;
   }
 
@@ -5219,10 +5251,13 @@ function _buildAiPrompt(isDeep) {
 
   var deepPrompt=
     'Sen Pugi KPSS hazırlık uygulamasının kişisel AI koçusun. Aşağıdaki verilere dayanarak kapsamlı DERİN ANALİZ yap.\n\n'+
-    '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+    'Bugün: '+_bugunAdi+' '+todayKey+'  |  Sınava kalan: '+sinavKalanStr+'\n'+
+    (_hedefPuan?'Hedef KPSS puanı: '+_hedefPuan+'\n':'')+'\n'+
+    '=== ADAY PROFİLİ ===\n'+(profil||'(profil girilmemiş)\n')+'\n'+
     '=== BU HAFTA (GÜN GÜN) ===\n'+haftaSatirlari.join('\n')+'\n'+
     'Hafta toplamı: '+weeklyGoalStr+'\n\n'+
     '=== SON 30 GÜN DERS DAĞILIMI ===\n'+ayDersStr+'\n\n'+
+    '=== TÜM ZAMANLAR ===\nToplam: '+tumToplamSaat+' saat — '+tumDersStr+'\n\n'+
     '=== EN ÇOK ÇALIŞILAN KONULAR (30 gün) ===\n'+(enCokKonu||'Konu kaydı yok')+'\n\n'+
     '=== EN AZ ÇALIŞILAN KONULAR (30 gün) ===\n'+(enAzKonu||'Veri yok')+'\n\n'+
     (ayEksikDers.length?'=== 30 GÜNDE HİÇ ÇALIŞILMAYAN DERSLER ===\n'+ayEksikDers.join(', ')+'\n\n':'')+
@@ -5231,22 +5266,19 @@ function _buildAiPrompt(isDeep) {
     '=== DERİN ANALİZ GÖREVİ ===\n'+
     'Aşağıdaki her başlığı MUTLAKA ele al:\n\n'+
     '**1. GENEL GİDİŞAT**\n'+
-    'Çalışma temposu nasıl? Seri değerlendirmesi. Haftalık hedefe ulaşılıyor mu?\n\n'+
+    'Çalışma temposu nasıl? Seri değerlendirmesi. Haftalık hedefe ulaşılıyor mu? Sınava kalan süreye ('+sinavKalanStr+') göre tempo yeterli mi?\n\n'+
     '**2. DERS ANALİZİ**\n'+
-    'Hangi dersler güçlü, hangilerine yetersiz zaman ayrılmış? '+
-    (dalDersler.length?'Seçilen alanda ('+(_userProfil&&dalDersMap[_userProfil.dal]||[]).join('/')+') denge nasıl?':'')+
-    '\n\n'+
+    'KPSS dersleri arasında (Genel Yetenek: Türkçe-Matematik, Genel Kültür: Tarih/Coğrafya/Anayasa/Atatürk İlkeleri/Vatandaşlık'+(/egit/i.test(_kpssKat)?' ve Eğitim Bilimleri':'')+') hangileri güçlü, hangilerine yetersiz zaman ayrılmış? Dengesizliği veriyle göster.\n\n'+
     '**3. DENEME PERFORMANSI**\n'+
     'Net trendi nasıl? '+
-    (_userProfil&&_userProfil.hedefProgram?'Hedef '+_userProfil.hedefProgram.uni+' için gereken puana ne kadar yakın?':'')+
-    (_userProfil&&_userProfil.hedefSiralama?'Hedef sıralama '+_userProfil.hedefSiralama.toLocaleString('tr-TR')+' için mevcut gidiş yeterli mi?':'')+
+    (_hedefPuan?'Hedef puana ('+_hedefPuan+') ulaşmak için hangi derslerden kaç net daha gerekiyor, hangi dersler puana en çok katkı sağlar?':'Hangi dersler puana en çok katkı sağlar, oralara yüklenmeli mi?')+
     '\n\n'+
     '**4. KRİTİK EKSİKLER**\n'+
-    'Hangi konular/dersler ihmal edilmiş? Neden önemli? Somut veriyle açıkla.\n\n'+
+    'Hangi konular/dersler ihmal edilmiş? Neden önemli (KPSS\'de soru ağırlığı)? Somut veriyle açıkla.\n\n'+
     '**5. BU HAFTA YAPILACAKLAR LİSTESİ**\n'+
     'Her ders için kaç dakika, hangi konular. Net ve uygulanabilir plan.\n\n'+
     '**6. GENEL TAVSİYE**\n'+
-    'En kritik 1 eylem önerisi.\n\n'+
+    'Hedef puana giden yolda en kritik 1 eylem önerisi.\n\n'+
     'ÖNEMLI: Her başlığı bold olarak yaz. Veriyle konuş, genel motivasyon yazma.';
 
   // Derin analizi localStorage'a kaydet (günlük öneri bunu referans alsın)
@@ -5316,7 +5348,7 @@ function loadAiDailyCoach() {
   var cachedText = null;
 
   // Cache versiyonu — prompt değişince eski öneriyi geçersiz say
-  var PROMPT_VERSION = 'v3';
+  var PROMPT_VERSION = 'v4';
   var uidSlice = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
   var aiDateKey = 'pugi_ai_date_' + uidSlice;
   var aiTextKey = 'pugi_ai_text_' + uidSlice;
@@ -5353,6 +5385,7 @@ function _fetchAiSuggestion(isDeep) {
     headers: { 'Content-Type': 'application/json' },
     signal: controller.signal,
     body: JSON.stringify({
+      model: GEMINI_MODEL,
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { maxOutputTokens: isDeep ? 1200 : 350, temperature: 0.75 }
     })
@@ -5396,7 +5429,7 @@ function _fetchAiSuggestion(isDeep) {
       var uidSl = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
       localStorage.setItem('pugi_ai_date_' + uidSl, todayKey);
       localStorage.setItem('pugi_ai_text_' + uidSl, text);
-      localStorage.setItem('pugi_ai_pv_'   + uidSl, 'v3');
+      localStorage.setItem('pugi_ai_pv_'   + uidSl, 'v4');
     }
     _showAiText(text, isDeep);
   })
@@ -5848,7 +5881,7 @@ function _showGuestLockModal(title, desc) {
 var _modalDal = null;
 
 function showOnboardingModal() {
-  if (_userProfil && _userProfil.dal) return;
+  if (_userProfil && _userProfil.onboardingDone) return;
   var modal = document.getElementById('onboardingModal');
   if (!modal) return;
 
@@ -5985,33 +6018,38 @@ function closeOnboardingModal(markShown) {
   }
 }
 
-function selectModalDal(dal, el) {
-  _modalDal = dal;
-  document.querySelectorAll('.ob-modal-dal').forEach(function(c){
+var _kpssOnbKat = null;
+function selectKpssOnbKat(kat, el) {
+  var already = (_kpssOnbKat === kat);
+  document.querySelectorAll('.ob-kpss-kat').forEach(function(c){
     c.style.borderColor = 'var(--border)';
     c.style.background = 'var(--card)';
+    c.style.color = 'var(--text)';
   });
+  if (already) { _kpssOnbKat = null; return; } // tekrar tıklayınca seçimi kaldır
+  _kpssOnbKat = kat;
   el.style.borderColor = 'var(--accent)';
-  el.style.background = 'rgba(56,189,248,0.08)';
-  document.getElementById('modalSaveBtn').disabled = false;
+  el.style.background = 'rgba(52,211,153,0.10)';
+  el.style.color = 'var(--accent)';
 }
+// Geriye dönük uyumluluk (artık kullanılmıyor)
+function selectModalDal() {}
 
 function saveOnboardingModal() {
-  if (!_modalDal || !_currentUser || !_fbDb) return;
-  var puan = parseFloat(document.getElementById('modalHedefSiralama').value) || null;
-  var update = { dal: _modalDal, onboardingDone: true };
-  if (puan) {
-    update.hedefTur = 'puan';
-    update.hedefPuan = puan;
-    update.hedefSiralama = null;
-    update.hedefProgram = null;
-  }
+  if (!_currentUser || !_fbDb) return;
+  var pEl = document.getElementById('modalHedefSiralama');
+  var puan = pEl ? (parseFloat(pEl.value) || null) : null;
+  var update = { onboardingDone: true };
+  if (puan) update.hedefPuan = puan;
+  if (_kpssOnbKat) update.kpssProfile = Object.assign({}, (_userProfil && _userProfil.kpssProfile) || {}, { kategori: _kpssOnbKat });
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
     _userProfil = Object.assign(_userProfil || {}, update);
-    _applyDalFilter();
+    try { _renderKpssKategoriInProfil(Object.assign({ lastActiveExam: 'kpss' }, _userProfil)); } catch(e){}
+    try { _applyDalFilter(); } catch(e){}
     closeOnboardingModal(false);
-    showToast('✅ Profil güncellendi!');
-    localStorage.removeItem('pugi_ai_date');
+    showToast('✅ Hedefin kaydedildi!');
+    // Bugünün AI önerisini sıfırla ki yeni hedefle yeniden üretilsin
+    try { var u = _currentUser.uid.slice(0,8); localStorage.removeItem('pugi_ai_date_'+u); localStorage.removeItem('pugi_ai_text_'+u); } catch(e){}
     loadAiDailyCoach();
   });
 }
@@ -10237,42 +10275,35 @@ function openCoachWhatsapp() {
     <div class="day-modal-handle"></div>
     <div class="day-modal-header">
       <div>
-        <div class="day-modal-title">🎉 Pugi güncellendi!</div>
-        <div style="font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:2px">Sana daha iyi yardımcı olabilmem için birkaç soru</div>
+        <div class="day-modal-title">🎯 KPSS hedefini belirle</div>
+        <div style="font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:2px">Koçun sana daha iyi yol göstersin diye (hepsi opsiyonel)</div>
       </div>
       <button class="day-modal-close" onclick="closeOnboardingModal(true)">✕</button>
     </div>
     <div class="day-modal-body">
 
-      <!-- Dal seçimi (KPSS için Sözel/Dil) -->
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Hangi alanda çalışıyorsun?</div>
+      <!-- KPSS — hedef kadro türü -->
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Hedef kadro türün? <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-        <div class="ob-modal-dal" id="mdSoz" onclick="selectModalDal('sozel',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">📖</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--warn)">Sözel</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Ede·Tar·Coğ·Fel</div>
-        </div>
-        <div class="ob-modal-dal" id="mdDil" onclick="selectModalDal('dil',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">🌍</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--accent2)">Dil</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">İng·Alm·Fra</div>
-        </div>
+        <div class="ob-kpss-kat" onclick="selectKpssOnbKat('lisans_b',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.76rem;font-weight:800">🏛️ B Grubu / Memur</div>
+        <div class="ob-kpss-kat" onclick="selectKpssOnbKat('lisans_a',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.76rem;font-weight:800">⚖️ A Grubu / Kariyer</div>
+        <div class="ob-kpss-kat" onclick="selectKpssOnbKat('lisans_egitim',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.76rem;font-weight:800">🏫 Eğitim (ÖABT)</div>
+        <div class="ob-kpss-kat" onclick="selectKpssOnbKat('on_lisans',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.76rem;font-weight:800">📋 Ön Lisans</div>
+        <div class="ob-kpss-kat" onclick="selectKpssOnbKat('lise',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.76rem;font-weight:800">🎒 Ortaöğretim</div>
       </div>
 
-      <!-- Puan hedefi -->
+      <!-- Hedef puan -->
       <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
-
-      <!-- Sıralama (puan) -->
-      <div id="modalSiralamaWrap" style="margin-bottom:12px">
+      <div style="margin-bottom:12px">
         <input type="number" id="modalHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
           style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
-          oninput="this.style.borderColor='var(--accent)'; _modalOnSiralamaInput();">
+          oninput="this.style.borderColor='var(--accent)'">
       </div>
 
       <!-- Kaydet butonu -->
-      <button id="modalSaveBtn" onclick="saveOnboardingModal()" disabled
+      <button id="modalSaveBtn" onclick="saveOnboardingModal()"
         style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#0a1a0f;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif;margin-bottom:10px">
-        Kaydet
+        Hedefimi Kaydet
       </button>
       <button onclick="closeOnboardingModal(true)"
         style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Sora',sans-serif">

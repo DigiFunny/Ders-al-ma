@@ -1685,6 +1685,7 @@ body:not(.light) .today-card {
 
 </style>
 
+  <link rel="stylesheet" href="pugi-modern.css">
 </head>
 <body class="light">
 
@@ -4968,7 +4969,7 @@ var _userProfil  = null; // { dal, hedefTur, hedefSiralama, hedefProgram, sinif,
 
 // ── Pugi Asistan Sabitleri ────────────────────────────
 var GEMINI_API_KEY = ''; // Artık gizli - Cloudflare Worker'da
-var GEMINI_MODEL   = 'gemini-1.5-flash';
+var GEMINI_MODEL   = 'gemini-2.5-flash';
 var GEMINI_URL     = 'https://pugi-ai-proxy.arifsenel48.workers.dev';
 
 // ── Pugi Asistan State ────────────────────────────────
@@ -5297,6 +5298,7 @@ function onUserLoggedIn(user) {
 
   _fbDb.collection('users').doc(user.uid).get().then(function(doc) {
     var data = doc.exists ? doc.data() : {};
+    try {
     var username    = data.username    || user.email.split('@')[0];
     var displayName = data.displayName || username;
     var accountType = data.accountType || 'student';
@@ -5326,6 +5328,8 @@ function onUserLoggedIn(user) {
       hedefTur:           data.hedefTur           || null,
       hedefSiralama:      data.hedefSiralama       || null,
       hedefPuan:          data.hedefPuan           || null,
+      hedefLise:          data.hedefLise           || null,
+      hedefYuzdelik:      data.hedefYuzdelik        || null,
       hedefProgram:       data.hedefProgram        || null,
       sinif:              data.sinif               || null,
       onboardingDone:     data.onboardingDone      || false,
@@ -5391,7 +5395,12 @@ function onUserLoggedIn(user) {
     if (!_userProfil.onboardingDone) {
       setTimeout(function(){ showOnboardingModal(); }, 1500);
     }
+    } catch(renderErr) {
+      // Arayüz render hatası oturumu KAPATMAMALI — sadece logla, kullanıcı içeride kalsın
+      console.error('Arayüz render hatası (oturum korundu):', renderErr);
+    }
   }).catch(function(e) {
+    // Buraya yalnızca gerçek Firestore okuma hatası düşer (izin/ağ) — render hataları yukarıda yakalandı
     console.warn('Kullanıcı verisi okunamadı:', e);
     try { _fbAuth && _fbAuth.signOut && _fbAuth.signOut(); } catch(_) {}
     try { window.location.href = 'index.html'; } catch(_) {}
@@ -5439,25 +5448,19 @@ function _renderKpssKategoriInProfil(data) {
   badge.onclick = function(){ openExamSheet(); };
 
   if (lastExam === 'lgs') {
-    var katMap = {
-      lisans_a:      { label: 'Lisans — A Grubu / Kariyer', emoji: '⚖️', color: '#fb923c' },
-      lisans_b:      { label: 'Lisans — B Grubu / Memur',  emoji: '🏛️', color: '#34d399' },
-      lisans_egitim: { label: 'Lisans — Eğitim (ÖABT)',    emoji: '🏫', color: '#a78bfa' },
-      on_lisans:     { label: 'Ön Lisans',                  emoji: '📋', color: '#38bdf8' },
-      lise:          { label: 'Ortaöğretim (Lise)',         emoji: '🎒', color: '#fbbf24' },
-      // eski format uyumluluk
-      gy_gk:   { label: 'GY + GK (Lisans)',      emoji: '📝', color: '#34d399' },
-      egitim:  { label: 'Eğitim Bilimleri',      emoji: '🏫', color: '#a78bfa' },
-      a_grubu: { label: 'A Grubu Kadro',          emoji: '⚖️', color: '#fb923c' }
-    };
-    var kpssP = data.kpssProfile || {};
-    var kat   = katMap[kpssP.kategori] || { label: 'LGS', emoji: '📚', color: '#38bdf8' };
-    var puan  = data.hedefPuan || kpssP.hedefPuan || null;
+    var hLise = data.hedefLise || null;
+    var hYuz  = data.hedefYuzdelik || null;
+    var hPuan = data.hedefPuan || null;
+    var hedefParts = [];
+    if (hLise) hedefParts.push(hLise);
+    if (hYuz)  hedefParts.push('%' + hYuz + ' dilim');
+    if (hPuan) hedefParts.push(hPuan + ' puan');
+    var hedefStr = hedefParts.length ? hedefParts.join(' · ') : 'Hedef belirlemek için dokun';
     badge.innerHTML =
-      '<span style="font-size:1.2rem">' + kat.emoji + '</span>' +
-      '<div style="flex:1">' +
-        '<div style="font-size:0.78rem;font-weight:900;color:' + kat.color + '">LGS — ' + kat.label + '</div>' +
-        (puan ? '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px">Hedef Puan: ' + puan + '</div>' : '') +
+      '<span style="font-size:1.2rem">🎯</span>' +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-size:0.78rem;font-weight:900;color:#38bdf8">LGS Hedefin</div>' +
+        '<div style="font-size:0.65rem;color:var(--muted);font-weight:700;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + hedefStr + '</div>' +
       '</div>';
   } else {
     var dalMap = { sozel:'Sözel (SÖZ)', dil:'Dil', sayisal:'Sayısal (SAY)', ea:'Eşit Ağırlık (EA)' };
@@ -5606,10 +5609,9 @@ function _buildAiPrompt(isDeep) {
   var denemeStr='Deneme yok';
   if(tumDeneme.length>0){
     denemeStr=tumDeneme.map(function(d,i){
-      var tip=d.type||'GY';
-      var tyt=parseFloat(d.tyt_net||d.net||0).toFixed(1);
-      var ayt=d.ayt_net?' AYT:'+parseFloat(d.ayt_net).toFixed(1):'';
-      return (i+1)+'. '+tip+' → TYT:'+tyt+ayt+(d.date?' ('+d.date+')':'');
+      var tip=d.type||'LGS';
+      var net=parseFloat(d.net||d.tyt_net||0).toFixed(1);
+      return (i+1)+'. '+tip+' → Net:'+net+(d.date?' ('+d.date+')':'');
     }).join('\n');
     if(tumDeneme.length>=2){
       var ilk=parseFloat(tumDeneme[tumDeneme.length-1].tyt_net||tumDeneme[tumDeneme.length-1].net||0);
@@ -5619,10 +5621,29 @@ function _buildAiPrompt(isDeep) {
     }
   }
 
-  // ── Haftalık hedefte eksik dersler ──
-  var dalDersMap={sayisal:['Matematik','Fizik','Kimya','Biyoloji'],sozel:['Türk Dili ve Edebiyatı','Tarih','Coğrafya','Felsefe'],ea:['Matematik','Türk Dili ve Edebiyatı','Tarih','Coğrafya'],dil:['İngilizce']};
-  var dalDersler=(_userProfil&&dalDersMap[_userProfil.dal])||[];
+  // ── Sınava kalan gün (LGS) ──
+  var _sinavTarihi = new Date('2026-06-07T09:30:00');
+  var sinavKalan = Math.max(0, Math.ceil((_sinavTarihi - now)/86400000));
+  var sinavKalanStr = sinavKalan>0 ? (sinavKalan+' gün kaldı') : 'Sınav tarihi geçti';
+
+  // ── LGS dersleri (EXAM_DATA.LGS'ten dinamik) ──
+  var dalDersler=[];
+  try { dalDersler=Object.keys(EXAM_DATA.LGS||{}); } catch(e){}
   var eksikDersler=dalDersler.filter(function(d){return !haftaDers[d];});
+
+  // ── Tüm zamanlar ders dağılımı ──
+  var tumDers={};
+  entries.forEach(function(e){ if(e.subject) tumDers[e.subject]=(tumDers[e.subject]||0)+(e.sure||0); });
+  var tumToplamSaat=Math.round(entries.reduce(function(s,e){return s+(e.sure||0);},0)/60*10)/10;
+  var tumDersStr=Object.keys(tumDers).length
+    ? Object.keys(tumDers).sort(function(a,b){return tumDers[b]-tumDers[a];}).map(function(s){return s+': '+tumDers[s]+'dk';}).join(', ')
+    : 'Veri yok';
+  // LGS hedefleri (onboarding sonrası dolar)
+  var _hedefLise=(_userProfil&&_userProfil.hedefLise)||null;
+  var _hedefYuzdelik=(_userProfil&&(_userProfil.hedefYuzdelik||_userProfil.hedefSiralama))||null;
+  var _hedefPuanLgs=(_userProfil&&_userProfil.hedefPuan)||null;
+  var _lgsHedefStr=[ _hedefLise?('Hedef okul: '+_hedefLise):'', _hedefYuzdelik?('Hedef yüzdelik: %'+_hedefYuzdelik):'', _hedefPuanLgs?('Hedef puan: '+_hedefPuanLgs):'' ].filter(Boolean).join(' | ');
+  var _bugunAdi=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'][now.getDay()];
 
   if (!isDeep) {
     // ══════════════════════════════════════════
@@ -5636,24 +5657,29 @@ function _buildAiPrompt(isDeep) {
     } catch(e){}
 
     var prompt=
-      'Sen Pugi LGS hazırlık uygulamasının kişisel AI koçusun.\n\n'+
-      '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+      'Sen Pugi LGS hazırlık uygulamasının kişisel AI koçusun. 8. sınıf öğrencisiyle yaşına uygun, sade ve motive edici ama somut konuş.\n\n'+
+      'Bugün: '+_bugunAdi+' '+todayKey+'\n'+
+      'Sınava kalan: '+sinavKalanStr+'\n'+
+      (_lgsHedefStr?_lgsHedefStr+'\n':'')+'\n'+
+      '=== ÖĞRENCİ PROFİLİ ===\n'+(profil||'')+(_lgsHedefStr?'':'(hedef girilmemiş)\n')+'\n'+
       '=== HAFTALIK ÖZET ===\n'+
       haftaSatirlari.join('\n')+'\n\n'+
       'Hafta toplamı: '+weeklyGoalStr+'\n'+
       'Bu hafta dersler: '+haftaDersStr+'\n'+
       'Bu hafta konular: '+haftaKonuStr+'\n\n'+
       '=== DÜN ===\n'+dunStr+'\n\n'+
+      '=== TÜM ZAMANLAR ===\nToplam: '+tumToplamSaat+' saat — '+tumDersStr+'\n\n'+
       '=== SON DENEMELER ===\n'+denemeStr+'\n\n'+
-      (eksikDersler.length?'=== BU HAFTA EKSİK DERSLER ===\n'+eksikDersler.join(', ')+'\n\n':'')+
+      (eksikDersler.length?'=== BU HAFTA HİÇ ÇALIŞILMAYAN DERSLER ===\n'+eksikDersler.join(', ')+'\n\n':'')+
       (sonDerinAnaliz?'=== SON DERİN ANALİZDEN ÖZET ===\n'+sonDerinAnaliz+'\n\n':'')+
       '=== GÜNLÜK ÖNERİ GÖREVİ ===\n'+
-      'Yukarıdaki verilere dayanarak BUGÜN için 3-4 cümlelik somut öneri yaz:\n'+
-      '- Bugün hangi derse/konuya kaç dakika odaklanmalı? (Spesifik konu adı ver)\n'+
-      '- Haftalık hedef durumuna göre ne yapmalı?\n'+
-      '- Deneme trendi veya hedefe yakınlık hakkında 1 cümle\n'+
-      (sonDerinAnaliz?'- Derin analizden bu yana nasıl ilerledi, doğru yolda mı? 1 cümle\n':'')+
-      'YASAK: Genel motivasyon cümleleri. Sadece verilerle konuş.';
+      'Yukarıdaki verilere dayanarak BUGÜN ('+_bugunAdi+') için 3-4 cümlelik somut öneri yaz:\n'+
+      '- Bugün hangi derse/konuya kaç dakika odaklanmalı? Spesifik KONU adı ver (örn. "Matematik / Üslü İfadeler").\n'+
+      '- Eksik/ihmal edilen dersi ve sınava kalan süreyi ('+sinavKalanStr+') dikkate al.\n'+
+      '- Haftalık hedefe göre bugün ne yapmalı?\n'+
+      (_lgsHedefStr?'- Hedefe ('+_lgsHedefStr+') ulaşmak için bugünkü çalışmanın katkısı hakkında 1 cümle.\n':'- Deneme net trendi hakkında 1 cümle.\n')+
+      (sonDerinAnaliz?'- Derin analizden bu yana doğru yolda mı? 1 cümle.\n':'')+
+      'YASAK: Boş motivasyon cümleleri. Sadece verilerle konuş.';
     return prompt;
   }
 
@@ -5688,18 +5714,20 @@ function _buildAiPrompt(isDeep) {
   var tumDeneme10=denemeler.slice(0,10);
   var tumDenemeStr=tumDeneme10.length>0
     ? tumDeneme10.map(function(d,i){
-        var tyt=parseFloat(d.tyt_net||d.net||0).toFixed(1);
-        var ayt=d.ayt_net?' AYT:'+parseFloat(d.ayt_net).toFixed(1):'';
-        return (i+1)+'. '+(d.type||'GY')+' → GY:'+tyt+ayt+(d.date?' ('+d.date+')':'');
+        var net=parseFloat(d.net||d.tyt_net||0).toFixed(1);
+        return (i+1)+'. '+(d.type||'LGS')+' → Net:'+net+(d.date?' ('+d.date+')':'');
       }).join('\n')
     : 'Deneme kaydı yok';
 
   var deepPrompt=
-    'Sen Pugi LGS hazırlık uygulamasının kişisel AI koçusun. Aşağıdaki verilere dayanarak kapsamlı DERİN ANALİZ yap.\n\n'+
-    '=== ÖĞRENCİ PROFİLİ ===\n'+profil+'\n'+
+    'Sen Pugi LGS hazırlık uygulamasının kişisel AI koçusun. 8. sınıf öğrencisi için aşağıdaki verilere dayanarak kapsamlı DERİN ANALİZ yap.\n\n'+
+    'Bugün: '+_bugunAdi+' '+todayKey+'  |  Sınava kalan: '+sinavKalanStr+'\n'+
+    (_lgsHedefStr?_lgsHedefStr+'\n':'')+'\n'+
+    '=== ÖĞRENCİ PROFİLİ ===\n'+(profil||'(profil/hedef girilmemiş)\n')+'\n'+
     '=== BU HAFTA (GÜN GÜN) ===\n'+haftaSatirlari.join('\n')+'\n'+
     'Hafta toplamı: '+weeklyGoalStr+'\n\n'+
     '=== SON 30 GÜN DERS DAĞILIMI ===\n'+ayDersStr+'\n\n'+
+    '=== TÜM ZAMANLAR ===\nToplam: '+tumToplamSaat+' saat — '+tumDersStr+'\n\n'+
     '=== EN ÇOK ÇALIŞILAN KONULAR (30 gün) ===\n'+(enCokKonu||'Konu kaydı yok')+'\n\n'+
     '=== EN AZ ÇALIŞILAN KONULAR (30 gün) ===\n'+(enAzKonu||'Veri yok')+'\n\n'+
     (ayEksikDers.length?'=== 30 GÜNDE HİÇ ÇALIŞILMAYAN DERSLER ===\n'+ayEksikDers.join(', ')+'\n\n':'')+
@@ -5708,22 +5736,19 @@ function _buildAiPrompt(isDeep) {
     '=== DERİN ANALİZ GÖREVİ ===\n'+
     'Aşağıdaki her başlığı MUTLAKA ele al:\n\n'+
     '**1. GENEL GİDİŞAT**\n'+
-    'Çalışma temposu nasıl? Seri değerlendirmesi. Haftalık hedefe ulaşılıyor mu?\n\n'+
+    'Çalışma temposu nasıl? Seri değerlendirmesi. Sınava kalan süreye ('+sinavKalanStr+') göre tempo yeterli mi?\n\n'+
     '**2. DERS ANALİZİ**\n'+
-    'Hangi dersler güçlü, hangilerine yetersiz zaman ayrılmış? '+
-    (dalDersler.length?'Seçilen alanda ('+(_userProfil&&dalDersMap[_userProfil.dal]||[]).join('/')+') denge nasıl?':'')+
-    '\n\n'+
+    'LGS dersleri (Türkçe, Matematik, Fen Bilimleri, T.C. İnkılap Tarihi, Din Kültürü, İngilizce) arasında hangileri güçlü, hangilerine yetersiz zaman ayrılmış? Dengesizliği veriyle göster.\n\n'+
     '**3. DENEME PERFORMANSI**\n'+
     'Net trendi nasıl? '+
-    (_userProfil&&_userProfil.hedefProgram?'Hedef '+_userProfil.hedefProgram.uni+' için gereken puana ne kadar yakın?':'')+
-    (_userProfil&&_userProfil.hedefSiralama?'Hedef sıralama '+_userProfil.hedefSiralama.toLocaleString('tr-TR')+' için mevcut gidiş yeterli mi?':'')+
+    (_lgsHedefStr?('Hedefe ('+_lgsHedefStr+') ulaşmak için hangi derslerden kaç net daha gerekiyor?'):'Hangi dersler nete en çok katkı sağlıyor, oralara yüklenmeli mi?')+
     '\n\n'+
     '**4. KRİTİK EKSİKLER**\n'+
-    'Hangi konular/dersler ihmal edilmiş? Neden önemli? Somut veriyle açıkla.\n\n'+
+    'Hangi konular/dersler ihmal edilmiş? Neden önemli (LGS\'de soru ağırlığı)? Somut veriyle açıkla.\n\n'+
     '**5. BU HAFTA YAPILACAKLAR LİSTESİ**\n'+
     'Her ders için kaç dakika, hangi konular. Net ve uygulanabilir plan.\n\n'+
     '**6. GENEL TAVSİYE**\n'+
-    'En kritik 1 eylem önerisi.\n\n'+
+    'Hedefe giden yolda en kritik 1 eylem önerisi.\n\n'+
     'ÖNEMLI: Her başlığı bold olarak yaz. Veriyle konuş, genel motivasyon yazma.';
 
   // Derin analizi localStorage'a kaydet (günlük öneri bunu referans alsın)
@@ -5793,7 +5818,7 @@ function loadAiDailyCoach() {
   var cachedText = null;
 
   // Cache versiyonu — prompt değişince eski öneriyi geçersiz say
-  var PROMPT_VERSION = 'v3';
+  var PROMPT_VERSION = 'v4';
   var uidSlice = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
   var aiDateKey = 'pugi_ai_date_' + uidSlice;
   var aiTextKey = 'pugi_ai_text_' + uidSlice;
@@ -5830,6 +5855,7 @@ function _fetchAiSuggestion(isDeep) {
     headers: { 'Content-Type': 'application/json' },
     signal: controller.signal,
     body: JSON.stringify({
+      model: GEMINI_MODEL,
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: { maxOutputTokens: isDeep ? 1200 : 350, temperature: 0.75 }
     })
@@ -5873,7 +5899,7 @@ function _fetchAiSuggestion(isDeep) {
       var uidSl = _currentUser ? _currentUser.uid.slice(0,8) : 'anon';
       localStorage.setItem('pugi_ai_date_' + uidSl, todayKey);
       localStorage.setItem('pugi_ai_text_' + uidSl, text);
-      localStorage.setItem('pugi_ai_pv_'   + uidSl, 'v3');
+      localStorage.setItem('pugi_ai_pv_'   + uidSl, 'v4');
     }
     _showAiText(text, isDeep);
   })
@@ -6325,7 +6351,7 @@ function _showGuestLockModal(title, desc) {
 var _modalDal = null;
 
 function showOnboardingModal() {
-  if (_userProfil && _userProfil.dal) return;
+  if (_userProfil && _userProfil.onboardingDone) return;
   var modal = document.getElementById('onboardingModal');
   if (!modal) return;
 
@@ -6462,33 +6488,42 @@ function closeOnboardingModal(markShown) {
   }
 }
 
-function selectModalDal(dal, el) {
-  _modalDal = dal;
-  document.querySelectorAll('.ob-modal-dal').forEach(function(c){
+var _lgsHedefLise = null;
+function selectLgsLise(tur, el) {
+  var already = (_lgsHedefLise === tur);
+  document.querySelectorAll('.ob-lgs-lise').forEach(function(c){
     c.style.borderColor = 'var(--border)';
     c.style.background = 'var(--card)';
+    c.style.color = 'var(--text)';
   });
+  if (already) { _lgsHedefLise = null; return; } // tekrar tıklayınca seçimi kaldır
+  _lgsHedefLise = tur;
   el.style.borderColor = 'var(--accent)';
-  el.style.background = 'rgba(56,189,248,0.08)';
-  document.getElementById('modalSaveBtn').disabled = false;
+  el.style.background = 'rgba(56,189,248,0.10)';
+  el.style.color = 'var(--accent)';
 }
+// Geriye dönük uyumluluk (artık LGS'de kullanılmıyor)
+function selectModalDal() {}
 
 function saveOnboardingModal() {
-  if (!_modalDal || !_currentUser || !_fbDb) return;
-  var puan = parseFloat(document.getElementById('modalHedefSiralama').value) || null;
-  var update = { dal: _modalDal, onboardingDone: true };
-  if (puan) {
-    update.hedefTur = 'puan';
-    update.hedefPuan = puan;
-    update.hedefSiralama = null;
-    update.hedefProgram = null;
-  }
+  if (!_currentUser || !_fbDb) return;
+  var yEl = document.getElementById('lgsHedefYuzdelik');
+  var pEl = document.getElementById('lgsHedefPuan');
+  var yuz  = yEl ? (parseFloat(yEl.value) || null) : null;
+  var puan = pEl ? (parseInt(pEl.value, 10) || null) : null;
+  var update = {
+    onboardingDone: true,
+    hedefLise:     _lgsHedefLise || null,
+    hedefYuzdelik: yuz,
+    hedefPuan:     puan
+  };
   _fbDb.collection('users').doc(_currentUser.uid).set(update, { merge: true }).then(function() {
     _userProfil = Object.assign(_userProfil || {}, update);
-    _applyDalFilter();
+    try { _renderKpssKategoriInProfil(Object.assign({ lastActiveExam:'lgs', kpssProfile:(_userProfil&&_userProfil.kpssProfile)||{} }, update)); } catch(e){}
     closeOnboardingModal(false);
-    showToast('✅ Profil güncellendi!');
-    localStorage.removeItem('pugi_ai_date');
+    showToast('✅ Hedefin kaydedildi!');
+    // Bugünün AI önerisini sıfırla ki yeni hedefle yeniden üretilsin
+    try { var u=_currentUser.uid.slice(0,8); localStorage.removeItem('pugi_ai_date_'+u); localStorage.removeItem('pugi_ai_text_'+u); } catch(e){}
     loadAiDailyCoach();
   });
 }
@@ -10705,42 +10740,44 @@ function openCoachWhatsapp() {
     <div class="day-modal-handle"></div>
     <div class="day-modal-header">
       <div>
-        <div class="day-modal-title">🎉 Pugi güncellendi!</div>
-        <div style="font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:2px">Sana daha iyi yardımcı olabilmem için birkaç soru</div>
+        <div class="day-modal-title">🎯 LGS hedefini belirle</div>
+        <div style="font-size:0.72rem;color:var(--muted);font-weight:600;margin-top:2px">Koçun sana daha iyi yol göstersin diye (hepsi opsiyonel)</div>
       </div>
       <button class="day-modal-close" onclick="closeOnboardingModal(true)">✕</button>
     </div>
     <div class="day-modal-body">
 
-      <!-- LGS — dal seçimi yok -->
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Hangi alanda çalışıyorsun?</div>
+      <!-- LGS — hedef girişi -->
+      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px">Hedef okul türün? <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px">
-        <div class="ob-modal-dal" id="mdSoz" onclick="selectModalDal('sozel',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">📖</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--warn)">Sözel</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">Ede·Tar·Coğ·Fel</div>
-        </div>
-        <div class="ob-modal-dal" id="mdDil" onclick="selectModalDal('dil',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;text-align:center;cursor:pointer;transition:all 0.2s">
-          <div style="font-size:1.3rem;margin-bottom:4px">🌍</div>
-          <div style="font-size:0.82rem;font-weight:900;color:var(--accent2)">Dil</div>
-          <div style="font-size:0.58rem;color:var(--muted);font-weight:700">İng·Alm·Fra</div>
-        </div>
+        <div class="ob-lgs-lise" onclick="selectLgsLise('Fen Lisesi',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.78rem;font-weight:800">🔬 Fen Lisesi</div>
+        <div class="ob-lgs-lise" onclick="selectLgsLise('Sosyal Bilimler Lisesi',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.78rem;font-weight:800">📚 Sosyal Bil.</div>
+        <div class="ob-lgs-lise" onclick="selectLgsLise('Anadolu Lisesi',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.78rem;font-weight:800">🏫 Anadolu L.</div>
+        <div class="ob-lgs-lise" onclick="selectLgsLise('Proje / Nitelikli Okul',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.78rem;font-weight:800">⭐ Proje Okulu</div>
+        <div class="ob-lgs-lise" onclick="selectLgsLise('İmam Hatip Lisesi',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.78rem;font-weight:800">🕌 İmam Hatip</div>
+        <div class="ob-lgs-lise" onclick="selectLgsLise('Meslek Lisesi',this)" style="background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:11px 8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:0.78rem;font-weight:800">🔧 Meslek L.</div>
       </div>
 
-      <!-- Puan hedefi -->
-      <div style="font-size:0.7rem;font-weight:800;color:var(--muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px">Hedef Puan <span style="font-size:0.6rem;font-weight:600;color:var(--muted)">(opsiyonel)</span></div>
-
-      <!-- Sıralama (puan) -->
-      <div id="modalSiralamaWrap" style="margin-bottom:12px">
-        <input type="number" id="modalHedefSiralama" placeholder="örn: 85.50" min="0" step="0.01" max="100"
-          style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
-          oninput="this.style.borderColor='var(--accent)'; _modalOnSiralamaInput();">
+      <!-- Yüzdelik + puan hedefi -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+        <div>
+          <div style="font-size:0.66rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Hedef yüzdelik %</div>
+          <input type="number" id="lgsHedefYuzdelik" placeholder="örn: 5" min="0.01" max="100" step="0.01"
+            style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
+            oninput="this.style.borderColor='var(--accent)'">
+        </div>
+        <div>
+          <div style="font-size:0.66rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Hedef puan</div>
+          <input type="number" id="lgsHedefPuan" placeholder="örn: 480" min="100" max="500" step="1"
+            style="width:100%;padding:12px;background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Sora',sans-serif;font-size:0.88rem;font-weight:700;outline:none"
+            oninput="this.style.borderColor='var(--accent)'">
+        </div>
       </div>
 
       <!-- Kaydet butonu -->
-      <button id="modalSaveBtn" onclick="saveOnboardingModal()" disabled
+      <button id="modalSaveBtn" onclick="saveOnboardingModal()"
         style="width:100%;padding:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:14px;color:#0a1a0f;font-size:0.92rem;font-weight:900;cursor:pointer;font-family:'Sora',sans-serif;margin-bottom:10px">
-        Kaydet
+        Hedefimi Kaydet
       </button>
       <button onclick="closeOnboardingModal(true)"
         style="width:100%;padding:12px;background:transparent;border:1.5px solid var(--border);border-radius:14px;color:var(--muted);font-size:0.82rem;font-weight:800;cursor:pointer;font-family:'Sora',sans-serif">
